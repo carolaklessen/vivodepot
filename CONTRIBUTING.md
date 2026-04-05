@@ -1,0 +1,64 @@
+# Beitragen / Contributing
+
+Vielen Dank für Ihr Interesse an VIVODEPOT! Wir freuen uns über jeden Beitrag.
+
+## Erste Schritte
+
+1. **Forken** Sie das Repository
+2. **Klonen** Sie Ihren Fork: `git clone https://github.com/carolaklessen/vivodepot.git`
+3. **Öffnen** Sie `VIVODEPOT.html` im Browser — fertig, keine Build-Tools nötig
+4. **Testen** Sie Ihre Änderungen: `python3 test_notfallmappe.py VIVODEPOT.html`
+5. **Pull Request** erstellen
+
+## Architektur
+
+VIVODEPOT ist bewusst als **einzelne HTML-Datei** ohne Build-System konzipiert. Das bedeutet:
+
+- **Kein npm, kein Webpack, kein Transpiler** — Vanilla JS, Vanilla CSS
+- **Alles in einer Datei** — HTML, CSS, JavaScript
+- **3 externe Bibliotheken** über CDN (docx, jsPDF, qrcode-generator)
+- **Kein Framework** — DOM-Manipulation direkt
+
+### Warum Single-File?
+Die Zielgruppe (ältere, nicht computeraffine Personen) soll eine Datei auf einen USB-Stick kopieren und im Browser öffnen können. Kein Installationsprozess, keine Abhängigkeiten, kein Server.
+
+## Richtlinien
+
+### Code-Stil
+- **Keine Emojis in `<h1>`-Tags** — ältere Screenreader haben Probleme damit
+- **Tap-Targets mindestens 44×44px** — Barrierefreiheit
+- **Schriftgröße mindestens 14px** — Lesbarkeit für ältere Nutzer
+- **Generische Feldlabels** — keine provider-spezifischen Begriffe
+- **Keine Passwort-Speicherfelder** — nur Ablageort-Hinweise
+
+### Konventionen
+- Variablennamen: `camelCase`
+- Datenfelder: `snake_case` (für Konsistenz mit `get()`/`set()`)
+- Kommentare: `// ═══ ABSCHNITT ═══` für große Blöcke
+- Deutsche UI-Texte mit `tl()`-Wrapper für Übersetzbarkeit
+
+### Tests
+Vor jedem PR: `python3 test_notfallmappe.py VIVODEPOT.html` — alle 69 Tests müssen grün sein.
+
+### Was wir suchen
+- 🐛 Bug-Fixes (besonders Browser-Kompatibilität)
+- 🌍 Übersetzungen (EN-Texte in PDFs/Word-Exporten)
+- ♿ Barrierefreiheit (ARIA-Labels, Tastaturnavigation)
+- 📱 Mobile-Optimierung
+- 🔒 Sicherheitsverbesserungen
+- 📝 Dokumentation
+
+### Was wir nicht suchen
+- Build-Systeme (npm, Webpack, etc.)
+- Frontend-Frameworks (React, Vue, etc.)
+- Server-Komponenten
+- Datenbank-Integration
+- Tracking oder Analytics
+
+## KI-Transparenz
+
+VIVODEPOT wurde mit Unterstützung von KI-Werkzeugen (Claude, Anthropic) entwickelt. Der gesamte Code wurde vom Projektinhaber geprüft, getestet und freigegeben. Wenn Sie KI-Werkzeuge für Ihre Beiträge verwenden, kennzeichnen Sie dies bitte im Pull Request.
+
+## Lizenz
+
+Mit Ihrem Beitrag stimmen Sie zu, dass dieser unter der [EUPL-1.2](LICENSE) lizenziert wird.
