@@ -2,168 +2,144 @@
 
 **Eine einzelne HTML-Datei. Kein Server. Keine Cloud. Alle Daten bleiben auf Ihrem Gerät.**
 
+*Souveränität by Design.*
+
 VIVODEPOT hilft Ihnen, alle wichtigen Informationen für den Notfall, die Vorsorge und den Nachlass an einem Ort zu sammeln — strukturiert, verschlüsselt und offline nutzbar. Angehörige finden im Ernstfall alles, was sie brauchen: Kontakte, Vollmachten, Medikamente, Bestattungswünsche und persönliche Worte.
 
 ---
 
 ## Schnellstart
 
-1. **`VIVODEPOT.html` herunterladen** (eine einzige Datei, ca. 375 KB)
+1. **`VIVODEPOT.html` herunterladen** (eine einzige Datei, ca. 500 KB)
 2. **Im Browser öffnen** (Chrome, Edge, Firefox oder Safari)
-3. **Daten eingeben** — die App führt Sie Schritt für Schritt
-4. **Speichern** (💾 oben rechts) — erzeugt eine neue HTML-Datei mit Ihren Daten
+3. **Fokus wählen** — Arztbesuch? Notfall? Vorsorge? Alles?
+4. **Daten eingeben** — die App führt Sie Schritt für Schritt
+5. **Speichern** (💾 oben rechts) — erzeugt eine neue HTML-Datei mit Ihren Daten
 
-> Empfehlung: Speichern Sie die Datei auf einem USB-Stick (z.B. beschriftet mit „Vivodepot") und legen Sie diesen an einem sicheren Ort ab. Informieren Sie Ihre Vertrauenspersonen über den Ablageort.
+> Empfehlung: Speichern Sie die Datei auf einem USB-Stick und legen Sie diesen an einem sicheren Ort ab. Oder installieren Sie Vivodepot als App über Ihren Browser (Einstellungen → 📲 Als App installieren).
 
 ---
 
 ## Features
 
-### Eingabe (18 Schritte)
-- Persönliche Daten mit optionalem Profilfoto
-- Vertrauenspersonen & Sofortkontakte
-- Zu informierende Personen (Sofort / Erste Woche / Erste 4 Wochen)
-- Finanzen (Konten, IBAN-Validierung)
-- Versicherungen
-- Immobilien
-- Testament & Vollmachten (inkl. Vollmachten für andere Personen)
-- Verträge & Abonnements
-- Gesundheit (Blutgruppe, Allergien, Medikamente, Befunde, Implantate)
-- Haustiere
-- Pflege & Biografie (Pflegegrad, Kommunikation, Ernährung, Alltag)
-- Digitales Erbe (Passwort-Manager, Krypto-Wallets, Legacy Contacts, Hardware-Wallets)
-- Persönliches & Briefe (Krankenhaus- und Abschiedsbriefe)
-- Bestattungswünsche
+### Eingabe (19 Schritte)
 
-### Assistenten (5 Wizards)
-- 💳 Notfall-Gesundheitskarte (druckbare Scheckkarte 85×54mm)
-- ⚖️ Vorsorgevollmacht-Assistent
-- 🏥 Patientenverfügung-Assistent
-- 🕊️ Bestattungs-Assistent
-- 🐾 Haustier-Assistent
+| Schritt | Inhalt |
+|---------|--------|
+| Über mich | Persönliche Daten, Profilfoto, Familienstand |
+| Vertrauenspersonen | Notfallkontakte mit Bevollmächtigungen |
+| Wichtige Kontakte | Zu informierende Personen (Sofort / 1. Woche / 4 Wochen) |
+| Geld & Konten | Bankkonten, Depots, Altersvorsorge, Steuern, Schulden |
+| Versicherungen | Alle laufenden Policen |
+| Wohnen & Eigentum | Wohnung, Immobilien, Fahrzeuge |
+| Verträge & Abos | Laufende Verträge und Mitgliedschaften |
+| Mein Wille | Testament, Vorsorgevollmacht, Patientenverfügung, Dokumente |
+| Meine Gesundheit | Blutgruppe, Allergien, Medikamente, Vorsorge, Anamnese |
+| Pflege & Lebenslauf | Pflegegrad, Biografie, Bildung, Beruf |
+| Meine Tiere | Haustiere mit Tierarzt und Betreuungsplan |
+| Online & Zugänge | Passwort-Manager, BundID, ELEFAND, Geräte |
+| Erinnerungsstücke & Briefe | Fotos, persönliche Gegenstände, Abschiedsbriefe |
+| Mein Abschied | Bestattungswünsche, Trauerfeier, Musik |
+| Assistenten | 6 geführte Schritt-für-Schritt-Wizards |
+| Meine Dateien | Upload von Befunden, Fotos, Vollmachten |
+| Prüftermine | Jährliche Erinnerungen für Vollmachten und Testament |
+| Einstellungen | Passwort, Darstellung, Profile, PWA-Installation |
+| Dokumente erstellen | 4 Export-Tabs mit allen Ausgabeformaten |
 
-### Exporte (11 Formate)
+### Assistenten (6 Wizards)
 
-| Kategorie | Export | Format |
-|-----------|--------|--------|
-| 📋 Komplett | Notfallmappe komplett | PDF |
-| 📋 Komplett | Notfallmappe komplett | Word (.docx) |
-| 📋 Komplett | Fortschritts-Checkliste | HTML |
-| ⚖️ Rechtlich | Vorsorgevollmacht (§§ 1814 ff. BGB) | Word (.docx) |
-| ⚖️ Rechtlich | Patientenverfügung (§ 1827 BGB) | Word (.docx) |
-| 🚑 Notfall | Krankenhaus-Einweisung | PDF |
-| 🚑 Notfall | Krisenplan — Im Todesfall | PDF |
-| 🚑 Notfall | Haustier-Notfallkarte | PDF |
-| 🏠 Pflege | Heimaufnahme-Paket (5 Seiten) | PDF |
-| 💼 Arbeit | Arbeitgeber-Notfallkarte | PDF |
-| 📱 QR | QR-Sticker Paket (3 Sticker) | Druckbar |
-| 🔬 Technik | FHIR R4 JSON | JSON |
+| Wizard | Schritte | Ergebnis |
+|--------|----------|----------|
+| 💳 Notfall-Gesundheitskarte | 6 | Druckbare Scheckkarte 85×54mm |
+| ⚖️ Vorsorgevollmacht | 6 | Word-Dokument (auto-Download) |
+| 🏥 Patientenverfügung | 6 | Word-Dokument (auto-Download) |
+| 💚 Gesundheitsvollmacht | 5 | Word-Dokument (auto-Download) |
+| 🕊️ Bestattungswünsche | 8 | Felder automatisch ausgefüllt |
+| 🐾 Haustier-Notfallplan | 6 | Felder automatisch ausgefüllt |
 
-### Sicherheit & Technik
-- **AES-256-GCM Verschlüsselung** (Web Crypto API) — optionaler Passwortschutz
-- **Angehörigen-Passwort** — separater Zugang für Angehörige mit Passwortabfrage
-- **Multi-Profil-System** — bis zu 4 Profile in einer Datei (löschbar)
-- **Profilfoto** — Smart-Crop für Portraits, in PDFs eingebettet
-- **Offline-fähig** — PWA mit Service Worker, kein Internet nötig
-- **Feld-Validierung** — IBAN (Mod-97), Steuer-ID, PLZ, Geburtsdatum, E-Mail
-- **Storage-Meter** — Speicherverbrauch im ⋮-Menü sichtbar
-- **File System Access API** — direktes Speichern auf USB-Stick (Chrome/Edge)
-- **Zweisprachig** — Deutsch/Englisch umschaltbar (140+ Übersetzungen)
-- **Barrierearm** — 3-stufige Schriftgröße, Tap-Targets min. 44px
+### Exporte (4 Tabs, 17+ Formate)
 
-### Externe Bibliotheken (3)
-- [docx 8.5.0](https://github.com/dolanmiu/docx) — Word-Dokument-Erzeugung
-- [jsPDF 2.5.1](https://github.com/parallax/jsPDF) — PDF-Erzeugung
-- [qrcode-generator 1.4.4](https://github.com/nickvdyck/qrcode-generator) — QR-Codes
+| Tab | Dokument | Format |
+|-----|----------|--------|
+| 📋 Mein Vivodepot | Gesamtexport | PDF |
+| 📋 Mein Vivodepot | Gesamtexport | Word (.docx) |
+| 📋 Mein Vivodepot | Fortschritts-Checkliste | HTML |
+| ⚖️ Vollmachten | Vorsorgevollmacht | Word |
+| ⚖️ Vollmachten | Patientenverfügung | Word |
+| ⚖️ Vollmachten | Gesundheitsvollmacht | Word |
+| 🚑 Notfall & Arzt | Krankenhaus-Blatt | PDF |
+| 🚑 Notfall & Arzt | Todesfall-Krisenplan | PDF |
+| 🚑 Notfall & Arzt | Haustier-Notfallkarte | PDF |
+| 🚑 Notfall & Arzt | Notfall-Tasche Checkliste | PDF |
+| 🚑 Notfall & Arzt | Arztbesuch-Bogen | PDF |
+| 🚑 Notfall & Arzt | QR-Sticker (3 Stück) | Druck |
+| 🏛️ Ämter & Einrichtungen | Heimaufnahme-Paket | Word |
+| 🏛️ Ämter & Einrichtungen | Arbeitgeber-Notfallkarte | Druck |
+| 🏛️ Ämter & Einrichtungen | Gesundheitsdaten für Klinik | FHIR R4 JSON |
+| 🏛️ Ämter & Einrichtungen | Kindergeld-Datenblatt | PDF + QR |
+| 🏛️ Ämter & Einrichtungen | Arbeitsamt-Datenblatt | PDF + QR |
+| 🏛️ Ämter & Einrichtungen | Pflegegrad-Datenblatt | PDF + QR |
+| 🏛️ Ämter & Einrichtungen | FIM-JSON Export | JSON |
 
-Alle über CDN (jsdelivr/cdnjs) geladen, kein npm/build-System nötig.
+### Import
 
----
+| Format | Quelle |
+|--------|--------|
+| FHIR R4 JSON | ePA, Arztbriefe, Medikationspläne |
+| FIM-JSON | Eigener Export, Verwaltungsportale |
+| Allgemeines JSON | Automatische Felderkennung |
 
-## Deutsches Recht
+### Barrierefreiheit (10 Features)
 
-VIVODEPOT referenziert aktuelle BGB-Paragraphen nach der **Betreuungsrechtsreform 2023**:
-- Vorsorgevollmacht: §§ 1814 ff. BGB
-- Patientenverfügung: § 1827 BGB (ehemals § 1901a)
-- Betreuungsverfügung: § 1831 BGB (ehemals § 1906)
+Schriftgröße (3 Stufen), Vorlesen, Hoher Kontrast, Nachtmodus, Bildschirmlupe, Spracheingabe, Drucken, Globale Suche, Notfall-Button (ohne Passwort), Fokus-Wizard.
 
-Links zu offiziellen Formularen des Bundesjustizministeriums, der Bundesnotarkammer (ZVR), des Organspende-Registers und der Verbraucherzentralen sind integriert.
+### Sicherheit
 
-> ⚠️ VIVODEPOT ersetzt keine Rechtsberatung. Alle erzeugten Dokumente sind Entwürfe und sollten ggf. anwaltlich oder notariell geprüft werden.
-
----
-
-## Systemvoraussetzungen
-
-- Moderner Browser (Chrome 80+, Edge 80+, Firefox 78+, Safari 14+)
-- JavaScript aktiviert
-- Kein Internet nötig (nach dem ersten Laden)
-- Empfohlen: Chrome oder Edge (für File System Access API / USB-Stick-Speicherung)
+- AES-256-GCM Verschlüsselung (Web Crypto API)
+- PBKDF2 Schlüsselableitung (100.000 Iterationen)
+- Optionaler Passwortschutz
+- Kein Server, kein Netzwerk, kein Login
+- 6 Notfall-Felder ohne Passwort zugänglich
 
 ---
 
-## Datenschutz
+## Technische Details
 
-- **Keine Daten verlassen Ihr Gerät** — kein Server, kein Tracking, keine Cookies
-- Alle Daten werden ausschließlich im `localStorage` des Browsers gespeichert
-- Optionale AES-256-GCM-Verschlüsselung für sensible Daten
-- Beim Speichern als HTML-Datei werden die Daten in der Datei selbst eingebettet
-- Kein Account, keine Registrierung, keine E-Mail-Adresse nötig
+| Eigenschaft | Wert |
+|-------------|------|
+| Dateigröße | ~500 KB (eine HTML-Datei) |
+| Zeilen | ~8.200 |
+| Funktionen | ~220 |
+| Externe Bibliotheken | jsPDF, docx, QRCode.js (MIT, CDN-gecacht) |
+| Verschlüsselung | AES-256-GCM / PBKDF2 |
+| Lizenz | EUPL-1.2 |
+| Tests | 89 (test_vivodepot.py) |
+| PWA | Manifest + Service Worker |
 
 ---
 
-## Entwicklung
+## Projektstruktur
 
-VIVODEPOT wurde mit Unterstützung von KI-Werkzeugen (Claude, Anthropic) entwickelt. Der gesamte Code wurde vom Projektinhaber geprüft, getestet und freigegeben. Die rechtlichen Textbausteine (Vorsorgevollmacht, Patientenverfügung) basieren auf den offiziellen Formulierungen des Bundesministeriums der Justiz und wurden an die aktuelle Rechtslage (Betreuungsrechtsreform 2023) angepasst.
-
-> ⚠️ Trotz sorgfältiger Prüfung ersetzt VIVODEPOT keine Rechtsberatung. Alle erzeugten Dokumente sind Entwürfe.
-
-VIVODEPOT ist eine einzelne HTML-Datei ohne Build-System. Zum Entwickeln:
-
-```bash
-# Repository klonen
-git clone https://github.com/carolaklessen/vivodepot.git
-
-# Datei im Browser öffnen
-open VIVODEPOT.html        # macOS
-xdg-open VIVODEPOT.html    # Linux
-start VIVODEPOT.html        # Windows
-
-# Tests ausführen (Python 3 nötig)
-python3 test_notfallmappe.py VIVODEPOT.html
+```
+VIVODEPOT.html          ← Die App (eine Datei)
+test_vivodepot.py       ← Regressions-Tests (89 Tests)
+README.md               ← Diese Datei
+QUICKSTART.md           ← 10-Minuten-Anleitung
+DOCS.md                 ← Technische Dokumentation
+FAQ.md                  ← Häufige Fragen
+CHANGELOG.md            ← Versionshistorie
+SOVEREIGNTY.md          ← ZenDiS Souveränitätsbewertung
+CONTRIBUTING.md         ← Beitragsrichtlinien
+SECURITY.md             ← Sicherheitsrichtlinie
+LICENSE                 ← EUPL-1.2
 ```
 
-### Architektur
-- **Single-File-Architecture** — alles in einer HTML-Datei (~375 KB, ~5.900 Zeilen)
-- **Keine Build-Pipeline** — kein Webpack, kein npm, kein Transpiler
-- **Vanilla JS** — kein Framework, kein React, kein jQuery
-- **CSS Custom Properties** — Farbpalette über CSS-Variablen
-- **Progressive Enhancement** — funktioniert ohne Service Worker, ohne Crypto API
-
-### Tests
-69 automatisierte Tests prüfen:
-- HTML-Struktur und Vollständigkeit
-- JavaScript-Syntax aller Script-Blöcke
-- Vorhandensein aller 18 Schritte, 11 Export-Funktionen, 5 Wizards
-- Sicherheitsmerkmale (AES-256, Passwort-Felder, EUPL-Lizenz)
-- Branding und Copyright
-
 ---
 
-## Lizenz
+## Herausgeber
 
-Copyright © 2026 Vivodepot.
-
-Lizenziert unter der **European Union Public Licence (EUPL), Version 1.2**.
-
-Den vollständigen Lizenztext finden Sie in der Datei [LICENSE](LICENSE) oder unter:
-https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
-
----
-
-## Feedback
-
-📩 **feedback@vivodepot1.odoo.com**
-
-Fehler gefunden? Feature-Wunsch? Verbesserungsvorschlag?
-Wir freuen uns über jede Rückmeldung.
+Vivodepot UG (haftungsbeschränkt)
+Website: [vivodepot.de](https://vivodepot.de)
+E-Mail: feedback@vivodepot.de
+Quellcode: [github.com/carolaklessen/vivodepot](https://github.com/carolaklessen/vivodepot)
+Lizenz: [EUPL-1.2](https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12)

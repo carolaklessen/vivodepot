@@ -1,68 +1,72 @@
 # Changelog
 
 Alle wesentlichen Änderungen an VIVODEPOT werden in dieser Datei dokumentiert.
-Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
-## [1.0.0-beta] — 2026-04-05
+## [1.0.0-beta.3] — 2026-04-06
 
-### Erste öffentliche Beta-Version
+### Neue Features
+- **4 Export-Tabs** statt endloser Scrollseite: Mein Vivodepot, Vollmachten, Notfall & Arzt, Ämter & Einrichtungen
+- **Behördendaten-Exporte**: Kindergeld (PDF+QR), Arbeitsamt (PDF+QR), Pflegegrad (PDF+QR)
+- **FIM-JSON Export**: Maschinenlesbarer Behördendaten-Export (12 Kategorien)
+- **Structured Import**: FHIR R4, FIM-JSON und Auto-Erkennung mit Vorschau-Dialog
+- **Gesundheitsvollmacht-Wizard**: 5 Schritte, Word-Export, § 1820 Abs. 3 BGB
+- **Notfall-Tasche Checkliste**: Orientiert an BBK-Empfehlungen
+- **Arztbesuch-Bogen**: PDF mit allen Stammdaten für die Praxis
+- **BundID & ELEFAND**: Felder für digitale Behördenzugänge
+- **Familie & Sorgerecht**: Familienstand, Kinder, Unterhalt
+- **Anamnese & Krankenversicherung**: Erweiterte Gesundheitsdaten
+- **Fokus-Wizard**: 4 Ziele (Arztbesuch, Notfall, Vorsorge, Alles) + 4 Toggles
+- **PWA-Installation**: Sichtbare Anleitung in Einstellungen (📲 Als App installieren)
+- **Favicon**: Browser-Tab-Icon
+- **Slogan**: „Souveränität by Design" auf Welcome-Screen und in Einstellungen
 
-#### Eingabe (18 Schritte)
-- Persönliche Daten mit optionalem Profilfoto (Smart-Crop für Portraits)
-- Vertrauenspersonen (Name, Rolle, Telefon, E-Mail, Aufgabe im Notfall)
-- Zu informierende Personen (4 Zeitkategorien: Sofort / Erste Woche / 4 Wochen / Bei Bedarf)
-- Finanzen (Konten, IBAN-Validierung nach Mod-97)
-- Versicherungen
-- Immobilien
-- Testament & Vollmachten (inkl. Vollmachten für andere Personen)
-- Verträge & Abonnements
-- Gesundheit (Blutgruppe, Allergien, Medikamente, Befunde, Implantate, Organspende)
-- Haustiere
-- Pflege & Biografie (Pflegegrad, GdB, Kommunikation, Ernährung, Alltag)
-- Digitales Erbe (Passwort-Manager, Krypto-Wallets, Legacy Contacts, Hardware-Wallets, Social Media)
-- Persönliches & Briefe (Fotos-Ablageort, Krankenhaus- und Abschiedsbriefe)
-- Bestattungswünsche (Art, Ort, Unternehmen, Musik, persönliche Botschaft)
-- Fristen & Prüfung (Ampel-System für 5 Dokumente)
+### Verbesserungen
+- **Logo aufgehellt**: Weißer Kreishintergrund für Sichtbarkeit auf dunkler Topbar
+- **Wizards erzeugen Dokumente automatisch**: Vorsorgevollmacht + Patientenverfügung → Word-Download statt confirm()-Dialog
+- **„Schnellhilfe" → „Assistenten"**: Klarerer Name in Sidebar
+- **„Notfallmappe" → „Mein Vivodepot"**: Durchgängiges Branding
+- **Navigation zeigt nächsten Step**: „Weiter: Versicherungen →" statt nur „Weiter →"
+- **Fortschrittsleiste**: „3 von 18 Bereichen ausgefüllt" statt „Vollständig: 3/18"
+- **Abhaken**: „Fertig? Abhaken" statt „Als vollständig markieren"
+- **Return-Overlay**: 🎯 Fokus-Auswahl entfernt (war redundant), nur noch in Einstellungen + Logo-Klick
+- **Mobile Tabs**: Horizontal scrollbar, kleinere Buttons
+- **Micro-Copy**: Ermutigende Step-Beschreibungen (Gesundheit, Finanzen, Mein Wille, Mein Abschied)
 
-#### Assistenten (5 Wizards)
-- Notfall-Gesundheitskarte (6 Schritte, druckbare Scheckkarte 85×54mm)
-- Vorsorgevollmacht (6 Schritte, nach §§ 1814 ff. BGB)
-- Patientenverfügung (6 Schritte, nach § 1827 BGB)
-- Bestattungs-Assistent (8 Schritte)
-- Haustier-Assistent (6 Schritte)
+### Entfernt
+- **Technik-Tab**: Aufgelöst — QR-Sticker nach „Notfall & Arzt", FHIR nach „Ämter & Einrichtungen"
+- **„Alle Dokumente erstellen"**-Button: War zu unspezifisch
+- **Sperren-Button**: War verwirrend bei unverschlüsselten Dateien
+- **confirm()-Dialoge** in Wizards: Ersetzt durch auto-Download
 
-#### Exporte (11 Formate)
-- Notfallmappe komplett (PDF + Word)
-- Vorsorgevollmacht (Word, unterschriftsreif)
-- Patientenverfügung (Word, unterschriftsreif)
-- Krankenhaus-Einweisung (1-Seiten-PDF)
-- Krisenplan — Im Todesfall (PDF)
-- Haustier-Notfallkarte (PDF)
-- Heimaufnahme-Paket (5-Seiten-PDF)
-- Arbeitgeber-Notfallkarte (PDF)
-- QR-Sticker Paket (3 laminierbare Sticker: Medizin, Haustier, Schlüssel)
-- FHIR R4 JSON
-- Fortschritts-Checkliste (HTML)
+### Testskript
+- Umbenannt: `test_notfallmappe.py` → `test_vivodepot.py`
+- Erweitert: 70 → 89 Tests
+- Neue Kategorien: Wizards (7), UI & Branding (10)
 
-#### Sicherheit
-- AES-256-GCM Verschlüsselung (Web Crypto API)
-- Angehörigen-Weiche (Inhaber vs. Angehörige)
-- Angehörigen-Passwort mit Abfrage
-- Multi-Profil-System (bis 4 Profile, löschbar)
+## [1.0.0-beta.2] — 2026-04-05
 
-#### Benutzeroberfläche
-- Zweisprachig (DE/EN, 140+ Übersetzungen)
-- 3-stufige Schriftgröße (persistent)
-- Geclusterte Navigation (5 Gruppen)
-- Barrierefreie Tap-Targets (min. 44px)
-- Topbar mit ⋮-Menü und Storage-Meter
-- File System Access API (direktes Speichern auf USB-Stick)
-- PWA / Service Worker für Offline-Nutzung
-- Professionelles Logo und SVG-Favicon
+### Neue Features
+- Globale Suche (durchsucht alle Felder)
+- Einstellungen-Step (Passwort, Darstellung, Profile)
+- Datenschutz-Banner + Modal (DSGVO)
+- Cloud-Backup-Empfehlung (Info, kein Upload)
+- Notfall-Button ohne Passwort
+- Transparentes Logo (Icon-only, ohne Text)
+- Meine Dateien (Upload von Befunden, Fotos)
 
-#### Rechtlich
+### Verbesserungen
+- 19 Steps statt 17
+- Step-Umbenennung + Umsortierung
+- Startseite aufgeräumt
+- Schnellhilfe: 2×3 Grid mit menschlichen Untertiteln
+
+## [1.0.0-beta.1] — 2026-04-05
+
+### Initiale Version
+- Einzelne HTML-Datei (~375 KB)
+- 17 Eingabe-Steps
+- AES-256-GCM Verschlüsselung
+- 5 Wizards (Gesundheitskarte, Vorsorgevollmacht, Patientenverfügung, Bestattung, Haustier)
+- 11 Export-Formate
+- Profil-System (Mehrpersonen)
 - EUPL-1.2 Lizenz
-- Copyright © 2026 auf allen Exporten
-- Aktuelle BGB-Referenzen (Betreuungsrechtsreform 2023)
-- Links zu offiziellen Formularen und Registern
-- KI-Transparenzhinweis (EU AI Act Art. 50) in App, Quellcode und Dokumentation
