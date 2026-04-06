@@ -60,7 +60,7 @@ Ja. Ihre Vivodepot-Datei ist AES-256 verschlüsselt. Sie können sie sicher in i
 
 ### Ich habe die Datei versehentlich gelöscht. Kann ich sie wiederherstellen?
 
-Wenn die Daten noch im Browser-Speicher sind: Öffnen Sie eine frische Kopie von VIVODEPOT.html — die Daten werden automatisch geladen. Wenn der Browser-Speicher gelöscht wurde und kein Backup existiert: leider nein.
+Wenn die Daten noch im Browser-Speicher sind: Öffnen Sie eine frische Kopie von index.html — die Daten werden automatisch geladen. Wenn der Browser-Speicher gelöscht wurde und kein Backup existiert: leider nein.
 
 ### Kann ich Vivodepot auf mehreren Geräten nutzen?
 

@@ -10,7 +10,7 @@ VIVODEPOT hilft Ihnen, alle wichtigen Informationen für den Notfall, die Vorsor
 
 ## Schnellstart
 
-1. **`VIVODEPOT.html` herunterladen** (eine einzige Datei, ca. 530 KB)
+1. **`index.html` herunterladen** (eine einzige Datei, ca. 530 KB)
 2. **Im Browser öffnen** (Chrome, Edge, Firefox oder Safari)
 3. **Fokus wählen** — Arztbesuch? Notfall? Vorsorge? Alles?
 4. **Daten eingeben** — die App führt Sie Schritt für Schritt
@@ -117,7 +117,7 @@ Beim Öffnen einer gespeicherten Datei — oder über ⋮-Menü → „Angehöri
 ## Entwicklung & Tests
 
 ```bash
-python3 test_vivodepot.py VIVODEPOT.html
+python3 test_vivodepot.py index.html
 ```
 
 126 Tests — Syntax, Funktionen, Exporte, Wizards, Barrierefreiheit, User-Journey.

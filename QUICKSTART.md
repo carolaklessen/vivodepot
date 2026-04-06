@@ -6,7 +6,7 @@
 
 ## Schritt 1: Öffnen
 
-Doppelklicken Sie auf `VIVODEPOT.html` — die Datei öffnet sich im Browser.
+Doppelklicken Sie auf `index.html` — die Datei öffnet sich im Browser.
 
 > **USB-Stick?** Öffnen Sie die Datei direkt vom Stick.  
 > **Heruntergeladen?** Öffnen Sie sie aus dem Download-Ordner.

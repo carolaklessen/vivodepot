@@ -37,7 +37,7 @@ Vivodepot ist eine browserbasierte Single-File-App für persönliche Vorsorge- u
 
 Es gibt keine Installation. Vivodepot ist eine einzelne HTML-Datei.
 
-**Vom USB-Stick:** Doppelklicken Sie auf `VIVODEPOT.html`.
+**Vom USB-Stick:** Doppelklicken Sie auf `index.html`.
 
 **Aus dem Internet:** Laden Sie die Datei von [GitHub](https://github.com/carolaklessen/vivodepot) herunter und öffnen Sie sie lokal.
 
