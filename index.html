@@ -166,7 +166,7 @@ body {
   gap: 12px;
 }
 .topbar-title > span { opacity: 0.55; font-weight: 400; font-size: 0.82rem; font-family: 'DM Sans', sans-serif; }
-.topbar-actions { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.topbar-actions { display: flex; gap: 4px; align-items: center; flex-wrap: nowrap; overflow: hidden; }
 .btn-sm { padding: 5px 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.22); background: transparent; color: rgba(255,255,255,0.9); font-size: 0.76rem; cursor: pointer; transition: background 0.15s; font-family: 'DM Sans', sans-serif; white-space: nowrap; }
 .btn-sm:hover { background: rgba(255,255,255,0.10); }
 .btn-sm.gold { background: var(--gold); border-color: var(--gold); color: var(--forest); font-weight: 600; }
@@ -644,11 +644,57 @@ input[type=text], input[type=email], input[type=tel], input[type=date], select {
 
 @media (max-width: 700px) {
   .sidebar { display: none; }
-  .main-content { padding: 1.5rem 1.2rem 3rem; }
+  .main-content { padding: 1.5rem 1.2rem 5rem; }
   .field-row, .export-grid, .file-cards { grid-template-columns: 1fr; }
   .export-tabs { overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; gap: 4px; padding-bottom: 4px; }
   .etab { font-size: 0.78rem; padding: 8px 12px; white-space: nowrap; flex-shrink: 0; }
   .step-header h1 { font-size: 1.3rem; }
+  .topbar-actions .fs-btn.hide-mobile { display: none !important; }
+  .topbar-logo .topbar-wordmark { font-size: 0.95rem; letter-spacing: 0.05em; }
+  .mobile-nav { display: flex !important; }
+  #notfall-fab { bottom: 74px !important; }
+}
+.mobile-nav {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 54px;
+  background: var(--forest);
+  border-top: 2px solid var(--gold);
+  z-index: 99;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.15);
+}
+.mobile-nav-btn {
+  background: rgba(255,255,255,0.12);
+  border: none;
+  color: #fff;
+  font-size: 1.1rem;
+  width: 44px; height: 44px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.mobile-nav-btn:active { background: rgba(255,255,255,0.25); }
+.mobile-nav-center {
+  flex: 1;
+  text-align: center;
+  color: #fff;
+  font-size: 0.82rem;
+  font-family: 'DM Sans', sans-serif;
+  padding: 0 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+.mobile-nav-step {
+  font-size: 0.68rem;
+  opacity: 0.65;
+  display: block;
 }
 </style>
 <link rel="icon" type="image/png" href="data:image/png;base64,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">
@@ -667,11 +713,11 @@ input[type=text], input[type=email], input[type=tel], input[type=date], select {
   <div class="topbar-actions">
     <button class="fs-btn" onclick="openGlobalSearch()" title="Suche">🔎</button>
     <button class="fs-btn" onclick="cycleFontSize()" id="fs-btn" title="Schriftgröße ändern">A⁺</button>
-    <button class="fs-btn" onclick="toggleVorlesen()" id="vorlesen-btn" title="Seite vorlesen">🔊</button>
-    <button class="fs-btn" onclick="toggleKontrast()" id="kontrast-btn" title="Hoher Kontrast">◐</button>
-    <button class="fs-btn" onclick="toggleLupe()" id="lupe-btn" title="Bildschirmlupe">🔍</button>
+    <button class="fs-btn hide-mobile" onclick="toggleVorlesen()" id="vorlesen-btn" title="Seite vorlesen">🔊</button>
+    <button class="fs-btn hide-mobile" onclick="toggleKontrast()" id="kontrast-btn" title="Hoher Kontrast">◐</button>
+    <button class="fs-btn hide-mobile" onclick="toggleLupe()" id="lupe-btn" title="Bildschirmlupe">🔍</button>
     <button class="fs-btn" onclick="toggleNacht()" id="nacht-btn" title="Nachtmodus">🌙</button>
-    <button class="fs-btn" onclick="window.print()" title="Seite drucken">🖨</button>
+    <button class="fs-btn hide-mobile" onclick="window.print()" title="Seite drucken">🖨</button>
     <!-- EN-Übersetzung vorbereitet, aber für Beta deaktiviert -->
     <button class="fs-btn" onclick="toggleLang()" id="lang-btn" title="Sprache / Language" style="display:none">EN</button>
     <div class="profile-switcher">
@@ -697,6 +743,14 @@ input[type=text], input[type=email], input[type=tel], input[type=date], select {
       </div>
     </div>
   </div>
+</div>
+<div class="mobile-nav" id="mobile-nav">
+  <button class="mobile-nav-btn" onclick="mobileNavPrev()" title="Vorheriger Schritt">&#8592;</button>
+  <div class="mobile-nav-center" onclick="mobileNavMenu()">
+    <span id="mobile-nav-name">Über mich</span>
+    <span class="mobile-nav-step" id="mobile-nav-step">Schritt 1 von 19</span>
+  </div>
+  <button class="mobile-nav-btn" onclick="mobileNavNext()" title="Nächster Schritt">&#8594;</button>
 </div>
 
 <!-- Welcome modal (first visit) -->
@@ -1836,10 +1890,39 @@ function vivoConfirm(msg, onOk, onCancel) {
   d.onclick = function(e) { if(e.target===d) { d.remove(); if(onCancel) onCancel(); } };
 }
 
+
+function mobileNavUpdate() {
+  var nameEl = document.getElementById('mobile-nav-name');
+  var stepEl = document.getElementById('mobile-nav-step');
+  if (!nameEl || !stepEl) return;
+  var step = STEPS[currentStep];
+  if (step) {
+    nameEl.textContent = step.label || step.id;
+    stepEl.textContent = 'Schritt ' + (currentStep + 1) + ' von ' + STEPS.length;
+  }
+}
+function mobileNavPrev() {
+  if (currentStep > 0) { currentStep--; renderSidebar(); renderStep(); mobileNavUpdate(); window.scrollTo(0,0); }
+}
+function mobileNavNext() {
+  if (currentStep < STEPS.length - 1) { currentStep++; renderSidebar(); renderStep(); mobileNavUpdate(); window.scrollTo(0,0); }
+}
+function mobileNavMenu() {
+  // Show step list as a simple select
+  var opts = STEPS.map((s,i) => i + ': ' + s.label).join('\n');
+  var sel = prompt('Schritt wählen (0-' + (STEPS.length-1) + '):\n' + STEPS.map((s,i)=>(i===currentStep?'► ':'  ')+(i+1)+'. '+s.label).join('\n'));
+  if (sel !== null) {
+    var n = parseInt(sel);
+    if (!isNaN(n) && n >= 0 && n < STEPS.length) {
+      currentStep = n; renderSidebar(); renderStep(); mobileNavUpdate(); window.scrollTo(0,0);
+    }
+  }
+}
 function safeRender() {
   try {
     renderSidebar();
     renderStep();
+    mobileNavUpdate();
   } catch(e) {
     console.error('[VIVODEPOT]', e && e.message, e && e.stack);
   }
