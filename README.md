@@ -10,13 +10,13 @@ VIVODEPOT hilft Ihnen, alle wichtigen Informationen für den Notfall, die Vorsor
 
 ## Schnellstart
 
-1. **`VIVODEPOT.html` herunterladen** (eine einzige Datei, ca. 500 KB)
+1. **`VIVODEPOT.html` herunterladen** (eine einzige Datei, ca. 530 KB)
 2. **Im Browser öffnen** (Chrome, Edge, Firefox oder Safari)
 3. **Fokus wählen** — Arztbesuch? Notfall? Vorsorge? Alles?
 4. **Daten eingeben** — die App führt Sie Schritt für Schritt
 5. **Speichern** (💾 oben rechts) — erzeugt eine neue HTML-Datei mit Ihren Daten
 
-> Empfehlung: Speichern Sie die Datei auf einem USB-Stick und legen Sie diesen an einem sicheren Ort ab. Oder installieren Sie Vivodepot als App über Ihren Browser (Einstellungen → 📲 Als App installieren).
+> Empfehlung: Speichern Sie die Datei auf einem USB-Stick und legen Sie diesen an einem sicheren Ort ab. Oder installieren Sie Vivodepot als App über Ihren Browser (Einstellungen → Als App installieren).
 
 ---
 
@@ -41,7 +41,7 @@ VIVODEPOT hilft Ihnen, alle wichtigen Informationen für den Notfall, die Vorsor
 | Erinnerungsstücke & Briefe | Fotos, persönliche Gegenstände, Abschiedsbriefe |
 | Mein Abschied | Bestattungswünsche, Trauerfeier, Musik |
 | Assistenten | 6 geführte Schritt-für-Schritt-Wizards |
-| Meine Dateien | Upload von Befunden, Fotos, Vollmachten |
+| Meine Dateien | Upload von Befunden, Fotos, Vollmachten — nach Kategorie |
 | Prüftermine | Jährliche Erinnerungen für Vollmachten und Testament |
 | Einstellungen | Passwort, Darstellung, Profile, PWA-Installation |
 | Dokumente erstellen | 4 Export-Tabs mit allen Ausgabeformaten |
@@ -50,96 +50,76 @@ VIVODEPOT hilft Ihnen, alle wichtigen Informationen für den Notfall, die Vorsor
 
 | Wizard | Schritte | Ergebnis |
 |--------|----------|----------|
-| 💳 Notfall-Gesundheitskarte | 6 | Druckbare Scheckkarte 85×54mm |
-| ⚖️ Vorsorgevollmacht | 6 | Word-Dokument (auto-Download) |
-| 🏥 Patientenverfügung | 6 | Word-Dokument (auto-Download) |
-| 💚 Gesundheitsvollmacht | 5 | Word-Dokument (auto-Download) |
-| 🕊️ Bestattungswünsche | 8 | Felder automatisch ausgefüllt |
-| 🐾 Haustier-Notfallplan | 6 | Felder automatisch ausgefüllt |
+| Notfall-Gesundheitskarte | 6 | Druckbare Scheckkarte 85×54mm |
+| Vorsorgevollmacht | 6 | Word-Dokument (auto-Download) |
+| Patientenverfügung | 6 | Word-Dokument (auto-Download) |
+| Gesundheitsvollmacht | 5 | Word-Dokument (auto-Download) |
+| Bestattungswünsche | 8 | Felder automatisch ausgefüllt |
+| Haustier-Notfallplan | 6 | Felder automatisch ausgefüllt |
 
-### Exporte (4 Tabs, 17+ Formate)
+### Exporte (4 Tabs, 13+ Formate)
 
-| Tab | Dokument | Format |
-|-----|----------|--------|
-| 📋 Mein Vivodepot | Gesamtexport | PDF |
-| 📋 Mein Vivodepot | Gesamtexport | Word (.docx) |
-| 📋 Mein Vivodepot | Fortschritts-Checkliste | HTML |
-| ⚖️ Vollmachten | Vorsorgevollmacht | Word |
-| ⚖️ Vollmachten | Patientenverfügung | Word |
-| ⚖️ Vollmachten | Gesundheitsvollmacht | Word |
-| 🚑 Notfall & Arzt | Krankenhaus-Blatt | PDF |
-| 🚑 Notfall & Arzt | Todesfall-Krisenplan | PDF |
-| 🚑 Notfall & Arzt | Haustier-Notfallkarte | PDF |
-| 🚑 Notfall & Arzt | Notfall-Tasche Checkliste | PDF |
-| 🚑 Notfall & Arzt | Arztbesuch-Bogen | PDF |
-| 🚑 Notfall & Arzt | QR-Sticker (3 Stück) | Druck |
-| 🏛️ Ämter & Einrichtungen | Heimaufnahme-Paket | Word |
-| 🏛️ Ämter & Einrichtungen | Arbeitgeber-Notfallkarte | Druck |
-| 🏛️ Ämter & Einrichtungen | Gesundheitsdaten für Klinik | FHIR R4 JSON |
-| 🏛️ Ämter & Einrichtungen | Kindergeld-Datenblatt | PDF + QR |
-| 🏛️ Ämter & Einrichtungen | Arbeitsamt-Datenblatt | PDF + QR |
-| 🏛️ Ämter & Einrichtungen | Pflegegrad-Datenblatt | PDF + QR |
-| 🏛️ Ämter & Einrichtungen | FIM-JSON Export | JSON |
-
-### Import
-
-| Format | Quelle |
-|--------|--------|
-| FHIR R4 JSON | ePA, Arztbriefe, Medikationspläne |
-| FIM-JSON | Eigener Export, Verwaltungsportale |
-| Allgemeines JSON | Automatische Felderkennung |
-
-### Barrierefreiheit (10 Features)
-
-Schriftgröße (3 Stufen), Vorlesen, Hoher Kontrast, Nachtmodus, Bildschirmlupe, Spracheingabe, Drucken, Globale Suche, Notfall-Button (ohne Passwort), Fokus-Wizard.
-
-### Sicherheit
-
-- AES-256-GCM Verschlüsselung (Web Crypto API)
-- PBKDF2 Schlüsselableitung (100.000 Iterationen)
-- Optionaler Passwortschutz
-- Kein Server, kein Netzwerk, kein Login
-- 6 Notfall-Felder ohne Passwort zugänglich
+| Tab | Enthält |
+|-----|---------|
+| Mein Vivodepot | Gesamt-PDF, Gesamt-Word, Fortschritts-Checkliste |
+| Vollmachten | Vorsorgevollmacht, Patientenverfügung, Gesundheitsvollmacht (je Word) |
+| Notfall & Arzt | Arztbesuch-Bogen, Notfall-Tasche, QR-Sticker, Krankenhaus-Einweisung, Haustier-Notfallkarte, Im Todesfall |
+| Ämter & Einrichtungen | Heimaufnahme-Paket (PDF), Gesundheitsdaten FHIR R4 (JSON), Kindergeld-Datenblatt, Arbeitsamt-Datenblatt, Pflegegrad-Datenblatt |
 
 ---
 
-## Technische Details
+## Zwei Zugangsmodi
 
-| Eigenschaft | Wert |
-|-------------|------|
-| Dateigröße | ~500 KB (eine HTML-Datei) |
-| Zeilen | ~8.200 |
-| Funktionen | ~220 |
-| Externe Bibliotheken | jsPDF, docx, QRCode.js (MIT, CDN-gecacht) |
-| Verschlüsselung | AES-256-GCM / PBKDF2 |
-| Lizenz | EUPL-1.2 |
-| Tests | 89 (test_vivodepot.py) |
-| PWA | Manifest + Service Worker |
+### Inhaberin / Inhaber
+- Alle Daten bearbeiten und ergänzen
+- Alle Exporte erstellen
+- Fokus wählen (Sidebar passt sich an)
+
+### Angehörige/r
+Beim Öffnen einer gespeicherten Datei — oder über ⋮-Menü → „Angehörigen-Ansicht testen":
+
+- **Krankenhaus-Einweisung**: Allergien, Medikamente, Blutgruppe, Vollmachten, Ärzte
+- **Im Todesfall**: Testament, Bestattungswünsche, Kontakte, persönliche Botschaft
+- Hochgeladene Befunde und Vollmachten direkt downloadbar
+- Optional durch Passwort geschützt
 
 ---
 
-## Projektstruktur
+## Sicherheit
 
-```
-VIVODEPOT.html          ← Die App (eine Datei)
-test_vivodepot.py       ← Regressions-Tests (89 Tests)
-README.md               ← Diese Datei
-QUICKSTART.md           ← 10-Minuten-Anleitung
-DOCS.md                 ← Technische Dokumentation
-FAQ.md                  ← Häufige Fragen
-CHANGELOG.md            ← Versionshistorie
-SOVEREIGNTY.md          ← ZenDiS Souveränitätsbewertung
-CONTRIBUTING.md         ← Beitragsrichtlinien
-SECURITY.md             ← Sicherheitsrichtlinie
-LICENSE                 ← EUPL-1.2
+- **AES-256-GCM Verschlüsselung** (Web Crypto API) — optionales Passwort
+- **Kein Server**, keine Übertragung, keine Telemetrie
+- **Offline-fähig** (PWA mit Service Worker)
+- Alle Daten bleiben ausschließlich im Browser (`localStorage`) und in der gespeicherten HTML-Datei
+
+---
+
+## Kompatibilität
+
+| Browser | Status |
+|---------|--------|
+| Chrome / Edge | Vollständig (inkl. Spracheingabe) |
+| Firefox | Vollständig |
+| Safari (macOS/iOS) | Vollständig |
+| DuckDuckGo Browser | Vollständig (Spracheingabe deaktiviert) |
+
+---
+
+## Technischer Aufbau
+
+- **Eine HTML-Datei**, keine externen Abhängigkeiten zur Laufzeit
+- CDN-Bibliotheken werden vom Service Worker gecacht (jsPDF, docx.js, qrcode-generator)
+- **~530 KB** unkomprimiert, ~8.500 Zeilen
+- Lizenz: **EUPL v1.2**
+
+---
+
+## Entwicklung & Tests
+
+```bash
+python3 test_vivodepot.py VIVODEPOT.html
 ```
 
----
+126 Tests — Syntax, Funktionen, Exporte, Wizards, Barrierefreiheit, User-Journey.
 
-## Herausgeber
-
-Vivodepot UG (haftungsbeschränkt)
-Website: [vivodepot.de](https://vivodepot.de)
-E-Mail: feedback@vivodepot.de
-Quellcode: [github.com/carolaklessen/vivodepot](https://github.com/carolaklessen/vivodepot)
-Lizenz: [EUPL-1.2](https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12)
+Siehe [CONTRIBUTING.md](CONTRIBUTING.md) für Entwicklungshinweise.

@@ -2,7 +2,7 @@
 
 **Bewertung nach den Kriterien des Zentrums für Digitale Souveränität (ZenDiS)**
 
-Stand: April 2026 · Version 1.0.0-beta · Vivodepot UG (haftungsbeschränkt)
+Stand: April 2026 · Version 1.0.0-beta.4 · Vivodepot UG (haftungsbeschränkt)
 
 ---
 

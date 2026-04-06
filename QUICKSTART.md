@@ -1,4 +1,4 @@
-# 🚀 Vivodepot — Schnellstart
+# Vivodepot — Schnellstart
 
 **In 10 Minuten startklar.** Keine Installation, kein Konto, kein Internet.
 
@@ -15,12 +15,12 @@ Doppelklicken Sie auf `VIVODEPOT.html` — die Datei öffnet sich im Browser.
 
 ## Schritt 2: Passwort setzen (empfohlen)
 
-Beim ersten Start werden Sie gefragt, ob Sie ein Passwort setzen möchten.
+Ein Passwort ist optional. Sie können es jederzeit unter **Einstellungen → Passwortschutz** aktivieren.
 
-- **Ja** → Ihre Daten werden mit AES-256 verschlüsselt (Bankenstandard)
-- **Nein** → Ihre Daten werden unverschlüsselt gespeichert
+- **Mit Passwort** → Daten werden mit AES-256 verschlüsselt (Bankenstandard)
+- **Ohne Passwort** → Daten werden unverschlüsselt gespeichert
 
-> 💡 **Tipp:** Schreiben Sie das Passwort auf Papier und legen Sie es in einen versiegelten Umschlag im Tresor. Ohne Passwort gibt es keinen Zugang — auch wir können es nicht zurücksetzen.
+> **Tipp:** Schreiben Sie das Passwort auf Papier und legen Sie es in einen versiegelten Umschlag im Tresor. Ohne Passwort gibt es keinen Zugang — auch wir können es nicht zurücksetzen.
 
 ---
 
@@ -30,11 +30,11 @@ Die App führt Sie durch **19 Abschnitte** in 5 Bereichen:
 
 | Bereich | Abschnitte |
 |---------|-----------|
-| 👤 **Meine Person** | Über mich · Vertrauenspersonen · Wichtige Kontakte |
-| 💰 **Absicherung & Finanzen** | Geld & Konten · Versicherungen · Wohnen · Verträge · Mein Wille |
-| 🏥 **Gesundheit & Leben** | Meine Gesundheit · Pflege & Lebenslauf · Meine Tiere |
-| 💌 **Persönliches & Wünsche** | Online & Zugänge · Erinnerungsstücke · Mein Abschied |
-| 🔧 **Werkzeuge** | Assistenten · Meine Dateien · Prüftermine · Einstellungen · Dokumente erstellen |
+| **Meine Person** | Über mich · Vertrauenspersonen · Wichtige Kontakte |
+| **Absicherung & Finanzen** | Geld & Konten · Versicherungen · Wohnen · Verträge · Mein Wille |
+| **Gesundheit & Leben** | Meine Gesundheit · Pflege & Lebenslauf · Meine Tiere |
+| **Persönliches & Wünsche** | Online & Zugänge · Erinnerungsstücke · Mein Abschied |
+| **Werkzeuge** | Assistenten · Meine Dateien · Prüftermine · Einstellungen · Dokumente erstellen |
 
 **Wichtig:** Alles ist freiwillig. Füllen Sie nur aus, was Ihnen wichtig ist. Sie können jederzeit unterbrechen und später weitermachen.
 
@@ -44,7 +44,7 @@ Die App führt Sie durch **19 Abschnitte** in 5 Bereichen:
 
 Klicken Sie auf **💾 Speichern** oben rechts → die Datei wird als neue HTML-Datei heruntergeladen. Ersetzen Sie damit die alte Datei auf Ihrem Stick.
 
-> ⚡ Die App speichert auch automatisch im Browser. Aber: Nur die heruntergeladene Datei ist Ihr echtes Backup.
+> Die App speichert auch automatisch im Browser. Aber: Nur die heruntergeladene Datei ist Ihr echtes Backup.
 
 ---
 
@@ -52,16 +52,22 @@ Klicken Sie auf **💾 Speichern** oben rechts → die Datei wird als neue HTML-
 
 Im letzten Schritt **„Dokumente erstellen"** können Sie mit einem Klick erzeugen:
 
-- 📄 **Haupt-PDF** — Ihr komplettes Vivodepot
-- 📝 **Word-Dokument** — zum Bearbeiten
-- ✅ **Checkliste** — Was ist ausgefüllt, was fehlt?
-- ⚖️ **Vorsorgevollmacht** — rechtsgültiger Entwurf
-- 🏥 **Patientenverfügung** — medizinische Wünsche
-- 🩺 **Arztbesuch-Bogen** — einmal drucken, immer mitbringen
-- 🎒 **Notfall-Tasche** — Checkliste für den Ernstfall
-- 🚑 **Krankenhaus-Blatt** — für Notarzt & Aufnahme
-- 🕊️ **Todesfall-Krisenplan** — erste Schritte für Angehörige
-- 🐾 **Haustier-Notfallkarte** — Versorgung Ihres Tiers
+- **Haupt-PDF** — Ihr komplettes Vivodepot
+- **Word-Dokument** — zum Bearbeiten
+- **Checkliste** — Was ist ausgefüllt, was fehlt?
+- **Vorsorgevollmacht** — rechtsgültiger Entwurf
+- **Patientenverfügung** — medizinische Wünsche
+- **Arztbesuch-Bogen** — einmal drucken, immer mitbringen
+- **Notfall-Tasche** — Checkliste für den Ernstfall
+- **Krankenhaus-Blatt** — für Notarzt & Aufnahme
+- **Todesfall-Krisenplan** — erste Schritte für Angehörige
+- **Haustier-Notfallkarte** — Versorgung Ihres Tiers
+
+---
+
+## Angehörigen-Modus
+
+Wenn jemand anderes die Datei öffnet (z.B. Ihre Tochter im Notfall), erscheint beim Öffnen die Frage: „Wer öffnet dieses Vivodepot?" — mit der Wahl zwischen Inhaberin (Bearbeiten) und Angehörige/r (Notfall-Informationen). Als Inhaberin können Sie den Angehörigen-Modus auch jederzeit über das ⋮-Menü testen.
 
 ---
 
@@ -90,4 +96,4 @@ Im letzten Schritt **„Dokumente erstellen"** können Sie mit einem Klick erzeu
 
 ---
 
-*Version 1.0.0-beta · © 2026 Vivodepot · [Ausführliche Dokumentation →](DOCS.md) · [FAQ →](FAQ.md)*
+*Version 1.0.0-beta.4 · © 2026 Vivodepot · [Ausführliche Dokumentation →](DOCS.md) · [FAQ →](FAQ.md)*

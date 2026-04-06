@@ -88,9 +88,9 @@ Es gibt keine Installation. Vivodepot ist eine einzelne HTML-Datei.
 
 ### Werkzeuge
 
-**15. Assistenten** — 5 geführte Assistenten (Gesundheitskarte, Vorsorgevollmacht, Patientenverfügung, Bestattung, Haustier). Außerdem: Passwort-Zugang für Angehörige.
+**15. Assistenten** — 6 geführte Assistenten (Gesundheitskarte, Vorsorgevollmacht, Patientenverfügung, Gesundheitsvollmacht, Bestattung, Haustier). Außerdem: Passwort-Zugang für Angehörige.
 
-**16. Meine Dateien** — Dokumente hochladen und kategorisieren (Befunde, Vollmachten, Ausweise, Verträge). Dateien werden in der App gespeichert.
+**16. Meine Dateien** — Dokumente hochladen, benennen und nach Kategorie ablegen (Ausweise, Vollmachten, Befunde, Verträge, Fotos, Sonstiges). Beim Upload wird nach einem aussagekräftigen Namen gefragt. Jede Datei ist jederzeit wieder downloadbar.
 
 **17. Prüftermine** — Erinnerungen an wichtige Fristen: Vollmacht, Patientenverfügung, Testament, Bankvollmacht, Vivodepot-Update. Ampelsystem (grün/gelb/rot).
 
@@ -241,10 +241,10 @@ Vivodepot kann als Progressive Web App installiert werden:
 
 ## Angehörigen-Modus
 
-Wenn Angehörige die Datei öffnen (z.B. nach einem Notfall), erscheint eine **Szenario-Auswahl**:
+Beim Öffnen einer gespeicherten Datei erscheint die Frage „Wer öffnet dieses Vivodepot?" — Inhaberin oder Angehörige/r. Als Inhaberin ist der Modus auch über ⋮-Menü → „Angehörigen-Ansicht testen" erreichbar. Angehörige wählen ein Szenario:
 
-- **Krankenhaus-Einweisung** → zeigt nur medizinische Daten und Kontakte
-- **Im Todesfall** → zeigt Checkliste, Testament, Bestattungswünsche
+- **Krankenhaus-Einweisung** → Allergien, Medikamente, Blutgruppe, Vollmachten, Hausarzt, laufende Behandlung, hochgeladene Befunde
+- **Im Todesfall** → Testament, Bestattungswünsche, Kontakte, persönliche Botschaft, hochgeladene Vollmachten
 
 Die Szenarien filtern die Daten auf das Wesentliche — Angehörige müssen nicht die ganze App durchsuchen.
 
@@ -254,13 +254,13 @@ Die Szenarien filtern die Daten auf das Wesentliche — Angehörige müssen nich
 
 | Eigenschaft | Wert |
 |-------------|------|
-| Dateigröße | ~445 KB |
-| Codezeilen | ~7.000 |
+| Dateigröße | ~530 KB |
+| Codezeilen | ~8.500 |
 | Externe Abhängigkeiten | 3 CDN-Bibliotheken (gecacht) |
 | Framework | Kein Framework — Vanilla HTML/CSS/JS |
 | Verschlüsselung | AES-256-GCM, PBKDF2 |
 | Lizenz | EUPL-1.2 |
-| Browser-Support | Chrome 90+, Firefox 90+, Safari 15+, Edge 90+ |
+| Browser-Support | Chrome 90+, Firefox 90+, Safari 15+, Edge 90+, DuckDuckGo |
 | KI-Transparenz | Entwickelt mit KI-Unterstützung (EU AI Act Art. 50) |
 
 ### Verwendete Bibliotheken

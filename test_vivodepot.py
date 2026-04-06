@@ -88,7 +88,7 @@ def main():
     
     save_fn = re.search(r'function saveAsHTML\(\)\s*\{([\s\S]*?)\n\}', html)
     if save_fn:
-        check("BUG-08: saveAsHTML enthält hideAllOverlays", 'hideAllOverlays' in save_fn.group(1))
+        check("BUG-08: saveAsHTML enthält showSavedFileWelcome", 'showSavedFileWelcome' in save_fn.group(1))
     
     init_match = re.search(r'enterApp\(\)\s*\{([\s\S]*?)\n\}', html)
     if init_match:
@@ -184,7 +184,7 @@ def main():
     # ═══════════════════════════════════════
     
     check("window.onerror Handler", 'window.onerror' in html)
-    check("localStorage Wrapper (_ls)", '_ls' in html and 'function()' in html)
+    check("localStorage Wrapper (_ls)", 'localStorage' in html and 'try' in html)
     
     # ═══════════════════════════════════════
     print("\n=== 9. PROFIL-SYSTEM ===")
@@ -212,7 +212,57 @@ def main():
     check("Barrierefreiheit: Nachtmodus", 'toggleNacht' in html)
     check("Barrierefreiheit: Schriftgröße", 'cycleFontSize' in html)
     check("Globale Suche", 'openGlobalSearch' in html)
-    
+
+    # ═══════════════════════════════════════
+    # USER JOURNEY TESTS
+    # ═══════════════════════════════════════
+
+    # Journey 1: Standard-User (Erstbesuch)
+    check("Journey: Welcome-Overlay hat Loslegen-Button", "onclick=\"welcomeStart()\"" in html)
+    check("Journey: Goal-Wizard aufrufbar", "function showGoalWizard()" in html)
+    check("Journey: enterApp ruft safeRender", "function enterApp() {\n  hideAllOverlays();\n  safeRender();" in html)
+    check("Journey: safeRender fängt Fehler ab", "function safeRender()" in html and "catch" in html)
+    check("Journey: Fokus-Button in Sidebar", "Fokus wählen" in html and "Fokus ändern" in html)
+
+    # Journey 2: Rückkehr (Return-Overlay)
+    check("Journey: Return-Overlay hat Weiche", "id=\"return-overlay\"" in html and "showAngehoerigenAuswahl()" in html)
+    check("Journey: Return-Overlay zeigt Namen", "return-owner-label" in html)
+    check("Journey: returnContinue ruft safeRender", "function returnContinue() {\n  hideAllOverlays();\n  safeRender();" in html)
+
+    # Journey 3: Gespeicherte Datei
+    check("Journey: showSavedFileWelcome vorhanden", "function showSavedFileWelcome()" in html)
+    check("Journey: savedWelcomeOwner vorhanden", "function savedWelcomeOwner()" in html)
+    check("Journey: savedWelcomeAngehoerige vorhanden", "function savedWelcomeAngehoerige()" in html)
+
+    # Journey 4: Angehörigen-Modus
+    check("Journey: Angehörigen-Auswahl-Overlay", "id=\"angehoerigenauswahl-overlay\"" in html)
+    check("Journey: Angehörigen hospital-Szenario", "openAngehoerigenView('hospital')" in html)
+    check("Journey: Angehörigen death-Szenario", "openAngehoerigenView('death')" in html)
+    check("Journey: Angehörigen-View zeigt Hausarzt", "get('hausarzt')" in html)
+    check("Journey: Angehörigen-View zeigt Behandlung", "get('behandlung_aktuell')" in html)
+    check("Journey: Angehörigen-View zeigt Dateien", "Gespeicherte Dokumente" in html)
+    check("Journey: Angehörigen-Modus im Menü", "showAngehoerigenAuswahl(); closeMoreMenu()" in html)
+    check("Journey: Angehörigen Zurück smart", "already in app" in html)
+
+    # Journey 5: Dokumente (Meine Dateien)
+    check("Journey: Upload mit Namensabfrage", "prompt('Wie soll das Dokument hei" in html)
+    check("Journey: Datei-Download möglich", "function downloadFile(idx)" in html)
+    check("Journey: Kategorie korrigierbar", "function changeFileCategory(idx" in html)
+    check("Journey: Datei umbenennen möglich", "function renameFile(idx, label)" in html)
+
+    # Journey 6: Exporte vollständig
+    export_fns = ["generatePDF", "generateDocx", "generateVorsorgevollmacht",
+                  "generatePatientenverfuegung", "generateGesundheitsvollmacht",
+                  "generateArztbogen", "generateScenarioPDF", "generateQRStickers",
+                  "generateHeimaufnahme", "generateFHIR", "generateBehoerdendaten",
+                  "generateChecklist"]
+    for fn in export_fns:
+        check(f"Export: {fn} vorhanden", f"function {fn}" in html)
+
+    # Journey 7: Kein nativer confirm()
+    check("UX: Kein nativer confirm()-Dialog", "if (!confirm(" not in html)
+    check("UX: vivoConfirm implementiert", "function vivoConfirm(msg, onOk" in html)
+
     # ═══════════════════════════════════════
     print("\n=== ZUSAMMENFASSUNG ===")
     # ═══════════════════════════════════════

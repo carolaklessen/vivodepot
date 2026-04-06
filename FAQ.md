@@ -1,4 +1,4 @@
-# ❓ Vivodepot — Häufige Fragen (FAQ)
+# Vivodepot — Häufige Fragen (FAQ)
 
 ---
 
@@ -72,7 +72,7 @@ Die Daten sind an den Browser und das Gerät gebunden. Um auf einem anderen Ger�
 
 ### Muss ich alles auf einmal ausfüllen?
 
-Nein. Sie können jederzeit aufhören und später weitermachen. Die App zeigt Ihnen mit dem Fortschrittsbalken, wie weit Sie sind. Jeder Abschnitt hat eine Zeitschätzung (z.B. „⏱ ca. 3 Min.").
+Nein. Sie können jederzeit aufhören und später weitermachen. Die App zeigt Ihnen mit dem Fortschrittsbalken, wie weit Sie sind. Jeder Abschnitt hat eine Zeitschätzung (z.B. „ca. 3 Min.").
 
 ### Muss ich alle Felder ausfüllen?
 
@@ -82,9 +82,9 @@ Nein. Nur die Felder mit * (Vorname, Nachname) sind Pflicht — für das Deckbla
 
 Ja. Klicken Sie in der Seitenleiste auf jeden Abschnitt, den Sie bearbeiten möchten. Die Reihenfolge ist egal.
 
-### Wofür sind die ❓-Icons neben den Feldern?
+### Wo finde ich Erklärungen zu den Feldern?
 
-Das sind Hilfe-Hinweise. Tippen Sie darauf, um zu erfahren, warum das Feld wichtig ist und was Sie eintragen sollten.
+Unter vielen Feldern erscheint ein kursiver Hinweistext — er erklärt, warum das Feld wichtig ist und was eingetragen werden sollte. Dieser Text erscheint automatisch, es ist kein Klick nötig.
 
 ### Kann ich Kontakte aus meinem Handy importieren?
 
@@ -131,7 +131,7 @@ Ja, mit Einschränkungen:
 - **Verschlüsselung** funktioniert über HTTPS (GitHub Pages), aber nicht bei `file://`-Zugriff (z.B. direkt vom Stick)
 - **Spracheingabe** ist nur in Chrome/Edge verfügbar, nicht in Safari
 
-### Warum ist die Datei so groß (ca. 450 KB)?
+### Warum ist die Datei so groß (ca. 530 KB)?
 
 Die Datei enthält alles: HTML, CSS, JavaScript, Logo und drei eingebettete Bibliotheken (jsPDF, docx, QRCode). Keine externen Abhängigkeiten. Das ist Absicht — so funktioniert alles offline.
 
@@ -141,7 +141,7 @@ Ja. Vivodepot ist Open Source unter der EUPL-1.2 Lizenz. Der Quellcode ist auf [
 
 ### Wird KI verwendet?
 
-Vivodepot wurde mit KI-Unterstützung entwickelt (EU AI Act Art. 50 konform). Die App selbst enthält optional eine Claude-API-Anbindung für Dokumenten-Review — diese ist deaktiviert und erfordert einen eigenen API-Schlüssel.
+VIVODEPOT wurde mit KI-Unterstützung entwickelt (EU AI Act Art. 50 konform, Hinweis in der App). Die App selbst enthält keine KI-Funktionen und keine API-Anbindung an externe Dienste.
 
 ---
 
@@ -170,6 +170,30 @@ Nein. Die ePA enthält medizinische Befunde und Behandlungsdaten. Vivodepot enth
 
 ---
 
+## Angehörigen-Modus
+
+### Wie kommen Angehörige an die Notfall-Informationen?
+
+Wenn jemand eine gespeicherte Vivodepot-Datei öffnet, erscheint die Frage „Wer öffnet dieses Vivodepot?" — mit zwei Optionen:
+- **Inhaberin — Daten bearbeiten**: normaler Zugang (ggf. Passwort erforderlich)
+- **Angehörige/r — Notfall-Informationen**: zeigt Krankenhaus- oder Todesfall-Szenario
+
+Als Inhaberin können Sie den Angehörigen-Modus jederzeit testen: ⋮-Menü → „Angehörigen-Ansicht testen".
+
+### Was sehen Angehörige im Krankenhaus-Szenario?
+
+Allergien, Medikamente, Blutgruppe, Vollmachten, Hausarzt, laufende Behandlungen und hochgeladene Befunde — alles auf einer übersichtlichen Seite mit Druckoption.
+
+### Was sehen Angehörige im Todesfall-Szenario?
+
+Testament, Ablageort, Bestattungswünsche, Kontakte und die persönliche Botschaft — sowie hochgeladene Vollmachten mit Download-Button.
+
+### Kann ich den Angehörigen-Zugang mit einem Passwort schützen?
+
+Ja. Im Schritt „Einstellungen" können Sie ein separates Angehörigen-Passwort setzen und einen Hinweis hinterlegen wo es aufzufinden ist (z.B. „Im blauen Umschlag im Tresor").
+
+---
+
 ## Probleme & Fehlerbehebung
 
 ### Die App zeigt nach dem Öffnen nur eine leere Seite
@@ -185,7 +209,7 @@ Mögliche Ursachen:
 
 ### Die Spracheingabe funktioniert nicht
 
-Spracheingabe (🎤) benötigt Chrome oder Edge. Safari und Firefox unterstützen die Web Speech API nicht. Außerdem muss die Mikrofonfreigabe erteilt werden.
+Spracheingabe (Mikrofon-Symbol) benötigt Chrome oder Edge — in DuckDuckGo Browser ist sie standardmäßig deaktiviert. Der Toggle befindet sich in Einstellungen → Darstellung. Safari und Firefox unterstützen die Web Speech API nicht. Außerdem muss die Mikrofonfreigabe erteilt werden.
 
 ### PDFs werden nicht heruntergeladen
 
@@ -193,4 +217,4 @@ Prüfen Sie, ob Ihr Browser Downloads erlaubt. Einige Browser (insbesondere mobi
 
 ---
 
-*Version 1.0.0-beta · © 2026 Vivodepot · [Schnellstart →](QUICKSTART.md) · [Dokumentation →](DOCS.md)*
+*Version 1.0.0-beta.4 · © 2026 Vivodepot · [Schnellstart →](QUICKSTART.md) · [Dokumentation →](DOCS.md)*

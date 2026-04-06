@@ -4,7 +4,7 @@
 
 | Version | Unterstützt |
 |---------|-------------|
-| 1.0.x   | ✅ Ja       |
+| 1.0.x-beta.4 | ✅ Ja |
 
 ## Sicherheitslücke melden / Reporting a Vulnerability
 
@@ -12,7 +12,7 @@ Wenn Sie eine Sicherheitslücke in VIVODEPOT gefunden haben, melden Sie diese bi
 
 Senden Sie stattdessen eine E-Mail an:
 
-📩 **feedback@vivodepot1.odoo.com**
+**feedback@vivodepot1.odoo.com**
 
 Bitte beschreiben Sie:
 - Die Art der Sicherheitslücke
@@ -39,6 +39,10 @@ VIVODEPOT wurde mit folgenden Sicherheitsprinzipien entwickelt:
 - Schlüsselableitung via PBKDF2 (100.000 Iterationen, SHA-256)
 - Session-Key wird nur im RAM gehalten
 - Salt wird pro Verschlüsselung neu generiert
+
+### DuckDuckGo Browser
+- DuckDuckGo überschreibt bestimmte globale JavaScript-Variablen (u.a. `_ls`) mit `localStorage` — VIVODEPOT arbeitet daher ohne globale localStorage-Wrapper
+- Spracheingabe ist in DuckDuckGo nicht unterstützt und standardmäßig deaktiviert
 
 ### Bekannte Einschränkungen
 - **localStorage** ist nicht verschlüsselt auf Betriebssystem-Ebene — physischer Zugriff auf den Rechner ermöglicht Zugriff auf unverschlüsselte Daten

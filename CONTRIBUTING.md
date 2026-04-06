@@ -7,7 +7,7 @@ Vielen Dank für Ihr Interesse an VIVODEPOT! Wir freuen uns über jeden Beitrag.
 1. **Forken** Sie das Repository
 2. **Klonen** Sie Ihren Fork: `git clone https://github.com/carolaklessen/vivodepot.git`
 3. **Öffnen** Sie `VIVODEPOT.html` im Browser — fertig, keine Build-Tools nötig
-4. **Testen** Sie Ihre Änderungen: `python3 test_vivodepot.py VIVODEPOT.html`
+4. **Testen** Sie Ihre Änderungen: `python3 test_vivodepot.py VIVODEPOT.html` (126 Tests)
 5. **Pull Request** erstellen
 
 ## Architektur
@@ -25,7 +25,10 @@ Die Zielgruppe (ältere, nicht computeraffine Personen) soll eine Datei auf eine
 ## Richtlinien
 
 ### Code-Stil
-- **Keine Emojis in `<h1>`-Tags** — ältere Screenreader haben Probleme damit
+- **Kein nativer `confirm()`** — immer `vivoConfirm(text, onOk)` verwenden
+- **Kein globaler localStorage-Wrapper** — direkt `localStorage` mit try/catch verwenden (DuckDuckGo-Kompatibilität)
+- **safeRender()** statt direktem `renderStep()` an Einstiegspunkten
+- **Keine Emojis in UI-Texten** — Zielgruppe 50+, ernste Themen, professionelles Design. Emojis nur in Export-Karten-Icons (ec-icon) und Topbar-Funktionssymbolen erlaubt — ältere Screenreader haben Probleme damit
 - **Tap-Targets mindestens 44×44px** — Barrierefreiheit
 - **Schriftgröße mindestens 14px** — Lesbarkeit für ältere Nutzer
 - **Generische Feldlabels** — keine provider-spezifischen Begriffe
@@ -38,15 +41,15 @@ Die Zielgruppe (ältere, nicht computeraffine Personen) soll eine Datei auf eine
 - Deutsche UI-Texte mit `tl()`-Wrapper für Übersetzbarkeit
 
 ### Tests
-Vor jedem PR: `python3 test_vivodepot.py VIVODEPOT.html` — alle 89 Tests müssen grün sein.
+Vor jedem PR: `python3 test_vivodepot.py VIVODEPOT.html` — alle 126 Tests müssen grün sein.
 
 ### Was wir suchen
-- 🐛 Bug-Fixes (besonders Browser-Kompatibilität)
-- 🌍 Übersetzungen (EN-Texte in PDFs/Word-Exporten)
-- ♿ Barrierefreiheit (ARIA-Labels, Tastaturnavigation)
-- 📱 Mobile-Optimierung
-- 🔒 Sicherheitsverbesserungen
-- 📝 Dokumentation
+- Bug-Fixes (besonders Browser-Kompatibilität)
+- Übersetzungen (EN-Texte in PDFs/Word-Exporten)
+- Barrierefreiheit (ARIA-Labels, Tastaturnavigation)
+- Mobile-Optimierung
+- Sicherheitsverbesserungen
+- Dokumentation
 
 ### Was wir nicht suchen
 - Build-Systeme (npm, Webpack, etc.)
