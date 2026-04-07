@@ -1,3 +1,7 @@
+# Vivodepot
+
+Version: v1.0.0-beta.4
+
 # VIVODEPOT — Persönliche Vorsorge- & Nachlassdokumentation
 
 **Eine einzelne HTML-Datei. Kein Server. Keine Cloud. Alle Daten bleiben auf Ihrem Gerät.**
@@ -111,7 +115,8 @@ Beim Öffnen einer gespeicherten Datei — oder über ⋮-Menü → „Angehöri
 
 Vivodepot ist vollständig mobil-optimiert:
 
-- **Fokus-Wizard** — Arztbesuch, Notfall, Mein Wille, Familie: nur relevante Schritte und Felder; auf Mobile goldener „Fokus"-Button in Bottom-Nav
+- **Fokus-Wizard** — Arztbesuch (4 Schritte), Notfall (5), Mein Wille (4), Familie (5): nur relevante Schritte, Felder und Exporte
+- **Mobile Fokus** — „Fokus"-Button in Bottom-Nav, korrekte Schrittzahl (z.B. „1 von 4"), Pfeile ← → respektieren Fokus
 - **Bottom-Navigation** — ← Schritt → Fokus-Button, immer sichtbar auf Mobile
 - **Kein Auto-Zoom** — Inputs haben `font-size: 16px`, kein ungewolltes Reinzoomen
 - **Smarte Tastatur** — Telefonnummern öffnen den Ziffernblock, Datumsfelder den Datepicker
@@ -138,6 +143,6 @@ Vivodepot ist vollständig mobil-optimiert:
 python3 test_vivodepot.py index.html
 ```
 
-160 Tests (Desktop, Mobile, Exporte, User-Journey) — Syntax, Funktionen, Exporte, Wizards, Barrierefreiheit, User-Journey, Fokus-Renderer.
+175 Tests (Desktop, Mobile, Exporte, User-Journey) — Syntax, Funktionen, Exporte, Wizards, Barrierefreiheit, User-Journey, Fokus-Renderer.
 
 Siehe [CONTRIBUTING.md](CONTRIBUTING.md) für Entwicklungshinweise.

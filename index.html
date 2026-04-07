@@ -451,8 +451,10 @@ textarea { resize: vertical; min-height: 80px; }
   position: fixed; inset: 0;
   background: rgba(26,74,46,0.75);
   backdrop-filter: blur(3px);
-  display: flex; align-items: center; justify-content: center;
+  display: flex; align-items: flex-start; justify-content: center;
   z-index: 10000;
+  overflow-y: auto;
+  padding: 20px 0 80px;
 }
 .crypto-modal {
   background: var(--beige);
@@ -461,6 +463,7 @@ textarea { resize: vertical; min-height: 80px; }
   max-width: 440px; width: 92%;
   box-shadow: 0 24px 60px rgba(61,90,42,0.3);
   border: 1px solid var(--beige-dk);
+  margin: auto;
 }
 .crypto-modal h2 { font-family: 'Lora',serif; font-size: 1.15rem; color: var(--forest); margin-bottom: 0.5rem; }
 .crypto-modal p { font-size: 0.84rem; color: var(--ink2); margin-bottom: 1.2rem; line-height: 1.55; }
@@ -746,6 +749,7 @@ input[type=text], input[type=email], input[type=tel], input[type=date], select {
       <div class="topbar-wordmark">VIVO<span>DEPOT</span></div>
     </div>
     <span id="autosave-indicator" class="autosave-badge" style="display:none">Gespeichert</span>
+    <span id="focus-badge" style="display:none;background:var(--gold);color:var(--forest);font-size:0.68rem;font-weight:700;padding:2px 8px;border-radius:10px;white-space:nowrap"></span>
     <span class="lock-badge" id="lock-badge" style="display:none">Geschützt</span>
   </div>
   <div class="topbar-actions">
@@ -1933,6 +1937,34 @@ function vivoConfirm(msg, onOk, onCancel) {
 }
 
 
+
+function renderUploadedFilesByCategories(cats) {
+  var files = getList('uploaded_files').filter(function(f){ return cats.indexOf(f.cat) >= 0; });
+  if (!files.length) return '<div style="text-align:center;padding:2rem;color:var(--ink3);font-size:0.85rem">Noch keine Dateien hochgeladen.</div>';
+  var ICONS = {ausweis:'',vollmacht:'',befund:'',vertrag:'',foto:'',sonstiges:''};
+  var LABELS = {ausweis:'Ausweis',vollmacht:'Vollmacht',befund:'Befund/Arzt',vertrag:'Vertrag',foto:'Foto',sonstiges:'Sonstiges'};
+  return files.map(function(f,i){
+    var sizeStr = f.size > 1048576 ? (f.size/1048576).toFixed(1)+' MB' : Math.round((f.size||0)/1024)+' KB';
+    return '<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#fff;border-radius:8px;border:1px solid var(--border);margin-bottom:6px">'+
+      '<span style="font-size:1.2rem">'+(ICONS[f.cat]||'')+'</span>'+
+      '<div style="flex:1;min-width:0"><div style="font-size:0.85rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(f.label||f.name)+'</div>'+
+      '<div style="font-size:0.72rem;color:var(--ink3)">'+(LABELS[f.cat]||f.cat)+' · '+sizeStr+'</div></div>'+
+      '<button class="btn-nav" onclick="downloadFile('+i+')" style="font-size:0.75rem;padding:5px 10px;min-height:36px"> Öffnen</button>'+
+      '</div>';
+  }).join('');
+}
+
+function updateFocusBadge() {
+  var badge = document.getElementById('focus-badge');
+  if (!badge) return;
+  var names = {health:'Fokus: Arztbesuch', emergency:'Fokus: Notfall', legal:'Fokus: Mein Wille', family:'Fokus: Familie'};
+  if (window._goalMode && window._activeGoal && names[window._activeGoal]) {
+    badge.textContent = names[window._activeGoal];
+    badge.style.display = 'inline-block';
+  } else {
+    badge.style.display = 'none';
+  }
+}
 function mobileNavUpdate() {
   var nameEl = document.getElementById('mobile-nav-name');
   var stepEl = document.getElementById('mobile-nav-step');
@@ -1940,14 +1972,22 @@ function mobileNavUpdate() {
   var step = STEPS[currentStep];
   if (step) {
     nameEl.textContent = step.label || step.id;
-    stepEl.textContent = 'Schritt ' + (currentStep + 1) + ' von ' + STEPS.length;
+    // Im Fokus-Modus: zeige Position unter relevanten Schritten
+    if (window._goalMode && window._goalRelevant) {
+      var relevant = STEPS.map(function(s,i){return {s,i};}).filter(function(x){return window._goalRelevant[x.s.id];});
+      var pos = relevant.findIndex(function(x){return x.i === currentStep;}) + 1;
+      if (pos < 1) pos = 1;
+      stepEl.textContent = 'Schritt ' + pos + ' von ' + relevant.length;
+    } else {
+      stepEl.textContent = 'Schritt ' + (currentStep + 1) + ' von ' + STEPS.length;
+    }
   }
 }
 function mobileNavPrev() {
-  if (currentStep > 0) { currentStep--; renderSidebar(); renderStep(); mobileNavUpdate(); window.scrollTo(0,0); }
+  prevStep();
 }
 function mobileNavNext() {
-  if (currentStep < STEPS.length - 1) { currentStep++; renderSidebar(); renderStep(); mobileNavUpdate(); window.scrollTo(0,0); }
+  nextStep();
 }
 function mobileNavMenu() {
   // Show step list as a simple select
@@ -2015,6 +2055,7 @@ function safeRender() {
     renderSidebar();
     renderStep();
     mobileNavUpdate();
+    updateFocusBadge();
   } catch(e) {
     console.error('[VIVODEPOT]', e && e.message, e && e.stack);
   }
@@ -2124,9 +2165,9 @@ function applyGoalWizard() {
   if (selectedGoal === 'all') {
     allSteps.forEach(function(s) { relevant[s] = true; });
   } else if (selectedGoal === 'health') {
-    ['start','gesundheit','exportStep'].forEach(function(s) { relevant[s] = true; });
+    ['start','gesundheit','dokumente','exportStep'].forEach(function(s) { relevant[s] = true; });
   } else if (selectedGoal === 'emergency') {
-    ['start','kontakte','gesundheit','exportStep'].forEach(function(s) { relevant[s] = true; });
+    ['start','kontakte','gesundheit','dokumente','exportStep'].forEach(function(s) { relevant[s] = true; });
   } else if (selectedGoal === 'legal') {
     ['start','testament','assistenten','exportStep'].forEach(function(s) { relevant[s] = true; });
   } else if (selectedGoal === 'family') {
@@ -2137,6 +2178,7 @@ function applyGoalWizard() {
   window._goalRelevant = relevant;
   window._goalMode = selectedGoal !== 'all';
   window._activeGoal = selectedGoal;
+  window._sidebarExpanded = false; // collapse sidebar when focus changes
 
   var el = document.getElementById('goal-wizard');
   if (el) el.remove();
@@ -2147,6 +2189,7 @@ function applyGoalWizard() {
   renderSidebar();
   renderStep();
   updateProfileButton();
+  updateFocusBadge();
 
   var goalLabels = {
     health: 'Arztbesuch',
@@ -2637,49 +2680,60 @@ function renderSidebar() {
   // Core steps adapt to the selected goal
   const goalRelevant = window._goalRelevant || null;
   const goalMode = window._goalMode || false;
-  const CORE_IDS = goalMode && goalRelevant
-    ? new Set(['start','assistenten','exportStep', ...Object.keys(goalRelevant)])
-    : new Set(['start','kontakte','gesundheit','testament','assistenten','exportStep']);
+
+  // ── FOKUS-MODUS: komplett separates Rendering ──────────────────
+  if (goalMode && goalRelevant) {
+    let html = '';
+    STEPS.forEach((s, i) => {
+      if (!goalRelevant[s.id] && i !== currentStep) return;
+      const done = isStepDone(i);
+      const active = i === currentStep;
+      const numStyle = done ? 'background:var(--teal)' : 'background:var(--gold);color:var(--ink)';
+      html += `<div class="nav-step ${active?'active':''} ${done?'complete':''}" onclick="goToStep(${i})" style="">
+        <div class="nav-num" style="${numStyle}">${done ? '' : '·'}</div>
+        <div class="nav-label">${tl(s.label)}</div>
+      </div>`;
+    });
+    html += `<div style="margin-top:auto;padding-top:12px">
+      <button onclick="showGoalWizard()" style="width:100%;padding:7px 10px;background:transparent;border:1px solid rgba(255,255,255,0.2);border-radius:6px;color:rgba(255,255,255,0.7);font-size:0.75rem;cursor:pointer;text-align:left">
+        &#9655; Fokus ändern
+      </button></div>`;
+    sb.innerHTML = html;
+    return;
+  }
+
+  // ── NORMALMODUS ────────────────────────────────────────────────
+  const CORE_IDS = new Set(['start','kontakte','gesundheit','testament','assistenten','exportStep']);
   const expanded = window._sidebarExpanded || false;
   const hiddenCount = STEPS.filter((s,i) =>
     !CORE_IDS.has(s.id) && i !== currentStep && !isStepDone(i)
   ).length;
 
-  // Two passes: first core+done+active, then hidden extras when expanded
   let html = '';
 
-  // Section 1: Core steps + done steps + active step (always visible)
-  // Show them in a clean list without confusing step numbers
-  const coreSection = [];
-  const extraSection = [];
+  // Normalmodus: Core + aktive + erledigte Steps
+  const stepsToShow = STEPS.map((s,i) => ({s,i})).filter(({s,i}) =>
+    CORE_IDS.has(s.id) || i === currentStep || isStepDone(i)
+  );
 
-  STEPS.forEach((s,i) => {
-    const isCore = CORE_IDS.has(s.id);
-    const isActive = i === currentStep;
-    const isDone = isStepDone(i);
-    if (isCore || isActive || isDone) {
-      coreSection.push({s,i});
-    } else {
-      extraSection.push({s,i});
-    }
-  });
-
-  // Render core section — no group labels, clean list
-  coreSection.forEach(({s,i}) => {
+  stepsToShow.forEach(({s,i}) => {
     const done = isStepDone(i);
     const active = i === currentStep;
-    const relevant = !goalMode || !window._goalRelevant || window._goalRelevant[s.id];
-    const dimStyle = goalMode && !relevant && !active ? 'opacity:0.4;' : '';
-    const starMark = goalMode && relevant && !done ? ' ' : '';
-    const numStyle = done ? 'background:var(--teal)' : (goalMode && relevant && !done ? 'background:var(--gold);color:var(--ink)' : '');
+    const numStyle = done ? 'background:var(--teal)' : '';
     html += `<div class="nav-step ${active?'active':''} ${done?'complete':''}" onclick="goToStep(${i})" style="">
       <div class="nav-num" style="${numStyle}">${done ? '' : '·'}</div>
-      <div class="nav-label">${tl(s.label)}${done?' <span style="opacity:0.6;font-size:0.68rem"></span>':''}${starMark}</div>
+      <div class="nav-label">${tl(s.label)}${done?' <span style="opacity:0.6;font-size:0.68rem"></span>':''}</div>
     </div>`;
   });
 
-  // "Mehr anzeigen" toggle
-  if (hiddenCount > 0) {
+  // Nicht-fokussierte Extras (nur im Normalmodus)
+  if (!goalMode) {
+    const extraSection = STEPS.map((s,i) => ({s,i})).filter(({s,i}) =>
+      !CORE_IDS.has(s.id) && i !== currentStep && !isStepDone(i)
+    );
+
+    // "Mehr anzeigen" toggle
+    if (hiddenCount > 0) {
     if (!expanded) {
       html += `<div onclick="toggleSidebarExpand()" style="padding:7px 12px 7px 16px;font-size:0.75rem;color:var(--ink3);cursor:pointer;display:flex;align-items:center;gap:6px;border-top:1px solid var(--border);margin-top:6px;user-select:none">
         <span style="flex:1">+ ${hiddenCount} weitere Bereiche</span><span>▼</span>
@@ -2700,7 +2754,7 @@ function renderSidebar() {
         const grp = groups.find(g => g.at === i);
         if (grp) html += `<div class="nav-group-label" style="font-size:0.65rem">${tl(grp.label)}</div>`;
         const relevant = !goalMode || !window._goalRelevant || window._goalRelevant[s.id];
-        const dimStyle = goalMode && !relevant && !active ? 'opacity:0.4;' : '';
+        if (goalMode && !relevant && !active) return; // hide irrelevant
         html += `<div class="nav-step ${active?'active':''} ${done?'complete':''}" onclick="goToStep(${i})" style="">
           <div class="nav-num" style="${done?'background:var(--teal)':''}">${done?'':i+1}</div>
           <div class="nav-label">${tl(s.label)}${done?' <span style="opacity:0.6;font-size:0.68rem"></span>':''}</div>
@@ -2711,7 +2765,8 @@ function renderSidebar() {
         <span style="flex:1">Weniger anzeigen</span><span>▲</span>
       </div>`;
     }
-  }
+    } // end if (hiddenCount > 0)
+  } // end if (!goalMode)
 
   html += `
     <div class="nav-progress">
@@ -4872,9 +4927,6 @@ const FOCUSED_RENDERERS = {
       <p>Arzt, Allergien, Medikamente, Krankenversicherung — alles was die Praxis braucht.</p>
       ${stepDots()}
     </div>
-    <div style="margin-bottom:1rem">
-      <button class="btn-nav gold-btn" onclick="gwizOpen()" style="font-size:0.88rem">Notfall-Gesundheitskarte erstellen</button>
-    </div>
     <div class="field-section-title">Behandelnde Ärzte</div>
     <div class="field-row" style="margin-top:8px">
       ${field('hausarzt','Hausarzt — Name & Kontakt','z.B. Dr. Müller, Praxis Mitte, 030 123456')}
@@ -4896,11 +4948,6 @@ const FOCUSED_RENDERERS = {
     <div class="field-row">
       ${field('kv_art','Versicherung','z.B. gesetzlich (TK), privat (Debeka)')}
       ${field('kv_nummer','Versichertennummer','')}
-    </div>
-    <div style="margin-top:1.2rem;padding:1rem;background:var(--gold-lt,#fdf6e3);border-radius:10px;border-left:3px solid var(--gold)">
-      <strong style="font-size:0.88rem">Arztbesuch-Bogen erstellen</strong>
-      <p style="font-size:0.8rem;color:var(--ink2);margin:6px 0 10px">Alle Daten auf einem Blatt — einmal drucken, immer mitbringen.</p>
-      <button class="btn-nav primary" onclick="navigateTo(${STEPS.findIndex(s=>s.id==='exportStep')})">Zu den Exporten</button>
     </div>
     ${navButtons()}`,
 
@@ -4941,9 +4988,6 @@ const FOCUSED_RENDERERS = {
       <p>Was Notarzt und Krankenhaus sofort wissen müssen.</p>
       ${stepDots()}
     </div>
-    <div style="margin-bottom:1rem">
-      <button class="btn-nav gold-btn" onclick="gwizOpen()" style="font-size:0.88rem">Notfall-Gesundheitskarte erstellen</button>
-    </div>
     <div class="field-row">
       ${field('blutgruppe','Blutgruppe','z.B. A+, 0-')}
       ${field('allergien','ALLERGIEN — lebensrettend','z.B. Penicillin, Nüsse')}
@@ -4955,11 +4999,6 @@ const FOCUSED_RENDERERS = {
     <div class="field-section-title" style="margin-top:1rem">Medikamente</div>
     ${renderMedikamentBlocks()}
     <button class="btn-add" onclick="addItem('medikamente',{name:'',dosis:'',arzt:'',bem:''})">+ Medikament hinzufügen</button>
-    <div style="margin-top:1.2rem;padding:1rem;background:var(--red-lt,#fde8e8);border-radius:10px;border-left:3px solid var(--red)">
-      <strong style="font-size:0.88rem;color:var(--red)">Notfall-Dokumente erstellen</strong>
-      <p style="font-size:0.8rem;color:var(--ink2);margin:6px 0 10px">Notfall-Tasche, Krankenhaus-Einweisung, QR-Sticker.</p>
-      <button class="btn-nav primary" onclick="navigateTo(${STEPS.findIndex(s=>s.id==='exportStep')})" style="background:var(--red);border-color:var(--red)">Zu den Exporten</button>
-    </div>
     ${navButtons()}`,
 
   // ── MEIN WILLE ──────────────────────────────────────────────
@@ -5013,6 +5052,325 @@ const FOCUSED_RENDERERS = {
     </div>
     ${navButtons(true)}`,
 
+
+  // ── FOKUSSIERTE EXPORT-SEITEN ────────────────────────────────
+  health_exportStep: () => `
+    <div class="step-header">
+      <h1>Dokumente — Arztbesuch</h1>
+      <p>Einmal drucken — bei jedem Arztbesuch dabei haben.</p>
+      ${stepDots()}
+    </div>
+    <div class="export-grid">
+      <div class="export-card" onclick="generateArztbogen()" style="border-left:4px solid var(--forest)">
+        <div class="ec-icon">🩺</div>
+        <div class="ec-title">Arztbesuch-Bogen</div>
+        <div class="ec-sub">Alle Stammdaten, Medikamente, Allergien auf einer Seite — für die Praxis</div>
+        <div class="ec-btn">PDF erstellen</div>
+      </div>
+      <div class="export-card" onclick="generateQRStickers()">
+        <div class="ec-icon">📱</div>
+        <div class="ec-title">QR-Sticker</div>
+        <div class="ec-sub">Medizinischer QR-Code — scanbar durch die Praxis</div>
+        <div class="ec-btn">Drucken</div>
+      </div>
+    </div>
+    <div style="margin-top:1.5rem;padding:1rem;background:var(--beige);border-radius:8px;font-size:0.82rem;color:var(--ink2)">
+      Weitere Exporte (Vollmachten, Notfall-Mappen, Behördendaten) unter:
+      <button class="btn-nav" onclick="window._activeGoal='all';window._goalMode=false;window._goalRelevant=null;safeRender()" style="font-size:0.78rem;padding:6px 12px;margin-left:8px">Alle Dokumente</button>
+    </div>
+    ${navButtons()}`,
+
+  emergency_exportStep: () => `
+    <div class="step-header">
+      <h1>Dokumente — Notfall</h1>
+      <p>Für Ihre Familie im Ernstfall — und für Sie selbst im Notfall.</p>
+      ${stepDots()}
+    </div>
+    <div class="infobox">${tl('Diese Dokumente auf den USB-Stick — damit Ihre Familie sofort das Richtige in der Hand hat.')}</div>
+    <div class="export-grid">
+      <div class="export-card" onclick="generateScenarioPDF('hospital')" style="border-left:4px solid var(--red)">
+        <div class="ec-icon">🚑</div>
+        <div class="ec-title">Krankenhaus-Einweisung</div>
+        <div class="ec-sub">Allergien, Medikamente, Vollmachten — für Notarzt und Aufnahme</div>
+        <div class="ec-btn" style="background:var(--red)">PDF erstellen</div>
+      </div>
+      <div class="export-card" onclick="gwizOpen()" style="border-left:4px solid var(--gold)">
+        <div class="ec-icon">💳</div>
+        <div class="ec-title">Notfall-Gesundheitskarte</div>
+        <div class="ec-sub">Scheckkarte mit Blutgruppe, Allergien, Notfallkontakt</div>
+        <div class="ec-btn" style="background:var(--gold);color:var(--forest)">Karte erstellen</div>
+      </div>
+      <div class="export-card" onclick="generateScenarioPDF('grabbag')" style="border-left:4px solid #d35400">
+        <div class="ec-icon">🎒</div>
+        <div class="ec-title">Notfall-Tasche</div>
+        <div class="ec-sub">Welche Dokumente sofort einpacken — mit Ihren Ablageorten</div>
+        <div class="ec-btn" style="background:#d35400">PDF erstellen</div>
+      </div>
+      <div class="export-card" onclick="generateScenarioPDF('emergency')" style="border-left:4px solid var(--navy)">
+        <div class="ec-icon">🕊️</div>
+        <div class="ec-title">Im Todesfall</div>
+        <div class="ec-sub">Erste Schritte, Kontakte, Bestattungswünsche</div>
+        <div class="ec-btn">PDF erstellen</div>
+      </div>
+      <div class="export-card" onclick="generateQRStickers()">
+        <div class="ec-icon">📱</div>
+        <div class="ec-title">QR-Sticker</div>
+        <div class="ec-sub">Notfall-QR-Code für Geldbörse oder Schlüsselbund</div>
+        <div class="ec-btn">Drucken</div>
+      </div>
+    </div>
+    <div style="margin-top:1.5rem;padding:1rem;background:var(--beige);border-radius:8px;font-size:0.82rem;color:var(--ink2)">
+      <button class="btn-nav" onclick="window._activeGoal='all';window._goalMode=false;window._goalRelevant=null;safeRender()" style="font-size:0.78rem;padding:6px 12px">Alle Dokumente anzeigen</button>
+    </div>
+    ${navButtons()}`,
+
+  legal_testament: () => `
+    <div class="step-header">
+      <h1>Mein Wille — Testament & Vollmachten</h1>
+      <p>Ablageorte, Vollmacht und wichtigste Regelungen.</p>
+      ${stepDots()}
+    </div>
+    <div class="field-section-title">Testament</div>
+    <div class="field-row">
+      ${radio('testament_vorhanden','Testament vorhanden?',['Ja','Nein','In Vorbereitung'],'Ohne Testament gilt die gesetzliche Erbfolge.')}
+      ${radio('testament_typ','Art',['Eigenhändig','Notariell','Noch nicht festgelegt'])}
+    </div>
+    <div class="field-row" style="margin-top:8px">
+      ${field('testament_ort','Ablageort Original','z.B. Notariat Muster, Tresor zuhause','false','text','Das Original muss nach dem Tod dem Nachlassgericht vorgelegt werden.')}
+      ${field('testament_datum','Datum der letzten Änderung','','false','date')}
+    </div>
+    <div class="field-row" style="margin-top:8px">
+      ${field('testamentsvollstrecker','Testamentsvollstrecker — Name','')}
+      ${field('notar','Notar / Anwalt — Name','')}
+    </div>
+    <div style="margin-top:8px">${textarea('erben','Erben — Kurzübersicht','z.B. je 1/3 an Tochter Anna, Sohn Peter, Sohn Klaus','2','Nur zur Orientierung — die verbindliche Regelung steht im Testament.')}</div>
+    <div class="field-section-title" style="margin-top:1rem">Vorsorgevollmacht</div>
+    <div class="field-row">
+      ${radio('vv_vorhanden','Vorsorgevollmacht vorhanden?',['Ja','Nein','In Vorbereitung'])}
+      ${field('vv_bevollmaechtigte','Bevollmächtigte Person','z.B. Maria Muster, Tochter, 0170 123456')}
+    </div>
+    <div class="field-row" style="margin-top:8px">
+      ${field('vv_ort','Ablageort Original','')}
+      ${field('vv_datum','Datum','','false','date')}
+    </div>
+    <div class="field-section-title" style="margin-top:1rem">Patientenverfügung</div>
+    <div class="field-row">
+      ${radio('pv_vorhanden','Patientenverfügung vorhanden?',['Ja','Nein','In Vorbereitung'])}
+      ${field('pv_ort','Ablageort','z.B. Notariat, Ordner Vorsorge')}
+    </div>
+    ${navButtons()}`,
+
+  family_testament: () => `
+    <div class="step-header">
+      <h1>Mein Wille — Testament & Vollmachten</h1>
+      <p>Ablageorte, Vollmacht und wichtigste Regelungen für Ihre Familie.</p>
+      ${stepDots()}
+    </div>
+    <div class="field-section-title">Testament</div>
+    <div class="field-row">
+      ${radio('testament_vorhanden','Testament vorhanden?',['Ja','Nein','In Vorbereitung'],'Stiefkinder und Pflegekinder erben nur mit Testament.')}
+      ${radio('testament_typ','Art',['Eigenhändig','Notariell','Noch nicht festgelegt'])}
+    </div>
+    <div class="field-row" style="margin-top:8px">
+      ${field('testament_ort','Ablageort Original','z.B. Notariat Muster, Tresor zuhause')}
+      ${field('testament_datum','Datum der letzten Änderung','','false','date')}
+    </div>
+    <div style="margin-top:8px">${textarea('erben','Erben — Kurzübersicht','z.B. je 1/3 an Tochter Anna, Sohn Peter, Sohn Klaus','2')}</div>
+    <div class="field-section-title" style="margin-top:1rem">Vorsorgevollmacht</div>
+    <div class="field-row">
+      ${radio('vv_vorhanden','Vorsorgevollmacht vorhanden?',['Ja','Nein','In Vorbereitung'])}
+      ${field('vv_bevollmaechtigte','Bevollmächtigte Person','z.B. Maria Muster, Tochter, 0170 123456')}
+    </div>
+    <div class="field-row" style="margin-top:8px">
+      ${field('vv_ort','Ablageort Original','')}
+      ${field('vv_datum','Datum','','false','date')}
+    </div>
+    ${navButtons()}`,
+
+  legal_assistenten: () => `
+    <div class="step-header">
+      <h1>Assistenten — Vollmachten & Testament</h1>
+      <p>Geführte Wizards — am Ende ist das Dokument fertig zum Download.</p>
+      ${stepDots()}
+    </div>
+    <div class="export-grid" style="grid-template-columns:1fr 1fr">
+      <div class="export-card" onclick="vvwizOpen()" style="border-left:4px solid var(--gold)">
+        <div class="ec-icon">⚖️</div>
+        <div class="ec-title">${tl('Vorsorgevollmacht')}</div>
+        <div class="ec-sub">Wer darf für Sie entscheiden, wenn Sie es nicht mehr können?</div>
+        <div class="ec-btn" style="background:var(--gold);color:var(--forest)">6 Schritte</div>
+      </div>
+      <div class="export-card" onclick="pvwizOpen()" style="border-left:4px solid var(--teal)">
+        <div class="ec-icon">🏥</div>
+        <div class="ec-title">${tl('Patientenverfügung')}</div>
+        <div class="ec-sub">Welche Behandlung wünschen Sie — und welche nicht?</div>
+        <div class="ec-btn" style="background:var(--teal)">6 Schritte</div>
+      </div>
+      <div class="export-card" onclick="gvwizOpen()" style="border-left:4px solid var(--teal)">
+        <div class="ec-icon">💚</div>
+        <div class="ec-title">Gesundheitsvollmacht</div>
+        <div class="ec-sub">Nur medizinische Entscheidungen — einfacher als Vorsorgevollmacht</div>
+        <div class="ec-btn" style="background:var(--teal)">5 Schritte</div>
+      </div>
+      <div class="export-card" onclick="bwizOpen()" style="border-left:4px solid var(--forest)">
+        <div class="ec-icon">🕊️</div>
+        <div class="ec-title">${tl('Bestattungswünsche')}</div>
+        <div class="ec-sub">Bestattungsart, Feier, Musik — Ihr letzter Wille</div>
+        <div class="ec-btn">8 Schritte</div>
+      </div>
+    </div>
+    ${navButtons()}`,
+
+  family_assistenten: () => `
+    <div class="step-header">
+      <h1>Assistenten — Familie absichern</h1>
+      <p>Geführte Wizards — am Ende ist das Dokument fertig zum Download.</p>
+      ${stepDots()}
+    </div>
+    <div class="export-grid" style="grid-template-columns:1fr 1fr">
+      <div class="export-card" onclick="vvwizOpen()" style="border-left:4px solid var(--gold)">
+        <div class="ec-icon">⚖️</div>
+        <div class="ec-title">${tl('Vorsorgevollmacht')}</div>
+        <div class="ec-sub">Wer darf für Sie entscheiden, wenn Sie es nicht mehr können?</div>
+        <div class="ec-btn" style="background:var(--gold);color:var(--forest)">6 Schritte</div>
+      </div>
+      <div class="export-card" onclick="pvwizOpen()" style="border-left:4px solid var(--teal)">
+        <div class="ec-icon">🏥</div>
+        <div class="ec-title">${tl('Patientenverfügung')}</div>
+        <div class="ec-sub">Welche Behandlung wünschen Sie — und welche nicht?</div>
+        <div class="ec-btn" style="background:var(--teal)">6 Schritte</div>
+      </div>
+      <div class="export-card" onclick="gvwizOpen()" style="border-left:4px solid var(--teal)">
+        <div class="ec-icon">💚</div>
+        <div class="ec-title">Gesundheitsvollmacht</div>
+        <div class="ec-sub">Nur medizinische Entscheidungen — einfacher als Vorsorgevollmacht</div>
+        <div class="ec-btn" style="background:var(--teal)">5 Schritte</div>
+      </div>
+      <div class="export-card" onclick="bwizOpen()" style="border-left:4px solid var(--forest)">
+        <div class="ec-icon">🕊️</div>
+        <div class="ec-title">${tl('Bestattungswünsche')}</div>
+        <div class="ec-sub">Bestattungsart, Feier, Musik — Ihr letzter Wille</div>
+        <div class="ec-btn">8 Schritte</div>
+      </div>
+    </div>
+    ${navButtons()}`,
+
+  legal_exportStep: () => `
+    <div class="step-header">
+      <h1>Dokumente — Vollmachten & Testament</h1>
+      <p>Unterschriftsreife Dokumente zum Download.</p>
+      ${stepDots()}
+    </div>
+    <div class="infobox">${tl('Diese Dokumente müssen ausgedruckt und handschriftlich unterschrieben werden.')}</div>
+    <div class="export-grid">
+      <div class="export-card" onclick="generateVorsorgevollmacht()" style="border-left:4px solid var(--gold)">
+        <div class="ec-icon">⚖</div>
+        <div class="ec-title">Vorsorgevollmacht (Word)</div>
+        <div class="ec-sub">Unterschriftsreifes Dokument nach §§ 1814 ff. BGB</div>
+        <div class="ec-btn">Word erstellen</div>
+      </div>
+      <div class="export-card" onclick="generatePatientenverfuegung()" style="border-left:4px solid var(--teal)">
+        <div class="ec-icon">🏥</div>
+        <div class="ec-title">Patientenverfügung (Word)</div>
+        <div class="ec-sub">Unterschriftsreifes Dokument nach § 1827 BGB</div>
+        <div class="ec-btn">Word erstellen</div>
+      </div>
+      <div class="export-card" onclick="generateGesundheitsvollmacht()" style="border-left:4px solid var(--teal)">
+        <div class="ec-icon">💚</div>
+        <div class="ec-title">Gesundheitsvollmacht (Word)</div>
+        <div class="ec-sub">Nur medizinische Entscheidungen — § 1820 Abs. 3 BGB</div>
+        <div class="ec-btn">Word erstellen</div>
+      </div>
+    </div>
+    <div style="margin-top:1.5rem;padding:1rem;background:var(--beige);border-radius:8px;font-size:0.82rem;color:var(--ink2)">
+      <button class="btn-nav" onclick="window._activeGoal='all';window._goalMode=false;window._goalRelevant=null;safeRender()" style="font-size:0.78rem;padding:6px 12px">Alle Dokumente anzeigen</button>
+    </div>
+    ${navButtons()}`,
+
+  family_exportStep: () => `
+    <div class="step-header">
+      <h1>Dokumente — Familie absichern</h1>
+      <p>Vollmachten, Testament und Notfall-Dokumente für Ihre Familie.</p>
+      ${stepDots()}
+    </div>
+    <div class="export-grid">
+      <div class="export-card" onclick="generateVorsorgevollmacht()" style="border-left:4px solid var(--gold)">
+        <div class="ec-icon">⚖</div>
+        <div class="ec-title">Vorsorgevollmacht (Word)</div>
+        <div class="ec-sub">§§ 1814 ff. BGB — unterschriftsreif</div>
+        <div class="ec-btn">Word erstellen</div>
+      </div>
+      <div class="export-card" onclick="generatePatientenverfuegung()" style="border-left:4px solid var(--teal)">
+        <div class="ec-icon">🏥</div>
+        <div class="ec-title">Patientenverfügung (Word)</div>
+        <div class="ec-sub">§ 1827 BGB — unterschriftsreif</div>
+        <div class="ec-btn">Word erstellen</div>
+      </div>
+      <div class="export-card" onclick="generateScenarioPDF('hospital')" style="border-left:4px solid var(--red)">
+        <div class="ec-icon">🚑</div>
+        <div class="ec-title">Krankenhaus-Einweisung</div>
+        <div class="ec-sub">Für Angehörige im Notfall</div>
+        <div class="ec-btn" style="background:var(--red)">PDF erstellen</div>
+      </div>
+      <div class="export-card" onclick="generateScenarioPDF('emergency')" style="border-left:4px solid var(--navy)">
+        <div class="ec-icon">🕊️</div>
+        <div class="ec-title">Im Todesfall</div>
+        <div class="ec-sub">Erste Schritte, Kontakte, Bestattungswünsche</div>
+        <div class="ec-btn">PDF erstellen</div>
+      </div>
+    </div>
+    <div style="margin-top:1.5rem;padding:1rem;background:var(--beige);border-radius:8px;font-size:0.82rem;color:var(--ink2)">
+      <button class="btn-nav" onclick="window._activeGoal='all';window._goalMode=false;window._goalRelevant=null;safeRender()" style="font-size:0.78rem;padding:6px 12px">Alle Dokumente anzeigen</button>
+    </div>
+    ${navButtons()}`,
+
+
+  health_dokumente: () => `
+    <div class="step-header">
+      <h1>Meine Dokumente — Arztbesuch</h1>
+      <p>Befunde, Arztbriefe, Rezepte hochladen — immer dabei auf dem Stick.</p>
+      ${stepDots()}
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1rem">
+      <label style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border:1.5px solid var(--gold);border-radius:20px;background:var(--gold-lt,#fdf6e3);cursor:pointer;font-size:0.82rem;color:var(--forest);font-weight:500">
+        <input type="file" accept="image/*" capture="environment" style="display:none" onchange="uploadFilesWithCat(event,'befund')">
+         Foto aufnehmen
+      </label>
+      <label style="display:inline-flex;align-items:center;gap:5px;padding:8px 14px;border:1.5px solid var(--forest);border-radius:20px;background:#fff;cursor:pointer;font-size:0.82rem;color:var(--forest)">
+        <input type="file" multiple accept="image/*,.pdf,.doc,.docx,.jpg,.jpeg,.png,.heic" style="display:none" onchange="uploadFilesWithCat(event,'befund')">
+         Befunde & Arztbriefe +
+      </label>
+      <label style="display:inline-flex;align-items:center;gap:5px;padding:8px 14px;border:1px solid var(--border);border-radius:20px;background:#fff;cursor:pointer;font-size:0.82rem;color:var(--ink2)">
+        <input type="file" multiple accept="image/*,.pdf,.doc,.docx,.jpg,.jpeg,.png,.heic" style="display:none" onchange="uploadFilesWithCat(event,'ausweis')">
+         Ausweise +
+      </label>
+    </div>
+    ${renderUploadedFilesByCategories(['befund','ausweis','sonstiges'])}
+    ${navButtons()}`,
+
+  emergency_dokumente: () => `
+    <div class="step-header">
+      <h1>Meine Dokumente — Notfall</h1>
+      <p>Vollmachten, Befunde und Ausweise — für den Ernstfall bereit.</p>
+      ${stepDots()}
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1rem">
+      <label style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border:1.5px solid var(--red);border-radius:20px;background:#fff;cursor:pointer;font-size:0.82rem;color:var(--red);font-weight:500">
+        <input type="file" accept="image/*" capture="environment" style="display:none" onchange="uploadFilesWithCat(event,'vollmacht')">
+         Foto aufnehmen
+      </label>
+      <label style="display:inline-flex;align-items:center;gap:5px;padding:8px 14px;border:1.5px solid var(--red);border-radius:20px;background:#fff;cursor:pointer;font-size:0.82rem;color:var(--red)">
+        <input type="file" multiple accept="image/*,.pdf,.doc,.docx,.jpg,.jpeg,.png,.heic" style="display:none" onchange="uploadFilesWithCat(event,'vollmacht')">
+         Vollmachten +
+      </label>
+      <label style="display:inline-flex;align-items:center;gap:5px;padding:8px 14px;border:1px solid var(--border);border-radius:20px;background:#fff;cursor:pointer;font-size:0.82rem;color:var(--ink2)">
+        <input type="file" multiple accept="image/*,.pdf,.doc,.docx,.jpg,.jpeg,.png,.heic" style="display:none" onchange="uploadFilesWithCat(event,'befund')">
+         Befunde +
+      </label>
+    </div>
+    ${renderUploadedFilesByCategories(['vollmacht','befund','ausweis'])}
+    ${navButtons()}`,
+
   family_kontakte: () => `
     <div class="step-header">
       <h1>2. Vertrauenspersonen</h1>
@@ -5047,7 +5405,7 @@ function nextStep() {
     if (!window._goalMode || !window._goalRelevant || window._goalRelevant[STEPS[next].id]) break;
     next++;
   }
-  if (next < STEPS.length) { currentStep = next; renderStep(); }
+  if (next < STEPS.length) { currentStep = next; safeRender(); window.scrollTo(0,0); }
 }
 function prevStep() {
   var prev = currentStep - 1;
@@ -5055,7 +5413,7 @@ function prevStep() {
     if (!window._goalMode || !window._goalRelevant || window._goalRelevant[STEPS[prev].id]) break;
     prev--;
   }
-  if (prev >= 0) { currentStep = prev; renderStep(); }
+  if (prev >= 0) { currentStep = prev; safeRender(); window.scrollTo(0,0); }
 }
 
 // ═══════════════════════════════════════════════

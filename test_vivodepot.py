@@ -309,6 +309,23 @@ def main():
     check("UX: Fokus-Wizard im More-Menu", "showGoalWizard(); closeMoreMenu()" in html)
     check("UX: Fokus-Wizard in Mobile Bottom-Nav", 'showGoalWizard()' in html and 'mobile-nav-center' in html)
 
+    # Export-Fokus
+    check("Fokus: health_exportStep", 'health_exportStep:' in html)
+    check("Fokus: emergency_exportStep", 'emergency_exportStep:' in html)
+    check("Fokus: legal_exportStep", 'legal_exportStep:' in html)
+    check("Fokus: family_exportStep", 'family_exportStep:' in html)
+    check("Fokus: health_dokumente", 'health_dokumente:' in html)
+    check("Fokus: emergency_dokumente", 'emergency_dokumente:' in html)
+    check("Fokus: legal_assistenten", 'legal_assistenten:' in html)
+    check("Fokus: family_assistenten", 'family_assistenten:' in html)
+    check("Fokus: renderUploadedFilesByCategories", 'renderUploadedFilesByCategories' in html)
+    check("Fokus: mobileNavNext ruft nextStep auf", "function mobileNavNext" in html and "nextStep()" in html.split("function mobileNavNext")[1][:30])
+    check("Fokus: mobileNavPrev ruft prevStep auf", "function mobileNavPrev" in html and "prevStep()" in html.split("function mobileNavPrev")[1][:30])
+    check("Fokus: Mobile zeigt Fokus-Schrittzahl", "relevant.length" in html)
+    check("Fokus: Sidebar Early-Return in goalMode", "if (goalMode && goalRelevant) {" in html and "sb.innerHTML = html;\n    return;" in html)
+    check("Fokus: Focus-Badge in Topbar", "focus-badge" in html)
+    check("Fokus: updateFocusBadge()", "function updateFocusBadge" in html)
+
     # ═══════════════════════════════════════
     print("\n=== ZUSAMMENFASSUNG ===")
     # ═══════════════════════════════════════

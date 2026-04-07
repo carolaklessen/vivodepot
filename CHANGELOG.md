@@ -2,6 +2,21 @@
 
 Alle wesentlichen Änderungen an VIVODEPOT werden in dieser Datei dokumentiert.
 
+## [1.0.0-beta.4-final] — 2026-04-07 (Fokus-Bugfix)
+
+### Bugfixes Fokus-Modus
+- **Ursache gefunden**: Mobile ← → Pfeile riefen `currentStep++` auf — komplett am Fokus-Filter vorbei
+- **Fix**: `mobileNavPrev()` → `prevStep()`, `mobileNavNext()` → `nextStep()`
+- **Mobile Navigation**: zeigt jetzt „Schritt 1 von 4" statt „Schritt 1 von 19" im Fokus
+- **Sidebar**: Early-Return in `renderSidebar()` für Fokus-Modus — komplett separates Rendering
+- **Focus-Badge**: goldenes Badge in Topbar zeigt aktiven Fokus (Diagnose + UX)
+- **Overlay**: `crypto-overlay` scrollbar (overflow-y: auto) — Button nicht mehr hinter Bottom-Nav
+
+### Tests
+- **175 Tests** alle grün (+6 neue: Mobile-Nav, Focus-Badge, Sidebar, Fokus-Schrittzahl)
+
+---
+
 ## [1.0.0-beta.4] — 2026-04-07
 
 ### Fokus-Wizard — echtes Field-Filtering
@@ -46,6 +61,21 @@ Alle wesentlichen Änderungen an VIVODEPOT werden in dieser Datei dokumentiert.
 
 ### Tests
 - **126 Tests** — alle grün (war 89)
+
+---
+
+## [1.0.0-beta.4-final] — 2026-04-07 (Fokus-Bugfix)
+
+### Bugfixes Fokus-Modus
+- **Ursache gefunden**: Mobile ← → Pfeile riefen `currentStep++` auf — komplett am Fokus-Filter vorbei
+- **Fix**: `mobileNavPrev()` → `prevStep()`, `mobileNavNext()` → `nextStep()`
+- **Mobile Navigation**: zeigt jetzt „Schritt 1 von 4" statt „Schritt 1 von 19" im Fokus
+- **Sidebar**: Early-Return in `renderSidebar()` für Fokus-Modus — komplett separates Rendering
+- **Focus-Badge**: goldenes Badge in Topbar zeigt aktiven Fokus (Diagnose + UX)
+- **Overlay**: `crypto-overlay` scrollbar (overflow-y: auto) — Button nicht mehr hinter Bottom-Nav
+
+### Tests
+- **175 Tests** alle grün (+6 neue: Mobile-Nav, Focus-Badge, Sidebar, Fokus-Schrittzahl)
 
 ---
 
@@ -120,6 +150,21 @@ Alle wesentlichen Änderungen an VIVODEPOT werden in dieser Datei dokumentiert.
 
 ---
 
+## [1.0.0-beta.4-final] — 2026-04-07 (Fokus-Bugfix)
+
+### Bugfixes Fokus-Modus
+- **Ursache gefunden**: Mobile ← → Pfeile riefen `currentStep++` auf — komplett am Fokus-Filter vorbei
+- **Fix**: `mobileNavPrev()` → `prevStep()`, `mobileNavNext()` → `nextStep()`
+- **Mobile Navigation**: zeigt jetzt „Schritt 1 von 4" statt „Schritt 1 von 19" im Fokus
+- **Sidebar**: Early-Return in `renderSidebar()` für Fokus-Modus — komplett separates Rendering
+- **Focus-Badge**: goldenes Badge in Topbar zeigt aktiven Fokus (Diagnose + UX)
+- **Overlay**: `crypto-overlay` scrollbar (overflow-y: auto) — Button nicht mehr hinter Bottom-Nav
+
+### Tests
+- **175 Tests** alle grün (+6 neue: Mobile-Nav, Focus-Badge, Sidebar, Fokus-Schrittzahl)
+
+---
+
 ## [1.0.0-beta.4] — 2026-04-07
 
 ### Fokus-Wizard — echtes Field-Filtering
@@ -176,6 +221,21 @@ Alle wesentlichen Änderungen an VIVODEPOT werden in dieser Datei dokumentiert.
 
 ### Tests
 - **126 Tests** (89 + 37 User-Journey-Tests) — alle grün
+
+---
+
+## [1.0.0-beta.4-final] — 2026-04-07 (Fokus-Bugfix)
+
+### Bugfixes Fokus-Modus
+- **Ursache gefunden**: Mobile ← → Pfeile riefen `currentStep++` auf — komplett am Fokus-Filter vorbei
+- **Fix**: `mobileNavPrev()` → `prevStep()`, `mobileNavNext()` → `nextStep()`
+- **Mobile Navigation**: zeigt jetzt „Schritt 1 von 4" statt „Schritt 1 von 19" im Fokus
+- **Sidebar**: Early-Return in `renderSidebar()` für Fokus-Modus — komplett separates Rendering
+- **Focus-Badge**: goldenes Badge in Topbar zeigt aktiven Fokus (Diagnose + UX)
+- **Overlay**: `crypto-overlay` scrollbar (overflow-y: auto) — Button nicht mehr hinter Bottom-Nav
+
+### Tests
+- **175 Tests** alle grün (+6 neue: Mobile-Nav, Focus-Badge, Sidebar, Fokus-Schrittzahl)
 
 ---
 
@@ -236,6 +296,21 @@ Alle wesentlichen Änderungen an VIVODEPOT werden in dieser Datei dokumentiert.
 
 ---
 
+## [1.0.0-beta.4-final] — 2026-04-07 (Fokus-Bugfix)
+
+### Bugfixes Fokus-Modus
+- **Ursache gefunden**: Mobile ← → Pfeile riefen `currentStep++` auf — komplett am Fokus-Filter vorbei
+- **Fix**: `mobileNavPrev()` → `prevStep()`, `mobileNavNext()` → `nextStep()`
+- **Mobile Navigation**: zeigt jetzt „Schritt 1 von 4" statt „Schritt 1 von 19" im Fokus
+- **Sidebar**: Early-Return in `renderSidebar()` für Fokus-Modus — komplett separates Rendering
+- **Focus-Badge**: goldenes Badge in Topbar zeigt aktiven Fokus (Diagnose + UX)
+- **Overlay**: `crypto-overlay` scrollbar (overflow-y: auto) — Button nicht mehr hinter Bottom-Nav
+
+### Tests
+- **175 Tests** alle grün (+6 neue: Mobile-Nav, Focus-Badge, Sidebar, Fokus-Schrittzahl)
+
+---
+
 ## [1.0.0-beta.4] — 2026-04-07
 
 ### Fokus-Wizard (komplett neu)
@@ -276,13 +351,23 @@ Alle wesentlichen Änderungen an VIVODEPOT werden in dieser Datei dokumentiert.
 - **Feedback-E-Mail**: feedback@vivodepot.de (war vivodepot1.odoo.com)
 - **vCard-Button**: immer sichtbar, zeigt Anleitung wenn Web Contacts API fehlt
 
+### Fokus-Wizard (Nachtrag)
+- **Fokussierte Export-Seiten**: bei Arztbesuch, Notfall, Mein Wille, Familie erscheinen nur die relevanten Dokumente
+- health_exportStep: Arztbesuch-Bogen + QR-Sticker (keine Notfallkarte)
+- emergency_exportStep: Krankenhaus, Gesundheitskarte, Notfall-Tasche, Todesfall, QR-Sticker
+- legal_exportStep: Vorsorgevollmacht, Patientenverfügung, Gesundheitsvollmacht
+- family_exportStep: Vollmachten + Notfall-Dokumente
+- Jede Fokus-Export-Seite hat einen „Alle Dokumente anzeigen"-Button
+- Kein „Zu den Exporten"-Button mehr in Gesundheits-Schritten
+- „Alle Dokumente"-Buttons nutzen safeRender() statt renderStep() — kein Zurück zur Willkommen-Seite mehr
+
 ### Mobile (Nachtrag)
 - **Fokus-Wizard auf Mobile**: goldener „Fokus"-Button direkt in Bottom-Nav + ⋮ Menü
 - **Topbar-Fix**: Profil und ⋮ bekommen flex-shrink:0 — werden nie abgeschnitten
 - **Sehr kleine Bildschirme (<400px)**: A⁺ und 🌙 ausgeblendet, Profil + ⋮ + Speichern bleiben immer sichtbar
 
 ### Tests
-- **160 Tests** alle grün (126 + 34 neue für Fokus-Wizard, Mobile, UX)
+- **164 Tests** alle grün (126 + 34 neue für Fokus-Wizard, Mobile, UX)
 
 ---
 

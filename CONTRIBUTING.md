@@ -1,3 +1,7 @@
+# Vivodepot
+
+Version: v1.0.0-beta.4
+
 # Beitragen / Contributing
 
 Vielen Dank für Ihr Interesse an VIVODEPOT! Wir freuen uns über jeden Beitrag.
@@ -7,7 +11,7 @@ Vielen Dank für Ihr Interesse an VIVODEPOT! Wir freuen uns über jeden Beitrag.
 1. **Forken** Sie das Repository
 2. **Klonen** Sie Ihren Fork: `git clone https://github.com/carolaklessen/vivodepot.git`
 3. **Öffnen** Sie `index.html` im Browser — fertig, keine Build-Tools nötig
-4. **Testen** Sie Ihre Änderungen: `python3 test_vivodepot.py index.html` (160 Tests)
+4. **Testen** Sie Ihre Änderungen: `python3 test_vivodepot.py index.html` (175 Tests)
 5. **Pull Request** erstellen
 
 ## Architektur
@@ -45,7 +49,7 @@ Die Zielgruppe (ältere, nicht computeraffine Personen) soll eine Datei auf eine
 - Deutsche UI-Texte mit `tl()`-Wrapper für Übersetzbarkeit
 
 ### Tests
-Vor jedem PR: `python3 test_vivodepot.py index.html` — alle 160 Tests müssen grün sein.
+Vor jedem PR: `python3 test_vivodepot.py index.html` — alle 175 Tests müssen grün sein.
 
 ### Was wir suchen
 - Bug-Fixes (besonders Browser-Kompatibilität)
