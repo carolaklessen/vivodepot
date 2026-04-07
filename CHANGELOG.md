@@ -2,6 +2,14 @@
 
 Alle wesentlichen Änderungen an VIVODEPOT werden in dieser Datei dokumentiert.
 
+## [1.0.0-beta.4-final4] — 2026-04-07 (Mobile Fixes)
+
+### Bugfix
+- **Horizontales Scrollen**: overflow-x:hidden auf html+body — Seite scrollt nicht mehr seitlich
+- **Samsung/Android**: 23/25 Kompatibilitätschecks grün (Samsung Internet, Chrome Android)
+
+---
+
 ## [1.0.0-beta.4-final3] — 2026-04-07 (Mobile Topbar)
 
 ### Bugfix
@@ -80,6 +88,14 @@ Alle wesentlichen Änderungen an VIVODEPOT werden in dieser Datei dokumentiert.
 
 ### Tests
 - **126 Tests** — alle grün (war 89)
+
+---
+
+## [1.0.0-beta.4-final4] — 2026-04-07 (Mobile Fixes)
+
+### Bugfix
+- **Horizontales Scrollen**: overflow-x:hidden auf html+body — Seite scrollt nicht mehr seitlich
+- **Samsung/Android**: 23/25 Kompatibilitätschecks grün (Samsung Internet, Chrome Android)
 
 ---
 
@@ -188,6 +204,14 @@ Alle wesentlichen Änderungen an VIVODEPOT werden in dieser Datei dokumentiert.
 
 ---
 
+## [1.0.0-beta.4-final4] — 2026-04-07 (Mobile Fixes)
+
+### Bugfix
+- **Horizontales Scrollen**: overflow-x:hidden auf html+body — Seite scrollt nicht mehr seitlich
+- **Samsung/Android**: 23/25 Kompatibilitätschecks grün (Samsung Internet, Chrome Android)
+
+---
+
 ## [1.0.0-beta.4-final3] — 2026-04-07 (Mobile Topbar)
 
 ### Bugfix
@@ -281,6 +305,14 @@ Alle wesentlichen Änderungen an VIVODEPOT werden in dieser Datei dokumentiert.
 
 ---
 
+## [1.0.0-beta.4-final4] — 2026-04-07 (Mobile Fixes)
+
+### Bugfix
+- **Horizontales Scrollen**: overflow-x:hidden auf html+body — Seite scrollt nicht mehr seitlich
+- **Samsung/Android**: 23/25 Kompatibilitätschecks grün (Samsung Internet, Chrome Android)
+
+---
+
 ## [1.0.0-beta.4-final3] — 2026-04-07 (Mobile Topbar)
 
 ### Bugfix
@@ -369,6 +401,14 @@ Alle wesentlichen Änderungen an VIVODEPOT werden in dieser Datei dokumentiert.
 
 ### Tests
 - 89 → 126 Tests (User-Journey, Export, Mobile, Fokus)
+
+---
+
+## [1.0.0-beta.4-final4] — 2026-04-07 (Mobile Fixes)
+
+### Bugfix
+- **Horizontales Scrollen**: overflow-x:hidden auf html+body — Seite scrollt nicht mehr seitlich
+- **Samsung/Android**: 23/25 Kompatibilitätschecks grün (Samsung Internet, Chrome Android)
 
 ---
 
