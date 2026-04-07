@@ -138,13 +138,21 @@ Ja, vollständig. Chrome for Android wird empfohlen:
 - Alle Exporte (PDF, Word, JSON) funktionieren
 - Bottom-Navigation ersetzt die Sidebar auf kleinen Bildschirmen
 
+### Kann ich die gespeicherte Datei direkt teilen?
+
+Ja. Auf Mobile erscheint neben Speichern ein goldener **Teilen**-Button. Er oeffnet das native Share-Sheet: AirDrop, WhatsApp, E-Mail, iCloud Drive. Die komplette HTML-Datei mit allen Daten wird geteilt.
+
+### Kann ich Dokumente direkt fotografieren?
+
+Ja. In **Meine Dateien** gibt es den Button **Dokument fotografieren** -- er oeffnet die Rueckkamera direkt. Das Foto wird sofort gespeichert. Auf Desktop oeffnet er den normalen Datei-Browser.
+
 ### Kann ich Kontakte direkt vom Handy importieren?
 
 Ja. In den Schritten **Vertrauenspersonen** und **Wichtige Kontakte** erscheint auf iOS Safari 14.1+ und Chrome Android ein Button **„Vom Telefon"** — er öffnet das native Telefonbuch, Sie wählen Kontakte aus, fertig. Keine Datei exportieren, kein Umweg.
 
 Die Daten werden wie alles andere lokal gespeichert — kein Netzwerkzugriff.
 
-### Warum ist die Datei so groß (ca. 530 KB)?
+### Warum ist die Datei so groß (ca. 830 KB)?
 
 Die Datei enthält alles: HTML, CSS, JavaScript, Logo und drei eingebettete Bibliotheken (jsPDF, docx, QRCode). Keine externen Abhängigkeiten. Das ist Absicht — so funktioniert alles offline.
 

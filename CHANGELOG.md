@@ -56,7 +56,13 @@ Alle wesentlichen Änderungen an VIVODEPOT werden in dieser Datei dokumentiert.
 - **Schriftgröße bei Rotation**: `-webkit-text-size-adjust: 100%` verhindert Skalierung
 - **Smarte Tastatur**: `type="tel"` automatisch für Telefon-Felder, `type="date"` für Datums-Felder
 - **Autocomplete**: Vorname, Nachname, E-Mail, Telefon, Adresse für Browser-Autofill
-- **Vom Telefon importieren**: Web Contacts API — direkter Zugriff auf Telefonbuch (iOS Safari 14.1+, Chrome Android)
+- **Vom Telefon importieren**: Web Contacts API (iOS Safari 14.1+, Chrome Android)
+- **Dokument fotografieren**: Kamera-Button in Meine Dateien, direkt Rueckkamera
+- **Safe area insets**: Bottom-Nav und Notfall-Button halten Abstand zur Home-Leiste (iPhone X+)
+- **Keyboard overlap fix**: Aktives Feld scrollt automatisch in Sicht wenn Tastatur erscheint
+- **Share API**: Goldener Teilen-Button auf Mobile -- AirDrop, WhatsApp, iCloud Drive etc.
+- **PWA-Logo**: Echtes Vivodepot-Logo als App-Icon (Home-Bildschirm, Desktop, Favicon, Apple Touch Icon)
+- **vCard-Import**: Immer sichtbar mit Anleitung wenn Web Contacts API nicht verfuegbar — direkter Zugriff auf Telefonbuch (iOS Safari 14.1+, Chrome Android)
 
 ### Neue Felder
 - **Pflegekinder** + **Pflegekinder Besonderheiten**: In Familie-Sektion, inkl. Hinweis auf fehlende Erbrechte

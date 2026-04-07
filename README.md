@@ -10,7 +10,7 @@ VIVODEPOT hilft Ihnen, alle wichtigen Informationen für den Notfall, die Vorsor
 
 ## Schnellstart
 
-1. **`index.html` herunterladen** (eine einzige Datei, ca. 530 KB)
+1. **`index.html` herunterladen** (eine einzige Datei, ca. 830 KB)
 2. **Im Browser öffnen** (Chrome, Edge, Firefox oder Safari)
 3. **Fokus wählen** — Arztbesuch? Notfall? Vorsorge? Alles?
 4. **Daten eingeben** — die App führt Sie Schritt für Schritt
@@ -114,14 +114,19 @@ Vivodepot ist vollständig mobil-optimiert:
 - **Bottom-Navigation** — ← Schritt-Name → ersetzt die Sidebar auf kleinen Bildschirmen
 - **Kein Auto-Zoom** — Inputs haben `font-size: 16px`, kein ungewolltes Reinzoomen
 - **Smarte Tastatur** — Telefonnummern öffnen den Ziffernblock, Datumsfelder den Datepicker
-- **Telefonbuch-Import** — „Vom Telefon" Button in Vertrauenspersonen und Wichtige Kontakte (iOS Safari 14.1+, Chrome Android)
+- **Telefonbuch-Import** — Vom Telefon Button in Vertrauenspersonen und Wichtige Kontakte
+- **Dokument fotografieren** — Kamera-Button in Meine Dateien oeffnet direkt die Rueckkamera
+- **Teilen** — natives Share-Sheet (AirDrop, WhatsApp, iCloud Drive) statt nur Download
+- **Safe area insets** — Bottom-Nav haelt Abstand zur Home-Leiste auf iPhone X+
+- **Keyboard fix** — aktives Feld scrollt in Sicht wenn Tastatur erscheint
+- **PWA-Logo** — echtes Vivodepot-Logo auf Home-Bildschirm und Desktop (kein generisches V mehr)
 - **Touch-optimiert** — kein Tap-Delay, kein Tap-Highlight, 44px Mindestgröße für alle Buttons
 
 ## Technischer Aufbau
 
 - **Eine HTML-Datei**, keine externen Abhängigkeiten zur Laufzeit
 - CDN-Bibliotheken werden vom Service Worker gecacht (jsPDF, docx.js, qrcode-generator)
-- **~530 KB** unkomprimiert, ~8.500 Zeilen
+- **~830 KB** unkomprimiert, ~8.500 Zeilen
 - Lizenz: **EUPL v1.2**
 
 ---

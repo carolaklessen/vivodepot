@@ -256,13 +256,14 @@ Die Szenarien filtern die Daten auf das Wesentliche — Angehörige müssen nich
 
 | Eigenschaft | Wert |
 |-------------|------|
-| Dateigröße | ~530 KB |
+| Dateigröße | ~830 KB |
 | Codezeilen | ~8.500 |
 | Externe Abhängigkeiten | 3 CDN-Bibliotheken (gecacht) |
 | Framework | Kein Framework — Vanilla HTML/CSS/JS |
 | Verschlüsselung | AES-256-GCM, PBKDF2 |
 | Lizenz | EUPL-1.2 |
 | Browser-Support | Chrome 90+, Firefox 90+, Safari 15+, Edge 90+, DuckDuckGo, Android Chrome, iOS Safari |
+| Mobile Features | Bottom-Nav, Share API, Camera Capture, Contacts API, Safe-area-insets, Keyboard-fix |
 | KI-Transparenz | Entwickelt mit KI-Unterstützung (EU AI Act Art. 50) |
 
 ### Verwendete Bibliotheken
