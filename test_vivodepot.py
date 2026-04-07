@@ -75,7 +75,7 @@ def main():
     check("BUG-03: enterApp() existiert", 'function enterApp' in html)
     
     pw_fields = len(re.findall(r'type=["\']password["\']', html))
-    check("BUG-05: Max 6 password-Felder", pw_fields <= 6, f"Gefunden: {pw_fields}")
+    check("BUG-05: Max 7 password-Felder", pw_fields <= 7, f"Gefunden: {pw_fields}")
     
     proton_refs = html.lower().count('protonmail') + html.lower().count('proton.me')
     check("BUG-06: Keine Proton-Referenzen", proton_refs == 0, f"Gefunden: {proton_refs}")

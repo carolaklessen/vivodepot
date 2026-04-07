@@ -126,10 +126,23 @@ Chrome 90+, Firefox 90+, Safari 15+, Edge 90+. Empfohlen: Chrome oder Firefox f�
 
 ### Funktioniert die App auf dem iPhone?
 
-Ja, mit Einschränkungen:
-- **Safari** funktioniert vollständig
-- **Verschlüsselung** funktioniert über HTTPS (GitHub Pages), aber nicht bei `file://`-Zugriff (z.B. direkt vom Stick)
-- **Spracheingabe** ist nur in Chrome/Edge verfügbar, nicht in Safari
+Ja, vollständig. Besonderheiten:
+- Direkt vom USB-Stick funktioniert die Verschlüsselung nicht (iOS-Einschränkung bei `file://`) — über GitHub Pages oder HTTPS problemlos
+- **Telefonbuch-Import**: „Vom Telefon" Button in den Kontakt-Schritten (iOS Safari 14.1+)
+- **Spracheingabe**: Nur in Chrome/Edge — in Safari deaktiviert
+
+### Funktioniert die App auf Android?
+
+Ja, vollständig. Chrome for Android wird empfohlen:
+- **Telefonbuch-Import** direkt aus der App (Web Contacts API)
+- Alle Exporte (PDF, Word, JSON) funktionieren
+- Bottom-Navigation ersetzt die Sidebar auf kleinen Bildschirmen
+
+### Kann ich Kontakte direkt vom Handy importieren?
+
+Ja. In den Schritten **Vertrauenspersonen** und **Wichtige Kontakte** erscheint auf iOS Safari 14.1+ und Chrome Android ein Button **„Vom Telefon"** — er öffnet das native Telefonbuch, Sie wählen Kontakte aus, fertig. Keine Datei exportieren, kein Umweg.
+
+Die Daten werden wie alles andere lokal gespeichert — kein Netzwerkzugriff.
 
 ### Warum ist die Datei so groß (ca. 530 KB)?
 

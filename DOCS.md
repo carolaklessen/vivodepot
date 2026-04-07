@@ -90,6 +90,8 @@ Es gibt keine Installation. Vivodepot ist eine einzelne HTML-Datei.
 
 **15. Assistenten** — 6 geführte Assistenten (Gesundheitskarte, Vorsorgevollmacht, Patientenverfügung, Gesundheitsvollmacht, Bestattung, Haustier). Außerdem: Passwort-Zugang für Angehörige.
 
+**15b. Pflegekinder** (in Über mich — Familie): Pflegekinder mit Jugendamt-Kontakt, Art der Pflege, Vormund. Hinweis: Pflegekinder erben gesetzlich nicht — nur durch Testament oder Adoption.
+
 **16. Meine Dateien** — Dokumente hochladen, benennen und nach Kategorie ablegen (Ausweise, Vollmachten, Befunde, Verträge, Fotos, Sonstiges). Beim Upload wird nach einem aussagekräftigen Namen gefragt. Jede Datei ist jederzeit wieder downloadbar.
 
 **17. Prüftermine** — Erinnerungen an wichtige Fristen: Vollmacht, Patientenverfügung, Testament, Bankvollmacht, Vivodepot-Update. Ampelsystem (grün/gelb/rot).
@@ -260,7 +262,7 @@ Die Szenarien filtern die Daten auf das Wesentliche — Angehörige müssen nich
 | Framework | Kein Framework — Vanilla HTML/CSS/JS |
 | Verschlüsselung | AES-256-GCM, PBKDF2 |
 | Lizenz | EUPL-1.2 |
-| Browser-Support | Chrome 90+, Firefox 90+, Safari 15+, Edge 90+, DuckDuckGo |
+| Browser-Support | Chrome 90+, Firefox 90+, Safari 15+, Edge 90+, DuckDuckGo, Android Chrome, iOS Safari |
 | KI-Transparenz | Entwickelt mit KI-Unterstützung (EU AI Act Art. 50) |
 
 ### Verwendete Bibliotheken

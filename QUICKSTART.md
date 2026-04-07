@@ -81,6 +81,8 @@ Wenn jemand anderes die Datei öffnet (z.B. Ihre Tochter im Notfall), erscheint 
 | Notfalldaten sofort sehen | Roter `🚨`-Button unten rechts |
 | Etwas suchen | `🔎` in der Topbar |
 | Datenschutz-Info lesen | „Datenschutz" im Footer |
+| Kontakte vom Handy importieren | „Vom Telefon"-Button in Vertrauenspersonen (iOS/Android) |
+| Zwischen Schritten navigieren (Mobile) | Pfeile ← → unten am Bildschirm |
 
 ---
 
@@ -92,7 +94,7 @@ Wenn jemand anderes die Datei öffnet (z.B. Ihre Tochter im Notfall), erscheint 
 
 **Was passiert, wenn ich mein Passwort vergesse?** Dann sind die Daten verloren. Es gibt kein „Passwort zurücksetzen" — weil es keinen Server gibt, der das tun könnte.
 
-**Kann ich die App auf dem Handy nutzen?** Ja. Öffnen Sie die Datei im Browser und fügen Sie sie zum Home-Bildschirm hinzu.
+**Kann ich die App auf dem Handy nutzen?** Ja. Am besten über GitHub Pages öffnen — dann auch Telefonbuch-Import und Verschlüsselung. Zum Home-Bildschirm hinzufügen für App-Erlebnis.
 
 ---
 

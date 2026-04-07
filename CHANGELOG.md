@@ -46,6 +46,21 @@ Alle wesentlichen Änderungen an VIVODEPOT werden in dieser Datei dokumentiert.
 - **Hint-Position**: Hint-Texte jetzt unter dem Eingabefeld (nicht mehr zwischen Label und Feld) — Spalten fluchten korrekt
 - **Label-Großschreibung entfernt**: Feldbezeichnungen in normaler Groß-/Kleinschreibung
 
+### Mobile (iOS, Android, alle Touch-Geräte)
+- **Bottom-Navigation**: Fixe Leiste unten mit ← Schritt-Name → (nur Mobile, ≤700px)
+- **Topbar aufgeräumt**: Dekorative Buttons auf Mobile ausgeblendet — Topbar bleibt einzeilig
+- **Notfall-Button**: Springt auf Mobile über die Navigation-Leiste (bottom: 74px)
+- **Kein Auto-Zoom**: `font-size: 16px` auf Inputs verhindert Reinzoomen (iOS + Android)
+- **Kein Tap-Delay**: `touch-action: manipulation` entfernt 300ms Verzögerung (ältere Android)
+- **Kein Tap-Highlight**: `-webkit-tap-highlight-color` entfernt blaues Aufleuchten (Android)
+- **Schriftgröße bei Rotation**: `-webkit-text-size-adjust: 100%` verhindert Skalierung
+- **Smarte Tastatur**: `type="tel"` automatisch für Telefon-Felder, `type="date"` für Datums-Felder
+- **Autocomplete**: Vorname, Nachname, E-Mail, Telefon, Adresse für Browser-Autofill
+- **Vom Telefon importieren**: Web Contacts API — direkter Zugriff auf Telefonbuch (iOS Safari 14.1+, Chrome Android)
+
+### Neue Felder
+- **Pflegekinder** + **Pflegekinder Besonderheiten**: In Familie-Sektion, inkl. Hinweis auf fehlende Erbrechte
+
 ### Tests
 - **User-Journey-Tests**: Welcome → GoalWizard → App, Angehörigen-Flow, Export-Vollständigkeit
 - **126 Tests** (89 + 37 neue User-Journey-Tests) — alle grün

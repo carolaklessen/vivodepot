@@ -653,6 +653,36 @@ input[type=text], input[type=email], input[type=tel], input[type=date], select {
   .topbar-logo .topbar-wordmark { font-size: 0.95rem; letter-spacing: 0.05em; }
   .mobile-nav { display: flex !important; }
   #notfall-fab { bottom: 74px !important; }
+
+  /* Prevent auto-zoom on focus — alle mobilen Browser */
+  input[type="text"], input[type="email"], input[type="password"],
+  input[type="date"], input[type="tel"], textarea, select {
+    font-size: 16px !important;
+  }
+
+  /* Bessere Touch-Targets für alle Geräte */
+  button, .btn-nav, .btn-sm, .btn-add, .fs-btn, label[style*="cursor:pointer"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Kein 300ms Tap-Delay (Android Chrome älter als v32) */
+  * { touch-action: manipulation; }
+
+  /* Kein blaues Tap-Highlight (Android) */
+  * { -webkit-tap-highlight-color: transparent; }
+
+  /* Kein Text-Select beim langen Drücken auf Buttons */
+  button, .btn-nav, .btn-sm, .mobile-nav-btn {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* Scrolling smoother auf Android */
+  .main-content, .export-tabs {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
 }
 .mobile-nav {
   display: none;
@@ -2641,6 +2671,12 @@ function hint(text) {
 }
 function field(key, label, placeholder='', required=false, type='text', hintText='') {
   const val = get(key);
+  // Auto-detect type from field key name
+  if (type === 'text') {
+    if (/tel|mobil|fax|phone|handy/i.test(key)) type = 'tel';
+    else if (/email|mail/i.test(key)) type = 'email';
+    else if (/datum|date|geburts|gueltig|ablauf|seit|bis$/i.test(key)) type = 'date';
+  }
   const req = required ? 'required' : '';
   const reqLabel = required ? ' required' : '';
   const showMic = (type === 'text') && mikrofon();
@@ -2648,6 +2684,8 @@ function field(key, label, placeholder='', required=false, type='text', hintText
     <label class="field-label${reqLabel}" for="${key}">${tl(label)}</label>
     <div style="position:relative">
       <input type="${type}" id="${key}" name="${key}" value="${esc(val)}" placeholder="${placeholder}" ${req}
+        inputmode="${type==='tel'?'tel':type==='date'?'none':type==='number'?'numeric':'text'}"
+        autocomplete="${key==='vorname'?'given-name':key==='nachname'?'family-name':key==='email'?'email':key==='telefon'||key==='mobil'?'tel':key==='strasse'?'street-address':key==='plz_ort'?'postal-code':'off'}"
         oninput="set('${key}',this.value)" onblur="validateField(this)"${showMic ? ' style="padding-right:36px"' : ''}>
       ${showMic ? '<button type="button" data-diktat="'+key+'" onclick="startDiktat(\''+key+'\')" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;font-size:1.1rem;cursor:pointer;color:var(--ink3);min-height:36px;min-width:36px;padding:0" title="Spracheingabe">🎤</button>' : ''}
     </div>
@@ -3023,6 +3061,7 @@ function renderKontaktBlocks() {
     + `<label class="btn-add" style="cursor:pointer">Tabelle importieren (CSV/Excel)<input type="file" accept=".csv,.txt" style="display:none" onchange="importCSV(event,'kontakte')"></label>`
     + `<button class="btn-add" onclick="downloadCSVTemplate('kontakte')">⬇ Vorlage herunterladen</button>`
     + `<label class="btn-add" style="cursor:pointer"> vCard (.vcf) <input type="file" accept=".vcf,text/vcard" multiple style="display:none" onchange="importVCard(event,'kontakte')"></label>`
+    + ('contacts' in navigator ? `<button class="btn-add" onclick="importFromPhone('kontakte')" style="background:var(--forest);color:#fff;border-color:var(--forest)">Vom Telefon</button>` : '')
     + `</div>`
     + `<div style="font-size:0.8rem;color:var(--ink2);margin-top:6px;padding:6px 10px;background:var(--beige);border-radius:6px">Empfohlen: Vorlage herunterladen → in Excel oder Google Sheets öffnen → Kontakte eintragen → als CSV speichern → hier importieren.</div>`;
 }
@@ -3071,6 +3110,7 @@ function renderInfokontaktBlocks() {
     + `<label class="btn-add" style="cursor:pointer">Tabelle importieren (CSV/Excel)<input type="file" accept=".csv,.txt" style="display:none" onchange="importCSV(event,'infokontakte')"></label>`
     + `<button class="btn-add" onclick="downloadCSVTemplate('infokontakte')">⬇ Vorlage herunterladen</button>`
     + `<label class="btn-add" style="cursor:pointer"> vCard (.vcf) <input type="file" accept=".vcf,text/vcard" multiple style="display:none" onchange="importVCard(event,'infokontakte')"></label>`
+    + ('contacts' in navigator ? `<button class="btn-add" onclick="importFromPhone('infokontakte')" style="background:var(--forest);color:#fff;border-color:var(--forest)">Vom Telefon</button>` : '')
     + `</div>`
     + `<div style="font-size:0.8rem;color:var(--ink2);margin-top:6px;padding:6px 10px;background:var(--beige);border-radius:6px">Empfohlen: Vorlage herunterladen → in Excel oder Google Sheets öffnen → Kontakte eintragen → als CSV speichern → hier importieren.</div>`;
 }
@@ -3131,6 +3171,41 @@ function parseVCard(text) {
 
     return { fn, tel, allTels: allTelsStr, telBem, email, adresse, org, title };
   }).filter(c => c.fn || c.tel || c.email);
+}
+
+
+async function importFromPhone(listKey) {
+  if (!('contacts' in navigator && 'ContactsManager' in window)) {
+    toast('Telefonbuch-Zugriff nicht verfügbar — bitte vCard verwenden');
+    return;
+  }
+  try {
+    const props = ['name', 'tel', 'email'];
+    const contacts = await navigator.contacts.select(props, { multiple: true });
+    if (!contacts || !contacts.length) return;
+
+    const list = getList(listKey);
+    let added = 0;
+    contacts.forEach(c => {
+      const name = (c.name && c.name[0]) || '';
+      const tel  = (c.tel  && c.tel[0])  || '';
+      const email= (c.email && c.email[0]) || '';
+      if (!name && !tel) return;
+      if (listKey === 'kontakte') {
+        list.push({ name, rolle: '', tel, email, aufgabe: '', adresse: '', wann: '', bem: '' });
+      } else {
+        list.push({ name, kategorie: 'Sonstiges', tel, email, adresse: '', bem: '' });
+      }
+      added++;
+    });
+    saveList(listKey, list);
+    await saveData();
+    renderStep();
+    toast(added + ' Kontakt' + (added !== 1 ? 'e' : '') + ' vom Telefon importiert');
+  } catch(e) {
+    if (e.name === 'SecurityError') toast('Zugriff verweigert — bitte vCard verwenden');
+    else toast('Fehler: ' + e.message);
+  }
 }
 
 function importVCard(event, listKey) {
@@ -3454,6 +3529,10 @@ const STEP_RENDERERS = {
     <div class="field-row" style="margin-top:8px">
       ${field('kinder_erwachsen','Volljährige Kinder','z.B. Max (2001, studiert Köln), Sara (1998, selbständig)','false','text','Kinder über 18 — relevant für Erbfolge, Unterhaltspflichten und Notfallkontakte. Wer soll im Notfall informiert werden?')}
       ${field('unterhalt','Unterhalt','z.B. Kindesunterhalt EUR 450/Monat, Trennungsunterhalt EUR 800/Monat, Elternunterhalt EUR 600/Monat (Pflegekosten Mutter)','false','text','Laufende Zahlungen, die bei Krankheit oder Tod weiterlaufen oder wegfallen. Empfangen und gezahlt angeben. Wichtig: Elternunterhalt gilt nur für leibliche Kinder — Ehepartner*innen sind gesetzlich nicht verpflichtet.')}
+    </div>
+    <div class="field-row" style="margin-top:8px">
+      ${field('pflegekinder','Pflegekinder','z.B. Jonas (2015, seit 2020, Pflegevertrag Jugendamt Berlin)','false','text','Pflegekinder sind rechtlich nicht mit leiblichen Kindern gleichgestellt — sie erben nicht automatisch. Nur durch Testament oder Adoption gesichert. Pflegevertrag und Jugendamt-Kontakt hier vermerken.')}
+      ${field('pflegekinder_bem','Pflegekinder — Besonderheiten','z.B. Vollzeitpflege, Wochenpflege, Adoptionsvorbereitung, Vormund: Frau Meier (Jugendamt)','false','text','Vollzeitpflege, Bereitschaftspflege, Adoptionspflege — die Art der Pflege bestimmt die rechtlichen Konsequenzen im Notfall. Wer ist der zuständige Vormund oder Pfleger beim Jugendamt?')}
     </div>
 
     <div style="margin-top:12px">${textarea('notizen_start','Weitere Angaben','z.B. besondere Hinweise für Angehörige','2')}</div>
@@ -5575,6 +5654,7 @@ function generatePDF() {
       if(get('familienstand')) labelVal('Familienstand', get('familienstand'));
       if(get('ehepartner')) labelVal('Ehepartner*in', get('ehepartner'));
       if(get('kinder_minderjaehrig')) labelVal('Minderjährige Kinder', get('kinder_minderjaehrig'));
+      if(get('pflegekinder')) labelVal('Pflegekinder', get('pflegekinder'));
 
       // Date
       y += 6;
@@ -6036,6 +6116,8 @@ function generateChecklist() {
       ['Partner*in', get('ehepartner')],
       ['Minderjährige Kinder', get('kinder_minderjaehrig')],
       ['Volljährige Kinder', get('kinder_erwachsen')],
+          ['Pflegekinder', get('pflegekinder')],
+          ['Pflegekinder Besonderheiten', get('pflegekinder_bem')],
       ['Sorgerecht', get('sorgerecht')],
       ['Unterhalt', get('unterhalt')],
     ]],

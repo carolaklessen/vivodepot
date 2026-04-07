@@ -29,7 +29,10 @@ Die Zielgruppe (ältere, nicht computeraffine Personen) soll eine Datei auf eine
 - **Kein globaler localStorage-Wrapper** — direkt `localStorage` mit try/catch verwenden (DuckDuckGo-Kompatibilität)
 - **safeRender()** statt direktem `renderStep()` an Einstiegspunkten
 - **Keine Emojis in UI-Texten** — Zielgruppe 50+, ernste Themen, professionelles Design. Emojis nur in Export-Karten-Icons (ec-icon) und Topbar-Funktionssymbolen erlaubt — ältere Screenreader haben Probleme damit
-- **Tap-Targets mindestens 44×44px** — Barrierefreiheit
+- **Tap-Targets mindestens 44×44px** — Barrierefreiheit (alle Touch-Geräte)
+- **Input font-size mindestens 16px auf Mobile** — verhindert Auto-Zoom auf iOS und Android
+- **`touch-action: manipulation`** auf interaktiven Elementen — kein Tap-Delay
+- **`type="tel"`** für Telefonnummer-Felder, **`type="date"`** für Datums-Felder — wird automatisch per Feldname erkannt
 - **Schriftgröße mindestens 14px** — Lesbarkeit für ältere Nutzer
 - **Generische Feldlabels** — keine provider-spezifischen Begriffe
 - **Keine Passwort-Speicherfelder** — nur Ablageort-Hinweise

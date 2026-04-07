@@ -102,8 +102,20 @@ Beim Öffnen einer gespeicherten Datei — oder über ⋮-Menü → „Angehöri
 | Firefox | Vollständig |
 | Safari (macOS/iOS) | Vollständig |
 | DuckDuckGo Browser | Vollständig (Spracheingabe deaktiviert) |
+| Android Chrome | Vollständig (inkl. Telefonbuch-Import) |
+| iOS Safari 14.1+ | Vollständig (inkl. Telefonbuch-Import) |
 
 ---
+
+## Mobile
+
+Vivodepot ist vollständig mobil-optimiert:
+
+- **Bottom-Navigation** — ← Schritt-Name → ersetzt die Sidebar auf kleinen Bildschirmen
+- **Kein Auto-Zoom** — Inputs haben `font-size: 16px`, kein ungewolltes Reinzoomen
+- **Smarte Tastatur** — Telefonnummern öffnen den Ziffernblock, Datumsfelder den Datepicker
+- **Telefonbuch-Import** — „Vom Telefon" Button in Vertrauenspersonen und Wichtige Kontakte (iOS Safari 14.1+, Chrome Android)
+- **Touch-optimiert** — kein Tap-Delay, kein Tap-Highlight, 44px Mindestgröße für alle Buttons
 
 ## Technischer Aufbau
 
