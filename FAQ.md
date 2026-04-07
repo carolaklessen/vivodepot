@@ -70,6 +70,18 @@ Die Daten sind an den Browser und das Gerät gebunden. Um auf einem anderen Ger�
 
 ## Bedienung
 
+### Was macht der Fokus-Wizard?
+
+Beim ersten Start fragt Vivodepot: „Was möchten Sie als erstes erledigen?" Sie wählen einen Fokus — und sehen dann nur die wirklich relevanten Felder:
+
+- **Arztbesuch vorbereiten** → Basisdaten, Arzt, Allergien, Medikamente → Arztbesuch-Bogen
+- **Notfall vorsorgen** → Basisdaten, Notfallkontakte, Medikamente → Notfall-Dokumente
+- **Meinen Willen festhalten** → Basisdaten, Testament, Vollmachten
+- **Familie absichern** → Basisdaten, Kinder/Sorgerecht, Kontakte, Vollmachten
+- **Alles ordnen** → alle 19 Schritte
+
+Den Fokus können Sie jederzeit über den Button unten in der Seitenleiste ändern.
+
 ### Muss ich alles auf einmal ausfüllen?
 
 Nein. Sie können jederzeit aufhören und später weitermachen. Die App zeigt Ihnen mit dem Fortschrittsbalken, wie weit Sie sind. Jeder Abschnitt hat eine Zeitschätzung (z.B. „ca. 3 Min.").
@@ -152,7 +164,7 @@ Ja. In den Schritten **Vertrauenspersonen** und **Wichtige Kontakte** erscheint 
 
 Die Daten werden wie alles andere lokal gespeichert — kein Netzwerkzugriff.
 
-### Warum ist die Datei so groß (ca. 830 KB)?
+### Warum ist die Datei so groß (ca. 1 MB)?
 
 Die Datei enthält alles: HTML, CSS, JavaScript, Logo und drei eingebettete Bibliotheken (jsPDF, docx, QRCode). Keine externen Abhängigkeiten. Das ist Absicht — so funktioniert alles offline.
 

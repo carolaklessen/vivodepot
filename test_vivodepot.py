@@ -264,6 +264,50 @@ def main():
     check("UX: vivoConfirm implementiert", "function vivoConfirm(msg, onOk" in html)
 
     # ═══════════════════════════════════════
+    print("\n=== 11. FOKUS-WIZARD (beta.4) ===")
+    # ═══════════════════════════════════════
+    check("Fokus: FOCUSED_RENDERERS definiert", "const FOCUSED_RENDERERS = {" in html)
+    check("Fokus: health_start Renderer", "health_start:" in html)
+    check("Fokus: health_gesundheit Renderer", "health_gesundheit:" in html)
+    check("Fokus: emergency_start Renderer", "emergency_start:" in html)
+    check("Fokus: emergency_kontakte Renderer", "emergency_kontakte:" in html)
+    check("Fokus: emergency_gesundheit Renderer", "emergency_gesundheit:" in html)
+    check("Fokus: legal_start Renderer", "legal_start:" in html)
+    check("Fokus: family_start Renderer", "family_start:" in html)
+    check("Fokus: family_kontakte Renderer", "family_kontakte:" in html)
+    check("Fokus: renderStep nutzt FOCUSED_RENDERERS", "FOCUSED_RENDERERS[focusKey]" in html)
+    check("Fokus: _activeGoal wird gesetzt", "window._activeGoal = selectedGoal" in html)
+    check("Fokus: _activeGoal wird geleert", "window._activeGoal = null" in html)
+    check("Fokus: nextStep überspringt irrelevante", "_goalRelevant[STEPS[next].id]" in html)
+    check("Fokus: prevStep überspringt irrelevante", "_goalRelevant[STEPS[prev].id]" in html)
+    check("Fokus: startet bei Schritt 0", "currentStep = 0;" in html)
+
+    # ═══════════════════════════════════════
+    print("\n=== 12. MOBILE (beta.4) ===")
+    # ═══════════════════════════════════════
+    check("Mobile: Bottom-Nav vorhanden", 'class="mobile-nav"' in html)
+    check("Mobile: mobileNavUpdate()", "function mobileNavUpdate" in html)
+    check("Mobile: Safe-area-inset Bottom-Nav", "safe-area-inset-bottom" in html)
+    check("Mobile: Viewport-fit cover", "viewport-fit=cover" in html)
+    check("Mobile: Font-size 16px (kein Auto-Zoom)", "font-size: 16px !important" in html)
+    check("Mobile: Touch-action manipulation", "touch-action: manipulation" in html)
+    check("Mobile: Tap-highlight entfernt", "tap-highlight-color: transparent" in html)
+    check("Mobile: Share API", "async function shareApp" in html)
+    check("Mobile: Kamera capture", 'capture="environment"' in html)
+    check("Mobile: Telefonbuch-Import", "async function importFromPhone" in html)
+    check("Mobile: Keyboard-fix visualViewport", "visualViewport" in html)
+    check("Mobile: Notfall-Button über Nav", "74px" in html)
+
+    # ═══════════════════════════════════════
+    print("\n=== 13. UX & FELDER (beta.4) ===")
+    # ═══════════════════════════════════════
+    check("UX: Pflegekinder-Felder vorhanden", "field('pflegekinder'" in html)
+    check("UX: feedback@vivodepot.de", "feedback@vivodepot.de" in html)
+    check("UX: Telefonbuch-Anleitung bei fehlendem API", "Direkter Telefonbuch-Zugriff" in html)
+    check("UX: PWA-Logo 512x512", "512x512" in html)
+    check("UX: SVG Favicon (DuckDuckGo-kompatibel)", "image/svg+xml" in html)
+
+    # ═══════════════════════════════════════
     print("\n=== ZUSAMMENFASSUNG ===")
     # ═══════════════════════════════════════
     

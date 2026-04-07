@@ -31,7 +31,7 @@ Vivodepot ist ein persönlicher Vorsorge-Assistent, der als einzelne HTML-Datei 
 
 **Bewertung: ✅ Maximal — ausschließlich der Nutzer selbst.**
 
-Vivodepot speichert keine Daten auf einem Server. Es gibt keinen Server. Die Anwendung ist eine einzelne HTML-Datei (~450 KB), die lokal im Browser ausgeführt wird. Alle Nutzerdaten werden im localStorage des Browsers oder in der heruntergeladenen HTML-Datei gespeichert.
+Vivodepot speichert keine Daten auf einem Server. Es gibt keinen Server. Die Anwendung ist eine einzelne HTML-Datei (~1 MB), die lokal im Browser ausgeführt wird. Alle Nutzerdaten werden im localStorage des Browsers oder in der heruntergeladenen HTML-Datei gespeichert.
 
 - Kein Benutzerkonto, keine Registrierung, keine E-Mail erforderlich
 - Kein Tracking, keine Cookies, kein Google Analytics, keine Telemetrie

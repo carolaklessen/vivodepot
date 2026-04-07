@@ -10,7 +10,7 @@ VIVODEPOT hilft Ihnen, alle wichtigen Informationen für den Notfall, die Vorsor
 
 ## Schnellstart
 
-1. **`index.html` herunterladen** (eine einzige Datei, ca. 830 KB)
+1. **`index.html` herunterladen** (eine einzige Datei, ca. 1 MB)
 2. **Im Browser öffnen** (Chrome, Edge, Firefox oder Safari)
 3. **Fokus wählen** — Arztbesuch? Notfall? Vorsorge? Alles?
 4. **Daten eingeben** — die App führt Sie Schritt für Schritt
@@ -111,6 +111,7 @@ Beim Öffnen einer gespeicherten Datei — oder über ⋮-Menü → „Angehöri
 
 Vivodepot ist vollständig mobil-optimiert:
 
+- **Fokus-Wizard** — Arztbesuch, Notfall, Mein Wille, Familie: nur relevante Schritte und Felder
 - **Bottom-Navigation** — ← Schritt-Name → ersetzt die Sidebar auf kleinen Bildschirmen
 - **Kein Auto-Zoom** — Inputs haben `font-size: 16px`, kein ungewolltes Reinzoomen
 - **Smarte Tastatur** — Telefonnummern öffnen den Ziffernblock, Datumsfelder den Datepicker
@@ -126,7 +127,7 @@ Vivodepot ist vollständig mobil-optimiert:
 
 - **Eine HTML-Datei**, keine externen Abhängigkeiten zur Laufzeit
 - CDN-Bibliotheken werden vom Service Worker gecacht (jsPDF, docx.js, qrcode-generator)
-- **~830 KB** unkomprimiert, ~8.500 Zeilen
+- **~1 MB** unkomprimiert, ~8.500 Zeilen
 - Lizenz: **EUPL v1.2**
 
 ---
@@ -137,6 +138,6 @@ Vivodepot ist vollständig mobil-optimiert:
 python3 test_vivodepot.py index.html
 ```
 
-126 Tests — Syntax, Funktionen, Exporte, Wizards, Barrierefreiheit, User-Journey.
+158 Tests (Desktop, Mobile, Exporte, User-Journey) — Syntax, Funktionen, Exporte, Wizards, Barrierefreiheit, User-Journey, Fokus-Renderer.
 
 Siehe [CONTRIBUTING.md](CONTRIBUTING.md) für Entwicklungshinweise.
