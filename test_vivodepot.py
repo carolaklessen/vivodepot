@@ -306,6 +306,8 @@ def main():
     check("UX: Telefonbuch-Anleitung bei fehlendem API", "Direkter Telefonbuch-Zugriff" in html)
     check("UX: PWA-Logo 512x512", "512x512" in html)
     check("UX: SVG Favicon (DuckDuckGo-kompatibel)", "image/svg+xml" in html)
+    check("UX: Fokus-Wizard im More-Menu", "showGoalWizard(); closeMoreMenu()" in html)
+    check("UX: Fokus-Wizard in Mobile Bottom-Nav", 'showGoalWizard()' in html and 'mobile-nav-center' in html)
 
     # ═══════════════════════════════════════
     print("\n=== ZUSAMMENFASSUNG ===")

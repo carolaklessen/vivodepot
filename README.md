@@ -138,6 +138,6 @@ Vivodepot ist vollständig mobil-optimiert:
 python3 test_vivodepot.py index.html
 ```
 
-158 Tests (Desktop, Mobile, Exporte, User-Journey) — Syntax, Funktionen, Exporte, Wizards, Barrierefreiheit, User-Journey, Fokus-Renderer.
+160 Tests (Desktop, Mobile, Exporte, User-Journey) — Syntax, Funktionen, Exporte, Wizards, Barrierefreiheit, User-Journey, Fokus-Renderer.
 
 Siehe [CONTRIBUTING.md](CONTRIBUTING.md) für Entwicklungshinweise.

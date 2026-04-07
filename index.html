@@ -765,6 +765,8 @@ input[type=text], input[type=email], input[type=tel], input[type=date], select {
     <div class="more-menu">
       <button class="more-btn" onclick="toggleMoreMenu()" title="Weitere Optionen">⋮</button>
       <div class="more-dropdown" id="more-dropdown">
+        <button onclick="showGoalWizard(); closeMoreMenu()">Fokus wählen</button>
+        <div class="more-divider"></div>
         <button onclick="showAngehoerigenAuswahl(); closeMoreMenu()">Angehörigen-Ansicht testen</button>
         <div class="more-divider"></div>
         <button onclick="exportJSON(); closeMoreMenu()">Daten exportieren (JSON)</button>
@@ -782,7 +784,7 @@ input[type=text], input[type=email], input[type=tel], input[type=date], select {
 </div>
 <div class="mobile-nav" id="mobile-nav">
   <button class="mobile-nav-btn" onclick="mobileNavPrev()" title="Vorheriger Schritt">&#8592;</button>
-  <div class="mobile-nav-center" onclick="mobileNavMenu()">
+  <div class="mobile-nav-center" onclick="showGoalWizard()" title="Fokus wählen">
     <span id="mobile-nav-name">Über mich</span>
     <span class="mobile-nav-step" id="mobile-nav-step">Schritt 1 von 19</span>
   </div>

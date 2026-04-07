@@ -276,8 +276,11 @@ Alle wesentlichen Änderungen an VIVODEPOT werden in dieser Datei dokumentiert.
 - **Feedback-E-Mail**: feedback@vivodepot.de (war vivodepot1.odoo.com)
 - **vCard-Button**: immer sichtbar, zeigt Anleitung wenn Web Contacts API fehlt
 
+### Mobile (Nachtrag)
+- **Fokus-Wizard auf Mobile**: über ⋮ Menü und Tipp auf Schritt-Name in Bottom-Nav
+
 ### Tests
-- **158 Tests** alle grün (126 + 32 neue für Fokus-Wizard, Mobile, UX)
+- **160 Tests** alle grün (126 + 34 neue für Fokus-Wizard, Mobile, UX)
 
 ---
 
