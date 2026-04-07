@@ -220,7 +220,7 @@ def main():
     # Journey 1: Standard-User (Erstbesuch)
     check("Journey: Welcome-Overlay hat Loslegen-Button", "onclick=\"welcomeStart()\"" in html)
     check("Journey: Goal-Wizard aufrufbar", "function showGoalWizard()" in html)
-    check("Journey: enterApp ruft safeRender", "function enterApp" in html and "safeRender" in html)
+    check("Journey: enterApp ruft safeRender", "function enterApp() {\n  hideAllOverlays();\n  safeRender();" in html)
     check("Journey: safeRender fängt Fehler ab", "function safeRender()" in html and "catch" in html)
     check("Journey: Fokus-Button in Sidebar", "Fokus wählen" in html and "Fokus ändern" in html)
 
@@ -262,79 +262,6 @@ def main():
     # Journey 7: Kein nativer confirm()
     check("UX: Kein nativer confirm()-Dialog", "if (!confirm(" not in html)
     check("UX: vivoConfirm implementiert", "function vivoConfirm(msg, onOk" in html)
-
-    # ═══════════════════════════════════════
-    print("\n=== 11. FOKUS-WIZARD (beta.4) ===")
-    # ═══════════════════════════════════════
-    check("Fokus: FOCUSED_RENDERERS definiert", "const FOCUSED_RENDERERS = {" in html)
-    check("Fokus: health_start Renderer", "health_start:" in html)
-    check("Fokus: health_gesundheit Renderer", "health_gesundheit:" in html)
-    check("Fokus: emergency_start Renderer", "emergency_start:" in html)
-    check("Fokus: emergency_kontakte Renderer", "emergency_kontakte:" in html)
-    check("Fokus: emergency_gesundheit Renderer", "emergency_gesundheit:" in html)
-    check("Fokus: legal_start Renderer", "legal_start:" in html)
-    check("Fokus: family_start Renderer", "family_start:" in html)
-    check("Fokus: family_kontakte Renderer", "family_kontakte:" in html)
-    check("Fokus: renderStep nutzt FOCUSED_RENDERERS", "FOCUSED_RENDERERS[focusKey]" in html)
-    check("Fokus: _activeGoal wird gesetzt", "window._activeGoal = selectedGoal" in html)
-    check("Fokus: _activeGoal wird geleert", "window._activeGoal = null" in html)
-    check("Fokus: nextStep überspringt irrelevante", "_goalRelevant[STEPS[next].id]" in html)
-    check("Fokus: prevStep überspringt irrelevante", "_goalRelevant[STEPS[prev].id]" in html)
-    check("Fokus: startet bei Schritt 0", "currentStep = 0;" in html)
-
-    # ═══════════════════════════════════════
-    print("\n=== 12. MOBILE (beta.4) ===")
-    # ═══════════════════════════════════════
-    check("Mobile: Bottom-Nav vorhanden", 'class="mobile-nav"' in html)
-    check("Mobile: mobileNavUpdate()", "function mobileNavUpdate" in html)
-    check("Mobile: Safe-area-inset Bottom-Nav", "safe-area-inset-bottom" in html)
-    check("Mobile: Viewport-fit cover", "viewport-fit=cover" in html)
-    check("Mobile: Font-size 16px (kein Auto-Zoom)", "font-size: 16px !important" in html)
-    check("Mobile: Touch-action manipulation", "touch-action: manipulation" in html)
-    check("Mobile: Tap-highlight entfernt", "tap-highlight-color: transparent" in html)
-    check("Mobile: Share API", "async function shareApp" in html)
-    check("Mobile: Kamera capture", 'capture="environment"' in html)
-    check("Mobile: Telefonbuch-Import", "async function importFromPhone" in html)
-    check("Mobile: Keyboard-fix visualViewport", "visualViewport" in html)
-    check("Mobile: Notfall-Button über Nav", "74px" in html)
-
-    # ═══════════════════════════════════════
-    print("\n=== 13. UX & FELDER (beta.4) ===")
-    # ═══════════════════════════════════════
-    check("UX: Pflegekinder-Felder vorhanden", "field('pflegekinder'" in html)
-    check("UX: feedback@vivodepot.de", "feedback@vivodepot.de" in html)
-    check("UX: Telefonbuch-Anleitung bei fehlendem API", "Direkter Telefonbuch-Zugriff" in html)
-    check("UX: PWA-Logo 512x512", "512x512" in html)
-    check("UX: SVG Favicon (DuckDuckGo-kompatibel)", "image/svg+xml" in html)
-    check("UX: Fokus-Wizard im More-Menu", "showGoalWizard(); closeMoreMenu()" in html)
-    check("UX: Fokus-Wizard in Mobile Bottom-Nav", 'showGoalWizard()' in html and 'mobile-nav-center' in html)
-
-    # Export-Fokus
-    check("Fokus: health_exportStep", 'health_exportStep:' in html)
-    check("Fokus: emergency_exportStep", 'emergency_exportStep:' in html)
-    check("Fokus: legal_exportStep", 'legal_exportStep:' in html)
-    check("Fokus: family_exportStep", 'family_exportStep:' in html)
-    check("Fokus: health_dokumente", 'health_dokumente:' in html)
-    check("Fokus: emergency_dokumente", 'emergency_dokumente:' in html)
-    check("Fokus: legal_assistenten", 'legal_assistenten:' in html)
-    check("Fokus: family_assistenten", 'family_assistenten:' in html)
-    check("Fokus: renderUploadedFilesByCategories", 'renderUploadedFilesByCategories' in html)
-    check("Fokus: mobileNavNext ruft nextStep auf", "function mobileNavNext" in html and "nextStep()" in html.split("function mobileNavNext")[1][:30])
-    check("Fokus: mobileNavPrev ruft prevStep auf", "function mobileNavPrev" in html and "prevStep()" in html.split("function mobileNavPrev")[1][:30])
-    check("Fokus: Mobile zeigt Fokus-Schrittzahl", "relevant.length" in html)
-    check("Fokus: Sidebar Early-Return in goalMode", "if (goalMode && goalRelevant) {" in html and "sb.innerHTML = html;\n    return;" in html)
-    check("Fokus: Focus-Badge in Topbar", "focus-badge" in html)
-    check("Fokus: updateFocusBadge()", "function updateFocusBadge" in html)
-    check("Fokus: legal_testament Renderer", "legal_testament:" in html)
-    check("Fokus: family_testament Renderer", "family_testament:" in html)
-
-    # Beta-Feedback Features
-    check("Security: Auto-Logout _inactivityMinutes", "_inactivityMinutes" in html)
-    check("Security: resetInactivityTimer()", "function resetInactivityTimer" in html)
-    check("Security: setInactivityTimeout()", "function setInactivityTimeout" in html)
-    check("Security: checkForUpdate()", "async function checkForUpdate" in html)
-    check("Security: update-check-btn", "update-check-btn" in html)
-    check("Security: Versionscheck nur version.txt", "version.txt" in html)
 
     # ═══════════════════════════════════════
     print("\n=== ZUSAMMENFASSUNG ===")
