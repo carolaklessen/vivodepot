@@ -2,6 +2,14 @@
 
 Alle wesentlichen Änderungen an VIVODEPOT werden in dieser Datei dokumentiert.
 
+## [1.0.0-beta.4-final3] — 2026-04-07 (Mobile Topbar)
+
+### Bugfix
+- **Topbar safe-area-inset-top**: Topbar überlagerte Browser-Adressleiste auf iPhone (Notch/Dynamic Island) — `height: calc(60px + env(safe-area-inset-top))` und `padding-top: env(safe-area-inset-top)` behoben
+- **Inhalt safe-area-inset-left**: Abschneiden am Rand im Landscape-Modus behoben
+
+---
+
 ## [1.0.0-beta.4-final2] — 2026-04-07 (Beta-Feedback)
 
 ### Neue Features
@@ -69,6 +77,14 @@ Alle wesentlichen Änderungen an VIVODEPOT werden in dieser Datei dokumentiert.
 
 ### Tests
 - **126 Tests** — alle grün (war 89)
+
+---
+
+## [1.0.0-beta.4-final3] — 2026-04-07 (Mobile Topbar)
+
+### Bugfix
+- **Topbar safe-area-inset-top**: Topbar überlagerte Browser-Adressleiste auf iPhone (Notch/Dynamic Island) — `height: calc(60px + env(safe-area-inset-top))` und `padding-top: env(safe-area-inset-top)` behoben
+- **Inhalt safe-area-inset-left**: Abschneiden am Rand im Landscape-Modus behoben
 
 ---
 
@@ -166,6 +182,14 @@ Alle wesentlichen Änderungen an VIVODEPOT werden in dieser Datei dokumentiert.
 
 ---
 
+## [1.0.0-beta.4-final3] — 2026-04-07 (Mobile Topbar)
+
+### Bugfix
+- **Topbar safe-area-inset-top**: Topbar überlagerte Browser-Adressleiste auf iPhone (Notch/Dynamic Island) — `height: calc(60px + env(safe-area-inset-top))` und `padding-top: env(safe-area-inset-top)` behoben
+- **Inhalt safe-area-inset-left**: Abschneiden am Rand im Landscape-Modus behoben
+
+---
+
 ## [1.0.0-beta.4-final2] — 2026-04-07 (Beta-Feedback)
 
 ### Neue Features
@@ -248,6 +272,14 @@ Alle wesentlichen Änderungen an VIVODEPOT werden in dieser Datei dokumentiert.
 
 ---
 
+## [1.0.0-beta.4-final3] — 2026-04-07 (Mobile Topbar)
+
+### Bugfix
+- **Topbar safe-area-inset-top**: Topbar überlagerte Browser-Adressleiste auf iPhone (Notch/Dynamic Island) — `height: calc(60px + env(safe-area-inset-top))` und `padding-top: env(safe-area-inset-top)` behoben
+- **Inhalt safe-area-inset-left**: Abschneiden am Rand im Landscape-Modus behoben
+
+---
+
 ## [1.0.0-beta.4-final2] — 2026-04-07 (Beta-Feedback)
 
 ### Neue Features
@@ -325,6 +357,14 @@ Alle wesentlichen Änderungen an VIVODEPOT werden in dieser Datei dokumentiert.
 
 ### Tests
 - 89 → 126 Tests (User-Journey, Export, Mobile, Fokus)
+
+---
+
+## [1.0.0-beta.4-final3] — 2026-04-07 (Mobile Topbar)
+
+### Bugfix
+- **Topbar safe-area-inset-top**: Topbar überlagerte Browser-Adressleiste auf iPhone (Notch/Dynamic Island) — `height: calc(60px + env(safe-area-inset-top))` und `padding-top: env(safe-area-inset-top)` behoben
+- **Inhalt safe-area-inset-left**: Abschneiden am Rand im Landscape-Modus behoben
 
 ---
 
