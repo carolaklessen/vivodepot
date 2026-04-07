@@ -2,6 +2,14 @@
 
 Alle wesentlichen Änderungen an VIVODEPOT werden in dieser Datei dokumentiert.
 
+## [1.0.0-beta.4-final5] — 2026-04-07 (Bugfixes Beta)
+
+### Bugfixes
+- **Fokus-Wizard nach Weiche**: `savedWelcomeOwner()` zeigt jetzt Fokus-Wizard wenn noch kein Fokus gesetzt — war ursprüngliche Implementierungslücke
+- **Begrüßung nach overflow-x fix**: `overflow-x: hidden` auf `html` bricht `position:fixed` auf iOS → ersetzt durch `overflow-x: clip` auf `body`
+
+---
+
 ## [1.0.0-beta.4-final4] — 2026-04-07 (Mobile Fixes)
 
 ### Bugfix
@@ -88,6 +96,14 @@ Alle wesentlichen Änderungen an VIVODEPOT werden in dieser Datei dokumentiert.
 
 ### Tests
 - **126 Tests** — alle grün (war 89)
+
+---
+
+## [1.0.0-beta.4-final5] — 2026-04-07 (Bugfixes Beta)
+
+### Bugfixes
+- **Fokus-Wizard nach Weiche**: `savedWelcomeOwner()` zeigt jetzt Fokus-Wizard wenn noch kein Fokus gesetzt — war ursprüngliche Implementierungslücke
+- **Begrüßung nach overflow-x fix**: `overflow-x: hidden` auf `html` bricht `position:fixed` auf iOS → ersetzt durch `overflow-x: clip` auf `body`
 
 ---
 
@@ -204,6 +220,14 @@ Alle wesentlichen Änderungen an VIVODEPOT werden in dieser Datei dokumentiert.
 
 ---
 
+## [1.0.0-beta.4-final5] — 2026-04-07 (Bugfixes Beta)
+
+### Bugfixes
+- **Fokus-Wizard nach Weiche**: `savedWelcomeOwner()` zeigt jetzt Fokus-Wizard wenn noch kein Fokus gesetzt — war ursprüngliche Implementierungslücke
+- **Begrüßung nach overflow-x fix**: `overflow-x: hidden` auf `html` bricht `position:fixed` auf iOS → ersetzt durch `overflow-x: clip` auf `body`
+
+---
+
 ## [1.0.0-beta.4-final4] — 2026-04-07 (Mobile Fixes)
 
 ### Bugfix
@@ -305,6 +329,14 @@ Alle wesentlichen Änderungen an VIVODEPOT werden in dieser Datei dokumentiert.
 
 ---
 
+## [1.0.0-beta.4-final5] — 2026-04-07 (Bugfixes Beta)
+
+### Bugfixes
+- **Fokus-Wizard nach Weiche**: `savedWelcomeOwner()` zeigt jetzt Fokus-Wizard wenn noch kein Fokus gesetzt — war ursprüngliche Implementierungslücke
+- **Begrüßung nach overflow-x fix**: `overflow-x: hidden` auf `html` bricht `position:fixed` auf iOS → ersetzt durch `overflow-x: clip` auf `body`
+
+---
+
 ## [1.0.0-beta.4-final4] — 2026-04-07 (Mobile Fixes)
 
 ### Bugfix
@@ -401,6 +433,14 @@ Alle wesentlichen Änderungen an VIVODEPOT werden in dieser Datei dokumentiert.
 
 ### Tests
 - 89 → 126 Tests (User-Journey, Export, Mobile, Fokus)
+
+---
+
+## [1.0.0-beta.4-final5] — 2026-04-07 (Bugfixes Beta)
+
+### Bugfixes
+- **Fokus-Wizard nach Weiche**: `savedWelcomeOwner()` zeigt jetzt Fokus-Wizard wenn noch kein Fokus gesetzt — war ursprüngliche Implementierungslücke
+- **Begrüßung nach overflow-x fix**: `overflow-x: hidden` auf `html` bricht `position:fixed` auf iOS → ersetzt durch `overflow-x: clip` auf `body`
 
 ---
 

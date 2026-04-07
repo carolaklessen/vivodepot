@@ -74,7 +74,7 @@ if (typeof docx === 'undefined' && typeof window.docx === 'undefined') {
   --navy-lt:   var(--forest-lt);
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { font-size: 16px; background: var(--forest); overflow-x: hidden; }
+html { font-size: 16px; background: var(--forest); }
 html.fs-medium { font-size: 18px; }
 html.fs-large { font-size: 21px; }
 
@@ -119,8 +119,8 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  overflow-x: hidden;
-  max-width: 100vw;
+  overflow-x: clip;
+  max-width: 100%;
 }
 
 /* ── TOP BAR ── */
@@ -2396,8 +2396,14 @@ function savedWelcomeOwner() {
   var el = document.getElementById('saved-welcome-overlay');
   if (el) el.remove();
   hideAllOverlays();
-  safeRender();
   try { updateProfileButton(); } catch(e) {}
+  // Fokus-Wizard zeigen wenn noch kein Fokus gewählt
+  if (!window._activeGoal) {
+    safeRender();
+    showGoalWizard();
+  } else {
+    safeRender();
+  }
 }
 
 function savedWelcomeAngehoerige() {
