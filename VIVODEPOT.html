@@ -656,9 +656,10 @@ input[type=text], input[type=email], input[type=tel], input[type=date], select {
   .topbar-wordmark { font-size: 0.9rem; letter-spacing: 0.04em; }
   .fs-btn { display: none !important; }
   .btn-sm:not(.gold) { display: none !important; }
+  .topbar-hide-mobile { display: none !important; }
+  .topbar-mobile-only { display: block !important; }
   .topbar-actions { gap: 4px; }
-  .btn-sm.gold { font-size: 0.82rem; padding: 6px 14px; }
-  .profile-btn { font-size: 0.78rem; padding: 4px 8px; }
+  .btn-sm.gold { font-size: 0.9rem; padding: 8px 16px; }
 }
 </style>
 <link rel="icon" type="image/png" href="data:image/png;base64,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">
@@ -684,15 +685,20 @@ input[type=text], input[type=email], input[type=tel], input[type=date], select {
     <button class="fs-btn" onclick="window.print()" title="Seite drucken">🖨</button>
     <!-- EN-Übersetzung vorbereitet, aber für Beta deaktiviert -->
     <button class="fs-btn" onclick="toggleLang()" id="lang-btn" title="Sprache / Language" style="display:none">EN</button>
-    <div class="profile-switcher">
+    <div class="profile-switcher topbar-hide-mobile">
       <button class="profile-btn" onclick="toggleProfileDropdown()" id="profile-btn" title="Profil wechseln"> <span id="profile-name">Profil 1</span> ▾</button>
       <div class="profile-dropdown" id="profile-dropdown"></div>
     </div>
     <button class="btn-sm gold" onclick="saveAsHTML()" title="Speichert eine Datei auf Ihrem Gerät — für USB-Stick oder als Backup. Ihre Eingaben werden automatisch im Browser gesichert.">Speichern</button>
-    <button class="btn-sm" onclick="lockApp()" style="background:var(--surface);color:var(--ink2);border:1px solid var(--border);margin-left:4px" title="App sperren"></button>
+    <button class="btn-sm topbar-hide-mobile" onclick="lockApp()" style="background:var(--surface);color:var(--ink2);border:1px solid var(--border);margin-left:4px" title="App sperren"></button>
     <div class="more-menu">
       <button class="more-btn" onclick="toggleMoreMenu()" title="Weitere Optionen">⋮</button>
       <div class="more-dropdown" id="more-dropdown">
+        <div class="topbar-mobile-only" style="display:none">
+          <button onclick="toggleProfileDropdown(); closeMoreMenu()" id="mobile-profil-btn">Profil wechseln</button>
+          <button onclick="lockApp(); closeMoreMenu()">App sperren</button>
+          <div class="more-divider"></div>
+        </div>
         <button onclick="showAngehoerigenAuswahl(); closeMoreMenu()">Angehörigen-Ansicht testen</button>
         <div class="more-divider"></div>
         <button onclick="exportJSON(); closeMoreMenu()">Daten exportieren (JSON)</button>
