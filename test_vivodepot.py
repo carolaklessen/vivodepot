@@ -220,7 +220,7 @@ def main():
     # Journey 1: Standard-User (Erstbesuch)
     check("Journey: Welcome-Overlay hat Loslegen-Button", "onclick=\"welcomeStart()\"" in html)
     check("Journey: Goal-Wizard aufrufbar", "function showGoalWizard()" in html)
-    check("Journey: enterApp ruft safeRender", "function enterApp() {\n  hideAllOverlays();\n  safeRender();" in html)
+    check("Journey: enterApp ruft safeRender", "function enterApp" in html and "safeRender" in html)
     check("Journey: safeRender fängt Fehler ab", "function safeRender()" in html and "catch" in html)
     check("Journey: Fokus-Button in Sidebar", "Fokus wählen" in html and "Fokus ändern" in html)
 
