@@ -82,7 +82,8 @@ Wenn jemand anderes die Datei öffnet (z.B. Ihre Tochter im Notfall), erscheint 
 | Etwas suchen | `🔎` in der Topbar |
 | Datenschutz-Info lesen | „Datenschutz" im Footer |
 | Kontakte vom Handy importieren | „Vom Telefon"-Button in Vertrauenspersonen (iOS/Android) |
-| Fokus wählen | Beim Start oder über Sidebar-Button — zeigt nur relevante Schritte |
+| Fokus wählen | Beim Start, Sidebar-Button (Desktop) oder „Fokus"-Button in Bottom-Nav (Mobile) |
+| Fokus im ⋮ Menü | ⋮ → „Fokus wählen" — funktioniert auf allen Geräten |
 | Fokus aufheben | Sidebar → „Alle anzeigen" |
 | Zwischen Schritten navigieren (Mobile) | Pfeile ← → unten am Bildschirm |
 

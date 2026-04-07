@@ -111,13 +111,13 @@ Beim Öffnen einer gespeicherten Datei — oder über ⋮-Menü → „Angehöri
 
 Vivodepot ist vollständig mobil-optimiert:
 
-- **Fokus-Wizard** — Arztbesuch, Notfall, Mein Wille, Familie: nur relevante Schritte und Felder
-- **Bottom-Navigation** — ← Schritt-Name → ersetzt die Sidebar auf kleinen Bildschirmen
+- **Fokus-Wizard** — Arztbesuch, Notfall, Mein Wille, Familie: nur relevante Schritte und Felder; auf Mobile goldener „Fokus"-Button in Bottom-Nav
+- **Bottom-Navigation** — ← Schritt → Fokus-Button, immer sichtbar auf Mobile
 - **Kein Auto-Zoom** — Inputs haben `font-size: 16px`, kein ungewolltes Reinzoomen
 - **Smarte Tastatur** — Telefonnummern öffnen den Ziffernblock, Datumsfelder den Datepicker
 - **Telefonbuch-Import** — Vom Telefon Button in Vertrauenspersonen und Wichtige Kontakte
 - **Dokument fotografieren** — Kamera-Button in Meine Dateien oeffnet direkt die Rueckkamera
-- **Teilen** — natives Share-Sheet (AirDrop, WhatsApp, iCloud Drive) statt nur Download
+- **Teilen** — natives Share-Sheet (AirDrop, WhatsApp, iCloud Drive) (AirDrop, WhatsApp, iCloud Drive) statt nur Download
 - **Safe area insets** — Bottom-Nav haelt Abstand zur Home-Leiste auf iPhone X+
 - **Keyboard fix** — aktives Feld scrollt in Sicht wenn Tastatur erscheint
 - **PWA-Logo** — echtes Vivodepot-Logo auf Home-Bildschirm und Desktop (kein generisches V mehr)

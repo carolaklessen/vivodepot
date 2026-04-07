@@ -277,7 +277,9 @@ Alle wesentlichen Änderungen an VIVODEPOT werden in dieser Datei dokumentiert.
 - **vCard-Button**: immer sichtbar, zeigt Anleitung wenn Web Contacts API fehlt
 
 ### Mobile (Nachtrag)
-- **Fokus-Wizard auf Mobile**: über ⋮ Menü und Tipp auf Schritt-Name in Bottom-Nav
+- **Fokus-Wizard auf Mobile**: goldener „Fokus"-Button direkt in Bottom-Nav + ⋮ Menü
+- **Topbar-Fix**: Profil und ⋮ bekommen flex-shrink:0 — werden nie abgeschnitten
+- **Sehr kleine Bildschirme (<400px)**: A⁺ und 🌙 ausgeblendet, Profil + ⋮ + Speichern bleiben immer sichtbar
 
 ### Tests
 - **160 Tests** alle grün (126 + 34 neue für Fokus-Wizard, Mobile, UX)

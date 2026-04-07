@@ -263,6 +263,7 @@ Die Szenarien filtern die Daten auf das Wesentliche — Angehörige müssen nich
 | Verschlüsselung | AES-256-GCM, PBKDF2 |
 | Lizenz | EUPL-1.2 |
 | Browser-Support | Chrome 90+, Firefox 90+, Safari 15+, Edge 90+, DuckDuckGo, Android Chrome, iOS Safari |
+| Mobile Features (beta.4) | Bottom-Nav + Fokus-Button, Share API, Camera Capture, Contacts API, Safe-area-insets, Keyboard-fix, Topbar-Fix |
 | Mobile Features | Bottom-Nav, Share API, Camera Capture, Contacts API, Safe-area-insets, Keyboard-fix, Touch-optimiert |
 | Fokus-Wizard | 4 Ziele mit echtem Field-Filtering, 8 FOCUSED_RENDERERS |
 | Fokus-Rendering | 8 fokussierte Step-Varianten (FOCUSED_RENDERERS) pro Ziel |

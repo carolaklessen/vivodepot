@@ -168,8 +168,8 @@ body {
   gap: 12px;
 }
 .topbar-title > span { opacity: 0.55; font-weight: 400; font-size: 0.82rem; font-family: 'DM Sans', sans-serif; }
-.topbar-actions { display: flex; gap: 4px; align-items: center; flex-wrap: nowrap; overflow: hidden; }
-.btn-sm { padding: 5px 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.22); background: transparent; color: rgba(255,255,255,0.9); font-size: 0.76rem; cursor: pointer; transition: background 0.15s; font-family: 'DM Sans', sans-serif; white-space: nowrap; }
+.topbar-actions { display: flex; gap: 4px; align-items: center; flex-wrap: nowrap; min-width: 0; }
+.btn-sm { padding: 5px 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.22); background: transparent; color: rgba(255,255,255,0.9); font-size: 0.76rem; cursor: pointer; transition: background 0.15s; font-family: 'DM Sans', sans-serif; white-space: nowrap; flex-shrink: 0; }
 .btn-sm:hover { background: rgba(255,255,255,0.10); }
 .btn-sm.gold { background: var(--gold); border-color: var(--gold); color: var(--forest); font-weight: 600; }
 .btn-sm.gold:hover { background: var(--gold-mid); }
@@ -543,7 +543,7 @@ input[type=text], input[type=email], input[type=tel], input[type=date], select {
 .export-card .ec-btn { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
 
 /* ── Topbar Mehr-Menü ── */
-.more-menu { position: relative; }
+.more-menu { position: relative; flex-shrink: 0; }
 .more-btn {
   padding: 4px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.22);
   background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.95); font-size: 1.1rem;
@@ -568,7 +568,7 @@ input[type=text], input[type=email], input[type=tel], input[type=date], select {
 .more-dropdown .more-divider { border-top: 1px solid var(--border); }
 
 /* Profile Switcher */
-.profile-switcher { position: relative; }
+.profile-switcher { position: relative; flex-shrink: 0; }
 .profile-btn {
   padding: 4px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.22);
   background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.95); font-size: 0.76rem;
@@ -652,6 +652,10 @@ input[type=text], input[type=email], input[type=tel], input[type=date], select {
   .etab { font-size: 0.78rem; padding: 8px 12px; white-space: nowrap; flex-shrink: 0; }
   .step-header h1 { font-size: 1.3rem; }
   .topbar-actions .fs-btn.hide-mobile { display: none !important; }
+  /* Very small screens: hide search and font-size too */
+  @media (max-width: 400px) {
+    #fs-btn, #nacht-btn { display: none !important; }
+  }
   .hide-desktop { display: none !important; }
   .topbar-logo .topbar-wordmark { font-size: 0.95rem; letter-spacing: 0.05em; }
   .mobile-nav { display: flex !important; }
@@ -783,10 +787,11 @@ input[type=text], input[type=email], input[type=tel], input[type=date], select {
 </div>
 <div class="mobile-nav" id="mobile-nav">
   <button class="mobile-nav-btn" onclick="mobileNavPrev()" title="Vorheriger Schritt">&#8592;</button>
-  <div class="mobile-nav-center" onclick="showGoalWizard()" title="Fokus wählen">
+  <div class="mobile-nav-center" title="Schritt-Info">
     <span id="mobile-nav-name">Über mich</span>
     <span class="mobile-nav-step" id="mobile-nav-step">Schritt 1 von 19</span>
   </div>
+  <button class="mobile-nav-btn" onclick="showGoalWizard()" title="Fokus wählen" style="font-size:0.7rem;width:52px;background:var(--gold);color:var(--forest);font-weight:600;border-radius:8px">Fokus</button>
   <button class="mobile-nav-btn" onclick="mobileNavNext()" title="Nächster Schritt">&#8594;</button>
 </div>
 
