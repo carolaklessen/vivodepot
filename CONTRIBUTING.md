@@ -49,7 +49,7 @@ Die Zielgruppe (ältere, nicht computeraffine Personen) soll eine Datei auf eine
 - Deutsche UI-Texte mit `tl()`-Wrapper für Übersetzbarkeit
 
 ### Tests
-Vor jedem PR: `python3 test_vivodepot.py index.html` — alle 175 Tests müssen grün sein.
+Vor jedem PR: `python3 test_vivodepot.py index.html` — alle 183 Tests müssen grün sein.
 
 ### Was wir suchen
 - Bug-Fixes (besonders Browser-Kompatibilität)

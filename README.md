@@ -14,6 +14,28 @@ VIVODEPOT hilft Ihnen, alle wichtigen Informationen für den Notfall, die Vorsor
 
 ## Schnellstart
 
+## Alleinstellungsmerkmal: FHIR R4 & FIM-JSON
+
+Vivodepot ist der **einzige Vorsorge-Assistent im DACH-Markt**, der Gesundheitsdaten im internationalen Standard **FHIR R4 (HL7)** exportiert und importiert.
+
+### Was das bedeutet
+
+| Standard | Verwendung | Wer nutzt es |
+|---|---|---|
+| **FHIR R4** | Medizinische Stammdaten (Diagnosen, Medikamente, Allergien) | Krankenhäuser, ePA, Arztpraxen weltweit |
+| **FIM-JSON** | Behördliche Stammdaten (FITKO-Schema) | Verwaltungsportale, OZG-Umsetzung |
+
+### Für Nutzer
+- Einmal eingeben → überall mitbringen
+- Krankenhaus-Aufnahme ohne Abtippen
+- ePA-Import (sobald Krankenkassen APIs öffnen)
+
+### Für Institutionen
+- FHIR R4 Export direkt in Kliniksysteme importierbar
+- FIM-JSON für Behördenformulare (Kindergeld, Pflegegrad, ALG)
+- QR-Code auf PDF → Sachbearbeiter scannt, Formular füllt sich
+
+
 1. **`index.html` herunterladen** (eine einzige Datei, ca. 1 MB)
 2. **Im Browser öffnen** (Chrome, Edge, Firefox oder Safari)
 3. **Fokus wählen** — Arztbesuch? Notfall? Vorsorge? Alles?
@@ -143,6 +165,6 @@ Vivodepot ist vollständig mobil-optimiert:
 python3 test_vivodepot.py index.html
 ```
 
-175 Tests (Desktop, Mobile, Exporte, User-Journey) — Syntax, Funktionen, Exporte, Wizards, Barrierefreiheit, User-Journey, Fokus-Renderer.
+183 Tests (Desktop, Mobile, Exporte, User-Journey) — Syntax, Funktionen, Exporte, Wizards, Barrierefreiheit, User-Journey, Fokus-Renderer.
 
 Siehe [CONTRIBUTING.md](CONTRIBUTING.md) für Entwicklungshinweise.

@@ -1,3 +1,11 @@
+### Sperrt sich die App automatisch?
+
+Optional. In **Einstellungen → Sicherheit** kann ein Inaktivitäts-Timer gesetzt werden (5, 15 oder 30 Minuten). Nach Ablauf wird die App gesperrt — empfohlen auf geteilten oder öffentlichen Geräten. Nur aktiv wenn ein Passwort gesetzt ist.
+
+### Wie erfahre ich von Updates?
+
+In **Einstellungen → Über Vivodepot** gibt es den Button **„Auf Updates prüfen"**. Er vergleicht nur Ihre Versionsnummer mit der aktuellen auf GitHub — keine Nutzerdaten werden übertragen. Neue Versionen sind kostenlos auf GitHub verfügbar.
+
 # Vivodepot — Häufige Fragen (FAQ)
 
 ---

@@ -698,11 +698,13 @@ input[type=text], input[type=email], input[type=tel], input[type=date], select {
   display: none;
   position: fixed;
   bottom: 0; left: 0; right: 0;
-  height: calc(54px + env(safe-area-inset-bottom, 0px));
+  height: 54px;
+  padding-bottom: 0;
   padding-bottom: env(safe-area-inset-bottom, 0px);
+  height: calc(54px + env(safe-area-inset-bottom, 0px));
   background: var(--forest);
   border-top: 2px solid var(--gold);
-  z-index: 99;
+  z-index: 9999;
   align-items: center;
   justify-content: space-between;
   padding-left: 12px;
@@ -1144,7 +1146,7 @@ function initNotfallButton() {
   btn.id = 'notfall-fab';
   btn.innerHTML = '🚨';
   btn.title = 'Notfall-Infos anzeigen';
-  btn.style.cssText = 'position:fixed;bottom:20px;right:20px;width:56px;height:56px;border-radius:50%;background:var(--red,#c0392b);color:#fff;border:none;font-size:1.5rem;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,0.25);z-index:800;display:flex;align-items:center;justify-content:center;transition:transform 0.2s';
+  btn.style.cssText = 'position:fixed;bottom:20px;right:20px;width:56px;height:56px;border-radius:50%;background:var(--red,#c0392b);color:#fff;border:none;font-size:1.5rem;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,0.25);z-index:9998;display:flex;align-items:center;justify-content:center;transition:transform 0.2s';
   btn.onclick = showNotfallPopup;
   btn.onmouseenter = function() { btn.style.transform = 'scale(1.1)'; };
   btn.onmouseleave = function() { btn.style.transform = ''; };
@@ -1807,6 +1809,7 @@ function updateProfileName() {
 const CRYPTO_AVAILABLE = !!(window.crypto && window.crypto.subtle);
 
 let sessionKey = null;
+var _inactivityMinutes = parseInt(localStorage.getItem && localStorage.getItem('auto_logout_minutes') || '0') || 0;
 let data = {};
 let _cryptoResolve = null;
 
@@ -2050,6 +2053,65 @@ async function shareApp() {
   var btn = document.getElementById('share-btn');
   if (btn && navigator.share) btn.style.display = '';
 })();
+
+// ── Auto-Logout bei Inaktivität ──────────────────────────────
+var _inactivityTimer = null;
+var _inactivityMinutes = 0; // 0 = deaktiviert
+
+function resetInactivityTimer() {
+  if (!_inactivityMinutes || !sessionKey) return;
+  clearTimeout(_inactivityTimer);
+  _inactivityTimer = setTimeout(function() {
+    lockApp();
+    toast('Automatisch gesperrt nach ' + _inactivityMinutes + ' Min. Inaktivität');
+  }, _inactivityMinutes * 60 * 1000);
+}
+
+function setInactivityTimeout(minutes) {
+  _inactivityMinutes = minutes;
+  clearTimeout(_inactivityTimer);
+  set('auto_logout_minutes', minutes);
+  if (minutes > 0 && sessionKey) {
+    resetInactivityTimer();
+    toast('Auto-Sperre: nach ' + minutes + ' Min. Inaktivität');
+  } else {
+    toast('Auto-Sperre deaktiviert');
+  }
+  renderStep();
+}
+
+// Aktivität tracken
+['click','keydown','touchstart','scroll'].forEach(function(ev) {
+  document.addEventListener(ev, resetInactivityTimer, {passive: true});
+});
+
+
+async function checkForUpdate() {
+  var btn = document.getElementById('update-check-btn');
+  if (btn) { btn.textContent = 'Prüfe...'; btn.disabled = true; }
+  try {
+    var res = await fetch('https://raw.githubusercontent.com/carolaklessen/vivodepot/main/version.txt', {cache: 'no-cache'});
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    var remote = (await res.text()).trim();
+    var local = VIVODEPOT_VERSION;
+    if (btn) { btn.textContent = 'Auf Updates prüfen'; btn.disabled = false; }
+    if (remote && remote !== local) {
+      vivoConfirm(
+        '<strong>Update verfügbar!</strong><br><br>' +
+        'Ihre Version: <code>' + local + '</code><br>' +
+        'Aktuelle Version: <code>' + remote + '</code><br><br>' +
+        'Laden Sie die neue Version kostenlos von GitHub herunter. Ihre Daten bleiben erhalten.',
+        function() { window.open('https://github.com/carolaklessen/vivodepot/releases/latest', '_blank'); }
+      );
+    } else {
+      toast('Sie haben die aktuellste Version (' + local + ')');
+    }
+  } catch(e) {
+    if (btn) { btn.textContent = 'Auf Updates prüfen'; btn.disabled = false; }
+    toast('Keine Verbindung zu GitHub — bitte Internet prüfen');
+  }
+}
+
 function safeRender() {
   try {
     renderSidebar();
@@ -3876,6 +3938,15 @@ const STEP_RENDERERS = {
       ${field('notar','Notar / Anwalt — Name','')}
       ${field('notar_tel','Kontakt Notar / Anwalt','')}
     </div>
+    <div class="field-section-title">${tl('Ehevertrag & Erbvertrag')}</div>
+    <div class="field-row">
+      ${radio('ehevertrag_vorhanden','Ehevertrag vorhanden?',['Ja','Nein','Nicht relevant'],'Ohne Ehevertrag gilt der gesetzliche Güterstand (Zugewinngemeinschaft). Besonders relevant bei Unternehmensbeteiligungen, Immobilien oder unterschiedlichen Vermögensverhältnissen.')}
+      ${field('ehevertrag_ort','Ablageort Ehevertrag','z.B. Notariat Muster, Tresor zuhause','false','text','Das Original bleibt beim beurkundenden Notar. Fordern Sie eine beglaubigte Abschrift an.')}
+    </div>
+    <div class="field-row" style="margin-top:8px">
+      ${field('erbvertrag_ort','Erbvertrag — Ablageort (falls vorhanden)','z.B. Notariat Muster, Nummer EB 2019/001','false','text','Erbverträge sind verbindlicher als Testamente — sie können nur mit Zustimmung aller Beteiligten geändert werden.')}
+      ${field('ehevertrag_datum','Ehevertrag — Datum','','false','date')}
+    </div>
     <div style="margin-top:12px">${textarea('erben','Erben — Kurzübersicht','z.B. je 1/3 an Tochter Anna, Sohn Peter, Sohn Klaus\n\nPatchworkfamilie: z.B. 1/4 je an Tim (leiblich, bei Ex), Lena (leiblich, bei mir), Emma (gemeinsam), Stiefkind Max (Testament nötig!)','3','Nur zur Orientierung — die verbindliche Regelung steht im Testament. Stiefkinder erben nur mit Testament. Bei mehreren Kindern aus verschiedenen Beziehungen: explizit aufführen wer was erhält.')}</div>
     <div class="field-section-title">${tl('Vorsorgevollmacht')}</div>
     ${hint('Die Vorsorgevollmacht erlaubt einer Person Ihres Vertrauens, in Ihrem Namen zu handeln — z.B. Verträge zu unterschreiben oder medizinische Entscheidungen zu treffen — falls Sie dazu selbst nicht mehr in der Lage sind (Unfall, Krankheit). Ohne diese Vollmacht muss das Gericht einen Betreuer einsetzen, was Zeit und Kosten verursacht.')}
@@ -4439,6 +4510,10 @@ const STEP_RENDERERS = {
         hint: 'Bankvollmachten können verfallen — bei der Hausbank nach Aktualität fragen.' },
       { key: 'erinnerung_notfallmappe', label: 'Vivodepot (diese)', icon: '',
         hint: 'Empfehlung: mindestens jährlich alle Angaben prüfen und aktualisieren.' },
+      { key: 'erinnerung_ehevertrag',   label: 'Ehevertrag',          icon: '',
+        hint: 'Ehevertrag nach Geburt von Kindern, Immobilienkauf oder größeren Vermögensveränderungen prüfen lassen. Ablageort im Testament-Schritt vermerken.' },
+      { key: 'erinnerung_erbvertrag',   label: 'Erbvertrag',          icon: '',
+        hint: 'Erbvertrag ist bindend — Änderungen nur mit Zustimmung aller Vertragsparteien. Bei Lebensveränderungen mit Notar besprechen.' },
     ];
 
     const now = new Date();
@@ -4652,10 +4727,23 @@ const STEP_RENDERERS = {
     <div style="font-size:0.78rem;color:var(--ink3);margin-bottom:1rem"> Tipp: Speichern Sie regelmäßig eine Kopie — als Backup in Ihrer Cloud (die Datei ist verschlüsselt).
     </div>
 
+    <div class="field-section-title">Sicherheit</div>
+    <div style="background:var(--beige);border-radius:10px;padding:1rem;margin-bottom:1rem">
+      <div style="font-size:0.85rem;font-weight:600;margin-bottom:8px">Automatische Sperre bei Inaktivität</div>
+      <div style="font-size:0.82rem;color:var(--ink2);margin-bottom:10px">Sperrt die App nach Inaktivität — empfohlen auf geteilten Geräten. Nur aktiv wenn ein Passwort gesetzt ist.</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <button class="btn-nav ${parseInt(get('auto_logout_minutes'))||0===0?'primary':''}" onclick="setInactivityTimeout(0)" style="font-size:0.82rem;padding:8px 14px">Aus</button>
+        <button class="btn-nav ${parseInt(get('auto_logout_minutes'))||0===5?'primary':''}" onclick="setInactivityTimeout(5)" style="font-size:0.82rem;padding:8px 14px">5 Min</button>
+        <button class="btn-nav ${parseInt(get('auto_logout_minutes'))||0===15?'primary':''}" onclick="setInactivityTimeout(15)" style="font-size:0.82rem;padding:8px 14px">15 Min</button>
+        <button class="btn-nav ${parseInt(get('auto_logout_minutes'))||0===30?'primary':''}" onclick="setInactivityTimeout(30)" style="font-size:0.82rem;padding:8px 14px">30 Min</button>
+      </div>
+    </div>
+
     <div class="field-section-title">${tl('ℹ Über Vivodepot')}</div>
     <div style="font-size:0.85rem;color:var(--ink2);line-height:1.8">
       <div style="font-size:0.72rem;color:var(--gold);letter-spacing:0.12em;font-weight:600;margin-bottom:6px">SOUVERÄNITÄT BY DESIGN</div>
-      <strong>Version:</strong> ${VIVODEPOT_VERSION}<br>
+      <strong>Version:</strong> ${VIVODEPOT_VERSION}
+      <button id="update-check-btn" onclick="checkForUpdate()" style="margin-left:10px;padding:3px 10px;font-size:0.75rem;background:var(--forest-lt);border:1px solid var(--forest);border-radius:6px;color:var(--forest);cursor:pointer">Auf Updates prüfen</button><br>
       <strong>Herausgeber:</strong> Vivodepot UG (haftungsbeschränkt)<br>
       <strong>Lizenz:</strong> <a href="https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12" target="_blank" style="color:var(--teal)">EUPL-1.2</a> (Open Source)<br>
       <strong>Quellcode:</strong> <a href="https://github.com/carolaklessen/vivodepot" target="_blank" style="color:var(--teal)">GitHub</a><br>
@@ -5144,6 +5232,10 @@ const FOCUSED_RENDERERS = {
       ${field('notar','Notar / Anwalt — Name','')}
     </div>
     <div style="margin-top:8px">${textarea('erben','Erben — Kurzübersicht','z.B. je 1/3 an Tochter Anna, Sohn Peter, Sohn Klaus','2','Nur zur Orientierung — die verbindliche Regelung steht im Testament.')}</div>
+    <div class="field-row" style="margin-top:8px">
+      ${radio('ehevertrag_vorhanden','Ehevertrag vorhanden?',['Ja','Nein','Nicht relevant'],'Ohne Ehevertrag gilt Zugewinngemeinschaft.')}
+      ${field('ehevertrag_ort','Ablageort Ehevertrag','z.B. Notariat Muster','false','text')}
+    </div>
     <div class="field-section-title" style="margin-top:1rem">Vorsorgevollmacht</div>
     <div class="field-row">
       ${radio('vv_vorhanden','Vorsorgevollmacht vorhanden?',['Ja','Nein','In Vorbereitung'])}
@@ -6795,6 +6887,8 @@ function generateChecklist() {
     [' Testament & Vollmachten', [
       ['Testament', [get('testament_vorhanden'),get('testament_ort')].filter(Boolean).join(' / ')],
       ['Testamentsvollstrecker', get('testamentsvollstrecker')],
+          ['Ehevertrag vorhanden', get('ehevertrag_vorhanden')],
+          ['Ehevertrag Ablageort', get('ehevertrag_ort')],
       ['Notar / Anwalt', get('notar')],
       ['Erben Übersicht', get('erben')],
       ['Vorsorgevollmacht', [get('vollmacht_vorhanden'),get('vollmacht_person')].filter(Boolean).join(' / ')],

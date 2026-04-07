@@ -2,6 +2,14 @@
 
 Alle wesentlichen Änderungen an VIVODEPOT werden in dieser Datei dokumentiert.
 
+## [1.0.0-beta.4-final2] — 2026-04-07 (Beta-Feedback)
+
+### Neue Features
+- **Auto-Logout**: Optionaler Inaktivitäts-Timer (5/15/30 Min.) in Einstellungen — empfohlen auf geteilten Geräten
+- **Versionscheck**: „Auf Updates prüfen"-Button in Einstellungen — prüft nur Versionsnummer auf GitHub, keine Nutzerdaten
+
+---
+
 ## [1.0.0-beta.4-final] — 2026-04-07 (Fokus-Bugfix)
 
 ### Bugfixes Fokus-Modus
@@ -13,7 +21,7 @@ Alle wesentlichen Änderungen an VIVODEPOT werden in dieser Datei dokumentiert.
 - **Overlay**: `crypto-overlay` scrollbar (overflow-y: auto) — Button nicht mehr hinter Bottom-Nav
 
 ### Tests
-- **175 Tests** alle grün (+6 neue: Mobile-Nav, Focus-Badge, Sidebar, Fokus-Schrittzahl)
+- **183 Tests** alle grün (+6 neue: Mobile-Nav, Focus-Badge, Sidebar, Fokus-Schrittzahl)
 
 ---
 
@@ -64,6 +72,14 @@ Alle wesentlichen Änderungen an VIVODEPOT werden in dieser Datei dokumentiert.
 
 ---
 
+## [1.0.0-beta.4-final2] — 2026-04-07 (Beta-Feedback)
+
+### Neue Features
+- **Auto-Logout**: Optionaler Inaktivitäts-Timer (5/15/30 Min.) in Einstellungen — empfohlen auf geteilten Geräten
+- **Versionscheck**: „Auf Updates prüfen"-Button in Einstellungen — prüft nur Versionsnummer auf GitHub, keine Nutzerdaten
+
+---
+
 ## [1.0.0-beta.4-final] — 2026-04-07 (Fokus-Bugfix)
 
 ### Bugfixes Fokus-Modus
@@ -75,7 +91,7 @@ Alle wesentlichen Änderungen an VIVODEPOT werden in dieser Datei dokumentiert.
 - **Overlay**: `crypto-overlay` scrollbar (overflow-y: auto) — Button nicht mehr hinter Bottom-Nav
 
 ### Tests
-- **175 Tests** alle grün (+6 neue: Mobile-Nav, Focus-Badge, Sidebar, Fokus-Schrittzahl)
+- **183 Tests** alle grün (+6 neue: Mobile-Nav, Focus-Badge, Sidebar, Fokus-Schrittzahl)
 
 ---
 
@@ -150,6 +166,14 @@ Alle wesentlichen Änderungen an VIVODEPOT werden in dieser Datei dokumentiert.
 
 ---
 
+## [1.0.0-beta.4-final2] — 2026-04-07 (Beta-Feedback)
+
+### Neue Features
+- **Auto-Logout**: Optionaler Inaktivitäts-Timer (5/15/30 Min.) in Einstellungen — empfohlen auf geteilten Geräten
+- **Versionscheck**: „Auf Updates prüfen"-Button in Einstellungen — prüft nur Versionsnummer auf GitHub, keine Nutzerdaten
+
+---
+
 ## [1.0.0-beta.4-final] — 2026-04-07 (Fokus-Bugfix)
 
 ### Bugfixes Fokus-Modus
@@ -161,7 +185,7 @@ Alle wesentlichen Änderungen an VIVODEPOT werden in dieser Datei dokumentiert.
 - **Overlay**: `crypto-overlay` scrollbar (overflow-y: auto) — Button nicht mehr hinter Bottom-Nav
 
 ### Tests
-- **175 Tests** alle grün (+6 neue: Mobile-Nav, Focus-Badge, Sidebar, Fokus-Schrittzahl)
+- **183 Tests** alle grün (+6 neue: Mobile-Nav, Focus-Badge, Sidebar, Fokus-Schrittzahl)
 
 ---
 
@@ -224,6 +248,14 @@ Alle wesentlichen Änderungen an VIVODEPOT werden in dieser Datei dokumentiert.
 
 ---
 
+## [1.0.0-beta.4-final2] — 2026-04-07 (Beta-Feedback)
+
+### Neue Features
+- **Auto-Logout**: Optionaler Inaktivitäts-Timer (5/15/30 Min.) in Einstellungen — empfohlen auf geteilten Geräten
+- **Versionscheck**: „Auf Updates prüfen"-Button in Einstellungen — prüft nur Versionsnummer auf GitHub, keine Nutzerdaten
+
+---
+
 ## [1.0.0-beta.4-final] — 2026-04-07 (Fokus-Bugfix)
 
 ### Bugfixes Fokus-Modus
@@ -235,7 +267,7 @@ Alle wesentlichen Änderungen an VIVODEPOT werden in dieser Datei dokumentiert.
 - **Overlay**: `crypto-overlay` scrollbar (overflow-y: auto) — Button nicht mehr hinter Bottom-Nav
 
 ### Tests
-- **175 Tests** alle grün (+6 neue: Mobile-Nav, Focus-Badge, Sidebar, Fokus-Schrittzahl)
+- **183 Tests** alle grün (+6 neue: Mobile-Nav, Focus-Badge, Sidebar, Fokus-Schrittzahl)
 
 ---
 
@@ -296,6 +328,14 @@ Alle wesentlichen Änderungen an VIVODEPOT werden in dieser Datei dokumentiert.
 
 ---
 
+## [1.0.0-beta.4-final2] — 2026-04-07 (Beta-Feedback)
+
+### Neue Features
+- **Auto-Logout**: Optionaler Inaktivitäts-Timer (5/15/30 Min.) in Einstellungen — empfohlen auf geteilten Geräten
+- **Versionscheck**: „Auf Updates prüfen"-Button in Einstellungen — prüft nur Versionsnummer auf GitHub, keine Nutzerdaten
+
+---
+
 ## [1.0.0-beta.4-final] — 2026-04-07 (Fokus-Bugfix)
 
 ### Bugfixes Fokus-Modus
@@ -307,7 +347,7 @@ Alle wesentlichen Änderungen an VIVODEPOT werden in dieser Datei dokumentiert.
 - **Overlay**: `crypto-overlay` scrollbar (overflow-y: auto) — Button nicht mehr hinter Bottom-Nav
 
 ### Tests
-- **175 Tests** alle grün (+6 neue: Mobile-Nav, Focus-Badge, Sidebar, Fokus-Schrittzahl)
+- **183 Tests** alle grün (+6 neue: Mobile-Nav, Focus-Badge, Sidebar, Fokus-Schrittzahl)
 
 ---
 

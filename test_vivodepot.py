@@ -325,6 +325,16 @@ def main():
     check("Fokus: Sidebar Early-Return in goalMode", "if (goalMode && goalRelevant) {" in html and "sb.innerHTML = html;\n    return;" in html)
     check("Fokus: Focus-Badge in Topbar", "focus-badge" in html)
     check("Fokus: updateFocusBadge()", "function updateFocusBadge" in html)
+    check("Fokus: legal_testament Renderer", "legal_testament:" in html)
+    check("Fokus: family_testament Renderer", "family_testament:" in html)
+
+    # Beta-Feedback Features
+    check("Security: Auto-Logout _inactivityMinutes", "_inactivityMinutes" in html)
+    check("Security: resetInactivityTimer()", "function resetInactivityTimer" in html)
+    check("Security: setInactivityTimeout()", "function setInactivityTimeout" in html)
+    check("Security: checkForUpdate()", "async function checkForUpdate" in html)
+    check("Security: update-check-btn", "update-check-btn" in html)
+    check("Security: Versionscheck nur version.txt", "version.txt" in html)
 
     # ═══════════════════════════════════════
     print("\n=== ZUSAMMENFASSUNG ===")
