@@ -13,7 +13,7 @@ VIVODEPOT ist eine vollständig offline-fähige Einzeldatei-HTML-Anwendung zur V
 
 ## Schnellstart
 
-1. [`VIVODEPOT_1.html`](VIVODEPOT_1.html) herunterladen
+1. [`VIVODEPOT.html`](VIVODEPOT.html) herunterladen
 2. In Chrome oder Firefox öffnen (Doppelklick genügt)
 3. Loslegen — keine Installation, keine Registrierung
 
@@ -132,7 +132,7 @@ Funktioniert auf:
 ## Tests
 
 ```bash
-python3 test_vivodepot_1.py VIVODEPOT_1.html
+python3 test_vivodepot.py VIVODEPOT.html
 ```
 
 **802 Tests** in 32 Sektionen: Syntax, Verschlüsselung, Navigation, PDF-Export, Word-Export, Barrierefreiheit, Mobile, Offline, Rechtsinhalte und mehr.

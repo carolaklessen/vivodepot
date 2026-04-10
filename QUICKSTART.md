@@ -8,7 +8,7 @@
 
 ### Schritt 1: Datei herunterladen
 
-Laden Sie [`VIVODEPOT_1.html`](VIVODEPOT_1.html) herunter (ca. 1,3 MB).
+Laden Sie [`VIVODEPOT.html`](VIVODEPOT.html) herunter (ca. 1,3 MB).
 
 Oder öffnen Sie direkt: [carolaklessen.github.io/vivodepot/](https://carolaklessen.github.io/vivodepot/)
 

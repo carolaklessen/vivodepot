@@ -21,8 +21,8 @@ Vielen Dank für Ihr Interesse an VIVODEPOT! Jede Rückmeldung hilft.
 Da VIVODEPOT eine Einzeldatei-HTML-App ist, sind Code-Beiträge direkt möglich:
 
 1. Fork erstellen
-2. Änderungen in `VIVODEPOT_1.html` vornehmen
-3. Tests ausführen: `python3 test_vivodepot_1.py VIVODEPOT_1.html`
+2. Änderungen in `VIVODEPOT.html` vornehmen
+3. Tests ausführen: `python3 test_vivodepot.py VIVODEPOT.html`
 4. Pull Request erstellen
 
 **Bitte beachten:**

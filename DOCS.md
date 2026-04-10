@@ -9,7 +9,7 @@
 VIVODEPOT ist eine **Einzeldatei-HTML-Anwendung** (~1,3 MB). Keine Build-Pipeline, kein Framework, kein CDN.
 
 ```
-VIVODEPOT_1.html
+VIVODEPOT.html
 ├── CSS (eingebettet)
 ├── Inline-Bibliotheken
 │   ├── jsPDF 2.5.1 (364 KB) — PDF-Erstellung
@@ -106,7 +106,7 @@ localStorage.setItem('vivodepot_data_profil1', JSON.stringify(verschluesselt));
 ## Tests
 
 ```bash
-python3 test_vivodepot_1.py VIVODEPOT_1.html
+python3 test_vivodepot.py VIVODEPOT.html
 ```
 
 **802 Tests in 32 Sektionen:**
