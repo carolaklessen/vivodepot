@@ -1,75 +1,44 @@
-# Vivodepot
+# VIVODEPOT — Mitmachen
 
-Version: v1.0.0-beta.4
+Vielen Dank für Ihr Interesse an VIVODEPOT! Jede Rückmeldung hilft.
 
-# Beitragen / Contributing
+## Wie Sie beitragen können
 
-Vielen Dank für Ihr Interesse an VIVODEPOT! Wir freuen uns über jeden Beitrag.
+### Fehler melden
 
-## Erste Schritte
+1. Prüfen Sie, ob der Fehler in der aktuellen Version (1.0.0-beta.6) noch vorhanden ist
+2. Öffnen Sie ein [GitHub Issue](https://github.com/carolaklessen/vivodepot/issues)
+3. Beschreiben Sie: Was haben Sie getan? Was ist passiert? Was hätten Sie erwartet?
+4. Nennen Sie Browser, Betriebssystem und Gerätetyp
 
-1. **Forken** Sie das Repository
-2. **Klonen** Sie Ihren Fork: `git clone https://github.com/carolaklessen/vivodepot.git`
-3. **Öffnen** Sie `index.html` im Browser — fertig, keine Build-Tools nötig
-4. **Testen** Sie Ihre Änderungen: `python3 test_vivodepot.py index.html` (175 Tests)
-5. **Pull Request** erstellen
+### Verbesserungen vorschlagen
 
-## Architektur
+- GitHub Issues mit dem Label `enhancement`
+- E-Mail an [feedback@vivodepot.de](mailto:feedback@vivodepot.de)
 
-VIVODEPOT ist bewusst als **einzelne HTML-Datei** ohne Build-System konzipiert. Das bedeutet:
+### Code-Beiträge
 
-- **Kein npm, kein Webpack, kein Transpiler** — Vanilla JS, Vanilla CSS
-- **Alles in einer Datei** — HTML, CSS, JavaScript
-- **3 externe Bibliotheken** über CDN (docx, jsPDF, qrcode-generator)
-- **Kein Framework** — DOM-Manipulation direkt
+Da VIVODEPOT eine Einzeldatei-HTML-App ist, sind Code-Beiträge direkt möglich:
 
-### Warum Single-File?
-Die Zielgruppe (ältere, nicht computeraffine Personen) soll eine Datei auf einen USB-Stick kopieren und im Browser öffnen können. Kein Installationsprozess, keine Abhängigkeiten, kein Server.
+1. Fork erstellen
+2. Änderungen in `VIVODEPOT_1.html` vornehmen
+3. Tests ausführen: `python3 test_vivodepot_1.py VIVODEPOT_1.html`
+4. Pull Request erstellen
 
-## Richtlinien
+**Bitte beachten:**
+- Keine externen Abhängigkeiten einführen (alles muss inline bleiben)
+- Barrierefreiheit nicht verschlechtern (Touch-Targets 44px, ARIA-Labels)
+- Bestehende Tests müssen weiterhin bestehen (802/802)
+- Neue Funktionen sollten von Tests abgedeckt werden
 
-### Code-Stil
-- **Kein nativer `confirm()`** — immer `vivoConfirm(text, onOk)` verwenden
-- **Kein globaler localStorage-Wrapper** — direkt `localStorage` mit try/catch verwenden (DuckDuckGo-Kompatibilität)
-- **safeRender()** statt direktem `renderStep()` an Einstiegspunkten
-- **FOCUSED_RENDERERS**: Für neue Fokus-Varianten `goalname_stepid:` Einträge ergänzen — schlanke Versionen mit nur relevanten Feldern
-- **Keine Emojis in UI-Texten** — Zielgruppe 50+, ernste Themen, professionelles Design. Emojis nur in Export-Karten-Icons (ec-icon) und Topbar-Funktionssymbolen erlaubt — ältere Screenreader haben Probleme damit
-- **Tap-Targets mindestens 44×44px** — Barrierefreiheit (alle Touch-Geräte)
-- **Input font-size mindestens 16px auf Mobile** — verhindert Auto-Zoom auf iOS und Android
-- **`touch-action: manipulation`** auf interaktiven Elementen — kein Tap-Delay
-- **`type="tel"`** für Telefonnummer-Felder, **`type="date"`** für Datums-Felder — wird automatisch per Feldname erkannt
-- **Schriftgröße mindestens 14px** — Lesbarkeit für ältere Nutzer
-- **Generische Feldlabels** — keine provider-spezifischen Begriffe
-- **Keine Passwort-Speicherfelder** — nur Ablageort-Hinweise
+## KI-Entwicklung
 
-### Konventionen
-- Variablennamen: `camelCase`
-- Datenfelder: `snake_case` (für Konsistenz mit `get()`/`set()`)
-- Kommentare: `// ═══ ABSCHNITT ═══` für große Blöcke
-- Deutsche UI-Texte mit `tl()`-Wrapper für Übersetzbarkeit
-
-### Tests
-Vor jedem PR: `python3 test_vivodepot.py index.html` — alle 183 Tests müssen grün sein.
-
-### Was wir suchen
-- Bug-Fixes (besonders Browser-Kompatibilität)
-- Übersetzungen (EN-Texte in PDFs/Word-Exporten)
-- Barrierefreiheit (ARIA-Labels, Tastaturnavigation)
-- Mobile-Optimierung
-- Sicherheitsverbesserungen
-- Dokumentation
-
-### Was wir nicht suchen
-- Build-Systeme (npm, Webpack, etc.)
-- Frontend-Frameworks (React, Vue, etc.)
-- Server-Komponenten
-- Datenbank-Integration
-- Tracking oder Analytics
-
-## KI-Transparenz
-
-VIVODEPOT wurde mit Unterstützung von KI-Werkzeugen (Claude, Anthropic) entwickelt. Der gesamte Code wurde vom Projektinhaber geprüft, getestet und freigegeben. Wenn Sie KI-Werkzeuge für Ihre Beiträge verwenden, kennzeichnen Sie dies bitte im Pull Request.
+VIVODEPOT wird mit KI-Unterstützung (Claude, Anthropic) entwickelt. Das ist in der App, im Code und in allen Dokumenten transparent ausgewiesen (EU AI Act Art. 50).
 
 ## Lizenz
 
-Mit Ihrem Beitrag stimmen Sie zu, dass dieser unter der [EUPL-1.2](LICENSE) lizenziert wird.
+Durch Ihren Beitrag stimmen Sie zu, dass Ihre Änderungen unter der [EUPL-1.2](LICENSE) veröffentlicht werden.
+
+## Kontakt
+
+[feedback@vivodepot.de](mailto:feedback@vivodepot.de) · [vivodepot.de](https://vivodepot.de)

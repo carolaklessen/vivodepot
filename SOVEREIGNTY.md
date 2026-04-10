@@ -1,250 +1,254 @@
-# 🔒 Vivodepot — Selbstbewertung Digitale Souveränität
+# VIVODEPOT — Souveränitätsprüfung
 
-**Bewertung nach den Kriterien des Zentrums für Digitale Souveränität (ZenDiS)**
-
-Stand: April 2026 · Version 1.0.0-beta.4 · Vivodepot UG (haftungsbeschränkt)
+**Selbstbewertung nach den Kriterien des ZenDiS (Zentrum für Digitale Souveränität)**
+*Version 1.0.0-beta.6 · April 2026*
 
 ---
 
 ## Zusammenfassung
 
-Vivodepot ist ein persönlicher Vorsorge-Assistent, der als einzelne HTML-Datei lokal im Browser läuft — ohne Server, ohne Cloud, ohne Benutzerkonto. Die Anwendung speichert alle Daten ausschließlich auf dem Gerät des Nutzers, verschlüsselt sie mit AES-256-GCM und exportiert sie bei Bedarf als maschinenlesbares FIM-kompatibles JSON — mit QR-Code auf dem Datenblatt, scanbar durch Verwaltungssysteme.
+VIVODEPOT erfüllt alle 8 Souveränitätskriterien des ZenDiS auf maximalem oder hohem Niveau. Das Produkt wurde von Grund auf mit dem Ziel entwickelt, vollständige digitale Souveränität für Bürgerinnen und Bürger zu gewährleisten.
 
-**Ergebnis: Vivodepot erfüllt alle 8 Kriterien digitaler Souveränität auf höchstem Niveau.**
-
-| Kriterium | Bewertung | Begründung |
-|-----------|-----------|------------|
-| Datenhoheit | ✅ Maximal | Kein Server. Daten existieren nur auf dem Gerät des Nutzers. |
-| Wechselmöglichkeit | ✅ Maximal | 17 Export-Formate inkl. FIM-JSON. Kein Lock-in. |
-| Transparenz | ✅ Maximal | Open Source (EUPL-1.2). Vollständig überprüfbarer Quellcode. |
-| Herkunft & Jurisdiktion | ✅ Maximal | Deutsches Unternehmen. Keine US-Verbindung. Kein CLOUD Act. |
-| Verfügbarkeit | ✅ Maximal | Funktioniert komplett offline. Keine Serverabhängigkeit. |
-| Sicherheit | ✅ Maximal | AES-256-GCM. Kein Angriffspunkt, weil kein Server existiert. |
-| Interoperabilität | ✅ Maximal | FHIR R4, FIM-JSON, PDF, DOCX, QR-Code, CSV, vCard. |
-| Barrierefreiheit | ✅ Hoch | 10 Features: Vorlesen, Kontrast, Lupe, Nachtmodus, Spracheingabe. |
+| Kriterium | Bewertung | Kurzfazit |
+|---|---|---|
+| 1. Datenhoheit | ✅ Maximal | 100% lokale Speicherung, AES-256-GCM |
+| 2. Wechselmöglichkeit | ✅ Maximal | JSON-Export, HTML-Export, kein Lock-in |
+| 3. Transparenz | ✅ Maximal | EUPL-1.2, quelloffen, KI-Transparenz |
+| 4. Jurisdiktion | ✅ Hoch | Deutsches Recht, EU-Datenschutz |
+| 5. Verfügbarkeit | ✅ Maximal | Vollständig offline, keine Abhängigkeiten |
+| 6. Sicherheit | ✅ Maximal | AES-256-GCM, PBKDF2, kein Netzwerk |
+| 7. Interoperabilität | ✅ Hoch | JSON, vCard, PDF, DOCX, FHIR R4 |
+| 8. Barrierefreiheit | ✅ Hoch | WCAG 2.1, Vorlesen, Kontrast, Lupe |
 
 ---
 
 ## 1. Datenhoheit
 
-> *„Wer hat Zugriff auf die Daten des Nutzers?"*
+**Bewertung: ✅ Maximal**
 
-**Bewertung: ✅ Maximal — ausschließlich der Nutzer selbst.**
+**Prüffrage:** Wer kontrolliert die Daten des Nutzers?
 
-Vivodepot speichert keine Daten auf einem Server. Es gibt keinen Server. Die Anwendung ist eine einzelne HTML-Datei (~1 MB), die lokal im Browser ausgeführt wird. Alle Nutzerdaten werden im localStorage des Browsers oder in der heruntergeladenen HTML-Datei gespeichert.
+**Befund:** Die nutzende Person hat vollständige und ausschließliche Kontrolle über ihre Daten.
 
-- Kein Benutzerkonto, keine Registrierung, keine E-Mail erforderlich
-- Kein Tracking, keine Cookies, kein Google Analytics, keine Telemetrie
-- Kein Anbieter — auch nicht Vivodepot — kann auf die Daten zugreifen
-- Software funktioniert weiter, selbst wenn Vivodepot als Unternehmen nicht mehr existiert
+- Alle Daten werden ausschließlich im `localStorage` des lokalen Browsers gespeichert
+- Kein Server, keine Cloud, keine Datenbank empfängt jemals Nutzerdaten
+- Keine Telemetrie, kein Analytics, keine Nutzungsstatistiken
+- Die gespeicherte HTML-Datei ist eine vollständige Kopie aller Daten — keine Abhängigkeit von externen Diensten
+- AES-256-GCM Verschlüsselung mit PBKDF2-Schlüsselableitung (100.000 Iterationen)
+- Ohne das Passwort des Nutzers sind gespeicherte Daten nicht lesbar — auch nicht für Vivodepot
 
 ---
 
-## 2. Wechselmöglichkeit (kein Vendor Lock-in)
+## 2. Wechselmöglichkeit (Portabilität)
 
-> *„Kann der Nutzer jederzeit seine Daten mitnehmen?"*
+**Bewertung: ✅ Maximal**
 
-**Bewertung: ✅ Maximal — vollständige Datenportabilität in 17 Formaten.**
+**Prüffrage:** Kann der Nutzer seine Daten jederzeit mitnehmen und zu einer anderen Lösung wechseln?
 
-| Format | Beschreibung |
-|--------|-------------|
-| JSON | Alle Daten als strukturierte Datei — maschinenlesbar |
-| FIM-JSON | Behördendaten nach FIM-Stammdatenschema — für Verwaltungsportale |
-| HTML | Selbsttragende Datei mit eingebetteten Daten |
-| PDF | Druckbares Gesamtdokument |
-| DOCX (Word) | Bearbeitbares Dokument |
-| FHIR R4 JSON | Internationaler Medizindaten-Standard (HL7) |
-| CSV / vCard | Kontaktdaten-Import und -Export |
-| QR-Code (Notfall) | Notfall-Informationen als scannbarer Code |
-| QR-Code (Behörden) | Kerndaten als maschinenlesbares JSON auf Behördendatenblättern |
-| Kindergeld-PDF | Datenblatt für die Familienkasse mit QR-Code |
-| Arbeitsamt-PDF | Stammdaten für ALG-Antrag mit QR-Code |
-| Pflegegrad-PDF | Gesundheitsdaten für die Pflegekasse mit QR-Code |
+**Befund:** Vollständige Portabilität ohne Hürden.
+
+**Export-Formate (13 Stück):**
+- HTML-Datei (vollständige App mit eingebetteten Daten)
+- JSON (maschinenlesbarer Rohdaten-Export)
+- PDF (Notfallmappe, druckfertig)
+- Word DOCX (bearbeitbar)
+- Notfall-Blatt PDF
+- Arztbogen PDF
+- Szenario-PDFs (Krankenhaus, Todesfall, Notfall-Tasche)
+- Vorsorgevollmacht DOCX
+- Patientenverfügung DOCX
+- Gesundheitsvollmacht DOCX
+- QR-Aufkleber PDF
+- vCard 4.0 (Kontaktexport)
+- FHIR R4 JSON (Gesundheitsdaten, HL7-Standard)
+
+Kein proprietäres Format, kein Export-Limit, kein Account erforderlich.
 
 ---
 
 ## 3. Transparenz
 
-> *„Ist der Quellcode überprüfbar?"*
+**Bewertung: ✅ Maximal**
 
-**Bewertung: ✅ Maximal — vollständig Open Source.**
+**Prüffrage:** Ist das Produkt transparent hinsichtlich Funktionsweise, Quellcode und KI-Einsatz?
 
-- **Lizenz:** EUPL-1.2 (European Union Public Licence)
-- **Quellcode:** Öffentlich auf [GitHub](https://github.com/carolaklessen/vivodepot)
-- **Architektur:** Einzelne HTML-Datei, keine versteckten Abhängigkeiten
-- **KI-Transparenz:** Konform mit EU AI Act Art. 50 — Entwicklung mit KI-Unterstützung dokumentiert
-- **Externe Bibliotheken:** 3 Open-Source-Bibliotheken (jsPDF, docx, QRCode.js), alle MIT-lizenziert
+**Befund:** Vollständige Transparenz auf allen Ebenen.
 
-Die EUPL-1.2 ist die einzige von der EU-Kommission herausgegebene, OSI-zertifizierte Open-Source-Lizenz. Sie ist in allen 23 EU-Amtssprachen rechtsverbindlich.
-
----
-
-## 4. Herkunft & Jurisdiktion
-
-> *„Unterliegt der Anbieter außereuropäischen Zugriffsgesetzen?"*
-
-**Bewertung: ✅ Maximal — rein deutsches Unternehmen, keine US-Verbindung.**
-
-| Prüfpunkt | Status |
-|-----------|--------|
-| Firmensitz | Deutschland |
-| Rechtsform | UG (haftungsbeschränkt) nach deutschem Recht |
-| US-Muttergesellschaft | Keine |
-| US-Tochtergesellschaft | Keine |
-| US-Investoren | Keine |
-| Unterliegt dem CLOUD Act | **Nein** |
-| Unterliegt FISA 702 | **Nein** |
-| Server in den USA | **Es gibt keine Server** |
+- **Quelloffenheit:** EUPL-1.2 (Europäische Union Public Licence) — copyleft-kompatibel mit GPL und AGPL
+- **Quellcode:** Vollständig einsehbar auf GitHub ([github.com/carolaklessen/vivodepot](https://github.com/carolaklessen/vivodepot))
+- **Einzeldatei:** Der gesamte Quellcode ist in einer einzigen HTML-Datei — keine Build-Pipeline, kein versteckter Code
+- **KI-Transparenz:** Entwickelt mit KI-Unterstützung (Claude, Anthropic) gemäß EU AI Act Art. 50 — in der App, im Code und in allen Dokumenten offengelegt
+- **Bibliotheken:** Alle verwendeten Drittbibliotheken sind inline eingebettet und in ihrer Herkunft dokumentiert (jsPDF, docx.js, QR-Code-Generator)
+- **Keine versteckten Funktionen:** Kein Tracking, kein Analytics, keine Werbung
 
 ---
 
-## 5. Verfügbarkeit & Resilienz
+## 4. Jurisdiktion
 
-> *„Funktioniert die Anwendung auch bei Ausfall externer Dienste?"*
+**Bewertung: ✅ Hoch**
 
-**Bewertung: ✅ Maximal — funktioniert komplett offline.**
+**Prüffrage:** Welchem Recht unterliegt das Produkt? Gibt es Risiken durch außereuropäische Jurisdiction?
 
-| Szenario | Cloud-Anbieter | Vivodepot |
-|----------|---------------|-----------|
-| Internet-Ausfall | ❌ Kein Zugriff | ✅ Funktioniert |
-| Server-Hack | ❌ Daten gefährdet | ✅ Kein Server vorhanden |
-| Anbieter insolvent | ❌ Daten ggf. verloren | ✅ Software läuft weiter |
-| CLOUD-Act-Anfrage | ⚠️ Herausgabepflicht | ✅ Nicht betroffen |
+**Befund:** Deutsches Recht, kein US-Cloud-Risiko.
 
----
+- Betreiber: Vivodepot UG (haftungsbeschränkt), Berlin — deutsches Gesellschaftsrecht
+- Keine Datenübermittlung an Dritte → keine Drittstaaten-Jurisdiktion
+- Keine US-Cloud-Dienste (kein AWS, Azure, Google Cloud)
+- Keine Verarbeitung personenbezogener Daten auf Servern → DSGVO-Konformität strukturell gewährleistet
+- Lizenz: EUPL-1.2 (europäische Open-Source-Lizenz, entwickelt für EU-Institutionen)
+- Rechtliche Hinweise, Impressum und Datenschutzerklärung: vivodepot.de
 
-## 6. Sicherheit & Verschlüsselung
-
-> *„Wie werden die Daten geschützt?"*
-
-**Bewertung: ✅ Maximal — AES-256-GCM, kein Angriffspunkt.**
-
-| Merkmal | Implementierung |
-|---------|----------------|
-| Verschlüsselung | AES-256-GCM (Web Crypto API) |
-| Schlüsselableitung | PBKDF2, 100.000 Iterationen |
-| Angriffsfläche | **Null** — kein Server, kein Netzwerk |
-| Brute-Force-Schutz | 5 Versuche, dann gesperrt |
-| Notfall-Zugriff | 6 Felder unverschlüsselt (wie iPhone ICE) |
-| Passwort-Reset | **Nicht möglich** — by design |
+*Einschränkung: Die zugrundeliegenden KI-Entwicklungswerkzeuge (Anthropic/Claude) sind US-amerikanisch. Der KI-Einsatz erfolgte ausschließlich während der Entwicklung — nicht im Betrieb der App.*
 
 ---
 
-## 7. Interoperabilität & Offene Standards
+## 5. Verfügbarkeit & Betriebskontinuität
 
-> *„Verwendet die Anwendung offene Standards?"*
+**Bewertung: ✅ Maximal**
 
-**Bewertung: ✅ Maximal — inkl. FIM-kompatibler Verwaltungsbrücke.**
+**Prüffrage:** Ist das Produkt unabhängig von externen Diensten verfügbar?
 
-| Standard | Verwendung |
-|----------|-----------|
-| HTML5 | Anwendungsformat |
-| JSON | Datenexport |
-| FIM-JSON | Behördendaten (FITKO-Stammdatenschema) |
-| PDF (ISO 32000) | Dokumentenexport |
-| OOXML (ISO 29500) | Word-Export |
-| FHIR R4 (HL7) | Medizindaten |
-| vCard (RFC 6350) | Kontakte |
-| QR-Code (ISO 18004) | Notfall- und Behördendaten |
-| AES-256-GCM (NIST) | Verschlüsselung |
-| EUPL-1.2 | Lizenz |
+**Befund:** Vollständige Offline-Fähigkeit — keine einzige externe Abhängigkeit im Betrieb.
 
-### FIM-JSON-Export (BürgerFIM)
+- Alle Bibliotheken sind inline eingebettet (jsPDF 364 KB, docx.js 368 KB, QR-Code 20 KB)
+- Keine Google Fonts — Systemschriften (Georgia, -apple-system) werden verwendet
+- Keine CDN-Anfragen beim Öffnen oder Nutzen der App
+- Keine API-Calls, keine Webhooks, keine Websockets
+- Funktioniert im Flugmodus, auf USB-Sticks, auf Offline-Computern
+- Service Worker für Browser-Cache (bei GitHub Pages Hosting)
+- Kein Single Point of Failure: Wenn GitHub offline ist, funktionieren alle gespeicherten Kopien weiterhin
 
-Vivodepot exportiert Stammdaten als maschinenlesbares JSON mit 12 Kategorien:
+**Getestete Umgebungen:** Chrome, Firefox, Edge, Safari (Desktop + Mobile), DuckDuckGo (eingeschränkt)
 
-```
-natuerlichePerson    → Familienname, Vorname, Geburtsdatum, Familienstand
-identifikation       → Steuer-ID, RV-Nr., Personalausweis, BundID
-bankverbindung       → IBAN, BIC, Kreditinstitut, Kontoinhaber
-krankenversicherung  → Art, Versichertennr., versichert über
-familie              → Ehepartner, Kinder, Sorgerecht, Unterhalt
-gesundheit           → Blutgruppe, Allergien, Erkrankungen, Medikamente
-wohnsituation        → Wohnungstyp, Miete, Vermieter
-beschaeftigung       → Arbeitgeber, Beruf
-anschrift            → Straße, PLZ/Ort
-kommunikation        → Telefon, Mobil, E-Mail
-notfallkontakte      → Name, Telefon, Beziehung
-_meta                → Version, Exportdatum, Formathinweis
-```
+---
 
-### QR-Codes auf Behördendatenblättern
+## 6. Sicherheit
 
-Die PDFs für Kindergeld, Arbeitsamt und Pflegegrad enthalten einen QR-Code mit Kerndaten als kompaktes JSON. Drei Nutzungsszenarien:
+**Bewertung: ✅ Maximal**
 
-1. **Heute:** Bürger druckt PDF, bringt es mit. Sachbearbeiter hat alles auf einer Seite.
-2. **Morgen:** Sachbearbeiter scannt QR → JSON wird ins Fachverfahren importiert.
-3. **Langfristig:** Verwaltungsportal bietet „QR hochladen" → Formular automatisch vorgefüllt.
+**Prüffrage:** Wie ist das Produkt gegen Datenverlust und unbefugten Zugriff gesichert?
+
+**Befund:** State-of-the-art Verschlüsselung, keine Angriffsfläche durch externe Verbindungen.
+
+**Verschlüsselung:**
+- Algorithmus: AES-256-GCM (authentifizierte Verschlüsselung)
+- Schlüsselableitung: PBKDF2-HMAC-SHA256 mit 100.000 Iterationen und zufälligem Salt
+- Implementierung: Web Crypto API (Browser-natives Krypto, keine externe Bibliothek)
+- Kein Schlüssel verlässt das Gerät
+
+**Angriffsfläche:**
+- Keine Netzwerkkommunikation = keine Man-in-the-Middle-Angriffe
+- Keine Server = kein Server-Hack
+- Keine Datenbank = kein SQL-Injection
+- Keine externe Skripte = kein Supply-Chain-Angriff
+- Content Security Policy implementiert
+
+**Passwortschutz:**
+- Bis zu 5 Fehlversuche, dann Sperrung
+- Kein Passwort-Reset (by design — nur der Nutzer kennt das Passwort)
+
+---
+
+## 7. Interoperabilität
+
+**Bewertung: ✅ Hoch**
+
+**Prüffrage:** Kann das Produkt mit anderen Systemen und Standards zusammenarbeiten?
+
+**Befund:** Offene Standards, mehrere Importformate, Verwaltungsanbindung vorbereitet.
+
+**Offene Exportstandards:**
+- JSON (RFC 8259) — universell maschinenlesbar
+- PDF/A — langzeitarchivierungsfähig
+- OOXML (DOCX, ISO/IEC 29500) — Microsoft-kompatibel
+- vCard 4.0 (RFC 6350) — Kontaktstandard
+- FHIR R4 (HL7) — internationaler Gesundheitsdatenstandard
+
+**Verwaltungsanbindung (vorbereitet):**
+- BundID-Felder für digitale Behördengänge
+- ELEFAND-Felder (Krisenvorsorgeliste Auswärtiges Amt)
+- Strukturierte Behördendaten-Exporte (Kindergeld, Rentenversicherung, Pflegegrad)
+- QR-Code-Export für institutionellen Einsatz
+
+**Import:**
+- JSON-Import (VIVODEPOT-Daten)
+- HTML-Import (gespeicherte VIVODEPOT-Dateien)
+- vCard-Import (Kontakte)
+- CSV-Import (Kontaktlisten)
 
 ---
 
 ## 8. Barrierefreiheit
 
-> *„Ist die Anwendung für alle Menschen zugänglich?"*
+**Bewertung: ✅ Hoch**
 
-**Bewertung: ✅ Hoch — 10 Features + Einstiegs-Wizard.**
+**Prüffrage:** Ist das Produkt für Menschen mit Einschränkungen nutzbar?
 
-| Feature | Beschreibung |
-|---------|-------------|
-| Schriftgröße (A⁺) | 3 Stufen, persistent |
-| Vorlesen (🔊) | Web Speech API, deutsche Stimme |
-| Hoher Kontrast (◐) | Erhöhter Kontrast |
-| Nachtmodus (🌙) | Dunkler Hintergrund |
-| Bildschirmlupe (🔍) | 100% / 150% / 200% |
-| Spracheingabe (🎤) | Diktieren statt tippen |
-| Globale Suche (🔎) | Durchsucht alle Felder |
-| Notfall-Button (🚨) | Ohne Passwort zugänglich |
-| Einstiegs-Wizard (🎯) | Fokus-Modus reduziert Komplexität |
-| Alt-Texte | Alle Bilder mit Beschreibung |
+**Befund:** Umfangreiche Barrierefreiheitsfunktionen implementiert — besonders für ältere Nutzende.
 
----
+**Implementierte Funktionen:**
+- **Schriftgröße:** 3 Stufen (normal, mittel, groß) — über Menü und Topbar
+- **Hoher Kontrast:** CSS-Klasse mit verstärkten Farb- und Kontrastwerten
+- **Nachtmodus:** Dunkles Farbschema für Augenschonung
+- **Vorlesen:** Web Speech API — Seiteninhalte werden vorgelesen
+- **Bildschirmlupe:** Vergrößerungs-Overlay für kleine Bildschirme
+- **Diktat-Eingabe:** Sprach-zu-Text für Formulareingaben
+- **Touch-Targets:** Mindestgröße 44×44px (WCAG 2.1 Erfolgskriterium 2.5.5)
+- **ARIA-Labels:** Auf allen interaktiven Elementen
+- **Fokus-Modus:** Zielgeführte Navigation (Notfall, Familie, Vorsorge)
+- **Einstiegs-Wizard:** Schritt-für-Schritt-Führung beim ersten Start
+- **Tastaturnavigation:** Vollständig bedienbar ohne Maus
 
-## Vergleich mit Wettbewerbern
-
-| Kriterium | Vivodepot | Afilio | DIPAT | Papier-Ordner |
-|-----------|-----------|--------|-------|---------------|
-| Daten beim Nutzer | ✅ Nur lokal | ❌ Server | ❌ Server | ✅ Physisch |
-| Kein CLOUD Act | ✅ | ⚠️ Unklar | ⚠️ Unklar | ✅ |
-| Open Source | ✅ EUPL-1.2 | ❌ | ❌ | — |
-| Offline-fähig | ✅ Komplett | ❌ | ❌ | ✅ |
-| Kein Abo | ✅ Einmalig | ❌ 29-72€/J. | ❌ 30€/J. | ✅ |
-| AES-256 lokal | ✅ | ⚠️ TLS | ⚠️ TLS | ❌ |
-| FHIR R4 | ✅ | ❌ | ❌ | ❌ |
-| FIM-JSON | ✅ | ❌ | ❌ | ❌ |
-| QR-Code Behörden | ✅ | ❌ | ❌ | ❌ |
-| Aktualisierbar | ✅ | ✅ | ✅ | ❌ |
-
-### TCO (Total Cost of Ownership) — 2 Personen, 10 Jahre
-
-| | Vivodepot (Duo) | Afilio (Familie) | DIPAT (2 Pers.) | Papier-Ordner |
-|--|----------------|-----------------|----------------|---------------|
-| Kosten | **79 €** | 720 € | 600 € | ~50 € |
-| Ersparnis vs. Afilio | **641 €** | — | 120 € | 670 € |
-| Offline | ✅ | ❌ | ❌ | ✅ |
-| Maschinenlesbar | ✅ | ⚠️ | ⚠️ | ❌ |
+**Sprachen:** Deutsch (primär), Englisch (experimentell)
 
 ---
 
-## Methodik
+## Wettbewerbsvergleich
+
+| Kriterium | VIVODEPOT | Afilio | DIPAT | US-Cloud-Dienst | Papier-Ordner |
+|---|---|---|---|---|---|
+| Datenhoheit | ✅ Vollständig | ⚠️ Teilweise | ⚠️ Teilweise | ❌ Server-seitig | ✅ Vollständig |
+| Offline-Fähigkeit | ✅ 100% | ❌ Cloud-abhängig | ❌ Cloud-abhängig | ❌ Cloud-abhängig | ✅ 100% |
+| Open Source | ✅ EUPL-1.2 | ❌ Proprietär | ❌ Proprietär | ❌ Proprietär | ✅ (kein Code) |
+| Verschlüsselung | ✅ AES-256-GCM | ⚠️ Server-seitig | ⚠️ Server-seitig | ⚠️ Anbieterkontrolle | ✅ (physisch) |
+| EU-Jurisdiktion | ✅ DE | ✅ DE | ✅ DE | ❌ USA | ✅ |
+| FHIR-Export | ✅ | ❌ | ⚠️ | ⚠️ | ❌ |
+| Interoperabilität | ✅ 13 Formate | ⚠️ PDF | ⚠️ PDF | ⚠️ Proprietär | ❌ |
+| Barrierefreiheit | ✅ WCAG 2.1 | ⚠️ Eingeschränkt | ⚠️ Eingeschränkt | ⚠️ Variiert | ❌ |
+| Kosten | Kostenlos | Abo | Abo | Abo | Material |
+
+---
+
+## TCO-Vergleich (10 Jahre, 2 Personen)
+
+| Lösung | Kosten |
+|---|---|
+| VIVODEPOT (Basis) | 0 € |
+| Afilio Premium | ca. 720 € |
+| Notarielle Vollmacht allein | 150–500 € |
+| US-Cloud-Dienst (Abo) | ca. 600–1.200 € |
+
+---
+
+## Methodik & Referenzen
 
 Diese Selbstbewertung orientiert sich an:
+- ZenDiS Souveränitätskriterien für digitale Produkte
+- BSI IT-Grundschutz (BSI-Standard 200-1)
+- DSGVO (EU) 2016/679
+- EUPL-1.2 Kompatibilitätsprüfung (joinup.ec.europa.eu)
+- WCAG 2.1 (W3C Accessibility Guidelines)
+- FIM-Stammdatenschema der FITKO
 
-- **ZenDiS-Kriterienkatalog** „Kriterien zur Bewertung von Digitaler Souveränität — aus messbar wird machbar" (2025)
-- **Souveränitätscheck der Stadt München** (IT-Referat, TU München, 2025)
-- **Bitkom-Bericht** „Digitale Souveränität 2025"
-- **adesso Index Digitale Souveränität** (2025)
-- **FIM-Stammdatenschema** der FITKO (Föderale IT-Kooperation)
-
-Die Bewertung wurde intern durchgeführt. Vivodepot strebt eine unabhängige Validierung durch das ZenDiS an und möchte am Konsultationsprozess zum Souveränitätscheck teilnehmen.
+Vivodepot strebt eine unabhängige Validierung durch das ZenDiS an und möchte am Konsultationsprozess zum Souveränitätscheck teilnehmen.
 
 ---
 
 ## Kontakt
 
-Vivodepot UG (haftungsbeschränkt)
-E-Mail: feedback@vivodepot.de
-Website: vivodepot.de
-Quellcode: github.com/carolaklessen/vivodepot
+Vivodepot UG (haftungsbeschränkt) · Berlin
+[feedback@vivodepot.de](mailto:feedback@vivodepot.de) · [vivodepot.de](https://vivodepot.de)
+Quellcode: [github.com/carolaklessen/vivodepot](https://github.com/carolaklessen/vivodepot)
 Lizenz: EUPL-1.2
 
 *Dieses Dokument ist öffentlich und darf frei weitergegeben werden.*

@@ -1,104 +1,88 @@
-# Vivodepot — Schnellstart
+# VIVODEPOT — Schnellstart
 
-**In 10 Minuten startklar.** Keine Installation, kein Konto, kein Internet.
-
----
-
-## Schritt 1: Öffnen
-
-Doppelklicken Sie auf `index.html` — die Datei öffnet sich im Browser.
-
-> **USB-Stick?** Öffnen Sie die Datei direkt vom Stick.  
-> **Heruntergeladen?** Öffnen Sie sie aus dem Download-Ordner.
+*Version 1.0.0-beta.6 · Zuletzt aktualisiert: April 2026*
 
 ---
 
-## Schritt 2: Passwort setzen (empfohlen)
+## In 3 Schritten loslegen
 
-Ein Passwort ist optional. Sie können es jederzeit unter **Einstellungen → Passwortschutz** aktivieren.
+### Schritt 1: Datei herunterladen
 
-- **Mit Passwort** → Daten werden mit AES-256 verschlüsselt (Bankenstandard)
-- **Ohne Passwort** → Daten werden unverschlüsselt gespeichert
+Laden Sie [`VIVODEPOT_1.html`](VIVODEPOT_1.html) herunter (ca. 1,3 MB).
 
-> **Tipp:** Schreiben Sie das Passwort auf Papier und legen Sie es in einen versiegelten Umschlag im Tresor. Ohne Passwort gibt es keinen Zugang — auch wir können es nicht zurücksetzen.
+Oder öffnen Sie direkt: [carolaklessen.github.io/vivodepot/](https://carolaklessen.github.io/vivodepot/)
 
----
+### Schritt 2: Im Browser öffnen
 
-## Schritt 3: Ausfüllen — Schritt für Schritt
+**Desktop (Mac/Windows):** Doppelklick auf die Datei — öffnet in Ihrem Standardbrowser.
 
-Die App führt Sie durch **19 Abschnitte** in 5 Bereichen:
+**iPhone/iPad:** Datei in der Dateien-App lang drücken → Teilen → **Safari** wählen.
+*(Wichtig: Nur Safari führt die App korrekt aus — nicht PocketBook oder andere Apps.)*
 
-| Bereich | Abschnitte |
-|---------|-----------|
-| **Meine Person** | Über mich · Vertrauenspersonen · Wichtige Kontakte |
-| **Absicherung & Finanzen** | Geld & Konten · Versicherungen · Wohnen · Verträge · Mein Wille |
-| **Gesundheit & Leben** | Meine Gesundheit · Pflege & Lebenslauf · Meine Tiere |
-| **Persönliches & Wünsche** | Online & Zugänge · Erinnerungsstücke · Mein Abschied |
-| **Werkzeuge** | Assistenten · Meine Dateien · Prüftermine · Einstellungen · Dokumente erstellen |
+**Android:** Datei im Dateimanager antippen → im Browser öffnen.
 
-**Wichtig:** Alles ist freiwillig. Füllen Sie nur aus, was Ihnen wichtig ist. Sie können jederzeit unterbrechen und später weitermachen.
+### Schritt 3: Loslegen
+
+Beim ersten Öffnen erscheint der Willkommens-Bildschirm. Wählen Sie Ihr Ziel und beginnen Sie mit dem Ausfüllen.
 
 ---
 
-## Schritt 4: Speichern
+## Daten speichern
 
-Klicken Sie auf **💾 Speichern** oben rechts → die Datei wird als neue HTML-Datei heruntergeladen. Ersetzen Sie damit die alte Datei auf Ihrem Stick.
+**Automatisch:** Ihre Eingaben werden automatisch im Browser gespeichert — auch wenn Sie das Fenster schließen.
 
-> Die App speichert auch automatisch im Browser. Aber: Nur die heruntergeladene Datei ist Ihr echtes Backup.
-
----
-
-## Schritt 5: Dokumente erstellen
-
-Im letzten Schritt **„Dokumente erstellen"** können Sie mit einem Klick erzeugen:
-
-- **Haupt-PDF** — Ihr komplettes Vivodepot
-- **Word-Dokument** — zum Bearbeiten
-- **Checkliste** — Was ist ausgefüllt, was fehlt?
-- **Vorsorgevollmacht** — rechtsgültiger Entwurf
-- **Patientenverfügung** — medizinische Wünsche
-- **Arztbesuch-Bogen** — einmal drucken, immer mitbringen
-- **Notfall-Tasche** — Checkliste für den Ernstfall
-- **Krankenhaus-Blatt** — für Notarzt & Aufnahme
-- **Todesfall-Krisenplan** — erste Schritte für Angehörige
-- **Haustier-Notfallkarte** — Versorgung Ihres Tiers
+**Als Datei sichern (empfohlen):** Klicken Sie oben auf **„Speichern"**. So erhalten Sie eine persönliche HTML-Datei mit allen Ihren Daten — ideal für USB-Stick oder iCloud.
 
 ---
 
-## Angehörigen-Modus
+## Dokumente erstellen
 
-Wenn jemand anderes die Datei öffnet (z.B. Ihre Tochter im Notfall), erscheint beim Öffnen die Frage: „Wer öffnet dieses Vivodepot?" — mit der Wahl zwischen Inhaberin (Bearbeiten) und Angehörige/r (Notfall-Informationen). Als Inhaberin können Sie den Angehörigen-Modus auch jederzeit über das ⋮-Menü testen.
+Gehen Sie zum Schritt **„Dokumente erstellen"** (letzter Punkt in der Seitenleiste). Dort finden Sie alle Exportoptionen:
 
----
-
-## Wo finde ich was?
-
-| Ich möchte... | Klicken Sie auf... |
-|---------------|-------------------|
-| Schriftgröße ändern | `A⁺` in der Topbar |
-| Seite vorlesen lassen | `🔊` in der Topbar |
-| Nachtmodus einschalten | `🌙` in der Topbar |
-| Notfalldaten sofort sehen | Roter `🚨`-Button unten rechts |
-| Etwas suchen | `🔎` in der Topbar |
-| Datenschutz-Info lesen | „Datenschutz" im Footer |
-| Kontakte vom Handy importieren | „Vom Telefon"-Button in Vertrauenspersonen (iOS/Android) |
-| Fokus wählen | Beim Start, Sidebar-Button (Desktop) oder „Fokus"-Button in Bottom-Nav (Mobile) |
-| Fokus im ⋮ Menü | ⋮ → „Fokus wählen" — funktioniert auf allen Geräten |
-| Fokus aufheben | Sidebar → „Alle anzeigen" |
-| Zwischen Schritten navigieren (Mobile) | Pfeile ← → unten am Bildschirm |
+- **PDF** — druckfertige Notfallmappe
+- **Word** — bearbeitbares Dokument
+- **Notfall-Blatt** — Kurzübersicht mit Notrufnummern
+- **Arztbogen** — für Krankenhaus und Arztbesuche
 
 ---
 
-## Häufige Fragen auf einen Blick
+## Passwortschutz
 
-**Brauche ich Internet?** Nein. Alles funktioniert offline.
+Empfohlen, wenn Sie die Datei weitergeben oder in der Cloud ablegen:
 
-**Werden meine Daten irgendwohin gesendet?** Nein. Kein Server, keine Cloud, kein Tracking.
+Menü **⋮** → **Passwortschutz** → Passwort festlegen.
 
-**Was passiert, wenn ich mein Passwort vergesse?** Dann sind die Daten verloren. Es gibt kein „Passwort zurücksetzen" — weil es keinen Server gibt, der das tun könnte.
+Die Datei wird mit AES-256-GCM verschlüsselt. Ohne das Passwort sind die Daten nicht lesbar — auch nicht für uns.
 
-**Kann ich die App auf dem Handy nutzen?** Ja. Am besten über GitHub Pages öffnen — dann auch Telefonbuch-Import und Verschlüsselung. Zum Home-Bildschirm hinzufügen für App-Erlebnis.
+**Wichtig:** Notieren Sie das Passwort an einem sicheren Ort und teilen Sie es Ihren Vertrauenspersonen mit.
 
 ---
 
-*Version 1.0.0-beta.4 · © 2026 Vivodepot · [Ausführliche Dokumentation →](DOCS.md) · [FAQ →](FAQ.md)*
+## Für Angehörige
+
+Wenn Angehörige die Datei öffnen, erscheint eine Weiche: „Inhaberin" oder „Angehörige/r". In der Angehörigen-Ansicht sind nur die relevanten Informationen sichtbar — übersichtlich und ohne persönliche Details.
+
+---
+
+## Systemvoraussetzungen
+
+| Browser | Version |
+|---|---|
+| Chrome / Edge | ab Version 90 |
+| Firefox | ab Version 88 |
+| Safari | ab Version 14 |
+| DuckDuckGo | Eingeschränkt (lokale Dateien nicht unterstützt) |
+
+**Kein Internet nötig** — alle Funktionen arbeiten vollständig offline.
+
+---
+
+## Häufige Fragen
+
+Siehe [FAQ.md](FAQ.md).
+
+---
+
+## Kontakt
+
+[feedback@vivodepot.de](mailto:feedback@vivodepot.de) · [vivodepot.de](https://vivodepot.de)

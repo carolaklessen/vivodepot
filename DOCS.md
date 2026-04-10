@@ -1,292 +1,182 @@
-# 📘 Vivodepot — Dokumentation
+# VIVODEPOT — Technische Dokumentation
 
-**Alles Wichtige an einem Ort — für mich und meine Familie.**
-
-Vivodepot ist eine browserbasierte Single-File-App für persönliche Vorsorge- und Nachlassdokumentation. Eine HTML-Datei, kein Internet, keine Installation, keine Cloud.
+*Version 1.0.0-beta.6 · April 2026*
 
 ---
 
-## Inhaltsverzeichnis
+## Architektur
 
-1. [Systemvoraussetzungen](#systemvoraussetzungen)
-2. [Installation & Start](#installation--start)
-3. [Die 19 Abschnitte im Detail](#die-18-abschnitte-im-detail)
-4. [Datenschutz & Verschlüsselung](#datenschutz--verschlüsselung)
-5. [Exporte & Dokumente](#exporte--dokumente)
-6. [Assistenten (Wizards)](#assistenten-wizards)
-7. [Barrierefreiheit](#barrierefreiheit)
-8. [Notfall-Schnellzugriff](#notfall-schnellzugriff)
-9. [Profile (Mehrere Personen)](#profile-mehrere-personen)
-10. [Speichern & Backup](#speichern--backup)
-11. [PWA & Offline-Nutzung](#pwa--offline-nutzung)
-12. [Angehörigen-Modus](#angehörigen-modus)
-13. [Technische Details](#technische-details)
+VIVODEPOT ist eine **Einzeldatei-HTML-Anwendung** (~1,3 MB). Keine Build-Pipeline, kein Framework, kein CDN.
 
----
-
-## Systemvoraussetzungen
-
-- Ein moderner Browser: Chrome, Firefox, Safari oder Edge
-- JavaScript muss aktiviert sein
-- Kein Internet erforderlich (alle Bibliotheken sind eingebettet)
-- Empfohlen: Bildschirm ab 320px Breite (Smartphone aufwärts)
+```
+VIVODEPOT_1.html
+├── CSS (eingebettet)
+├── Inline-Bibliotheken
+│   ├── jsPDF 2.5.1 (364 KB) — PDF-Erstellung
+│   ├── docx.js 8.5.0 (368 KB) — Word-Erstellung
+│   └── QRCode-Generator 1.4.4 (20 KB) — QR-Codes
+├── JavaScript (Hauptlogik)
+│   ├── Datenspeicherung (localStorage + AES-256-GCM)
+│   ├── STEP_RENDERERS (20 Schritte)
+│   ├── Export-Funktionen (13 Formate)
+│   ├── Wizard-System
+│   └── Barrierefreiheits-Funktionen
+└── HTML (UI-Struktur)
+```
 
 ---
 
-## Installation & Start
+## Datenspeicherung
 
-Es gibt keine Installation. Vivodepot ist eine einzelne HTML-Datei.
+### Primär: localStorage
+```javascript
+localStorage.setItem('vivodepot_data_profil1', JSON.stringify(verschluesselt));
+```
 
-**Vom USB-Stick:** Doppelklicken Sie auf `index.html`.
+### Verschlüsselung (optional)
+- Algorithmus: AES-256-GCM
+- Schlüsselableitung: PBKDF2-HMAC-SHA256 (100.000 Iterationen)
+- Salt: 16 Byte zufällig
+- IV: 12 Byte zufällig
+- Implementierung: Web Crypto API
 
-**Aus dem Internet:** Laden Sie die Datei von [GitHub](https://github.com/carolaklessen/vivodepot) herunter und öffnen Sie sie lokal.
-
-**Als App installieren (PWA):**
-- **Android/Desktop:** Chrome zeigt einen „Installieren"-Banner → klicken
-- **iPhone/iPad:** Safari → Teilen ⬆️ → „Zum Home-Bildschirm"
-- PWA-Installation erfordert HTTPS (z.B. über GitHub Pages)
-
----
-
-## Die 19 Abschnitte im Detail
-
-### Meine Person
-
-**1. Über mich** — Name, Geburtsdatum, Adresse, Kontaktdaten, Foto, Familienstand, Kinder. Das Minimum für den Einstieg. Pflichtfelder (Name) werden fürs Deckblatt benötigt.
-
-**2. Vertrauenspersonen** — Die wichtigsten Kontakte im Notfall. Name, Telefon, E-Mail, Rolle (z.B. „Hauptkontaktperson"), Aufgabe (z.B. „hat Wohnungsschlüssel"). Unterstützt CSV- und vCard-Import.
-
-**3. Wichtige Kontakte** — Ärzte, Anwälte, Steuerberater, Handwerker, Nachbarn — alle, die im Ernstfall informiert werden müssen.
-
-### Absicherung & Finanzen
-
-**4. Geld & Konten** — Bankkonten, Depots, Kreditkarten, Altersvorsorge, Rentenversicherungsnummer, Steuer-ID. Beliebig viele Konten und Depots, jeweils mit ▲▼-Buttons sortierbar.
-
-**5. Versicherungen** — Alle Versicherungspolicen mit Gesellschaft, Policennummer und Ablageort.
-
-**6. Wohnen & Eigentum** — Mietverträge, Immobilien, Grundbucheinträge.
-
-**7. Verträge & Abos** — Laufende Verträge (Mobilfunk, Streaming, Strom, ADAC…) mit Kündigungsfrist und -weg. Jeder Vertrag hat eine Kategorie mit spezifischen Tipps (z.B. „ADAC-Mitgliedschaft kann übertragen werden").
-
-**8. Mein Wille** — Testament, Vorsorgevollmacht, Patientenverfügung, Erben, Notar, Organspende, Sorgerechtsverfügung, Unterhaltsverpflichtungen. Enthält 5 Assistenten für geführte Eingabe.
-
-### Gesundheit & Leben
-
-**9. Meine Gesundheit** — Blutgruppe, Allergien, Erkrankungen, Medikamente, Implantate, Krankenversicherung (inkl. Familienversicherung), Voroperationen, Familienanamnese, Vorsorgeuntersuchungen, Zahnarzt, Bonusheft, Befunde (Ablageorte).
-
-**10. Pflege & Lebenslauf** — Pflegegrad, Behinderung, Hilfsmittel, Pflegewünsche, Biografie, Bildung & Berufsleben (Schulabschluss, Ausbildung, Studium, Beruf, Arbeitgeber, Zeugnisse).
-
-**11. Meine Tiere** — Name, Art, Betreuung, Tierarzt, Futter, besondere Hinweise.
-
-### Persönliches & Wünsche
-
-**12. Online & Zugänge** — Passwort-Manager, Cloud-Speicher, E-Mail-Konten, Soziale Netzwerke, Krypto-Wallets (inkl. Legacy Contact), BundID, ELEFAND, Geräte, Tresore, Schlüssel, Zugangscodes.
-
-**13. Erinnerungsstücke & Briefe** — Fotos (physisch & digital), persönliche Gegenstände („Wer soll was bekommen?"), Haushalt/Spenden-Wünsche, persönliche Briefe für Szenarien (Krankenhaus, Todesfall).
-
-**14. Mein Abschied** — Bestattungswünsche, Trauerfeier, Grabstein, Blumenschmuck, Musik, Nachrufe.
-
-### Werkzeuge
-
-**15. Assistenten** — 6 geführte Assistenten (Gesundheitskarte, Vorsorgevollmacht, Patientenverfügung, Gesundheitsvollmacht, Bestattung, Haustier). Außerdem: Passwort-Zugang für Angehörige.
-
-**15b. Pflegekinder** (in Über mich — Familie): Pflegekinder mit Jugendamt-Kontakt, Art der Pflege, Vormund. Hinweis: Pflegekinder erben gesetzlich nicht — nur durch Testament oder Adoption.
-
-**16. Meine Dateien** — Dokumente hochladen, benennen und nach Kategorie ablegen (Ausweise, Vollmachten, Befunde, Verträge, Fotos, Sonstiges). Beim Upload wird nach einem aussagekräftigen Namen gefragt. Jede Datei ist jederzeit wieder downloadbar.
-
-**17. Prüftermine** — Erinnerungen an wichtige Fristen: Vollmacht, Patientenverfügung, Testament, Bankvollmacht, Vivodepot-Update. Ampelsystem (grün/gelb/rot).
-
-**18. Einstellungen** — Passwort ändern oder entfernen, Darstellung (Schriftgröße, Kontrast, Nachtmodus, Bildschirmlupe), Profile verwalten, Daten exportieren/importieren, App-Informationen und Datenschutz.
-
-**19. Dokumente erstellen** — Alle Exporte auf einen Blick (siehe unten).
+### Datei-Speicherung
+`saveAsHTML()` erstellt eine neue HTML-Datei mit eingebetteten Daten:
+```javascript
+// INIT-Block wird ersetzt:
+// ═══ INIT (mit eingebetteten Daten) ═══
+(function(){
+  try { data = { /* vollständige Nutzerdaten */ }; } catch(e){ data={}; }
+  showSavedFileWelcome();
+})();
+```
 
 ---
 
-## Datenschutz & Verschlüsselung
+## Step-System
 
-### Grundprinzip
+20 Schritte (0-indexiert):
 
-Vivodepot speichert **keine Daten im Internet**. Es gibt keinen Server, keine Cloud, kein Benutzerkonto, kein Tracking, keine Cookies, kein Google Analytics.
-
-Alle Daten bleiben:
-- Im lokalen Browser-Speicher (localStorage), oder
-- In der heruntergeladenen HTML-Datei auf Ihrem USB-Stick
-
-### Verschlüsselung
-
-- **Standard:** AES-256-GCM über die Web Crypto API
-- **Schlüsselableitung:** PBKDF2 mit 100.000 Iterationen
-- **Ohne Passwort** kann niemand die Daten lesen — auch nicht der Entwickler
-- **iOS `file://`:** Falls `crypto.subtle` nicht verfügbar ist (z.B. auf iOS bei Dateien vom Stick), werden die Daten unverschlüsselt gespeichert — mit Warnhinweis
-
-### Notfall-Daten
-
-6 Felder werden **zusätzlich unverschlüsselt** gespeichert, damit der 🚨-Notfall-Button auch vor der Passworteingabe funktioniert: Name, Blutgruppe, Allergien, Erkrankungen, Medikamente, Notfallkontakt.
-
-### Open Source
-
-Der gesamte Quellcode ist öffentlich einsehbar auf [GitHub](https://github.com/carolaklessen/vivodepot). Lizenz: EUPL-1.2.
-
----
-
-## Exporte & Dokumente
-
-| Export | Format | Beschreibung |
-|--------|--------|-------------|
-| Haupt-PDF | PDF | Komplettes Vivodepot mit Deckblatt und allen Daten |
-| Haupt-Word | DOCX | Bearbeitbares Word-Dokument |
-| Checkliste | HTML | Was ist ausgefüllt, was fehlt? |
-| Vorsorgevollmacht | DOCX | Rechtsgültiger Entwurf nach aktuellem BGB |
-| Patientenverfügung | DOCX | Medizinische Wünsche nach aktuellem BGB |
-| Heimaufnahme-Paket | PDF | 6 Seiten für Pflegeeinrichtungen |
-| Arztbesuch-Bogen | PDF | Stammdaten für die Arztpraxis |
-| Krankenhaus-Blatt | PDF | Notarzt- und Aufnahme-Daten |
-| Todesfall-Krisenplan | PDF | Erste Schritte für Angehörige |
-| Haustier-Notfallkarte | PDF | Versorgung bei Abwesenheit |
-| Notfall-Tasche | PDF | Checkliste für Evakuierung/Krise |
-| QR-Sticker | HTML | 3 laminierbare QR-Codes |
-| Work-Life-Karte | HTML | Notfallkarte für den Arbeitgeber |
-| FHIR R4 JSON | JSON | Medizindaten-Standard für Kliniken |
-
-Alle Dokumente werden **lokal im Browser erzeugt** — keine Daten verlassen das Gerät.
+| Index | ID | Label |
+|---|---|---|
+| 0 | start | Über mich |
+| 1 | kontakte | Vertrauenspersonen |
+| 2 | infokontakte | Zu informieren |
+| 3 | finanzen | Finanzen |
+| 4 | versich | Versicherungen |
+| 5 | immobilien | Immobilien |
+| 6 | vertraege | Verträge & Abos |
+| 7 | testament | Testament & Vollmachten |
+| 8 | gesundheit | Gesundheit |
+| 9 | pflege | Pflege |
+| 10 | haustiere | Haustiere |
+| 11 | digital | Digitales Erbe |
+| 12 | persoenliches | Persönliches |
+| 13 | bestattung | Bestattung |
+| 14 | assistenten | Assistenten |
+| 15 | notfall | Notfall & Katastrophenschutz |
+| 16 | dokumente | Dokumente erstellen |
+| 17 | erinnerung | Erinnerungen |
+| 18 | einstellungen | Einstellungen |
+| 19 | exportStep | Export (intern) |
 
 ---
 
-## Assistenten (Wizards)
+## Export-Funktionen
 
-5 geführte Schritt-für-Schritt-Assistenten mit einfachen Fragen:
-
-1. **Notfall-Gesundheitskarte** — 6 Schritte → druckbare Scheckkarte für die Geldbörse
-2. **Vorsorgevollmacht** — 6 Schritte → füllt alle relevanten Felder aus
-3. **Patientenverfügung** — 6 Schritte → Entscheidungen zu Lebenserhaltung
-4. **Bestattungs-Assistent** — 8 Schritte → Bestattungsart, Feier, Musik
-5. **Haustier-Assistent** — 6 Schritte → Tier, Futter, Betreuung, Tierarzt
-
-Die Assistenten füllen automatisch die Felder im jeweiligen Abschnitt aus.
-
----
-
-## Barrierefreiheit
-
-| Funktion | Button | Beschreibung |
-|----------|--------|-------------|
-| Suche | 🔎 | Durchsucht alle Felder, Werte und Abschnitte |
-| Schriftgröße | A⁺ | 3 Stufen (normal, groß, sehr groß) |
-| Vorlesen | 🔊 | Liest die aktuelle Seite vor (Web Speech API, deutsch) |
-| Hoher Kontrast | ◐ | Erhöhter Kontrast für bessere Lesbarkeit |
-| Bildschirmlupe | 🔍 | 100% / 150% / 200% Zoom |
-| Nachtmodus | 🌙 | Dunkler Hintergrund, augenschonend |
-| Drucken | 🖨 | Browser-Druckdialog |
-| Spracheingabe | 🎤 | Diktieren statt tippen (Chrome/Edge) |
-
-Alle Einstellungen (Schriftgröße, Kontrast, Nachtmodus) werden gespeichert.
+| Funktion | Format | Bibliothek |
+|---|---|---|
+| `generatePDF()` | PDF | jsPDF |
+| `generateDocx()` | DOCX | docx.js |
+| `generateArztbogen()` | PDF | jsPDF |
+| `generateScenarioPDF()` | PDF | jsPDF |
+| `generateKatastrophenschutzPDF()` | PDF | jsPDF |
+| `generateHeimaufnahme()` | PDF | jsPDF |
+| `generateBehoerdendaten()` | PDF | jsPDF |
+| `generateQRStickers()` | PDF | jsPDF + QRCode |
+| `generateVorsorgevollmacht()` | DOCX | docx.js |
+| `generatePatientenverfuegung()` | DOCX | docx.js |
+| `generateGesundheitsvollmacht()` | DOCX | docx.js |
+| `exportVCard()` | VCF | vanilla |
+| `exportJSON()` | JSON | vanilla |
+| `generateFHIR()` | JSON | vanilla |
 
 ---
 
-## Notfall-Schnellzugriff
+## Tests
 
-Der rote **🚨-Button** unten rechts zeigt sofort:
+```bash
+python3 test_vivodepot_1.py VIVODEPOT_1.html
+```
 
-- Blutgruppe
-- Allergien
-- Erkrankungen
-- Medikamente (mit Dosierung)
-- Notfallkontakt (mit Telefonnummer)
-- Organspende-Wunsch
+**802 Tests in 32 Sektionen:**
 
-**Funktioniert auch ohne Passworteingabe** — die Notfall-Daten werden separat und unverschlüsselt gespeichert (wie die ICE-Funktion auf dem iPhone).
-
----
-
-## Profile (Mehrere Personen)
-
-Vivodepot unterstützt bis zu **4 Profile** in einer Datei — z.B. für Ehepartner oder pflegebedürftige Eltern.
-
-- Klicken Sie auf den Profil-Button (👤) in der Topbar
-- „Neues Profil" → eigener Datensatz, eigenes Passwort
-- Profile sind vollständig getrennt — kein Zugriff zwischen den Profilen
-
----
-
-## Speichern & Backup
-
-### Automatisch
-
-Die App speichert automatisch nach jeder Änderung im Browser-Speicher (localStorage).
-
-### Manuell (empfohlen)
-
-Klicken Sie auf **💾 Speichern** → die komplette App mit allen Daten wird als neue HTML-Datei heruntergeladen. Diese Datei ist Ihr Backup.
-
-### Cloud-Backup
-
-Ihre Vivodepot-Datei ist AES-256 verschlüsselt. Sie können eine Kopie sicher in Ihrer eigenen Cloud ablegen (iCloud, Google Drive, OneDrive). Ohne Ihr Passwort kann niemand die Datei lesen — auch nicht der Cloud-Anbieter.
-
-### Daten exportieren/importieren
-
-- **Menü ⋮ → Daten exportieren (JSON)** → Backup als JSON-Datei
-- **Menü ⋮ → Daten importieren** → JSON oder HTML-Datei einlesen
+1. JavaScript-Syntax
+2. Bekannte Bugs (BUG-10, BUG-11)
+3. Steps und Navigation
+4. Kernfunktionen (set/get/esc/tl)
+5. Verschlüsselung
+6. Import/Export
+7. Wizards
+8. Robustheit
+9. Profile und Multi-Profil
+10. Branding und Logo
+11. User Journeys
+12. Kern/Mehr-System
+13. Persona-Felder
+14. Update-System
+15. Mobile und Responsive
+16. Fokus-System
+17. Barrierefreiheit
+18. vCard
+19. Notfall/BBK
+20. Browser-Kompatibilität
+21. Export-Qualität
+22. Datenspeicherung
+23. Internationalisierung
+24. PWA
+25. Rechtliche Inhalte
+26. Externe Links
+27. Exporte gesamt
+28. Vollmachten
+29. Robustheit (erweitert)
+30. Update-Integration
+31. Eingabe-Hilfe
+32. Vollständigkeits-Regression
 
 ---
 
-## PWA & Offline-Nutzung
+## Notfall-Ampelkarten
 
-Vivodepot kann als Progressive Web App installiert werden:
+Die Katastrophenschutz-Karten (`ksAmpelCard()`) haben drei Zustände:
 
-- Alle 3 externen Bibliotheken (jsPDF, docx, QRCode) werden beim ersten Laden gecacht
-- Danach funktioniert alles komplett offline
-- Service Worker (Cache v2) aktualisiert sich automatisch
+| Wert | Farbe | Label |
+|---|---|---|
+| 'Vorhanden' | Grün | ✅ Vorhanden |
+| 'Teilweise' | Gelb/Orange | ⚠️ Teilweise |
+| 'Fehlt noch' | Rot | ❌ Fehlt noch |
+| (leer) | Grau | Antippen → |
 
-**Voraussetzung für PWA:** HTTPS (z.B. über GitHub Pages).
-
----
-
-## Angehörigen-Modus
-
-Beim Öffnen einer gespeicherten Datei erscheint die Frage „Wer öffnet dieses Vivodepot?" — Inhaberin oder Angehörige/r. Als Inhaberin ist der Modus auch über ⋮-Menü → „Angehörigen-Ansicht testen" erreichbar. Angehörige wählen ein Szenario:
-
-- **Krankenhaus-Einweisung** → Allergien, Medikamente, Blutgruppe, Vollmachten, Hausarzt, laufende Behandlung, hochgeladene Befunde
-- **Im Todesfall** → Testament, Bestattungswünsche, Kontakte, persönliche Botschaft, hochgeladene Vollmachten
-
-Die Szenarien filtern die Daten auf das Wesentliche — Angehörige müssen nicht die ganze App durchsuchen.
+Klick zyklisch: leer → Vorhanden → Teilweise → Fehlt noch → Vorhanden …
 
 ---
 
-## Technische Details
+## Barrierefreiheits-Funktionen
 
-| Eigenschaft | Wert |
-|-------------|------|
-| Dateigröße | ~1 MB |
-| Codezeilen | ~8.900 |
-| Externe Abhängigkeiten | 3 CDN-Bibliotheken (gecacht) |
-| Framework | Kein Framework — Vanilla HTML/CSS/JS |
-| Verschlüsselung | AES-256-GCM, PBKDF2 |
-| Lizenz | EUPL-1.2 |
-| Browser-Support | Chrome 90+, Firefox 90+, Safari 15+, Edge 90+, DuckDuckGo, Android Chrome, iOS Safari |
-| Mobile Features (beta.4) | Bottom-Nav + Fokus-Button, Share API, Camera Capture, Contacts API, Safe-area-insets, Keyboard-fix, Topbar-Fix |
-| Mobile Features | Bottom-Nav, Share API, Camera Capture, Contacts API, Safe-area-insets, Keyboard-fix, Touch-optimiert |
-| Fokus-Wizard | 4 Ziele mit echtem Field-Filtering, 8 FOCUSED_RENDERERS |
-| Fokus-Rendering | 8 fokussierte Step-Varianten (FOCUSED_RENDERERS) pro Ziel |
-| KI-Transparenz | Entwickelt mit KI-Unterstützung (EU AI Act Art. 50) |
-
-### Verwendete Bibliotheken
-
-- **jsPDF** (MIT) — PDF-Erzeugung
-- **docx** (MIT) — Word-Dokument-Erzeugung
-- **QRCode.js** (MIT) — QR-Code-Generierung
-
-### localStorage-Keys
-
-| Key | Inhalt |
-|-----|--------|
-| `vivodepot_v1_enc` | Verschlüsselte/unverschlüsselte Nutzerdaten |
-| `vivodepot_v1_meta` | Kryptografisches Salt |
-| `vivodepot_v1_enc_notfall` | Unverschlüsselte Notfall-Daten |
-| `vivodepot_fontsize` | Schriftgröße-Einstellung |
-| `vivodepot_contrast` | Kontrast-Modus |
-| `vivodepot_darkmode` | Nachtmodus |
-| `vivodepot_lang` | Sprache (de/en) |
+```javascript
+cycleFontSize()     // 3 Stufen: normal, fs-medium, fs-large
+toggleKontrast()    // CSS-Klasse 'high-contrast'
+toggleNacht()       // CSS-Klasse 'dark-mode'
+toggleVorlesen()    // Web Speech API
+toggleLupe()        // Lupe-Overlay
+startDiktat()       // SpeechRecognition API
+```
 
 ---
 
-*Version 1.0.0-beta · © 2026 Vivodepot · Lizenziert unter [EUPL-1.2](LICENSE)*
+## Bekannte Einschränkungen
+
+- **iOS/PocketBook:** HTML-Dateien werden von PocketBook als Standard-App geöffnet. Workaround: Dateien auf iOS mit `.htm`-Endung speichern.
+- **DuckDuckGo Browser:** Unterstützt keine lokalen HTML-Dateien (file://-Protokoll).
+- **localStorage-Limit:** ~5 MB pro Domain. Bei vielen hochgeladenen Dateien kann dieses Limit erreicht werden.
+- **Safari iOS:** `showSaveFilePicker` nicht unterstützt — Fallback auf `a.click()` mit iOS-spezifischer Anleitung.

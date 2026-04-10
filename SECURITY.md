@@ -1,51 +1,50 @@
-# Sicherheitsrichtlinie / Security Policy
+# VIVODEPOT — Sicherheitsrichtlinie
 
-## Unterstützte Versionen / Supported Versions
+## Unterstützte Versionen
 
-| Version | Unterstützt |
-|---------|-------------|
-| 1.0.x-beta.4 | ✅ Ja |
+| Version | Support |
+|---|---|
+| 1.0.0-beta.6 | ✅ Aktiv |
+| < 1.0.0-beta.6 | ❌ Nicht mehr unterstützt |
 
-## Sicherheitslücke melden / Reporting a Vulnerability
+## Sicherheitsarchitektur
 
-Wenn Sie eine Sicherheitslücke in VIVODEPOT gefunden haben, melden Sie diese bitte **nicht** über ein öffentliches GitHub Issue.
+**VIVODEPOT ist by Design maximal sicher:**
 
-Senden Sie stattdessen eine E-Mail an:
+- **Keine Netzwerkkommunikation:** Die App sendet keinerlei Daten an externe Server. Es gibt keinen Angriffspunkt über das Netzwerk.
+- **Lokale Verschlüsselung:** AES-256-GCM mit PBKDF2-HMAC-SHA256 (100.000 Iterationen, zufälliger Salt). Implementiert über die Web Crypto API des Browsers — keine externe Kryptobibliothek.
+- **Kein Server:** Es gibt keinen Server, der gehackt werden könnte.
+- **Kein Account:** Keine Passwort-Datenbank, kein Credential-Leak.
+- **Inline-Bibliotheken:** Alle Drittbibliotheken sind direkt eingebettet — kein Supply-Chain-Angriff über CDNs möglich.
 
-**feedback@vivodepot1.odoo.com**
+## Sicherheitslücken melden
 
-Bitte beschreiben Sie:
-- Die Art der Sicherheitslücke
+Wenn Sie eine Sicherheitslücke entdecken, melden Sie diese bitte **vertraulich**:
+
+**E-Mail:** [feedback@vivodepot.de](mailto:feedback@vivodepot.de)
+**Betreff:** `[SECURITY] Kurzbeschreibung`
+
+Bitte **keine** öffentlichen GitHub-Issues für Sicherheitslücken.
+
+### Was wir benötigen
+
+- Beschreibung der Lücke
 - Schritte zur Reproduktion
-- Mögliche Auswirkungen
-- Ggf. einen Lösungsvorschlag
+- Betroffene Version(en)
+- Potenzielle Auswirkungen
 
-Wir werden innerhalb von **72 Stunden** antworten und die Meldung vertraulich behandeln.
+### Was Sie erwarten können
 
----
+- Bestätigung des Eingangs innerhalb von 48 Stunden
+- Regelmäßige Updates zum Bearbeitungsstand
+- Anerkennung in der Versionsnote (wenn gewünscht)
 
-## Architektur-Sicherheit
+## Bekannte Einschränkungen
 
-VIVODEPOT wurde mit folgenden Sicherheitsprinzipien entwickelt:
+- **localStorage ist nicht verschlüsselt** ohne aktivierten Passwortschutz. Empfehlung: Passwortschutz immer aktivieren.
+- **Browser-Sicherheit gilt:** Wenn das Gerät kompromittiert ist (Malware, Keylogger), kann auch VIVODEPOT nicht schützen.
+- **iOS/PocketBook-Problem:** HTML-Dateien öffnen sich auf iOS möglicherweise in PocketBook statt im Browser. Das ist kein Sicherheitsproblem, aber ein Nutzungsproblem.
 
-### Datenhoheit
-- **Keine Server-Kommunikation** — alle Daten bleiben lokal
-- **Kein Tracking, keine Cookies, keine Analytics**
-- **Kein Account-System** — keine Registrierung nötig
-- Externe CDN-Bibliotheken werden nur für PDF/Word-Erzeugung geladen
+## Responsible Disclosure
 
-### Verschlüsselung
-- **AES-256-GCM** über die Web Crypto API
-- Schlüsselableitung via PBKDF2 (100.000 Iterationen, SHA-256)
-- Session-Key wird nur im RAM gehalten
-- Salt wird pro Verschlüsselung neu generiert
-
-### DuckDuckGo Browser
-- DuckDuckGo überschreibt bestimmte globale JavaScript-Variablen (u.a. `_ls`) mit `localStorage` — VIVODEPOT arbeitet daher ohne globale localStorage-Wrapper
-- Spracheingabe ist in DuckDuckGo nicht unterstützt und standardmäßig deaktiviert
-
-### Bekannte Einschränkungen
-- **localStorage** ist nicht verschlüsselt auf Betriebssystem-Ebene — physischer Zugriff auf den Rechner ermöglicht Zugriff auf unverschlüsselte Daten
-- **CDN-Bibliotheken** (docx, jsPDF, qrcode) werden ohne SRI-Hashes geladen — für erhöhte Sicherheit in Unternehmensumgebungen können SRI-Hashes nachgerüstet werden
-- **Service Worker via Blob-URL** — kann in Browsern mit strenger Content Security Policy blockiert werden
-- **Web Crypto API** ist unter `file://`-Protokoll auf iOS Safari nicht verfügbar — die App erkennt dies und bietet einen Fallback
+Wir verpflichten uns zu verantwortungsvollem Umgang mit gemeldeten Sicherheitslücken. Bitte geben Sie uns angemessene Zeit zur Behebung, bevor Sie eine Lücke öffentlich machen.

@@ -1,261 +1,92 @@
-### Sperrt sich die App automatisch?
-
-Optional. In **Einstellungen → Sicherheit** kann ein Inaktivitäts-Timer gesetzt werden (5, 15 oder 30 Minuten). Nach Ablauf wird die App gesperrt — empfohlen auf geteilten oder öffentlichen Geräten. Nur aktiv wenn ein Passwort gesetzt ist.
-
-### Wie erfahre ich von Updates?
-
-In **Einstellungen → Über Vivodepot** gibt es den Button **„Auf Updates prüfen"**. Er vergleicht nur Ihre Versionsnummer mit der aktuellen auf GitHub — keine Nutzerdaten werden übertragen. Neue Versionen sind kostenlos auf GitHub verfügbar.
-
-# Vivodepot — Häufige Fragen (FAQ)
+# VIVODEPOT — Häufige Fragen
 
 ---
 
-## Datenschutz & Sicherheit
+## Allgemein
 
-### Werden meine Daten ins Internet gesendet?
+**Was ist VIVODEPOT?**
+Eine Einzeldatei-HTML-App, mit der Sie alle wichtigen Informationen für den Notfall dokumentieren: Kontakte, Finanzen, Gesundheit, Vollmachten, Bestattungswünsche und mehr. Die App läuft vollständig offline — keine Cloud, kein Abo, keine Registrierung.
 
-**Nein.** Vivodepot hat keinen Server. Keine Daten verlassen Ihr Gerät — nicht beim Ausfüllen, nicht beim Speichern, nicht beim Erstellen von PDFs. Alles passiert lokal in Ihrem Browser.
+**Kostet VIVODEPOT etwas?**
+Die Basisversion ist kostenlos und enthält alle wesentlichen Funktionen. Zukünftige Premium-Funktionen sind in Planung.
 
-### Wie sicher ist die Verschlüsselung?
-
-Vivodepot verwendet **AES-256-GCM** — denselben Standard, den Banken, Behörden und das Militär einsetzen. Der Schlüssel wird aus Ihrem Passwort mit 100.000 Iterationen abgeleitet (PBKDF2). Ohne Ihr Passwort kann niemand die Daten lesen.
-
-### Kann jemand meine Daten hacken?
-
-Nur wenn jemand physischen Zugang zu Ihrem Gerät oder USB-Stick hat **und** Ihr Passwort kennt. Da keine Daten online gespeichert werden, gibt es keinen Server, den man angreifen könnte.
-
-### Kann Vivodepot meine Daten lesen?
-
-**Nein.** Es gibt kein „Vivodepot" als Unternehmen mit Zugang zu Ihren Daten. Der Code läuft lokal auf Ihrem Gerät. Selbst wenn wir wollten — wir haben keinen Zugriff.
-
-### Was sieht jemand, der meinen Stick findet?
-
-Ohne Passwort: Nur den Anmeldebildschirm und die **Notfall-Informationen** (Blutgruppe, Allergien, Medikamente, Notfallkontakt). Das ist Absicht — im medizinischen Notfall müssen diese Daten sofort zugänglich sein.
-
-Alles andere (Finanzen, Testament, Verträge, Passwörter) ist verschlüsselt.
+**Wer steckt dahinter?**
+Vivodepot UG (haftungsbeschränkt), Berlin. Kontakt: [feedback@vivodepot.de](mailto:feedback@vivodepot.de)
 
 ---
 
-## Passwort
+## Daten & Datenschutz
 
-### Was passiert, wenn ich mein Passwort vergesse?
+**Wo werden meine Daten gespeichert?**
+Ausschließlich in Ihrem Browser (`localStorage`) und optional in der gespeicherten HTML-Datei. Kein Server, keine Cloud, keine Übertragung.
 
-**Die Daten sind dann verloren.** Es gibt kein „Passwort zurücksetzen", weil es keinen Server gibt, der das tun könnte. Deshalb: Schreiben Sie Ihr Passwort auf Papier und legen Sie es in einen versiegelten Umschlag im Tresor.
+**Kann VIVODEPOT meine Daten sehen?**
+Nein. Die Daten verlassen Ihr Gerät nicht. Auch wir als Entwickler haben keinen Zugriff.
 
-### Kann ich das Passwort ändern?
+**Sind meine Daten verschlüsselt?**
+Ja — wenn Sie einen Passwortschutz einrichten. Die Verschlüsselung erfolgt mit AES-256-GCM, einem der sichersten verfügbaren Standards.
 
-**Ja.** Im Schritt **„Einstellungen"** (Nr. 18) können Sie Ihr Passwort jederzeit ändern oder entfernen. Die Daten werden dann mit dem neuen Passwort neu verschlüsselt.
+**Was passiert, wenn ich meinen Browser-Cache leere?**
+Die Daten in `localStorage` gehen verloren. **Empfehlung:** Regelmäßig über „Speichern" eine persönliche HTML-Datei erstellen und sichern.
 
-### Muss ich ein Passwort setzen?
+**Kann ich die Daten exportieren?**
+Ja — als passwortgeschützte HTML-Datei (über „Speichern"), als JSON-Datei (über das ⋮-Menü) oder als fertige Dokumente (PDF, Word).
 
-Nein. Ohne Passwort werden die Daten unverschlüsselt gespeichert. Das ist weniger sicher, aber einfacher. Für den USB-Stick empfehlen wir ein Passwort.
-
----
-
-## Speichern & Backup
-
-### Wo werden meine Daten gespeichert?
-
-Im **localStorage** Ihres Browsers — das ist ein lokaler Speicher auf Ihrem Gerät. Wenn Sie die Datei auf einem USB-Stick öffnen und über „💾 Speichern" herunterladen, werden die Daten in die HTML-Datei eingebettet.
-
-### Warum muss ich auf „💾 Speichern" klicken?
-
-Die App speichert automatisch im Browser. Aber wenn Sie den Browser-Cache löschen oder einen anderen Browser verwenden, sind die Daten weg. Mit „💾 Speichern" laden Sie eine neue HTML-Datei herunter, die Ihre Daten enthält — das ist Ihr echtes Backup.
-
-### Kann ich meine Daten in der Cloud sichern?
-
-Ja. Ihre Vivodepot-Datei ist AES-256 verschlüsselt. Sie können sie sicher in iCloud, Google Drive oder OneDrive ablegen. Ohne Ihr Passwort kann niemand die Datei lesen — auch nicht Apple oder Google.
-
-### Ich habe die Datei versehentlich gelöscht. Kann ich sie wiederherstellen?
-
-Wenn die Daten noch im Browser-Speicher sind: Öffnen Sie eine frische Kopie von index.html — die Daten werden automatisch geladen. Wenn der Browser-Speicher gelöscht wurde und kein Backup existiert: leider nein.
-
-### Kann ich Vivodepot auf mehreren Geräten nutzen?
-
-Die Daten sind an den Browser und das Gerät gebunden. Um auf einem anderen Gerät weiterzuarbeiten, speichern Sie die Datei (💾) und öffnen Sie sie auf dem neuen Gerät.
+**Kann ich die Daten importieren?**
+Ja — über das ⋮-Menü → „Daten importieren". Unterstützt werden HTML-Dateien (eigene gespeicherte VIVODEPOT-Dateien) und JSON-Dateien.
 
 ---
 
-## Bedienung
+## Technisches
 
-### Was macht der Fokus-Wizard?
+**Welche Browser werden unterstützt?**
+Chrome, Firefox, Edge (ab Version 90), Safari (ab Version 14). DuckDuckGo Browser auf iOS unterstützt keine lokalen HTML-Dateien.
 
-Beim ersten Start fragt Vivodepot: „Was möchten Sie als erstes erledigen?" Sie wählen einen Fokus — und sehen dann nur die wirklich relevanten Felder:
+**Funktioniert VIVODEPOT ohne Internet?**
+Vollständig. Alle Bibliotheken (PDF, Word, QR-Code) sind direkt in der HTML-Datei eingebettet — keine einzige externe Anfrage.
 
-- **Arztbesuch vorbereiten** → Basisdaten, Arzt, Allergien, Medikamente → Arztbesuch-Bogen
-- **Notfall vorsorgen** → Basisdaten, Notfallkontakte, Medikamente → Notfall-Dokumente
-- **Meinen Willen festhalten** → Basisdaten, Testament, Vollmachten
-- **Familie absichern** → Basisdaten, Kinder/Sorgerecht, Kontakte, Vollmachten
-- **Alles ordnen** → alle 19 Schritte
+**Wie groß ist die Datei?**
+Ca. 1,3 MB. Das entspricht etwa dem Speicherplatz einer Foto-Vorschau.
 
-Den Fokus können Sie jederzeit über den Button unten in der Seitenleiste ändern.
+**Kann ich VIVODEPOT auf einem USB-Stick nutzen?**
+Ja — einfach die HTML-Datei auf den USB-Stick kopieren und in Chrome oder Firefox öffnen.
 
-### Muss ich alles auf einmal ausfüllen?
+**iPhone: Die Datei öffnet sich in PocketBook statt im Browser.**
+PocketBook hat sich als Standard-App für HTML-Dateien registriert. Lösung: Datei in der Dateien-App **lang drücken** → **Teilen** → **Safari** wählen. Alternativ: Einstellungen → Standard-Browser → vorübergehend auf Safari wechseln.
 
-Nein. Sie können jederzeit aufhören und später weitermachen. Die App zeigt Ihnen mit dem Fortschrittsbalken, wie weit Sie sind. Jeder Abschnitt hat eine Zeitschätzung (z.B. „ca. 3 Min.").
-
-### Muss ich alle Felder ausfüllen?
-
-Nein. Nur die Felder mit * (Vorname, Nachname) sind Pflicht — für das Deckblatt. Alles andere ist freiwillig. Füllen Sie nur aus, was Ihnen wichtig ist.
-
-### Kann ich Abschnitte überspringen?
-
-Ja. Klicken Sie in der Seitenleiste auf jeden Abschnitt, den Sie bearbeiten möchten. Die Reihenfolge ist egal.
-
-### Wo finde ich Erklärungen zu den Feldern?
-
-Unter vielen Feldern erscheint ein kursiver Hinweistext — er erklärt, warum das Feld wichtig ist und was eingetragen werden sollte. Dieser Text erscheint automatisch, es ist kein Klick nötig.
-
-### Kann ich Kontakte aus meinem Handy importieren?
-
-Ja. Im Schritt „Vertrauenspersonen" gibt es einen **vCard-Import** — exportieren Sie Kontakte aus Ihrem Handy als .vcf-Datei und laden Sie sie hoch. Auch **CSV-Import** ist möglich.
+**Die PDF-Erstellung schlägt fehl.**
+Die PDF-Bibliothek ist vollständig eingebettet und benötigt kein Internet. Falls ein Fehler auftritt, bitte Seite neu laden und erneut versuchen. Bei anhaltenden Problemen: [feedback@vivodepot.de](mailto:feedback@vivodepot.de)
 
 ---
 
-## Dokumente & Exporte
+## Inhalt & Exporte
 
-### Sind die erstellten Dokumente rechtsgültig?
+**Welche Dokumente kann ich erstellen?**
+PDF (Notfallmappe), Word (bearbeitbar), Notfall-Blatt (Katastrophenschutz), Arztbogen, Szenario-PDFs (Krankenhaus, Todesfall, Notfall-Tasche), Vorsorgevollmacht (Word), Patientenverfügung (Word), Gesundheitsvollmacht (Word), QR-Aufkleber, vCard-Export.
 
-Die Vorsorgevollmacht und Patientenverfügung sind **Entwürfe** nach aktuellem deutschem Recht (BGB). Sie müssen handschriftlich unterschrieben werden. Eine notarielle Beurkundung ist empfehlenswert, aber nicht zwingend.
+**Sind die Dokumente rechtsgültig?**
+VIVODEPOT erstellt Entwürfe und Vorlagen. Für rechtliche Gültigkeit (besonders Vorsorgevollmacht, Patientenverfügung, Testament) ist in der Regel eine notarielle Beglaubigung oder eigenhändige Unterschrift erforderlich. VIVODEPOT ist **keine Rechtsberatung**.
 
-**Wichtig:** Vivodepot bietet keine Rechtsberatung. Bei komplexen Familienverhältnissen oder großen Vermögen empfehlen wir einen Notar oder Anwalt.
+**Kann ich mehrere Profile anlegen?**
+Ja — über Einstellungen → Profile. Praktisch für Paare oder wenn Sie Informationen für mehrere Personen verwalten.
 
-### Warum sieht mein PDF anders aus als erwartet?
-
-PDFs werden mit jsPDF generiert — das Ergebnis kann je nach Browser leicht variieren. Falls das Logo nicht erscheint: Stellen Sie sicher, dass JavaScript aktiviert ist.
-
-### Kann ich die Word-Dokumente bearbeiten?
-
-Ja. Die DOCX-Dateien können in Microsoft Word, LibreOffice oder Google Docs geöffnet und bearbeitet werden.
-
-### Was ist der Arztbesuch-Bogen?
-
-Ein 1-2 seitiges PDF mit allen Daten, die bei jedem Arztbesuch abgefragt werden: Stammdaten, Krankenversicherung, Allergien, Medikamente, Vorerkrankungen, Familienanamnese. Einmal ausdrucken und zum Arzt mitbringen — statt jedes Mal per Hand ausfüllen.
-
-### Was ist die Notfall-Tasche?
-
-Eine Checkliste für den Ernstfall (Hochwasser, Brand, Evakuierung): Welche Dokumente sofort einpacken, was auf den USB-Stick speichern, wichtige Kontakte und Notrufnummern. Basiert auf Empfehlungen des Bundesamts für Bevölkerungsschutz (BBK).
+**Was ist die Angehörigen-Ansicht?**
+Eine vereinfachte Ansicht, die beim Öffnen der gespeicherten Datei angeboten wird. Angehörige sehen nur die relevanten Informationen — keine persönlichen Details, die sie nicht brauchen.
 
 ---
 
-## Technik
+## Notfall & Katastrophenschutz
 
-### Welche Browser werden unterstützt?
+**Was zeigt die Notfall-Kategorie?**
+Sechs klickbare Statuskarten für Wasser, Lebensmittel, Medikamente, Dokumente, Licht & Kommunikation sowie Bargeld. Außerdem Felder für Evakuierungsplan, lokale Kontakte und Notrufnummern. Orientiert sich an den Empfehlungen des Bundesamts für Bevölkerungsschutz (BBK).
 
-Chrome 90+, Firefox 90+, Safari 15+, Edge 90+. Empfohlen: Chrome oder Firefox für alle Funktionen (insbesondere Spracheingabe).
-
-### Funktioniert die App auf dem iPhone?
-
-Ja, vollständig. Besonderheiten:
-- Direkt vom USB-Stick funktioniert die Verschlüsselung nicht (iOS-Einschränkung bei `file://`) — über GitHub Pages oder HTTPS problemlos
-- **Telefonbuch-Import**: „Vom Telefon" Button in den Kontakt-Schritten (iOS Safari 14.1+)
-- **Spracheingabe**: Nur in Chrome/Edge — in Safari deaktiviert
-
-### Funktioniert die App auf Android?
-
-Ja, vollständig. Chrome for Android wird empfohlen:
-- **Telefonbuch-Import** direkt aus der App (Web Contacts API)
-- Alle Exporte (PDF, Word, JSON) funktionieren
-- Bottom-Navigation ersetzt die Sidebar auf kleinen Bildschirmen
-
-### Kann ich die gespeicherte Datei direkt teilen?
-
-Ja. Auf Mobile erscheint neben Speichern ein goldener **Teilen**-Button. Er oeffnet das native Share-Sheet: AirDrop, WhatsApp, E-Mail, iCloud Drive. Die komplette HTML-Datei mit allen Daten wird geteilt.
-
-### Kann ich Dokumente direkt fotografieren?
-
-Ja. In **Meine Dateien** gibt es den Button **Dokument fotografieren** -- er oeffnet die Rueckkamera direkt. Das Foto wird sofort gespeichert. Auf Desktop oeffnet er den normalen Datei-Browser.
-
-### Kann ich Kontakte direkt vom Handy importieren?
-
-Ja. In den Schritten **Vertrauenspersonen** und **Wichtige Kontakte** erscheint auf iOS Safari 14.1+ und Chrome Android ein Button **„Vom Telefon"** — er öffnet das native Telefonbuch, Sie wählen Kontakte aus, fertig. Keine Datei exportieren, kein Umweg.
-
-Die Daten werden wie alles andere lokal gespeichert — kein Netzwerkzugriff.
-
-### Warum ist die Datei so groß (ca. 1 MB)?
-
-Die Datei enthält alles: HTML, CSS, JavaScript, Logo und drei eingebettete Bibliotheken (jsPDF, docx, QRCode). Keine externen Abhängigkeiten. Das ist Absicht — so funktioniert alles offline.
-
-### Kann ich den Quellcode einsehen?
-
-Ja. Vivodepot ist Open Source unter der EUPL-1.2 Lizenz. Der Quellcode ist auf [GitHub](https://github.com/carolaklessen/vivodepot) verfügbar.
-
-### Wird KI verwendet?
-
-VIVODEPOT wurde mit KI-Unterstützung entwickelt (EU AI Act Art. 50 konform, Hinweis in der App). Die App selbst enthält keine KI-Funktionen und keine API-Anbindung an externe Dienste.
+**Was enthält das Notfall-Blatt als PDF?**
+Notrufnummern (112, 110, Seelsorge), Vorratsstatus, Evakuierungsplan, Sammelplatz, medizinische Hinweise, Vertrauenspersonen. Ideal zum Ausdrucken und Aufhängen.
 
 ---
 
-## Zielgruppe & Anwendungsfälle
+## Kontakt & Feedback
 
-### Für wen ist Vivodepot gedacht?
+Fragen, Fehlerberichte, Verbesserungsvorschläge: [feedback@vivodepot.de](mailto:feedback@vivodepot.de)
 
-Für alle, die ihre persönlichen Daten und Vorsorge-Dokumente an einem Ort sammeln möchten — insbesondere:
-- Menschen ab 50, die Ordnung schaffen wollen
-- Angehörige, die für pflegebedürftige Eltern vorsorgen
-- Familien mit minderjährigen Kindern (Sorgerecht!)
-- Alleinstehende ohne nahe Verwandte
-- Vielreisende (ELEFAND-Registrierung)
-
-### Ersetzt Vivodepot einen Notar?
-
-Nein. Vivodepot hilft beim Sammeln und Organisieren — aber bei Testament, Vorsorgevollmacht und Patientenverfügung empfehlen wir immer eine rechtliche Beratung, insbesondere bei:
-- Patchwork-Familien
-- Immobilienbesitz
-- Unternehmensbeteiligungen
-- Internationalen Bezügen (mehrere Staatsangehörigkeiten)
-
-### Ersetzt Vivodepot die elektronische Patientenakte (ePA)?
-
-Nein. Die ePA enthält medizinische Befunde und Behandlungsdaten. Vivodepot enthält keine Befunde selbst — nur Ablageorte und Übersichten. Vivodepot ergänzt die ePA um alles, was dort nicht steht: Finanzen, Testament, persönliche Wünsche, Kontakte.
-
----
-
-## Angehörigen-Modus
-
-### Wie kommen Angehörige an die Notfall-Informationen?
-
-Wenn jemand eine gespeicherte Vivodepot-Datei öffnet, erscheint die Frage „Wer öffnet dieses Vivodepot?" — mit zwei Optionen:
-- **Inhaberin — Daten bearbeiten**: normaler Zugang (ggf. Passwort erforderlich)
-- **Angehörige/r — Notfall-Informationen**: zeigt Krankenhaus- oder Todesfall-Szenario
-
-Als Inhaberin können Sie den Angehörigen-Modus jederzeit testen: ⋮-Menü → „Angehörigen-Ansicht testen".
-
-### Was sehen Angehörige im Krankenhaus-Szenario?
-
-Allergien, Medikamente, Blutgruppe, Vollmachten, Hausarzt, laufende Behandlungen und hochgeladene Befunde — alles auf einer übersichtlichen Seite mit Druckoption.
-
-### Was sehen Angehörige im Todesfall-Szenario?
-
-Testament, Ablageort, Bestattungswünsche, Kontakte und die persönliche Botschaft — sowie hochgeladene Vollmachten mit Download-Button.
-
-### Kann ich den Angehörigen-Zugang mit einem Passwort schützen?
-
-Ja. Im Schritt „Einstellungen" können Sie ein separates Angehörigen-Passwort setzen und einen Hinweis hinterlegen wo es aufzufinden ist (z.B. „Im blauen Umschlag im Tresor").
-
----
-
-## Probleme & Fehlerbehebung
-
-### Die App zeigt nach dem Öffnen nur eine leere Seite
-
-JavaScript ist vermutlich deaktiviert. Aktivieren Sie JavaScript in den Browser-Einstellungen.
-
-### Meine Daten sind verschwunden
-
-Mögliche Ursachen:
-- Browser-Cache wurde gelöscht → Lösung: Regelmäßig „💾 Speichern" nutzen
-- Anderer Browser geöffnet → Daten sind browser-gebunden
-- Privates/Inkognito-Fenster → dort wird localStorage beim Schließen gelöscht
-
-### Die Spracheingabe funktioniert nicht
-
-Spracheingabe (Mikrofon-Symbol) benötigt Chrome oder Edge — in DuckDuckGo Browser ist sie standardmäßig deaktiviert. Der Toggle befindet sich in Einstellungen → Darstellung. Safari und Firefox unterstützen die Web Speech API nicht. Außerdem muss die Mikrofonfreigabe erteilt werden.
-
-### PDFs werden nicht heruntergeladen
-
-Prüfen Sie, ob Ihr Browser Downloads erlaubt. Einige Browser (insbesondere mobile) blockieren automatische Downloads. Versuchen Sie es mit einem Desktop-Browser.
-
----
-
-*Version 1.0.0-beta.4 · © 2026 Vivodepot · [Schnellstart →](QUICKSTART.md) · [Dokumentation →](DOCS.md)*
+GitHub: [github.com/carolaklessen/vivodepot](https://github.com/carolaklessen/vivodepot)
