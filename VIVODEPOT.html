@@ -3206,11 +3206,10 @@ function mehr(id, label, keys, content) {
     if (Array.isArray(v)) return v.length > 0;
     return true;
   }).length;
-  const badgeOnclick = filled > 0 ? `<span style='display:inline-block;font-size:0.68rem;font-weight:600;background:var(--gold-lt);color:var(--gold);border:1px solid var(--gold);border-radius:20px;padding:1px 8px;margin-left:8px;vertical-align:middle'>${filled} eingetragen</span>` : '';
   const badge = filled > 0 ? `<span style="display:inline-block;font-size:0.68rem;font-weight:600;background:var(--gold-lt);color:var(--gold);border:1px solid var(--gold);border-radius:20px;padding:1px 8px;margin-left:8px;vertical-align:middle">${filled} eingetragen</span>` : '';
   const uid = 'mehr_' + id;
   return `<div style="margin-top:14px">
-    <button onclick="(function(){var el=document.getElementById('${uid}');var btn=document.getElementById('${uid}_btn');var open=el.style.display==='block';el.style.display=open?'none':'block';btn.innerHTML=open?'▶ ${label.replace(/'/g,"\\'")}${badgeOnclick}':'▼ Weniger anzeigen';})();" id="${uid}_btn"
+    <button onclick="(function(){var el=document.getElementById('${uid}');var btn=document.getElementById('${uid}_btn');var open=el.style.display==='block';el.style.display=open?'none':'block';btn.innerHTML=open?'▶ ${label.replace(/'/g,"\\'")}${badge}':'▼ Weniger anzeigen';})();" id="${uid}_btn"
       style="background:none;border:none;font-family:inherit;font-size:0.83rem;color:var(--ink3);cursor:pointer;padding:6px 0;display:flex;align-items:center;gap:6px;min-height:36px;text-align:left">
       ▶ ${label}${badge}
     </button>

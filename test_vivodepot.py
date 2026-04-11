@@ -81,6 +81,12 @@ def main():
     else:
         check("BUG-14: showOverlay existiert", False)
 
+    # BUG-15: mehr()-Badge im onclick darf keine einfachen Anführungszeichen enthalten
+    # (style='...' bricht den onclick-String → JS-Fehler → window.onerror → welcome-overlay)
+    check("BUG-15: mehr() badgeOnclick mit einfachen Quotes im onclick beseitigt",
+          'badgeOnclick' not in html,
+          "badgeOnclick mit style='...' bricht onclick-String → JS-Fehler → welcome-overlay erscheint")
+
     check("BUG-03: enterApp() existiert", 'function enterApp' in html)
 
     # BUG-13: returnContinue() darf showGoalWizard nicht bedingungslos aufrufen
