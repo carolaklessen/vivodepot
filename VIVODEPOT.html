@@ -3197,6 +3197,17 @@ function hint(text) {
 }
 
 // Aufklappbarer "Mehr"-Bereich für optionale Felder
+function mehrToggle(uid) {
+  var el  = document.getElementById(uid);
+  var btn = document.getElementById(uid + '_btn');
+  if (!el || !btn) return;
+  var open = el.style.display === 'block';
+  el.style.display = open ? 'none' : 'block';
+  var labelSpan = btn.querySelector('.mehr-label');
+  var badgeSpan = btn.querySelector('.mehr-badge');
+  if (labelSpan) labelSpan.textContent = open ? ('\u25B6 ' + btn.dataset.label) : '\u25BC Weniger anzeigen';
+  if (badgeSpan) badgeSpan.style.display = open ? '' : 'none';
+}
 function mehr(id, label, keys, content) {
   // Zählt wie viele der genannten Keys bereits Daten enthalten
   const filled = (keys||[]).filter(k => {
@@ -3206,12 +3217,15 @@ function mehr(id, label, keys, content) {
     if (Array.isArray(v)) return v.length > 0;
     return true;
   }).length;
-  const badge = filled > 0 ? `<span style="display:inline-block;font-size:0.68rem;font-weight:600;background:var(--gold-lt);color:var(--gold);border:1px solid var(--gold);border-radius:20px;padding:1px 8px;margin-left:8px;vertical-align:middle">${filled} eingetragen</span>` : '';
   const uid = 'mehr_' + id;
+  const badgeHtml = filled > 0
+    ? `<span class="mehr-badge" style="display:inline-block;font-size:0.68rem;font-weight:600;background:var(--gold-lt);color:var(--gold);border:1px solid var(--gold);border-radius:20px;padding:1px 8px;margin-left:8px;vertical-align:middle">${filled} eingetragen</span>`
+    : '';
+  const safeLabel = label.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
   return `<div style="margin-top:14px">
-    <button onclick="(function(){var el=document.getElementById('${uid}');var btn=document.getElementById('${uid}_btn');var open=el.style.display==='block';el.style.display=open?'none':'block';btn.innerHTML=open?'▶ ${label.replace(/'/g,"\\'")}${badge}':'▼ Weniger anzeigen';})();" id="${uid}_btn"
+    <button onclick="mehrToggle('${uid}')" id="${uid}_btn" data-label="${safeLabel}"
       style="background:none;border:none;font-family:inherit;font-size:0.83rem;color:var(--ink3);cursor:pointer;padding:6px 0;display:flex;align-items:center;gap:6px;min-height:36px;text-align:left">
-      ▶ ${label}${badge}
+      <span class="mehr-label">\u25B6 ${label}</span>${badgeHtml}
     </button>
     <div id="${uid}" style="display:none;border-left:2px solid var(--beige-dk);padding-left:14px;margin-top:8px;animation:fadeIn 0.2s ease">
       ${content}

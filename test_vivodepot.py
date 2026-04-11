@@ -81,11 +81,20 @@ def main():
     else:
         check("BUG-14: showOverlay existiert", False)
 
-    # BUG-15: mehr()-Badge im onclick darf keine einfachen Anführungszeichen enthalten
-    # (style='...' bricht den onclick-String → JS-Fehler → window.onerror → welcome-overlay)
-    check("BUG-15: mehr() badgeOnclick mit einfachen Quotes im onclick beseitigt",
+    # BUG-15: mehr()-Badge im onclick darf kein HTML mit Anführungszeichen enthalten
+    # (style="..." oder style='...' bricht das onclick-Attribut → HTML kaputt oder JS-Fehler → welcome-overlay)
+    check("BUG-15a: mehr() badgeOnclick (einfache Quotes) beseitigt",
           'badgeOnclick' not in html,
-          "badgeOnclick mit style='...' bricht onclick-String → JS-Fehler → welcome-overlay erscheint")
+          "badgeOnclick mit style='...' bricht onclick-String")
+    check("BUG-15b: mehr() verwendet mehrToggle() statt inline-HTML im onclick",
+          'function mehrToggle' in html,
+          "mehrToggle fehlt — mehr()-Button hat HTML-in-onclick die das Attribut bricht")
+    import re as _re15
+    mehr_fn = _re15.search(r'function mehr\(id.*?\n\}', html, _re15.DOTALL)
+    if mehr_fn:
+        check("BUG-15c: mehr() hat kein btn.innerHTML im onclick-String",
+              'btn.innerHTML' not in mehr_fn.group(0),
+              "btn.innerHTML im onclick-Attribut → HTML-Injection bricht Attribut-Parsing")
 
     check("BUG-03: enterApp() existiert", 'function enterApp' in html)
 
