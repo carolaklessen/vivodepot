@@ -1239,6 +1239,25 @@ def main():
     check("Fokus: savedWelcomeOwner stellt Fokus wieder her", "savedFokus" in html and "savedWelcomeOwner" in html)
     check("Fokus: Wizard nur bei fehlendem Fokus",        "savedFokus" in html and "showGoalWizard" in html)
 
+    # ═══════════════════════════════════════
+    print("\n=== 33. VIEWPORT & LAYOUT-REGRESSION ===")
+    # ═══════════════════════════════════════
+
+    # BUG-12: .crypto-modal auf kleinen Bildschirmen (iPhone) oben/unten abgeschnitten.
+    # Ursache: Fehlende max-height und overflow-y im .crypto-modal CSS-Block.
+    # Suche den Haupt-Block (enthält border-radius), nicht den Dark-Mode-Override.
+    modal_css = re.search(r'\.crypto-modal\s*\{([^}]*border-radius[^}]*)\}', html)
+    if modal_css:
+        block = modal_css.group(1)
+        check("BUG-12: .crypto-modal hat max-height (kein Viewport-Clipping)",
+              'max-height' in block,
+              "Fehlt: max-height — Modal wird auf kleinen Bildschirmen abgeschnitten")
+        check("BUG-12: .crypto-modal hat overflow-y (scrollbar bei Überlauf)",
+              'overflow-y' in block,
+              "Fehlt: overflow-y — Inhalt nicht scrollbar wenn Modal zu hoch")
+    else:
+        check("BUG-12: .crypto-modal CSS-Block gefunden", False, "Klasse nicht gefunden")
+
     passed = sum(1 for s, _, _ in results if s == "PASS")
     failed = sum(1 for s, _, _ in results if s == "FAIL")
     total = len(results)
