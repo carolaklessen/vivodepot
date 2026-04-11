@@ -2346,7 +2346,12 @@ function showOverlay(id) {
 }
 function hideAllOverlays() {
   ['welcome-overlay','return-overlay','angehoerigenauswahl-overlay','set-password-overlay','crypto-overlay','gwiz-overlay','vvwiz-overlay','pvwiz-overlay','bwiz-overlay','hwiz-overlay','gvwiz-overlay','goal-wizard']
-    .forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+    .forEach(id => {
+      // Im Angehörigen-Modus darf der Auswahl-Overlay nicht versteckt werden,
+      // solange kein expliziter Fokuswechsel stattgefunden hat.
+      if (id === 'angehoerigenauswahl-overlay' && window._angehoerigenModus) return;
+      const el = document.getElementById(id); if (el) el.style.display = 'none';
+    });
 }
 
 
@@ -2684,6 +2689,9 @@ function savedWelcomeAngehoerige() {
 
 function angehoerigenZurueck() {
   hideAllOverlays();
+  window._angehoerigenModus = false; // BUG-FIX: Angehörigen-Modus beenden — Owner-Navigation freigeben
+  var sb = document.getElementById('sidebar');
+  if (sb) sb.style.display = ''; // Sidebar-Sichtbarkeit zurücksetzen
   var mc = document.getElementById('main-content');
   // If app is loaded (main-content has content), go back to app view
   if (mc && mc.innerHTML.trim()) {
@@ -2793,10 +2801,11 @@ function removeFoto() {
 
 function openAngehoerigenView(scenario) {
   hideAllOverlays();
+  window._angehoerigenModus = true; // BUG-FIX: Angehörigen-Modus aktiv — Owner-Navigation gesperrt
   var name = [get('vorname'),get('nachname')].filter(Boolean).join(' ')||'—';
   var mc = document.getElementById('main-content');
   var sb = document.getElementById('sidebar');
-  if (sb) sb.innerHTML = '';
+  if (sb) { sb.innerHTML = ''; sb.style.display = 'none'; }
 
   var html = '<div style="max-width:700px;margin:0 auto;padding:2rem 1rem">';
   html += '<div style="background:var(--forest);color:#fff;padding:16px 20px;border-radius:10px;margin-bottom:1.5rem">';
@@ -3029,6 +3038,7 @@ function toggleDone(i) {
 }
 
 function renderSidebar() {
+  if (window._angehoerigenModus) return; // BUG-FIX: Angehörigen-Modus sperrt Owner-Navigation
   const sb = document.getElementById('sidebar');
   const total = STEPS.length - 1;
   const doneCnt = STEPS.slice(0, total).filter((_,i) => isStepDone(i)).length;
@@ -9809,6 +9819,12 @@ document.addEventListener('keydown', function(e) {
       var el = document.getElementById(id);
       if (el && el.style.display !== 'none') el.style.display = 'none';
     });
+  // Angehörigen-Auswahl-Overlay nur schließen wenn KEIN Angehörigen-Modus aktiv
+  // (im Modus muss der Nutzer explizit "Zurück" klicken, um sauber zurückzukehren)
+  if (!window._angehoerigenModus) {
+    var ao = document.getElementById('angehoerigenauswahl-overlay');
+    if (ao && ao.style.display !== 'none') ao.style.display = 'none';
+  }
   // Crypto/Overlay schließen
   var co = document.getElementById('crypto-overlay');
   if (co && co.style.display !== 'none') { co.style.display = 'none'; }

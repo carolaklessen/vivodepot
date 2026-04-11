@@ -1211,6 +1211,26 @@ def main():
     check("Angehörigen: return-owner-label",             "return-owner-label" in html)
     check("Angehörigen: angehoerigen_passwort Feld",     "'angehoerigen_passwort'" in html)
 
+    # BUG-FIX Angehörigen-Modus: Zugangssperre (verhindert Owner-Datenzugriff)
+    check("BUG-ANG-01: _angehoerigenModus Flag gesetzt in openAngehoerigenView()",
+          "window._angehoerigenModus = true" in html,
+          "Fehlt: Flag zum Sperren des Owner-Modus wird nicht gesetzt")
+    check("BUG-ANG-02: _angehoerigenModus Flag zurückgesetzt in angehoerigenZurueck()",
+          "window._angehoerigenModus = false" in html,
+          "Fehlt: Flag wird beim Verlassen nicht zurückgesetzt")
+    check("BUG-ANG-03: renderSidebar() prüft _angehoerigenModus Guard",
+          "if (window._angehoerigenModus) return" in html,
+          "Fehlt: renderSidebar() kann im Angehörigen-Modus Owner-Navigation neu rendern")
+    check("BUG-ANG-04: Sidebar wird per display:none gesperrt (nicht nur geleert)",
+          "sb.style.display = 'none'" in html,
+          "Fehlt: Sidebar nur geleert statt unsichtbar — renderSidebar() kann sie neu befüllen")
+    check("BUG-ANG-05: hideAllOverlays() schützt angehoerigenauswahl-overlay im Angehörigen-Modus",
+          "id === 'angehoerigenauswahl-overlay' && window._angehoerigenModus" in html,
+          "Fehlt: hideAllOverlays() kann Auswahl-Overlay im Angehörigen-Modus schließen")
+    check("BUG-ANG-06: ESC-Handler schließt angehoerigenauswahl-overlay nur außerhalb Angehörigen-Modus",
+          "if (!window._angehoerigenModus)" in html and "angehoerigenauswahl-overlay" in html,
+          "Fehlt: ESC-Taste kann Auswahl-Overlay im Angehörigen-Modus schließen")
+
     # Persona-Felder aus Chat-Abgleich
     check("Persona: selbstaendig_notfall",               "'selbstaendig_notfall'" in html)
     check("Persona: krypto_seed_ort",                    "'krypto_seed_ort'" in html)
