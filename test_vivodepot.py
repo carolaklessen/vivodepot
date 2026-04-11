@@ -916,6 +916,7 @@ def main():
     check("Wizard: Zurück-Button vorhanden",        "wizard-btn-back" in html)
     check("Wizard: Weiter-Button vorhanden",        "wizard-btn-next" in html)
     check("Wizard: Schließen im Header",            'title="Schlie' in html)
+    check("Wizard: Schließen-Button hat sichtbaren Inhalt", 'title="Schließen">✕</button>' in html)
 
     # ═══════════════════════════════════════
     print("\n=== 27. IMPORT-SYSTEM ===")
