@@ -89,8 +89,7 @@ def main():
     check("BUG-15b: mehr() verwendet mehrToggle() statt inline-HTML im onclick",
           'function mehrToggle' in html,
           "mehrToggle fehlt — mehr()-Button hat HTML-in-onclick die das Attribut bricht")
-    import re as _re15
-    mehr_fn = _re15.search(r'function mehr\(id.*?\n\}', html, _re15.DOTALL)
+    mehr_fn = re.search(r'function mehr\(id.*?\n\}', html, re.DOTALL)
     if mehr_fn:
         check("BUG-15c: mehr() hat kein btn.innerHTML im onclick-String",
               'btn.innerHTML' not in mehr_fn.group(0),
@@ -140,6 +139,12 @@ def main():
     if vcard_pos >= 0:
         last_script_close = html.rfind('</script>', 0, vcard_pos)
         next_script_open  = html.rfind('<script',   0, vcard_pos)
+        check("BUG-10: vCard-Code innerhalb <script>-Tag",
+              next_script_open > last_script_close,
+              "vCard-JS liegt außerhalb eines <script>-Tags — wird als Text gerendert!")
+    else:
+        check("BUG-10: vCard-Code innerhalb <script>-Tag", False,
+              "Marker '// ── vCard 4.0 Export' nicht gefunden")
 
     # BUG-11: mehr()-Aufrufe mit falschem 3. Argument (Template statt Array → filter-Fehler)
     mehr_calls = re.findall(r"mehr\('([^']+)',\s*'[^']*',\s*(`|\[)", html)
@@ -147,10 +152,6 @@ def main():
     check("BUG-11: Alle mehr()-Aufrufe haben Array als 3. Arg",
           len(bad_mehr) == 0,
           f"Fehler in: {[mid for mid,_ in bad_mehr]}")
-
-    check("BUG-10: vCard-Code innerhalb <script>-Tag",
-              next_script_open > last_script_close,
-              "vCard-JS liegt außerhalb eines <script>-Tags — wird als Text gerendert!")
     
     pw_fields = len(re.findall(r'type=["\']password["\']', html))
     check("BUG-05: Max 7 password-Felder", pw_fields <= 7, f"Gefunden: {pw_fields}")
@@ -687,10 +688,9 @@ def main():
 
 
     # ═══════════════════════════════════════
-    print("\n=== 15. MOBILE & RESPONSIVE ===")
+    print("\n=== 27. MOBILE & RESPONSIVE ===")
     # ═══════════════════════════════════════
 
-    check("Mobile: viewport-fit=cover",           "viewport-fit=cover" in html)
     check("Mobile: safe-area-inset-bottom",        "safe-area-inset-bottom" in html)
     check("Mobile: safe-area-inset-right",         "safe-area-inset-right" in html)
     check("Mobile: apple-mobile-web-app-capable",  "apple-mobile-web-app-capable" in html)
@@ -710,7 +710,7 @@ def main():
     check("Mobile: Lora Schrift geladen",          "Lora" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 16. FOKUS-SYSTEM ===")
+    print("\n=== 28. FOKUS-SYSTEM ===")
     # ═══════════════════════════════════════
 
     check("Fokus: _goalMode Flag",                 "_goalMode" in html)
@@ -739,7 +739,7 @@ def main():
           if "function renderSidebar" in html else False)
 
     # ═══════════════════════════════════════
-    print("\n=== 17. BARRIEREFREIHEIT (ERWEITERT) ===")
+    print("\n=== 29. BARRIEREFREIHEIT (ERWEITERT) ===")
     # ═══════════════════════════════════════
 
     check("A11y: aria-label auf FAB",              'aria-label' in html)
@@ -765,7 +765,7 @@ def main():
     check("A11y: dark-mode Klasse",                "dark-mode" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 18. VCARD & KONTAKTE ===")
+    print("\n=== 30. VCARD & KONTAKTE ===")
     # ═══════════════════════════════════════
 
     check("vCard: exportVCard() vorhanden",        "function exportVCard" in html)
@@ -784,7 +784,7 @@ def main():
     check("vCard: Leere Kontakte Prüfung",         "Keine Kontakte" in html or "personen" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 19. NOTFALL & KATASTROPHENSCHUTZ ===")
+    print("\n=== 31. NOTFALL & KATASTROPHENSCHUTZ ===")
     # ═══════════════════════════════════════
 
     check("Notfall: NOTFALL_VORRAT_ITEMS definiert", "NOTFALL_VORRAT_ITEMS" in html)
@@ -819,7 +819,6 @@ def main():
     check("Notfall: Pfeife/Signalmittel in Vorrat",  "Signalmittel" in html)
     check("Notfall: Werkzeug in Vorrat",             "Dosenöffner" in html)
     # Genau 15 Einträge
-    import re as _re2
     vorrat_start = html.find("var NOTFALL_VORRAT_ITEMS")
     vorrat_end   = html.find("];", vorrat_start) + 2
     vorrat_block = html[vorrat_start:vorrat_end]
@@ -827,7 +826,7 @@ def main():
     check("Notfall: Liste hat genau 15 Einträge", vorrat_count == 15, f"Gefunden: {vorrat_count}")
 
     # ═══════════════════════════════════════
-    print("\n=== 20. BROWSER-VERHALTEN & ROBUSTHEIT ===")
+    print("\n=== 32. BROWSER-VERHALTEN & ROBUSTHEIT ===")
     # ═══════════════════════════════════════
 
     check("Browser: popstate Handler",             "popstate" in html)
@@ -848,7 +847,7 @@ def main():
     check("Browser: iOS standalone detect",        "window.navigator.standalone" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 21. EXPORT-QUALITÄT ===")
+    print("\n=== 33. EXPORT-QUALITÄT ===")
     # ═══════════════════════════════════════
 
     check("Export: PDF generiert Titelseite",      "Mein Vivodepot" in html and "generatePDF" in html)
@@ -872,7 +871,7 @@ def main():
     check("Export: © 2026 Vivodepot",             "© 2026 Vivodepot" in html or "2026 Vivodepot" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 22. DATENSPEICHERUNG ===")
+    print("\n=== 34. DATENSPEICHERUNG ===")
     # ═══════════════════════════════════════
 
     check("Speicher: STORE_KEY let (nicht const)",    "let STORE_KEY" in html)
@@ -895,14 +894,13 @@ def main():
     check("Speicher: setActiveProfile()",             "function setActiveProfile" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 23. INTERNATIONALISIERUNG ===")
+    print("\n=== 35. INTERNATIONALISIERUNG ===")
     # ═══════════════════════════════════════
 
-    import re as _re
     en_block_start = html.find("var EN")
     en_block_end   = html.find("function tl(")
     en_block = html[en_block_start:en_block_end] if en_block_start > 0 else ""
-    en_keys  = len(_re.findall(r"'[^']{3,50}'\s*:", en_block))
+    en_keys  = len(re.findall(r"'[^']{3,50}'\s*:", en_block))
 
     check("i18n: var EN Wörterbuch vorhanden",    "var EN" in html)
     check("i18n: function tl() vorhanden",         "function tl(" in html)
@@ -913,7 +911,7 @@ def main():
     check("i18n: tl('Fokus')",                    "tl('Fokus" in html or 'tl("Fokus' in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 24. PWA & INSTALLATION ===")
+    print("\n=== 36. PWA & INSTALLATION ===")
     # ═══════════════════════════════════════
 
     check("PWA: rel=manifest vorhanden",            'rel="manifest"' in html)
@@ -933,7 +931,7 @@ def main():
     check("PWA: Apple Touch Icon",                  "apple-touch-icon" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 25. LEGAL & COMPLIANCE ===")
+    print("\n=== 37. LEGAL & COMPLIANCE ===")
     # ═══════════════════════════════════════
 
     check("Legal: EUPL-1.2 Lizenz",                "EUPL" in html)
@@ -953,7 +951,7 @@ def main():
     check("Legal: Unverheiratete Paare Warnung",   "nicht verheiratete Paare" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 26. WIZARDS (ERWEITERT) ===")
+    print("\n=== 38. WIZARDS (ERWEITERT) ===")
     # ═══════════════════════════════════════
 
     check("Wizard: gwizOpen() Gesundheitskarte",   "function gwizOpen" in html)
@@ -974,7 +972,7 @@ def main():
     check("Wizard: Schließen-Button hat sichtbaren Inhalt", 'title="Schließen">✕</button>' in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 27. IMPORT-SYSTEM ===")
+    print("\n=== 39. IMPORT-SYSTEM ===")
     # ═══════════════════════════════════════
 
     check("Import: parseVCard() vorhanden",        "parseVCard" in html)
@@ -989,7 +987,7 @@ def main():
     check("Import: FileReader onload",             "FileReader" in html and "onload" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 28. UX-DETAILS ===")
+    print("\n=== 40. UX-DETAILS ===")
     # ═══════════════════════════════════════
 
     check("UX: toast() Funktion",                  "function toast(" in html)
@@ -1014,7 +1012,7 @@ def main():
     check("UX: stepDots() Hilfsfunktion",          "function stepDots" in html or "stepDots" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 29. INHALTLICHE VOLLSTÄNDIGKEIT ===")
+    print("\n=== 41. INHALTLICHE VOLLSTÄNDIGKEIT ===")
     # ═══════════════════════════════════════
 
     content_checks = [
@@ -1043,7 +1041,7 @@ def main():
         check(f"Inhalt: {label}", cond)
 
     # ═══════════════════════════════════════
-    print("\n=== 30. UPDATE-SYSTEM (ERWEITERT) ===")
+    print("\n=== 42. UPDATE-SYSTEM (ERWEITERT) ===")
     # ═══════════════════════════════════════
 
     check("Update-Ext: vivodepot_use_count gespeichert",  "vivodepot_use_count" in html)
@@ -1063,7 +1061,7 @@ def main():
 
 
     # ═══════════════════════════════════════
-    print("\n=== 27. EXPORTE — QUALITÄT ===")
+    print("\n=== 43. EXPORTE — QUALITÄT ===")
     # ═══════════════════════════════════════
 
     check("Export: generateArztbogen() vorhanden", "function generateArztbogen" in html)
@@ -1086,7 +1084,7 @@ def main():
     check("Export: Behördendaten Kindergeld", "Kindergeld" in html or "generateBehoerdendaten" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 28. VOLLMACHTEN & DOKUMENTE ===")
+    print("\n=== 44. VOLLMACHTEN & DOKUMENTE ===")
     # ═══════════════════════════════════════
 
     check("Vollmacht: generateVorsorgevollmacht()", "function generateVorsorgevollmacht" in html)
@@ -1103,7 +1101,7 @@ def main():
     check("Vollmacht: Vollmacht Hinweis Alleinlebende", "Alleinlebend oder verwitwet?" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 29. ROBUSTHEIT & FEHLERBEHANDLUNG ===")
+    print("\n=== 45. ROBUSTHEIT & FEHLERBEHANDLUNG ===")
     # ═══════════════════════════════════════
 
     check("Robust: window.onerror", "window.onerror" in html)
@@ -1123,7 +1121,7 @@ def main():
     check("Robust: Daten-Fallback bei leerem Wert", "|| ''" in html or "|| \"\"" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 30. UPDATE-SYSTEM INTEGRATION ===")
+    print("\n=== 46. UPDATE-SYSTEM INTEGRATION ===")
     # ═══════════════════════════════════════
 
     check("Update: VIVODEPOT_VERSION Konstante", "VIVODEPOT_VERSION" in html)
@@ -1140,7 +1138,7 @@ def main():
     check("Update: Opt-in mit 4s Verzögerung", "4000" in html and "showEmailOptin" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 31. EINGABE-HILFE & VALIDIERUNG ===")
+    print("\n=== 47. EINGABE-HILFE & VALIDIERUNG ===")
     # ═══════════════════════════════════════
 
     # IBAN-Formatierung
@@ -1179,7 +1177,7 @@ def main():
     check("Inaktiv: Mehrere Events (input/click/keydown)", "_idleTimer" in html and "keydown" in html and "touchstart" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 32. VOLLSTÄNDIGKEITS-REGRESSION (Chat-Abgleich) ===")
+    print("\n=== 48. VOLLSTÄNDIGKEITS-REGRESSION (Chat-Abgleich) ===")
     # ═══════════════════════════════════════
 
     # Fokus-System: notfall muss in emergency UND family enthalten sein
@@ -1282,20 +1280,9 @@ def main():
     check("Persona: bundid_email",                       "'bundid_email'" in html)
     check("Persona: behandlung_aktuell",                 "'behandlung_aktuell'" in html)
 
-    # Alle 6 Wizards
-    check("Wizard: gwizOpen (Gesundheitskarte)",         "function gwizOpen" in html)
-    check("Wizard: vvwizOpen (Vorsorgevollmacht)",       "function vvwizOpen" in html)
-    check("Wizard: pvwizOpen (Patientenverfügung)",      "function pvwizOpen" in html)
-    check("Wizard: bwizOpen (Bestattung)",               "function bwizOpen" in html)
-    check("Wizard: hwizOpen (Haustier)",                 "function hwizOpen" in html)
-    check("Wizard: gvwizOpen (Gesundheitsvollmacht)",    "function gvwizOpen" in html)
-
     # Rechtliche Inhalte
     check("Recht: Stiefkinder erben nichts",             "Stiefkinder erben nichts" in html)
     check("Recht: § 2077 BGB (Scheidung)",               "2077 BGB" in html)
-    check("Recht: Alleinlebend Vollmacht Hinweis",       "Alleinlebend oder verwitwet?" in html)
-    check("Recht: unwiederbringlich verloren (Krypto)",  "unwiederbringlich" in html)
-    check("Recht: Elternunterhalt leibliche Kinder",     "Elternunterhalt gilt nur für leibliche" in html)
     check("Recht: Nachlassgericht Alleinerziehend",      "Nachlassgericht hinterlegen" in html)
 
     # Print-CSS (aus Session)
@@ -1309,23 +1296,7 @@ def main():
     check("vCard: VERSION:4.0",                          "VERSION:4.0" in html)
     check("vCard: PRODID Vivodepot",                     "PRODID:-//Vivodepot" in html)
 
-    # BUG-10 Regression: vCard-Code in script-Tag
-    vcard_pos = html.find('// ── vCard 4.0 Export')
-    if vcard_pos >= 0:
-        last_close = html.rfind('</script>', 0, vcard_pos)
-        last_open  = html.rfind('<script',   0, vcard_pos)
-        # BUG-11: mehr()-Aufrufe mit falschem 3. Argument (Template statt Array → filter-Fehler)
-    import re as _re11
-    mehr_calls = _re11.findall(r"mehr\('([^']+)',\s*'[^']*',\s*(`|\[)", html)
-    bad_mehr = [(mid, t) for mid, t in mehr_calls if t == '`']
-    check("BUG-11: Alle mehr()-Aufrufe haben Array als 3. Arg",
-          len(bad_mehr) == 0,
-          f"Fehler in: {[mid for mid,_ in bad_mehr]}")
-
-    check("BUG-10: vCard-Code innerhalb <script>-Tag", last_open > last_close)
-
     # IBAN-Formatierung und Validierung
-    check("Eingabe: ibanFormat() vorhanden",             "function ibanFormat" in html)
     check("Eingabe: BIC-Validierung",                    "BIC" in html and "COBADEFFXXX" in html)
     check("Eingabe: SVNR-Validierung 12 Stellen",        "12 Ziffern" in html and "svnr" in html)
 
@@ -1354,7 +1325,7 @@ def main():
     check("Fokus: Wizard nur bei fehlendem Fokus",        "savedFokus" in html and "showGoalWizard" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 33. VIEWPORT & LAYOUT-REGRESSION ===")
+    print("\n=== 49. VIEWPORT & LAYOUT-REGRESSION ===")
     # ═══════════════════════════════════════
 
     # BUG-12: .crypto-modal auf kleinen Bildschirmen (iPhone) oben/unten abgeschnitten.
