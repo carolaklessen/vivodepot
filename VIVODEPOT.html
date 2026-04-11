@@ -2396,7 +2396,7 @@ function enterApp() {
     // Kein Wizard zeigen — Fokus ist bekannt
   } else {
     // Nur beim ersten Mal oder wenn kein Fokus gespeichert: Wizard anbieten
-    setTimeout(showGoalWizard, 300);
+    setTimeout(function(){ if (!window._angehoerigenModus) showGoalWizard(); }, 300);
   }
 
   // Update-Check und E-Mail-Opt-in (verzögert, damit der Seitenaufbau fertig ist)
@@ -2406,8 +2406,38 @@ function enterApp() {
 
 function welcomeStart() {
   hideAllOverlays();
-  
+  showWelcomeRoleSelect();
+}
+
+function showWelcomeRoleSelect() {
+  var el = document.createElement('div');
+  el.id = 'welcome-role-overlay';
+  el.style.cssText = 'position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:var(--beige)';
+  el.innerHTML =
+    '<div style="max-width:420px;width:90%;text-align:center;padding:2rem 1.5rem">' +
+    '<div style="font-family:Lora,serif;font-size:2rem;font-weight:700;color:var(--forest);letter-spacing:0.06em;margin-bottom:0.2rem">VIVO<span style="color:var(--gold)">DEPOT</span></div>' +
+    '<div style="font-size:0.78rem;color:var(--ink3);letter-spacing:0.12em;margin-bottom:2rem">PERSÖNLICHE VORSORGE</div>' +
+    '<div style="background:#fff;border-radius:12px;padding:1.5rem;box-shadow:0 2px 16px rgba(61,90,42,0.1);margin-bottom:1.5rem">' +
+    '<p style="font-size:0.88rem;color:var(--ink2);margin-bottom:1.2rem">Für wen öffnen Sie Vivodepot?</p>' +
+    '<div style="display:flex;flex-direction:column;gap:10px">' +
+    '<button class="btn-nav primary" onclick="welcomeRoleOwner()" style="padding:13px 24px;font-size:0.95rem;background:var(--forest)">👤 Für mich — Vorsorge anlegen</button>' +
+    '<button class="btn-nav" onclick="welcomeRoleAngehoerige()" style="padding:11px 24px;font-size:0.88rem;color:var(--ink2)">👨‍👩‍👧 Angehörige — Notfall-Informationen</button>' +
+    '</div></div>' +
+    '<p style="font-size:0.72rem;color:var(--ink3)">Alle Informationen bleiben auf diesem Gerät.</p>' +
+    '</div>';
+  document.body.appendChild(el);
+}
+
+function welcomeRoleOwner() {
+  var el = document.getElementById('welcome-role-overlay');
+  if (el) el.remove();
   showGoalWizard();
+}
+
+function welcomeRoleAngehoerige() {
+  var el = document.getElementById('welcome-role-overlay');
+  if (el) el.remove();
+  showOverlay('angehoerigenauswahl-overlay');
 }
 
 function showGoalWizard() {
@@ -2491,6 +2521,7 @@ function toggleGoalOption(btn) {
 }
 
 function applyGoalWizard() {
+  if (window._angehoerigenModus) return; // Angehörigen-Modus: kein Owner-App-Rendering
   // Determine which steps to highlight
   var relevant = {};
   var allSteps = STEPS.map(function(s) { return s.id; });
@@ -2530,6 +2561,7 @@ function applyGoalWizard() {
 }
 
 function skipGoalWizard() {
+  if (window._angehoerigenModus) return; // Angehörigen-Modus: kein Owner-App-Rendering
   window._goalMode = false;
   window._goalRelevant = null;
   try { data['__fokus__'] = 'all'; saveData(); } catch(e) {}
@@ -2585,7 +2617,7 @@ function returnContinue() {
     selectedGoal = savedFokus;
     applyGoalWizard();
   } else if (!savedFokus) {
-    setTimeout(showGoalWizard, 300);
+    setTimeout(function(){ if (!window._angehoerigenModus) showGoalWizard(); }, 300);
   }
 }
 
@@ -2677,7 +2709,7 @@ function savedWelcomeOwner() {
     selectedGoal = savedFokus;
     applyGoalWizard();
   } else {
-    setTimeout(showGoalWizard, 300);
+    setTimeout(function(){ if (!window._angehoerigenModus) showGoalWizard(); }, 300);
   }
 }
 
@@ -2688,18 +2720,26 @@ function savedWelcomeAngehoerige() {
 }
 
 function angehoerigenZurueck() {
+  // Angehörigen-View-Overlay entfernen
+  var angOverlay = document.getElementById('angehoerigen-view-overlay');
+  if (angOverlay) angOverlay.remove();
+  // App-Shell und Bars wiederherstellen
+  var appEl = document.querySelector('.app');
+  if (appEl) appEl.style.display = '';
+  var barEl = document.getElementById('save-reminder-bar');
+  if (barEl) barEl.style.display = '';
+
   hideAllOverlays();
   window._angehoerigenModus = false; // BUG-FIX: Angehörigen-Modus beenden — Owner-Navigation freigeben
   var sb = document.getElementById('sidebar');
-  if (sb) sb.style.display = ''; // Sidebar-Sichtbarkeit zurücksetzen
+  if (sb) { sb.style.display = ''; } // Sidebar-Sichtbarkeit zurücksetzen
   var mc = document.getElementById('main-content');
   // If app is loaded (main-content has content), go back to app view
   if (mc && mc.innerHTML.trim()) {
     // already in app — just hide overlays, app remains
     return;
   }
-  // Otherwise came from saved file welcome
-  var sb = document.getElementById('sidebar');
+  // Otherwise came from saved file welcome or first-time Angehoerigen flow
   if (mc) mc.innerHTML = '';
   if (sb) sb.innerHTML = '';
   showSavedFileWelcome();
@@ -2803,7 +2843,23 @@ function openAngehoerigenView(scenario) {
   hideAllOverlays();
   window._angehoerigenModus = true; // BUG-FIX: Angehörigen-Modus aktiv — Owner-Navigation gesperrt
   var name = [get('vorname'),get('nachname')].filter(Boolean).join(' ')||'—';
-  var mc = document.getElementById('main-content');
+  // App-Shell und Bars verstecken — Angehörigen-View ist ein eigenständiger Overlay
+  var appEl = document.querySelector('.app');
+  if (appEl) appEl.style.display = 'none';
+  var barEl = document.getElementById('save-reminder-bar');
+  if (barEl) barEl.style.display = 'none';
+  // Bestehenden Angehörigen-Overlay entfernen falls vorhanden
+  var old = document.getElementById('angehoerigen-view-overlay');
+  if (old) old.remove();
+  // Vollbild-Overlay erstellen
+  var overlay = document.createElement('div');
+  overlay.id = 'angehoerigen-view-overlay';
+  overlay.className = 'crypto-overlay';
+  overlay.style.display = 'flex';
+  overlay.style.alignItems = 'flex-start';
+  overlay.style.overflowY = 'auto';
+  document.body.appendChild(overlay);
+  var mc = overlay; // html wird in den Overlay geschrieben
   var sb = document.getElementById('sidebar');
   if (sb) { sb.innerHTML = ''; sb.style.display = 'none'; }
 
@@ -2898,7 +2954,7 @@ function openAngehoerigenView(scenario) {
   html += '<button class="btn-nav" onclick="showOverlay(\'angehoerigenauswahl-overlay\')" style="margin:4px">← Ansicht wechseln</button>';
   html += '</div></div>';
 
-  mc.innerHTML = html;
+  overlay.innerHTML = html;
 }
 
 async function loadData() {

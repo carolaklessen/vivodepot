@@ -1230,6 +1230,37 @@ def main():
     check("BUG-ANG-06: ESC-Handler schließt angehoerigenauswahl-overlay nur außerhalb Angehörigen-Modus",
           "if (!window._angehoerigenModus)" in html and "angehoerigenauswahl-overlay" in html,
           "Fehlt: ESC-Taste kann Auswahl-Overlay im Angehörigen-Modus schließen")
+    check("BUG-ANG-07: welcomeStart() zeigt zuerst Inhaber/Angehörigen-Auswahl",
+          "showWelcomeRoleSelect" in html,
+          "Fehlt: welcomeStart() springt direkt zum Goal-Wizard ohne Inhaber/Angehörigen-Auswahl")
+    check("BUG-ANG-08: welcomeRoleOwner() führt zum Goal-Wizard",
+          "function welcomeRoleOwner" in html and "showGoalWizard" in html,
+          "Fehlt: Inhaber-Pfad nach Rollenauswahl")
+    check("BUG-ANG-09: welcomeRoleAngehoerige() öffnet Angehörigen-Auswahl",
+          "function welcomeRoleAngehoerige" in html and "angehoerigenauswahl-overlay" in html,
+          "Fehlt: Angehörigen-Pfad nach Rollenauswahl")
+    check("BUG-ANG-10: setTimeout(showGoalWizard) prüft _angehoerigenModus",
+          "if (!window._angehoerigenModus) showGoalWizard" in html,
+          "Fehlt: Timer kann showGoalWizard im Angehoerigen-Modus aufrufen")
+    check("BUG-ANG-11: applyGoalWizard() Guard gegen Angehoerigen-Modus",
+          "if (window._angehoerigenModus) return;" in html,
+          "Fehlt: applyGoalWizard oeffnet Owner-App im Angehoerigen-Modus")
+    check("BUG-ANG-12: skipGoalWizard() Guard gegen Angehoerigen-Modus",
+          "if (window._angehoerigenModus) return;" in html,
+          "Fehlt: skipGoalWizard oeffnet Owner-App im Angehoerigen-Modus")
+    check("BUG-ANG-13: openAngehoerigenView() versteckt App-Shell (.app)",
+          "appEl.style.display = 'none'" in html,
+          "Fehlt: App-Shell bleibt sichtbar — 20 Kategorien in Sidebar sichtbar")
+    check("BUG-ANG-14: openAngehoerigenView() versteckt save-reminder-bar",
+          "save-reminder-bar" in html and "barEl.style.display = 'none'" in html,
+          "Fehlt: save-reminder-bar mit Fokus/Speichern-Buttons bleibt sichtbar")
+    check("BUG-ANG-15: openAngehoerigenView() nutzt eigenen Vollbild-Overlay",
+          "angehoerigen-view-overlay" in html,
+          "Fehlt: Angehoerigen-View zeigt in main-content statt eigenem Overlay")
+    check("BUG-ANG-16: angehoerigenZurueck() stellt App-Shell wieder her",
+          "angehoerigen-view-overlay" in html and "appEl.style.display = ''" in html,
+          "Fehlt: App-Shell wird nach Angehoerigen-Modus nicht wiederhergestellt")
+
 
     # Persona-Felder aus Chat-Abgleich
     check("Persona: selbstaendig_notfall",               "'selbstaendig_notfall'" in html)
