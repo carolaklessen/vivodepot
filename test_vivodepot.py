@@ -96,6 +96,30 @@ def main():
               'btn.innerHTML' not in mehr_fn.group(0),
               "btn.innerHTML im onclick-Attribut → HTML-Injection bricht Attribut-Parsing")
 
+    # BUG-17: skipGoalWizard() muss currentStep auf 0 zurücksetzen vor safeRender()
+    skip_fn_match = re.search(r'function skipGoalWizard\(\)\s*\{([\s\S]*?)\n\}', html)
+    if skip_fn_match:
+        skip_body = skip_fn_match.group(1)
+        reset_before_render = bool(re.search(
+            r'currentStep\s*=\s*0[\s\S]*?safeRender', skip_body))
+        check("BUG-17: skipGoalWizard() setzt currentStep=0 vor safeRender()",
+              reset_before_render,
+              "Fokus überspringen auf Seite 7 → App startet auf Seite 7 statt Seite 1")
+    else:
+        check("BUG-17: skipGoalWizard() existiert", False)
+
+    # BUG-16: applyGoalWizard() muss currentStep auf 0 zurücksetzen vor renderSidebar/renderStep
+    apply_fn_match = re.search(r'function applyGoalWizard\(\)\s*\{([\s\S]*?)\n\}', html)
+    if apply_fn_match:
+        apply_body = apply_fn_match.group(1)
+        reset_before_render = bool(re.search(
+            r'currentStep\s*=\s*0[\s\S]*?renderSidebar', apply_body))
+        check("BUG-16a: applyGoalWizard() setzt currentStep=0 vor renderSidebar()",
+              reset_before_render,
+              "Fokus-Wechsel auf Seite 7 → neuer Fokus startet auf Seite 7 statt Seite 1")
+    else:
+        check("BUG-16a: applyGoalWizard() existiert", False)
+
     check("BUG-03: enterApp() existiert", 'function enterApp' in html)
 
     # BUG-13: returnContinue() darf showGoalWizard nicht bedingungslos aufrufen

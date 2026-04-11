@@ -2514,6 +2514,7 @@ function applyGoalWizard() {
   var el = document.getElementById('goal-wizard');
   if (el) el.remove();
 
+  currentStep = 0;
   renderSidebar();
   renderStep();
   updateProfileButton();
@@ -2529,6 +2530,7 @@ function skipGoalWizard() {
   try { data['__fokus__'] = 'all'; saveData(); } catch(e) {}
   var el = document.getElementById('goal-wizard');
   if (el) el.remove();
+  currentStep = 0;
   safeRender();
   try { updateProfileButton(); } catch(e) {}
 }
