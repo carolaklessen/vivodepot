@@ -2849,15 +2849,12 @@ function openAngehoerigenView(scenario) {
   var barEl = document.getElementById('save-reminder-bar');
   if (barEl) barEl.style.display = 'none';
   // Bestehenden Angehörigen-Overlay entfernen falls vorhanden
-  var old = document.getElementById('angehoerigen-view-overlay');
-  if (old) old.remove();
-  // Vollbild-Overlay erstellen
+  var oldOv = document.getElementById('angehoerigen-view-overlay');
+  if (oldOv) oldOv.remove();
+  // Vollbild-Container erstellen — kein Modal-Stil, direkt scrollbar
   var overlay = document.createElement('div');
   overlay.id = 'angehoerigen-view-overlay';
-  overlay.className = 'crypto-overlay';
-  overlay.style.display = 'flex';
-  overlay.style.alignItems = 'flex-start';
-  overlay.style.overflowY = 'auto';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:9000;background:#f5f2eb;overflow-y:auto;-webkit-overflow-scrolling:touch;';
   document.body.appendChild(overlay);
   var mc = overlay; // html wird in den Overlay geschrieben
   var sb = document.getElementById('sidebar');
