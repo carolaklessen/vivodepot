@@ -66,28 +66,44 @@ def main():
     hide_fn_match = re.search(r'function hideAllOverlays\(\)\s*\{([^}]+)\}', html)
     if hide_fn_match:
         hide_fn = hide_fn_match.group(1)
-        required_overlays = ['welcome-overlay', 'return-overlay', 'crypto-overlay']
+        required_overlays = ['welcome-overlay', 'return-overlay', 'crypto-overlay', 'goal-wizard']
         for oid in required_overlays:
             check(f"BUG-02: hideAllOverlays enthält '{oid}'", oid in hide_fn)
     else:
         check("BUG-02: hideAllOverlays existiert", False)
-    
+
+    # BUG-14: goal-wizard muss auch in showOverlay-Liste stehen
+    show_fn_match = re.search(r'function showOverlay\(id\)\s*\{([^}]+)\}', html)
+    if show_fn_match:
+        check("BUG-14: showOverlay enthält 'goal-wizard'",
+              'goal-wizard' in show_fn_match.group(1),
+              "goal-wizard fehlt in showOverlay — Wizard nicht schließbar bei Overlay-Wechsel")
+    else:
+        check("BUG-14: showOverlay existiert", False)
+
     check("BUG-03: enterApp() existiert", 'function enterApp' in html)
+
+    # BUG-13: returnContinue() darf showGoalWizard nicht bedingungslos aufrufen
+    rc_match = re.search(r'function returnContinue\(\)\s*\{([\s\S]*?)\n\}', html)
+    if rc_match:
+        rc_body = rc_match.group(1)
+        unconditional = bool(re.search(r'setTimeout\s*\(\s*showGoalWizard', rc_body)) and \
+                        'savedFokus' not in rc_body
+        check("BUG-13: returnContinue() zeigt Wizard nur bei fehlendem Fokus",
+              not unconditional,
+              "setTimeout(showGoalWizard) ohne savedFokus-Check → Wizard für Rückkehr-Nutzer nicht schließbar")
+    else:
+        check("BUG-13: returnContinue() existiert", False)
 
     # vCard darf nicht als sichtbarer Text im HTML stehen
     # (Bug: JS-Code außerhalb <script>-Tag wird als HTML gerendert)
     vcard_pos = html.find('// ── vCard 4.0 Export')
     if vcard_pos >= 0:
-        # Suche das letzte </script> vor dem vCard-Kommentar
         last_script_close = html.rfind('</script>', 0, vcard_pos)
-        next_script_open  = html.rfind('<script', 0, vcard_pos)
-        # BUG-11: mehr()-Aufrufe mit falschem 3. Argument (Template statt Array → filter-Fehler)
-    import re as _re11
-    mehr_calls = _re11.findall(r"mehr\('([^']+)',\s*'[^']*',\s*(`|\[)", html)
-    bad_mehr = [(id, t) for id, t in mehr_calls if t == '`']
+        next_script_open  = html.rfind('<script',   0, vcard_pos)
+
     # BUG-11: mehr()-Aufrufe mit falschem 3. Argument (Template statt Array → filter-Fehler)
-    import re as _re11
-    mehr_calls = _re11.findall(r"mehr\('([^']+)',\s*'[^']*',\s*(`|\[)", html)
+    mehr_calls = re.findall(r"mehr\('([^']+)',\s*'[^']*',\s*(`|\[)", html)
     bad_mehr = [(mid, t) for mid, t in mehr_calls if t == '`']
     check("BUG-11: Alle mehr()-Aufrufe haben Array als 3. Arg",
           len(bad_mehr) == 0,

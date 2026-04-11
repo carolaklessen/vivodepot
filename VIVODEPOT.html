@@ -2339,13 +2339,13 @@ function getNotfallData() {
 
 // ── Welcome flow ──────────────────────────────────────
 function showOverlay(id) {
-  ['welcome-overlay','return-overlay','angehoerigenauswahl-overlay','set-password-overlay','crypto-overlay','gwiz-overlay','vvwiz-overlay','pvwiz-overlay','bwiz-overlay','hwiz-overlay','gvwiz-overlay']
+  ['welcome-overlay','return-overlay','angehoerigenauswahl-overlay','set-password-overlay','crypto-overlay','gwiz-overlay','vvwiz-overlay','pvwiz-overlay','bwiz-overlay','hwiz-overlay','gvwiz-overlay','goal-wizard']
     .forEach(oid => { const el = document.getElementById(oid); if (el) el.style.display = 'none'; });
   const el = document.getElementById(id);
   if (el) el.style.display = 'flex';
 }
 function hideAllOverlays() {
-  ['welcome-overlay','return-overlay','angehoerigenauswahl-overlay','set-password-overlay','crypto-overlay','gwiz-overlay','vvwiz-overlay','pvwiz-overlay','bwiz-overlay','hwiz-overlay','gvwiz-overlay']
+  ['welcome-overlay','return-overlay','angehoerigenauswahl-overlay','set-password-overlay','crypto-overlay','gwiz-overlay','vvwiz-overlay','pvwiz-overlay','bwiz-overlay','hwiz-overlay','gvwiz-overlay','goal-wizard']
     .forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
 }
 
@@ -2571,7 +2571,15 @@ function returnContinue() {
   hideAllOverlays();
   safeRender();
   try { updateProfileButton(); } catch(e) {}
-  setTimeout(showGoalWizard, 300);
+
+  // Gespeicherten Fokus wiederherstellen; Wizard nur bei fehlendem Fokus zeigen
+  var savedFokus = (typeof data !== 'undefined') ? (data['__fokus__'] || '') : '';
+  if (savedFokus && savedFokus !== 'all') {
+    selectedGoal = savedFokus;
+    applyGoalWizard();
+  } else if (!savedFokus) {
+    setTimeout(showGoalWizard, 300);
+  }
 }
 
 function lockApp() {
