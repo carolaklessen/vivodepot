@@ -1260,6 +1260,13 @@ def main():
     check("BUG-ANG-16: angehoerigenZurueck() stellt App-Shell wieder her",
           "angehoerigen-view-overlay" in html and "appEl.style.display = ''" in html,
           "Fehlt: App-Shell wird nach Angehoerigen-Modus nicht wiederhergestellt")
+    check("BUG-ANG-17: wechselAngehoerigenAnsicht() setzt _angehoerigenModus=false",
+          "function wechselAngehoerigenAnsicht" in html and
+          "window._angehoerigenModus = false" in html,
+          "Fehlt: _angehoerigenModus bleibt true — hideAllOverlays-Guard blockiert naechstes Szenario")
+    check("BUG-ANG-18: View-Overlay z-index ueber crypto-overlay (10001 > 10000)",
+          "z-index:10001" in html,
+          "Fehlt: View-Overlay z-index 9000 liegt unter crypto-overlay 10000 — Auswahl-Overlay verdeckt View")
 
 
     # Persona-Felder aus Chat-Abgleich

@@ -2745,6 +2745,15 @@ function angehoerigenZurueck() {
   showSavedFileWelcome();
 }
 
+function wechselAngehoerigenAnsicht() {
+  // Modus zurücksetzen damit hideAllOverlays() den Auswahl-Overlay schließen darf
+  window._angehoerigenModus = false;
+  // View-Overlay entfernen, dann Auswahl-Overlay zeigen
+  var angOverlay = document.getElementById('angehoerigen-view-overlay');
+  if (angOverlay) angOverlay.remove();
+  showOverlay('angehoerigenauswahl-overlay');
+}
+
 function showAngehoerigenPasswortDialog() {
   hideAllOverlays();
   var mc = document.getElementById('main-content');
@@ -2854,7 +2863,7 @@ function openAngehoerigenView(scenario) {
   // Vollbild-Container erstellen — kein Modal-Stil, direkt scrollbar
   var overlay = document.createElement('div');
   overlay.id = 'angehoerigen-view-overlay';
-  overlay.style.cssText = 'position:fixed;inset:0;z-index:9000;background:#f5f2eb;overflow-y:auto;-webkit-overflow-scrolling:touch;';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:10001;background:#f5f2eb;overflow-y:auto;-webkit-overflow-scrolling:touch;';
   document.body.appendChild(overlay);
   var mc = overlay; // html wird in den Overlay geschrieben
   var sb = document.getElementById('sidebar');
@@ -2948,7 +2957,7 @@ function openAngehoerigenView(scenario) {
   html += '</div>';
 
   html += '<div style="margin-top:1rem;text-align:center">';
-  html += '<button class="btn-nav" onclick="showOverlay(\'angehoerigenauswahl-overlay\')" style="margin:4px">← Ansicht wechseln</button>';
+  html += '<button class="btn-nav" onclick="wechselAngehoerigenAnsicht()" style="margin:4px">← Ansicht wechseln</button>';
   html += '</div></div>';
 
   overlay.innerHTML = html;
