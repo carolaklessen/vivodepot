@@ -5714,13 +5714,27 @@ async function saveAsHTML() {
   const snapshot = JSON.stringify(data);
   const originalHTML = document.documentElement.outerHTML;
 
+  // Salt aus localStorage lesen, damit die Datei auf jedem Gerät entschlüsselt
+  // werden kann — auch ohne dass der Salt dort gespeichert ist.
+  var embeddedSalt = '';
+  try {
+    var metaRaw = localStorage.getItem(STORE_META);
+    if (metaRaw) embeddedSalt = metaRaw;
+  } catch(e) {}
+
   const initBlock = [
-    '// \u2550\u2550\u2550 INIT (mit eingebetteten Daten) \u2550\u2550\u2550',
+    '// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550',
+    '// INIT (mit eingebetteten Daten)',
+    '// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550',
     '(function(){',
     '  try { data = ' + snapshot + '; } catch(e){ data={}; }',
+    // Salt in localStorage schreiben, damit loadData() ihn findet
+    embeddedSalt
+      ? '  try { if(!' + 'localStorage.getItem(' + JSON.stringify(STORE_META) + ')) { localStorage.setItem(' + JSON.stringify(STORE_META) + ', ' + JSON.stringify(embeddedSalt) + '); } } catch(e) {}'
+      : '',
     '  showSavedFileWelcome();',
     '})();'
-  ].join('\n');
+  ].filter(function(l){ return l !== ''; }).join('\n');
 
   const patched = originalHTML.replace(/\/\/ [═]+\s*\/\/ INIT[\s\S]*?\}\)\(\);/, initBlock);
   const name = [get('vorname'), get('nachname')].filter(Boolean).join('_') || 'Dokument';

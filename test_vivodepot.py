@@ -1380,6 +1380,39 @@ def main():
         check("BUG-NEW-01: updateFokusBarLabel() Ternary gefunden", False,
               "btn.textContent-Ternary in updateFokusBarLabel() nicht gefunden")
 
+    # ═══════════════════════════════════════
+    print("\n=== 51. KRYPTO-PORTABILITÄT (Salt in Datei) ===")
+    # ═══════════════════════════════════════
+
+    # BUG-SALT-01: Salt muss beim Speichern in die HTML-Datei eingebettet werden.
+    # Ohne diesen Fix schlägt die Entschlüsselung auf einem anderen Gerät fehl,
+    # weil der Salt nur im localStorage des Ursprungsgeräts existiert.
+    # Prüfung: saveAsHTML() liest STORE_META aus localStorage und schreibt ihn
+    # in den initBlock der gespeicherten Datei.
+    save_fn = re.search(r'async function saveAsHTML\(\)([\s\S]*?)(?=\nasync function |\nfunction )', html)
+    if save_fn:
+        save_body = save_fn.group(1)
+        check("BUG-SALT-01a: saveAsHTML() liest STORE_META (Salt) aus localStorage",
+              'localStorage.getItem(STORE_META)' in save_body or
+              "localStorage.getItem(STORE_META)" in save_body,
+              "Salt wird nicht aus localStorage gelesen — nicht portierbar")
+        check("BUG-SALT-01b: saveAsHTML() schreibt Salt in den initBlock",
+              'localStorage.setItem' in save_body and 'embeddedSalt' in save_body,
+              "Salt wird nicht in die gespeicherte Datei eingebettet")
+        check("BUG-SALT-01c: Salt-Schreibung ist idempotent (nur wenn nicht vorhanden)",
+              "if(!" in save_body or "if (!" in save_body,
+              "Salt wird immer überschrieben statt nur bei Fehlen gesetzt")
+    else:
+        check("BUG-SALT-01: saveAsHTML() gefunden", False)
+
+    # BUG-SALT-02: initBlock-Regex muss auch den neuen Salt-Block treffen.
+    # Der Regex /\/\/ [═]+\s*\/\/ INIT[\s\S]*?\}\)\(\);/ muss den neuen
+    # gespeicherten Block mit "// INIT (mit eingebetteten Daten)" erkennen.
+    check("BUG-SALT-02: initBlock enthält '// INIT'-Marker für Regex",
+          '// INIT (mit eingebetteten Daten)' in html or
+          "// INIT\\n" in html,
+          "initBlock-Kommentar fehlt — Regex trifft gespeicherte Datei nicht beim Weiter-Speichern")
+
     passed = sum(1 for s, _, _ in results if s == "PASS")
     failed = sum(1 for s, _, _ in results if s == "FAIL")
     total = len(results)
