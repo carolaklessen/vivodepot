@@ -1247,6 +1247,7 @@ input[type=text], input[type=email], input[type=tel], input[type=date], select {
   <div class="crypto-modal" style="max-width:440px">
     <h2>Passwortschutz aktivieren</h2>
     <p>Wählen Sie ein Passwort. Ihre Daten werden damit verschlüsselt — ohne das Passwort sind sie nicht lesbar.</p>
+    <p style="background:#fdf3f3;border:1.5px solid #c0392b;border-radius:8px;padding:0.75rem 1rem;font-size:0.85rem;color:#c0392b;margin-bottom:0.75rem"><strong>Wichtig: Das Passwort kann nicht wiederhergestellt werden.</strong> Wenn Sie es vergessen, sind Ihre Daten dauerhaft verloren. Notieren Sie das Passwort und bewahren Sie es sicher auf.</p>
     <input type="password" id="set-pw-input" placeholder="Passwort wählen" autocomplete="new-password" style="margin-bottom:0.5rem">
     <input type="password" id="set-pw-confirm" placeholder="Passwort wiederholen" autocomplete="new-password">
     <div class="crypto-error" id="set-pw-error"></div>
@@ -2953,7 +2954,7 @@ function openAngehoerigenView(scenario) {
   } else {
     html += '<button class="btn-nav primary" onclick="generateScenarioPDF(\'emergency\')" style="margin:4px">Als PDF speichern / drucken</button> ';
   }
-  html += '<div style="font-size:0.75rem;color:var(--ink3);margin-top:6px">Das PDF enthält die gleichen Informationen wie diese Ansicht — zum Ausdrucken, Weitergeben oder Hochladen auf Online-Portale.</div>';
+  html += '<div style="font-size:0.75rem;color:var(--ink3);margin-top:6px">Das PDF enthält die gleichen Informationen wie diese Ansicht — zum Ausdrucken oder Weitergeben.</div>';
   html += '</div>';
 
   html += '<div style="margin-top:1rem;text-align:center">';
@@ -5302,6 +5303,7 @@ const STEP_RENDERERS = {
         <button class="btn-nav primary" onclick="changePassword()" style="font-size:0.85rem">${sessionKey ? 'Passwort ändern' : ' Passwort setzen'}</button>
         ${sessionKey ? '<button class="btn-nav" onclick="removePassword()" style="font-size:0.82rem;color:var(--red)">Passwort entfernen</button>' : ''}
       </div>
+      <p style="background:#fdf3f3;border:1.5px solid #c0392b;border-radius:8px;padding:0.75rem 1rem;font-size:0.83rem;color:#c0392b;margin-top:10px;margin-bottom:0"><strong>Wichtig: Das Passwort kann nicht wiederhergestellt werden.</strong> Wenn Sie es vergessen, sind Ihre Daten dauerhaft verloren. Notieren Sie das Passwort und bewahren Sie es sicher auf.</p>
     </div>
 
     <div class="field-section-title">${tl('Fokus')}</div>
@@ -5547,18 +5549,18 @@ const STEP_RENDERERS = {
       </div>
     </div>
     <div class="field-section-title">${tl('Beh\u00F6rdendaten')}</div>
-    <div class="infobox">${tl('Diese Datenbl\u00E4tter fassen Ihre Vivodepot-Daten f\u00FCr einen konkreten Beh\u00F6rdengang zusammen. Ausdrucken und mitnehmen, als PDF auf das Online-Portal des Amtes hochladen -- oder als maschinenlesbares JSON exportieren.')}</div>
+    <div class="infobox">${tl('Diese Datenbl\u00E4tter fassen Ihre Vivodepot-Daten f\u00FCr einen konkreten Beh\u00F6rdengang zusammen. Ausdrucken und mitnehmen -- oder als maschinenlesbares JSON exportieren.')}</div>
     <div class="export-grid">
-      <div class="export-card" onclick="generateStammdaten()" style="border-left:4px solid #3d5a2a">
-        <div class="ec-icon">🪪</div>
-        <div class="ec-title">Meine Stammdaten</div>
-        <div class="ec-sub">Name, Adresse, Steuer-ID, IBAN, Versicherungsnummern — für jeden Behördengang</div>
-        <div class="ec-btn" style="background:#3d5a2a">PDF erstellen</div>
-      </div>
       <div class="export-card" onclick="generateBehoerdendaten('kindergeld')" style="border-left:4px solid #2980b9">
         <div class="ec-icon"></div>
         <div class="ec-title">Kindergeld-Datenblatt</div>
         <div class="ec-sub">Steuer-IDs, Bankverbindung, Kinder -- alles f\u00FCr den Antrag</div>
+        <div class="ec-btn" style="background:#2980b9">PDF erstellen</div>
+      </div>
+      <div class="export-card" onclick="generateBehoerdendaten('elterngeld')" style="border-left:4px solid #2980b9">
+        <div class="ec-icon"></div>
+        <div class="ec-title">Elterngeld-Datenblatt</div>
+        <div class="ec-sub">Steuer-ID, Einkommen, Arbeitgeber — alles für den Antrag beim Elterngeldstelle</div>
         <div class="ec-btn" style="background:#2980b9">PDF erstellen</div>
       </div>
       <div class="export-card" onclick="generateBehoerdendaten('arbeitsamt')" style="border-left:4px solid #2980b9">
@@ -5571,6 +5573,18 @@ const STEP_RENDERERS = {
         <div class="ec-icon"></div>
         <div class="ec-title">Pflegegrad-Vorbereitung</div>
         <div class="ec-sub">Diagnosen, Medikamente, Versichertennr. -- f\u00FCr die Pflegekasse</div>
+        <div class="ec-btn" style="background:#2980b9">PDF erstellen</div>
+      </div>
+      <div class="export-card" onclick="generateBehoerdendaten('grundsicherung')" style="border-left:4px solid #2980b9">
+        <div class="ec-icon"></div>
+        <div class="ec-title">Grundsicherung-Datenblatt</div>
+        <div class="ec-sub">Stammdaten, Einkommen, Wohnsituation -- f\u00FCr das Jobcenter (SGB II / SGB XII)</div>
+        <div class="ec-btn" style="background:#2980b9">PDF erstellen</div>
+      </div>
+      <div class="export-card" onclick="generateBehoerdendaten('schwerbehinderung')" style="border-left:4px solid #2980b9">
+        <div class="ec-icon"></div>
+        <div class="ec-title">Schwerbehindertenantrag-Datenblatt</div>
+        <div class="ec-sub">GdB, Merkzeichen, Diagnosen, Arzt -- f\u00FCr das Versorgungsamt</div>
         <div class="ec-btn" style="background:#2980b9">PDF erstellen</div>
       </div>
       <div class="export-card" onclick="exportFIMJson()">
@@ -9090,119 +9104,6 @@ function generateGesundheitsvollmacht() {
 // ═══════════════════════════════════════════════
 // BEHÖRDENDATEN PDF + FIM-JSON
 // ═══════════════════════════════════════════════
-function generateStammdaten() {
-  toast('Stammdaten-Datenblatt wird erstellt...');
-  setTimeout(function() {
-    try {
-      var pdf = new jspdf.jsPDF({format:'a4'});
-      var name = [get('vorname'),get('nachname')].filter(Boolean).join(' ') || '[Name]';
-      var y = 20, lh = 7, pw = 170, ml = 20;
-
-      function section(title) {
-        if (y > 255) { pdf.addPage(); y = 20; }
-        pdf.setFont('helvetica','bold'); pdf.setFontSize(11); pdf.setTextColor(61,90,42);
-        pdf.text(title, ml, y); y += lh;
-        pdf.setFont('helvetica','normal'); pdf.setFontSize(10); pdf.setTextColor(30,30,30);
-      }
-      function row(label, value) {
-        if (y > 270) { pdf.addPage(); y = 20; }
-        pdf.setFont('helvetica','bold'); pdf.setFontSize(9); pdf.setTextColor(80,80,80);
-        pdf.text(label+':', ml, y);
-        pdf.setFont('helvetica','normal'); pdf.setTextColor(30,30,30);
-        var val = (value||'').toString(); if(!val) val = '-- nicht eingetragen --';
-        pdf.text(val, ml+60, y);
-        y += lh-1;
-      }
-      function gap() { y += 4; }
-
-      // Header
-      pdf.setFont('helvetica','bold'); pdf.setFontSize(16); pdf.setTextColor(61,90,42);
-      pdf.text('Meine Stammdaten', ml+22, 22);
-      pdf.setFont('helvetica','normal'); pdf.setFontSize(9); pdf.setTextColor(120,120,120);
-      pdf.text('Universelles Datenblatt f\u00FCr Beh\u00F6rdeng\u00E4nge \u00B7 Erstellt mit Vivodepot', ml+22, 28);
-      pdf.setDrawColor(201,168,76); pdf.setLineWidth(0.8); pdf.line(ml,33,ml+pw,33);
-      y = 40;
-
-      section('Pers\u00F6nliche Daten');
-      row('Name', name);
-      row('Geburtsdatum', get('geburtsdatum') ? new Date(get('geburtsdatum')).toLocaleDateString('de-DE') : '');
-      row('Geburtsort', get('geburtsort'));
-      row('Geburtsname', get('geburtsname'));
-      row('Familienstand', get('familienstand'));
-      row('Staatsangeh\u00F6rigkeit', get('staatsangehoerigkeit'));
-      gap();
-
-      section('Anschrift');
-      row('Stra\u00DFe', get('strasse'));
-      row('PLZ / Ort', get('plz_ort'));
-      gap();
-
-      section('Kontakt');
-      row('Telefon', get('telefon'));
-      row('Mobil', get('mobil'));
-      row('E-Mail', get('email'));
-      gap();
-
-      section('Identifikation');
-      row('Steuer-ID', get('steuer_id'));
-      row('Sozialversicherungsnr.', get('rv_nummer'));
-      row('Personalausweis-Nr.', get('ausweis_nr'));
-      row('G\u00FCltig bis', get('ausweis_gueltig'));
-      row('Reisepass-Nr.', get('reisepass_nr'));
-      row('BundID', get('bundid_status'));
-      gap();
-
-      section('Bankverbindung');
-      row('IBAN', get('konto_iban'));
-      row('BIC', get('konto_bic'));
-      row('Kreditinstitut', get('konto_bank'));
-      row('Kontoinhaber/in', get('konto_inhaber') || name);
-      gap();
-
-      section('Krankenversicherung');
-      row('Art', get('kv_art'));
-      row('Versichertennr.', get('kv_nummer'));
-      row('Krankenkasse', get('kv_kasse'));
-      row('Versichert \u00FCber', get('kv_ueber'));
-      gap();
-
-      // QR-Code
-      try {
-        var qrPayload = {
-          t:'SD',n:name,
-          gd:get('geburtsdatum')||'',
-          adr:[get('strasse'),get('plz_ort')].filter(Boolean).join(', '),
-          sid:get('steuer_id')||'',
-          rv:get('rv_nummer')||'',
-          iban:get('konto_iban')||'',
-          kv:get('kv_nummer')||''
-        };
-        var qrStr = JSON.stringify(qrPayload);
-        if (qrStr.length < 2000) {
-          var qr = qrcode(0,'M'); qr.addData(qrStr); qr.make();
-          var qrImg = qr.createDataURL(4,0);
-          var qrSize = 38, qrX = ml+pw-qrSize;
-          var qrY = y > 220 ? (pdf.addPage(), 20) : y+4;
-          pdf.addImage(qrImg,'PNG',qrX,qrY,qrSize,qrSize);
-          pdf.setFont('helvetica','normal'); pdf.setFontSize(7); pdf.setTextColor(120,120,120);
-          pdf.text('QR-Code enth\u00E4lt Ihre Kerndaten', qrX, qrY+qrSize+4);
-          pdf.text('als maschinenlesbares JSON --', qrX, qrY+qrSize+8);
-          pdf.text('oder Foto des QR-Codes hochladen.', qrX, qrY+qrSize+12);
-        }
-      } catch(qe) { console.warn('QR:', qe); }
-
-      // Footer
-      y = 280;
-      pdf.setDrawColor(201,168,76); pdf.setLineWidth(0.5); pdf.line(ml,y-4,ml+pw,y-4);
-      pdf.setFont('helvetica','italic'); pdf.setFontSize(7); pdf.setTextColor(150,150,150);
-      pdf.text('Erstellt mit Vivodepot \u00B7 '+new Date().toLocaleDateString('de-DE')+' \u00B7 Alle Angaben ohne Gew\u00E4hr \u00B7 vivodepot.de', ml, y);
-
-      pdf.save('Vivodepot_Stammdaten_'+(get('nachname')||'Datenblatt')+'.pdf');
-      toast('Stammdaten-Datenblatt erstellt \u2713');
-    } catch(e) { toast('Fehler: '+e.message); console.error(e); }
-  }, 80);
-}
-
 function generateBehoerdendaten(type) {
   toast('Datenblatt wird erstellt...');
   setTimeout(function() {
@@ -9295,6 +9196,50 @@ function generateBehoerdendaten(type) {
           y += 6;
         });
 
+      } else if (type === 'elterngeld') {
+        header('Elterngeld-Datenblatt', 'Alle Daten f\u00FCr den Antrag bei der Elterngeldstelle (BEEG)');
+        stammdaten();
+        row('Ehepartner/in', get('ehepartner'));
+        gap();
+        bankdaten();
+        section('Kinder');
+        var kinder = get('kinder_minderjaehrig');
+        if (kinder) {
+          pdf.text(kinder, ml, y); y += pdf.splitTextToSize(kinder, pw).length * 5 + 4;
+        } else {
+          note('Bitte tragen Sie Ihr Kind in Vivodepot unter \u201cFamilie & Familienstand\u201d ein (Name, Geburtsdatum, Steuer-ID).');
+        }
+        gap();
+        section('Besch\u00E4ftigung (vor der Geburt)');
+        row('Beruf / T\u00E4tigkeit', get('beruf_hauptberuf'));
+        row('Arbeitgeber', get('letzter_arbeitgeber'));
+        row('Krankenversicherung', get('kv_art'));
+        row('Versichertennr.', get('kv_nummer'));
+        gap();
+        section('OK Checkliste f\u00FCr den Antrag');
+        var egChecks = [
+          ['Geburtsurkunde des Kindes', 'Original oder beglaubigte Kopie'],
+          ['Personalausweis / Reisepass', 'Antragsteller/in'],
+          ['Steuer-ID (eigene)', get('steuer_id') ? 'OK: ' + get('steuer_id') : 'FEHLT \u2014 in Vivodepot eintragen'],
+          ['Steuer-ID des Kindes', 'Wird nach der Geburt zugeteilt'],
+          ['Bankverbindung', get('konto_iban') ? 'OK: ' + get('konto_iban') : 'FEHLT \u2014 in Vivodepot eintragen'],
+          ['Einkommensnachweise', 'Letzte 12 Monate vor der Geburt'],
+          ['Arbeitgeberbescheinigung', 'Oder: Nachweis \u00FCber Selbst\u00E4ndigkeit'],
+          ['Mutterschaftsgeld-Nachweis', 'Falls erhalten \u2014 Betrag und Zeitraum'],
+          ['Antragsformular', 'Online: elterngeld.de oder bei Ihrer Beh\u00F6rde'],
+        ];
+        egChecks.forEach(function(c) {
+          if (y > 268) { pdf.addPage(); y = 20; }
+          pdf.setFont('helvetica', 'bold'); pdf.setFontSize(9);
+          pdf.text('[ ] ' + c[0], ml, y);
+          pdf.setFont('helvetica', 'normal');
+          var hint = pdf.splitTextToSize(c[1], 80);
+          pdf.text(hint, ml + 80, y);
+          y += Math.max(hint.length * 4, 6);
+        });
+        gap();
+        note('Hinweis: Elterngeld muss sp\u00E4testens 3 Monate nach dem Geburtsmonat beantragt werden. Es kann r\u00FCckwirkend nur f\u00FCr diese 3 Monate geltend gemacht werden.');
+
       } else if (type === 'arbeitsamt') {
         header('Arbeitsamt-Datenblatt', 'Stammdaten f\u00FCr Arbeitslosmeldung / ALG I / ALG II');
         stammdaten();
@@ -9358,6 +9303,99 @@ function generateBehoerdendaten(type) {
          'Kontaktdaten Hausarzt', 'Ggf. Vollmacht / Betreuungsurkunde'].forEach(function(c) {
           pdf.text('[ ] '+c, ml, y); y += 6;
         });
+
+      } else if (type === 'grundsicherung') {
+        header('Grundsicherung-Datenblatt', 'Daten f\u00FCr den Antrag beim Jobcenter (SGB II) oder Sozialamt (SGB XII)');
+        stammdaten();
+        row('Ehepartner/in', get('ehepartner'));
+        row('Familienstand', get('familienstand'));
+        gap();
+        bankdaten();
+        section('Wohnsituation');
+        row('Wohnungstyp', get('wohnung_typ'));
+        row('Miete / Nebenkosten', get('miete'));
+        row('Vermieter', get('vermieter'));
+        gap();
+        section('Krankenversicherung');
+        row('KV-Art', get('kv_art'));
+        row('Versichertennr.', get('kv_nummer'));
+        row('Versichert \u00FCber', get('kv_ueber'));
+        gap();
+        section('Familie');
+        row('Minderj\u00E4hrige Kinder', get('kinder_minderjaehrig'));
+        row('Unterhaltspflichten', get('unterhalt'));
+        gap();
+        section('OK Checkliste f\u00FCr den Antrag');
+        var gsChecks = [
+          ['Personalausweis / Reisepass', 'Antragsteller/in und alle Haushaltsmitglieder'],
+          ['Meldebescheinigung', 'Aktuelle Adresse bestätigt'],
+          ['Mietvertrag', 'Inkl. Nebenkostenabrechnung'],
+          ['Kontoausz\u00FCge', 'Letzte 3 Monate aller Konten'],
+          ['Einkommensnachweise', 'Lohn, Rente, Unterhalt, sonstige Einnahmen'],
+          ['Versicherungsnachweise', 'Kranken-, Lebens-, Rentenversicherung'],
+          ['Nachweise \u00FCber Verm\u00F6gen', 'Sparguthaben, Immobilien, Fahrzeuge'],
+          ['Schwerbehindertenausweis', 'Falls vorhanden'],
+          ['Rentenbescheid', 'Falls Rente bezogen wird'],
+          ['Antragsformular', 'Beim Jobcenter oder Sozialamt erh\u00E4ltlich'],
+        ];
+        gsChecks.forEach(function(c) {
+          if (y > 268) { pdf.addPage(); y = 20; }
+          pdf.setFont('helvetica', 'bold'); pdf.setFontSize(9);
+          pdf.text('[ ] ' + c[0], ml, y);
+          pdf.setFont('helvetica', 'normal');
+          var hint = pdf.splitTextToSize(c[1], 80);
+          pdf.text(hint, ml + 80, y);
+          y += Math.max(hint.length * 4, 6);
+        });
+        gap();
+        note('Hinweis: SGB II (Buergergeld) gilt fuer Personen unter 65, die arbeitsfaehig sind. SGB XII (Sozialhilfe / Grundsicherung im Alter) gilt fuer Personen ab 65 oder mit dauerhafter Erwerbsminderung.');
+
+      } else if (type === 'schwerbehinderung') {
+        header('Schwerbehindertenantrag-Datenblatt', 'Daten f\u00FCr das Versorgungsamt (SGB IX)');
+        stammdaten();
+        gap();
+        section('Bestehende Feststellungen');
+        row('Grad der Behinderung (GdB)', get('gdb'));
+        row('Merkzeichen', get('gdb_merkmale'));
+        row('Ausweis g\u00FCltig bis', get('schwerbehindertenausweis_gueltig'));
+        row('Ausweis Ablageort', get('schwerbehindertenausweis_ort'));
+        row('Feststellungsbescheid Ablage', get('gdb_bescheid_ort'));
+        gap();
+        section('Gesundheitsdaten');
+        row('Erkrankungen / Diagnosen', get('erkrankungen'));
+        row('Allergien', get('allergien'));
+        row('Medikamente', get('medikamente'));
+        row('Voroperationen', get('voroperationen'));
+        row('Hilfsmittel', get('hilfsmittel'));
+        row('Pflegegrad', get('pflegegrad'));
+        gap();
+        section('Behandelnde \u00C4rzte');
+        row('Hausarzt', get('hausarzt'));
+        row('Fach\u00E4rzte', get('fachaerzte'));
+        gap();
+        section('OK Checkliste f\u00FCr den Antrag');
+        var sbChecks = [
+          ['Personalausweis / Reisepass', 'Antragsteller/in'],
+          ['Antrag auf Feststellung', 'Formular beim Versorgungsamt oder online'],
+          ['Arztberichte / Befunde', 'M\u00F6glichst aktuell (nicht \u00E4lter als 1 Jahr)'],
+          ['Krankenhausberichte', 'Falls vorhanden'],
+          ['Medikamentenplan', 'Aktuell, vom Arzt unterschrieben'],
+          ['R\u00F6ntgen- / MRT-Befunde', 'Falls vorhanden'],
+          ['Pflegebescheid', 'Falls Pflegegrad vorhanden'],
+          ['Bestehender Schwerbehindertenausweis', 'Bei Antrag auf Erh\u00F6hung des GdB'],
+          ['Vollmacht / Betreuungsurkunde', 'Falls jemand den Antrag stellt'],
+        ];
+        sbChecks.forEach(function(c) {
+          if (y > 268) { pdf.addPage(); y = 20; }
+          pdf.setFont('helvetica', 'bold'); pdf.setFontSize(9);
+          pdf.text('[ ] ' + c[0], ml, y);
+          pdf.setFont('helvetica', 'normal');
+          var hint = pdf.splitTextToSize(c[1], 80);
+          pdf.text(hint, ml + 80, y);
+          y += Math.max(hint.length * 4, 6);
+        });
+        gap();
+        note('Hinweis: Ab einem GdB von 50 gilt man als schwerbehindert. Ab GdB 20 kann ein Gleichstellungsantrag beim Arbeitsamt gestellt werden. Das Versorgungsamt entscheidet -- nicht der Arzt.');
       }
 
       // QR-Code mit Kerndaten
@@ -9367,6 +9405,12 @@ function generateBehoerdendaten(type) {
           qrPayload = {t:'KG',n:name,gd:get('geburtsdatum')||'',sid:get('steuer_id')||'',iban:get('konto_iban')||'',fs:get('familienstand')||'',ep:get('ehepartner')||'',ki:get('kinder_minderjaehrig')||''};
         } else if (type === 'arbeitsamt') {
           qrPayload = {t:'AA',n:name,gd:get('geburtsdatum')||'',sid:get('steuer_id')||'',rv:get('rv_nummer')||'',iban:get('konto_iban')||'',kv:get('kv_art')||'',kvn:get('kv_nummer')||'',fs:get('familienstand')||'',adr:[get('strasse'),get('plz_ort')].filter(Boolean).join(', ')};
+        } else if (type === 'elterngeld') {
+          qrPayload = {t:'EG',n:name,gd:get('geburtsdatum')||'',sid:get('steuer_id')||'',iban:get('konto_iban')||'',fs:get('familienstand')||'',ep:get('ehepartner')||'',ki:get('kinder_minderjaehrig')||'',ag:get('letzter_arbeitgeber')||'',kv:get('kv_art')||'',kvn:get('kv_nummer')||''};
+        } else if (type === 'grundsicherung') {
+          qrPayload = {t:'GS',n:name,gd:get('geburtsdatum')||'',sid:get('steuer_id')||'',iban:get('konto_iban')||'',adr:[get('strasse'),get('plz_ort')].filter(Boolean).join(', '),fs:get('familienstand')||'',kv:get('kv_art')||'',kvn:get('kv_nummer')||'',wt:get('wohnung_typ')||''};
+        } else if (type === 'schwerbehinderung') {
+          qrPayload = {t:'SB',n:name,gd:get('geburtsdatum')||'',sid:get('steuer_id')||'',gdb:get('gdb')||'',mk:get('gdb_merkmale')||'',ek:get('erkrankungen')||'',md:get('medikamente')||'',ha:get('hausarzt')||''};
         } else if (type === 'pflege') {
           qrPayload = {t:'PG',n:name,gd:get('geburtsdatum')||'',kvn:get('kv_nummer')||'',bg:get('blutgruppe')||'',al:get('allergien')||'',ek:get('erkrankungen')||'',md:get('medikamente')||'',ha:get('hausarzt')||''};
         }
@@ -9382,8 +9426,8 @@ function generateBehoerdendaten(type) {
           pdf.addImage(qrImg, 'PNG', qrX, qrY, qrSize, qrSize);
           pdf.setFont('helvetica','normal'); pdf.setFontSize(7); pdf.setTextColor(120,120,120);
           pdf.text('QR-Code enth\u00E4lt Ihre Kerndaten', qrX, qrY + qrSize + 4);
-          pdf.text('als maschinenlesbares JSON --', qrX, qrY + qrSize + 8);
-          pdf.text('oder Foto des QR-Codes hochladen.', qrX, qrY + qrSize + 12);
+          pdf.text('als maschinenlesbares JSON.', qrX, qrY + qrSize + 8);
+          pdf.text('Scanbar durch Verwaltungssysteme.', qrX, qrY + qrSize + 12);
         }
       } catch(qe) { console.warn('QR:', qe); }
 
@@ -9393,7 +9437,7 @@ function generateBehoerdendaten(type) {
       pdf.setFont('helvetica','italic'); pdf.setFontSize(7); pdf.setTextColor(150,150,150);
       pdf.text('Erstellt mit Vivodepot \u00B7 '+new Date().toLocaleDateString('de-DE')+' \u00B7 Alle Angaben ohne Gew\u00E4hr \u00B7 vivodepot.de', ml, y);
 
-      var titles = {kindergeld:'Kindergeld',arbeitsamt:'Arbeitsamt',pflege:'Pflegegrad'};
+      var titles = {kindergeld:'Kindergeld',elterngeld:'Elterngeld',arbeitsamt:'Arbeitsamt',pflege:'Pflegegrad',grundsicherung:'Grundsicherung',schwerbehinderung:'Schwerbehinderung'};
       pdf.save('Vivodepot_'+titles[type]+'_'+( get('nachname')||'Datenblatt')+'.pdf');
       toast(titles[type]+'-Datenblatt erstellt OK');
     } catch(e) { toast('Fehler: '+e.message); console.error(e); }
