@@ -1362,6 +1362,24 @@ def main():
     else:
         check("BUG-12: .crypto-modal CSS-Block gefunden", False, "Klasse nicht gefunden")
 
+    # ═══════════════════════════════════════
+    print("\n=== 50. NEUE BUGS (BUG-NEW) ===")
+    # ═══════════════════════════════════════
+
+    # BUG-NEW-01: updateFokusBarLabel() hatte toten Ternary — beide Zweige identisch '⊕ Fokus'
+    # Nutzer konnte nicht erkennen ob Fokus aktiv ist. Fix: '⊕ Fokus ändern' vs. '⊕ Fokus wählen'
+    fokus_label_match = re.search(
+        r"btn\.textContent\s*=\s*\([^)]+\)\s*\?\s*'([^']*)'\s*:\s*'([^']*)'", html)
+    if fokus_label_match:
+        a = fokus_label_match.group(1)
+        b = fokus_label_match.group(2)
+        check("BUG-NEW-01: updateFokusBarLabel() zeigt unterschiedliche Labels (Fokus aktiv/inaktiv)",
+              a != b,
+              f"Toter Ternary: beide Zweige '{a}' — kein visueller Unterschied ob Fokus aktiv ist")
+    else:
+        check("BUG-NEW-01: updateFokusBarLabel() Ternary gefunden", False,
+              "btn.textContent-Ternary in updateFokusBarLabel() nicht gefunden")
+
     passed = sum(1 for s, _, _ in results if s == "PASS")
     failed = sum(1 for s, _, _ in results if s == "FAIL")
     total = len(results)
