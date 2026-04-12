@@ -1,5 +1,7 @@
 # VIVODEPOT — Häufige Fragen
 
+*Version 1.0.0-beta.7 · April 2026*
+
 ---
 
 ## Allgemein
@@ -18,7 +20,7 @@ Vivodepot UG (haftungsbeschränkt), Berlin. Kontakt: [feedback@vivodepot.de](mai
 ## Daten & Datenschutz
 
 **Wo werden meine Daten gespeichert?**
-Ausschließlich in Ihrem Browser (`localStorage`) und optional in der gespeicherten HTML-Datei. Kein Server, keine Cloud, keine Übertragung.
+Ausschließlich in Ihrem Browser (`localStorage`) und in der gespeicherten HTML-Datei. Kein Server, keine Cloud, keine Übertragung.
 
 **Kann VIVODEPOT meine Daten sehen?**
 Nein. Die Daten verlassen Ihr Gerät nicht. Auch wir als Entwickler haben keinen Zugriff.
@@ -27,13 +29,13 @@ Nein. Die Daten verlassen Ihr Gerät nicht. Auch wir als Entwickler haben keinen
 Ja — wenn Sie einen Passwortschutz einrichten. Die Verschlüsselung erfolgt mit AES-256-GCM, einem der sichersten verfügbaren Standards.
 
 **Was passiert, wenn ich meinen Browser-Cache leere?**
-Die Daten in `localStorage` gehen verloren. **Empfehlung:** Regelmäßig über „Speichern" eine persönliche HTML-Datei erstellen und sichern.
+Die Daten in `localStorage` gehen verloren. Empfehlung: Regelmäßig über „Speichern" eine persönliche HTML-Datei erstellen und sichern.
 
 **Kann ich die Daten exportieren?**
-Ja — als passwortgeschützte HTML-Datei (über „Speichern"), als JSON-Datei (über das ⋮-Menü) oder als fertige Dokumente (PDF, Word).
+Ja — als passwortgeschützte HTML-Datei (über „Speichern"), als JSON-Datei (über das Menü) oder als fertige Dokumente (PDF, Word).
 
 **Kann ich die Daten importieren?**
-Ja — über das ⋮-Menü → „Daten importieren". Unterstützt werden HTML-Dateien (eigene gespeicherte VIVODEPOT-Dateien) und JSON-Dateien.
+Ja — über das Menü → „Daten importieren". Unterstützt werden HTML-Dateien (eigene gespeicherte VIVODEPOT-Dateien) und JSON-Dateien.
 
 ---
 
@@ -51,8 +53,13 @@ Ca. 1,3 MB. Das entspricht etwa dem Speicherplatz einer Foto-Vorschau.
 **Kann ich VIVODEPOT auf einem USB-Stick nutzen?**
 Ja — einfach die HTML-Datei auf den USB-Stick kopieren und in Chrome oder Firefox öffnen.
 
+**Kann ich die Datei auf einem anderen Gerät öffnen?**
+Ja — seit Version 1.0.0-beta.7 vollständig. Der kryptographische Schlüssel wird jetzt in der Datei selbst gespeichert. Passwort eingeben genügt — egal auf welchem Gerät oder Browser.
+
+In früheren Versionen (bis beta.6) war dies ein bekanntes Problem: Der Salt fehlte auf anderen Geräten, was zur Fehlermeldung führte, obwohl das Passwort korrekt war.
+
 **iPhone: Die Datei öffnet sich in PocketBook statt im Browser.**
-PocketBook hat sich als Standard-App für HTML-Dateien registriert. Lösung: Datei in der Dateien-App **lang drücken** → **Teilen** → **Safari** wählen. Alternativ: Einstellungen → Standard-Browser → vorübergehend auf Safari wechseln.
+PocketBook hat sich als Standard-App für HTML-Dateien registriert. Lösung: Datei in der Dateien-App lang drücken → Teilen → Safari wählen.
 
 **Die PDF-Erstellung schlägt fehl.**
 Die PDF-Bibliothek ist vollständig eingebettet und benötigt kein Internet. Falls ein Fehler auftritt, bitte Seite neu laden und erneut versuchen. Bei anhaltenden Problemen: [feedback@vivodepot.de](mailto:feedback@vivodepot.de)
@@ -65,7 +72,7 @@ Die PDF-Bibliothek ist vollständig eingebettet und benötigt kein Internet. Fal
 PDF (Notfallmappe), Word (bearbeitbar), Notfall-Blatt (Katastrophenschutz), Arztbogen, Szenario-PDFs (Krankenhaus, Todesfall, Notfall-Tasche), Vorsorgevollmacht (Word), Patientenverfügung (Word), Gesundheitsvollmacht (Word), QR-Aufkleber, vCard-Export.
 
 **Sind die Dokumente rechtsgültig?**
-VIVODEPOT erstellt Entwürfe und Vorlagen. Für rechtliche Gültigkeit (besonders Vorsorgevollmacht, Patientenverfügung, Testament) ist in der Regel eine notarielle Beglaubigung oder eigenhändige Unterschrift erforderlich. VIVODEPOT ist **keine Rechtsberatung**.
+VIVODEPOT erstellt Entwürfe und Vorlagen. Für rechtliche Gültigkeit (besonders Vorsorgevollmacht, Patientenverfügung, Testament) ist in der Regel eine notarielle Beglaubigung oder eigenhändige Unterschrift erforderlich. VIVODEPOT ist keine Rechtsberatung.
 
 **Kann ich mehrere Profile anlegen?**
 Ja — über Einstellungen → Profile. Praktisch für Paare oder wenn Sie Informationen für mehrere Personen verwalten.

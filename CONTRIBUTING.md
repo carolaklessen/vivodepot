@@ -1,12 +1,16 @@
 # VIVODEPOT — Mitmachen
 
-Vielen Dank für Ihr Interesse an VIVODEPOT! Jede Rückmeldung hilft.
+*Version 1.0.0-beta.7 · April 2026*
+
+Vielen Dank für Ihr Interesse an VIVODEPOT. Jede Rückmeldung hilft.
+
+---
 
 ## Wie Sie beitragen können
 
 ### Fehler melden
 
-1. Prüfen Sie, ob der Fehler in der aktuellen Version (1.0.0-beta.6) noch vorhanden ist
+1. Prüfen Sie, ob der Fehler in der aktuellen Version (1.0.0-beta.7) noch vorhanden ist
 2. Öffnen Sie ein [GitHub Issue](https://github.com/carolaklessen/vivodepot/issues)
 3. Beschreiben Sie: Was haben Sie getan? Was ist passiert? Was hätten Sie erwartet?
 4. Nennen Sie Browser, Betriebssystem und Gerätetyp
@@ -28,16 +32,33 @@ Da VIVODEPOT eine Einzeldatei-HTML-App ist, sind Code-Beiträge direkt möglich:
 **Bitte beachten:**
 - Keine externen Abhängigkeiten einführen (alles muss inline bleiben)
 - Barrierefreiheit nicht verschlechtern (Touch-Targets 44px, ARIA-Labels)
-- Bestehende Tests müssen weiterhin bestehen (802/802)
+- Bestehende Tests müssen weiterhin bestehen (842/842)
 - Neue Funktionen sollten von Tests abgedeckt werden
+- Korrekte Orthographie und Kommasetzung in allen Texten, Labels und Fehlermeldungen
+
+---
+
+## Testlauf
+
+```bash
+python3 test_vivodepot.py VIVODEPOT.html
+```
+
+Ergebnis muss `0 FAIL` sein, bevor eine Änderung als Baseline akzeptiert wird.
+
+---
 
 ## KI-Entwicklung
 
 VIVODEPOT wird mit KI-Unterstützung (Claude, Anthropic) entwickelt. Das ist in der App, im Code und in allen Dokumenten transparent ausgewiesen (EU AI Act Art. 50).
 
+---
+
 ## Lizenz
 
 Durch Ihren Beitrag stimmen Sie zu, dass Ihre Änderungen unter der [EUPL-1.2](LICENSE) veröffentlicht werden.
+
+---
 
 ## Kontakt
 

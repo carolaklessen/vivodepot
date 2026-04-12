@@ -1,12 +1,12 @@
 # VIVODEPOT — Technische Dokumentation
 
-*Version 1.0.0-beta.6 · April 2026*
+*Version 1.0.0-beta.7 · April 2026*
 
 ---
 
 ## Architektur
 
-VIVODEPOT ist eine **Einzeldatei-HTML-Anwendung** (~1,3 MB). Keine Build-Pipeline, kein Framework, kein CDN.
+VIVODEPOT ist eine **Einzeldatei-HTML-Anwendung** (ca. 1,3 MB). Keine Build-Pipeline, kein Framework, kein CDN.
 
 ```
 VIVODEPOT.html
@@ -29,26 +29,52 @@ VIVODEPOT.html
 ## Datenspeicherung
 
 ### Primär: localStorage
+
 ```javascript
-localStorage.setItem('vivodepot_data_profil1', JSON.stringify(verschluesselt));
+localStorage.setItem('vivodepot_v1_enc', JSON.stringify(verschluesselt));
 ```
 
 ### Verschlüsselung (optional)
+
 - Algorithmus: AES-256-GCM
 - Schlüsselableitung: PBKDF2-HMAC-SHA256 (100.000 Iterationen)
-- Salt: 16 Byte zufällig
-- IV: 12 Byte zufällig
-- Implementierung: Web Crypto API
+- Salt: 16 Byte, kryptographisch zufällig (Web Crypto API)
+- IV: 12 Byte, kryptographisch zufällig
+- Implementierung: Web Crypto API (browser-nativ, keine externe Bibliothek)
 
-### Datei-Speicherung
-`saveAsHTML()` erstellt eine neue HTML-Datei mit eingebetteten Daten:
+### Salt-Portabilität (seit beta.7)
+
+Vor beta.7 wurde der Salt ausschließlich in `localStorage` (Schlüssel `STORE_META`) gespeichert. Beim Öffnen der gespeicherten Datei auf einem anderen Gerät fehlte er — die Entschlüsselung schlug fehl, obwohl das Passwort korrekt war.
+
+**Fix:** `saveAsHTML()` liest den Salt vor dem Speichern aus `localStorage` und bettet ihn in den INIT-Block der HTML-Datei ein. Beim Öffnen auf einem neuen Gerät schreibt der INIT-Block den Salt synchron in `localStorage`, bevor `loadData()` ihn benötigt. Der bestehende Salt wird dabei nicht überschrieben (idempotent).
+
 ```javascript
-// INIT-Block wird ersetzt:
-// ═══ INIT (mit eingebetteten Daten) ═══
+// Eingebettet in die gespeicherte Datei (vereinfacht):
 (function(){
-  try { data = { /* vollständige Nutzerdaten */ }; } catch(e){ data={}; }
+  try { data = { /* Nutzerdaten */ }; } catch(e){ data={}; }
+  try {
+    if (!localStorage.getItem('vivodepot_v1_meta')) {
+      localStorage.setItem('vivodepot_v1_meta', '<salt-base64>');
+    }
+  } catch(e) {}
   showSavedFileWelcome();
 })();
+```
+
+### Datei-Speicherung
+
+`saveAsHTML()` erstellt eine HTML-Datei mit eingebetteten Daten und eingebettetem Salt. Der INIT-Block wird durch regulären Ausdruck ersetzt:
+
+```
+/\/\/ [═]+\s*\/\/ INIT[\s\S]*?\}\)\(\);/
+```
+
+Der Kommentar lautet in allen Varianten:
+
+```
+// ═══════════════════════════════════════════════
+// INIT  (bzw. INIT (mit eingebetteten Daten))
+// ═══════════════════════════════════════════════
 ```
 
 ---
@@ -109,10 +135,10 @@ localStorage.setItem('vivodepot_data_profil1', JSON.stringify(verschluesselt));
 python3 test_vivodepot.py VIVODEPOT.html
 ```
 
-**802 Tests in 32 Sektionen:**
+**842 Tests in 33 Sektionen:**
 
 1. JavaScript-Syntax
-2. Bekannte Bugs (BUG-10, BUG-11)
+2. Bekannte Bugs
 3. Steps und Navigation
 4. Kernfunktionen (set/get/esc/tl)
 5. Verschlüsselung
@@ -143,19 +169,40 @@ python3 test_vivodepot.py VIVODEPOT.html
 30. Update-Integration
 31. Eingabe-Hilfe
 32. Vollständigkeits-Regression
+33. Krypto-Portabilität (Salt in Datei) — neu in beta.7
+
+---
+
+## Krypto-Details
+
+### Schlüssel-Lifecycle
+
+```
+Passwort + Salt → PBKDF2 → sessionKey (im RAM, nie persistent)
+sessionKey + IV  → AES-GCM-Encrypt → ct (in localStorage)
+Salt             → localStorage (STORE_META) + HTML-Datei (seit beta.7)
+```
+
+### Fehlversuche
+
+Bis zu 5 Passwort-Fehlversuche. Danach wird die Sitzung beendet. Kein automatischer Reset.
+
+### Sitzungsende
+
+`sessionKey = null` beim Schließen des Tabs (`beforeunload`). Nächstes Öffnen erfordert erneute Passworteingabe.
 
 ---
 
 ## Notfall-Ampelkarten
 
-Die Katastrophenschutz-Karten (`ksAmpelCard()`) haben drei Zustände:
+Die Katastrophenschutz-Karten haben drei Zustände:
 
 | Wert | Farbe | Label |
 |---|---|---|
-| 'Vorhanden' | Grün | ✅ Vorhanden |
-| 'Teilweise' | Gelb/Orange | ⚠️ Teilweise |
-| 'Fehlt noch' | Rot | ❌ Fehlt noch |
-| (leer) | Grau | Antippen → |
+| Vorhanden | Grün | Vorhanden |
+| Teilweise | Gelb | Teilweise |
+| Fehlt noch | Rot | Fehlt noch |
+| (leer) | Grau | Antippen |
 
 Klick zyklisch: leer → Vorhanden → Teilweise → Fehlt noch → Vorhanden …
 
@@ -176,7 +223,7 @@ startDiktat()       // SpeechRecognition API
 
 ## Bekannte Einschränkungen
 
-- **iOS/PocketBook:** HTML-Dateien werden von PocketBook als Standard-App geöffnet. Workaround: Dateien auf iOS mit `.htm`-Endung speichern.
+- **iOS/PocketBook:** HTML-Dateien werden von PocketBook als Standard-App geöffnet. Workaround: Datei auf iOS mit `.htm`-Endung speichern und in der Dateien-App über Teilen → Safari öffnen.
 - **DuckDuckGo Browser:** Unterstützt keine lokalen HTML-Dateien (file://-Protokoll).
-- **localStorage-Limit:** ~5 MB pro Domain. Bei vielen hochgeladenen Dateien kann dieses Limit erreicht werden.
+- **localStorage-Limit:** Ca. 5 MB pro Domain. Bei vielen hochgeladenen Dateien kann dieses Limit erreicht werden.
 - **Safari iOS:** `showSaveFilePicker` nicht unterstützt — Fallback auf `a.click()` mit iOS-spezifischer Anleitung.

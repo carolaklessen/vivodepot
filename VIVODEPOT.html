@@ -471,7 +471,7 @@ function ensureDocx(callback) {
 </script>
 <script>
 // Normalise docx global — jsdelivr exposes it as window.docx
-const VIVODEPOT_VERSION = '1.0.0-beta.6';
+const VIVODEPOT_VERSION = '1.0.0-beta.7';
 function getLogoData() { var img = document.querySelector('.topbar-logo img'); return img ? img.src : ''; }
 if (typeof docx === 'undefined' && typeof window.docx === 'undefined') {
   console.warn('docx library not loaded yet — will retry on demand');
