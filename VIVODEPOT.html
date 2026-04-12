@@ -2953,7 +2953,7 @@ function openAngehoerigenView(scenario) {
   } else {
     html += '<button class="btn-nav primary" onclick="generateScenarioPDF(\'emergency\')" style="margin:4px">Als PDF speichern / drucken</button> ';
   }
-  html += '<div style="font-size:0.75rem;color:var(--ink3);margin-top:6px">Das PDF enthält die gleichen Informationen wie diese Ansicht — zum Ausdrucken oder Weitergeben.</div>';
+  html += '<div style="font-size:0.75rem;color:var(--ink3);margin-top:6px">Das PDF enthält die gleichen Informationen wie diese Ansicht — zum Ausdrucken, Weitergeben oder Hochladen auf Online-Portale.</div>';
   html += '</div>';
 
   html += '<div style="margin-top:1rem;text-align:center">';
@@ -5547,8 +5547,14 @@ const STEP_RENDERERS = {
       </div>
     </div>
     <div class="field-section-title">${tl('Beh\u00F6rdendaten')}</div>
-    <div class="infobox">${tl('Diese Datenbl\u00E4tter fassen Ihre Vivodepot-Daten f\u00FCr einen konkreten Beh\u00F6rdengang zusammen. Ausdrucken und mitnehmen -- oder als maschinenlesbares JSON exportieren.')}</div>
+    <div class="infobox">${tl('Diese Datenbl\u00E4tter fassen Ihre Vivodepot-Daten f\u00FCr einen konkreten Beh\u00F6rdengang zusammen. Ausdrucken und mitnehmen, als PDF auf das Online-Portal des Amtes hochladen -- oder als maschinenlesbares JSON exportieren.')}</div>
     <div class="export-grid">
+      <div class="export-card" onclick="generateStammdaten()" style="border-left:4px solid #3d5a2a">
+        <div class="ec-icon">🪪</div>
+        <div class="ec-title">Meine Stammdaten</div>
+        <div class="ec-sub">Name, Adresse, Steuer-ID, IBAN, Versicherungsnummern — für jeden Behördengang</div>
+        <div class="ec-btn" style="background:#3d5a2a">PDF erstellen</div>
+      </div>
       <div class="export-card" onclick="generateBehoerdendaten('kindergeld')" style="border-left:4px solid #2980b9">
         <div class="ec-icon"></div>
         <div class="ec-title">Kindergeld-Datenblatt</div>
@@ -9084,6 +9090,119 @@ function generateGesundheitsvollmacht() {
 // ═══════════════════════════════════════════════
 // BEHÖRDENDATEN PDF + FIM-JSON
 // ═══════════════════════════════════════════════
+function generateStammdaten() {
+  toast('Stammdaten-Datenblatt wird erstellt...');
+  setTimeout(function() {
+    try {
+      var pdf = new jspdf.jsPDF({format:'a4'});
+      var name = [get('vorname'),get('nachname')].filter(Boolean).join(' ') || '[Name]';
+      var y = 20, lh = 7, pw = 170, ml = 20;
+
+      function section(title) {
+        if (y > 255) { pdf.addPage(); y = 20; }
+        pdf.setFont('helvetica','bold'); pdf.setFontSize(11); pdf.setTextColor(61,90,42);
+        pdf.text(title, ml, y); y += lh;
+        pdf.setFont('helvetica','normal'); pdf.setFontSize(10); pdf.setTextColor(30,30,30);
+      }
+      function row(label, value) {
+        if (y > 270) { pdf.addPage(); y = 20; }
+        pdf.setFont('helvetica','bold'); pdf.setFontSize(9); pdf.setTextColor(80,80,80);
+        pdf.text(label+':', ml, y);
+        pdf.setFont('helvetica','normal'); pdf.setTextColor(30,30,30);
+        var val = (value||'').toString(); if(!val) val = '-- nicht eingetragen --';
+        pdf.text(val, ml+60, y);
+        y += lh-1;
+      }
+      function gap() { y += 4; }
+
+      // Header
+      pdf.setFont('helvetica','bold'); pdf.setFontSize(16); pdf.setTextColor(61,90,42);
+      pdf.text('Meine Stammdaten', ml+22, 22);
+      pdf.setFont('helvetica','normal'); pdf.setFontSize(9); pdf.setTextColor(120,120,120);
+      pdf.text('Universelles Datenblatt f\u00FCr Beh\u00F6rdeng\u00E4nge \u00B7 Erstellt mit Vivodepot', ml+22, 28);
+      pdf.setDrawColor(201,168,76); pdf.setLineWidth(0.8); pdf.line(ml,33,ml+pw,33);
+      y = 40;
+
+      section('Pers\u00F6nliche Daten');
+      row('Name', name);
+      row('Geburtsdatum', get('geburtsdatum') ? new Date(get('geburtsdatum')).toLocaleDateString('de-DE') : '');
+      row('Geburtsort', get('geburtsort'));
+      row('Geburtsname', get('geburtsname'));
+      row('Familienstand', get('familienstand'));
+      row('Staatsangeh\u00F6rigkeit', get('staatsangehoerigkeit'));
+      gap();
+
+      section('Anschrift');
+      row('Stra\u00DFe', get('strasse'));
+      row('PLZ / Ort', get('plz_ort'));
+      gap();
+
+      section('Kontakt');
+      row('Telefon', get('telefon'));
+      row('Mobil', get('mobil'));
+      row('E-Mail', get('email'));
+      gap();
+
+      section('Identifikation');
+      row('Steuer-ID', get('steuer_id'));
+      row('Sozialversicherungsnr.', get('rv_nummer'));
+      row('Personalausweis-Nr.', get('ausweis_nr'));
+      row('G\u00FCltig bis', get('ausweis_gueltig'));
+      row('Reisepass-Nr.', get('reisepass_nr'));
+      row('BundID', get('bundid_status'));
+      gap();
+
+      section('Bankverbindung');
+      row('IBAN', get('konto_iban'));
+      row('BIC', get('konto_bic'));
+      row('Kreditinstitut', get('konto_bank'));
+      row('Kontoinhaber/in', get('konto_inhaber') || name);
+      gap();
+
+      section('Krankenversicherung');
+      row('Art', get('kv_art'));
+      row('Versichertennr.', get('kv_nummer'));
+      row('Krankenkasse', get('kv_kasse'));
+      row('Versichert \u00FCber', get('kv_ueber'));
+      gap();
+
+      // QR-Code
+      try {
+        var qrPayload = {
+          t:'SD',n:name,
+          gd:get('geburtsdatum')||'',
+          adr:[get('strasse'),get('plz_ort')].filter(Boolean).join(', '),
+          sid:get('steuer_id')||'',
+          rv:get('rv_nummer')||'',
+          iban:get('konto_iban')||'',
+          kv:get('kv_nummer')||''
+        };
+        var qrStr = JSON.stringify(qrPayload);
+        if (qrStr.length < 2000) {
+          var qr = qrcode(0,'M'); qr.addData(qrStr); qr.make();
+          var qrImg = qr.createDataURL(4,0);
+          var qrSize = 38, qrX = ml+pw-qrSize;
+          var qrY = y > 220 ? (pdf.addPage(), 20) : y+4;
+          pdf.addImage(qrImg,'PNG',qrX,qrY,qrSize,qrSize);
+          pdf.setFont('helvetica','normal'); pdf.setFontSize(7); pdf.setTextColor(120,120,120);
+          pdf.text('QR-Code enth\u00E4lt Ihre Kerndaten', qrX, qrY+qrSize+4);
+          pdf.text('als maschinenlesbares JSON --', qrX, qrY+qrSize+8);
+          pdf.text('oder Foto des QR-Codes hochladen.', qrX, qrY+qrSize+12);
+        }
+      } catch(qe) { console.warn('QR:', qe); }
+
+      // Footer
+      y = 280;
+      pdf.setDrawColor(201,168,76); pdf.setLineWidth(0.5); pdf.line(ml,y-4,ml+pw,y-4);
+      pdf.setFont('helvetica','italic'); pdf.setFontSize(7); pdf.setTextColor(150,150,150);
+      pdf.text('Erstellt mit Vivodepot \u00B7 '+new Date().toLocaleDateString('de-DE')+' \u00B7 Alle Angaben ohne Gew\u00E4hr \u00B7 vivodepot.de', ml, y);
+
+      pdf.save('Vivodepot_Stammdaten_'+(get('nachname')||'Datenblatt')+'.pdf');
+      toast('Stammdaten-Datenblatt erstellt \u2713');
+    } catch(e) { toast('Fehler: '+e.message); console.error(e); }
+  }, 80);
+}
+
 function generateBehoerdendaten(type) {
   toast('Datenblatt wird erstellt...');
   setTimeout(function() {
@@ -9251,73 +9370,20 @@ function generateBehoerdendaten(type) {
         } else if (type === 'pflege') {
           qrPayload = {t:'PG',n:name,gd:get('geburtsdatum')||'',kvn:get('kv_nummer')||'',bg:get('blutgruppe')||'',al:get('allergien')||'',ek:get('erkrankungen')||'',md:get('medikamente')||'',ha:get('hausarzt')||''};
         }
-        // QR-Code als Mini-Webseite: lesbar auf dem Bildschirm + JSON-Download
-        var titlesQR = {kindergeld:'Kindergeld-Datenblatt', arbeitsamt:'Arbeitsamt-Datenblatt', pflege:'Pflegegrad-Vorbereitung'};
-        var qrTitle = titlesQR[type] || 'Vivodepot-Datenblatt';
-
-        // Lesbare Zeilen je nach PDF-Typ zusammenstellen
-        var qrZeilen = [];
-        if (type === 'kindergeld') {
-          if (qrPayload.n)   qrZeilen.push('<b>Name:</b> '           + qrPayload.n);
-          if (qrPayload.gd)  qrZeilen.push('<b>Geb.:</b> '           + qrPayload.gd);
-          if (qrPayload.sid) qrZeilen.push('<b>Steuer-ID:</b> '      + qrPayload.sid);
-          if (qrPayload.ep)  qrZeilen.push('<b>Ehepartner:</b> '     + qrPayload.ep);
-          if (qrPayload.iban)qrZeilen.push('<b>IBAN:</b> '           + qrPayload.iban);
-          if (qrPayload.ki)  qrZeilen.push('<b>Kinder:</b> '         + qrPayload.ki);
-          if (qrPayload.fs)  qrZeilen.push('<b>Familienstand:</b> '  + qrPayload.fs);
-        } else if (type === 'arbeitsamt') {
-          if (qrPayload.n)   qrZeilen.push('<b>Name:</b> '           + qrPayload.n);
-          if (qrPayload.gd)  qrZeilen.push('<b>Geb.:</b> '           + qrPayload.gd);
-          if (qrPayload.adr) qrZeilen.push('<b>Adresse:</b> '        + qrPayload.adr);
-          if (qrPayload.sid) qrZeilen.push('<b>Steuer-ID:</b> '      + qrPayload.sid);
-          if (qrPayload.rv)  qrZeilen.push('<b>RV-Nummer:</b> '      + qrPayload.rv);
-          if (qrPayload.iban)qrZeilen.push('<b>IBAN:</b> '           + qrPayload.iban);
-          if (qrPayload.kv)  qrZeilen.push('<b>Krankenversich.:</b> '+ qrPayload.kv);
-          if (qrPayload.kvn) qrZeilen.push('<b>Versichertennr.:</b> '+ qrPayload.kvn);
-        } else if (type === 'pflege') {
-          if (qrPayload.n)   qrZeilen.push('<b>Name:</b> '           + qrPayload.n);
-          if (qrPayload.gd)  qrZeilen.push('<b>Geb.:</b> '           + qrPayload.gd);
-          if (qrPayload.kvn) qrZeilen.push('<b>Versichertennr.:</b> '+ qrPayload.kvn);
-          if (qrPayload.bg)  qrZeilen.push('<b>Blutgruppe:</b> '     + qrPayload.bg);
-          if (qrPayload.al)  qrZeilen.push('<b>Allergien:</b> '      + qrPayload.al);
-          if (qrPayload.ek)  qrZeilen.push('<b>Erkrankungen:</b> '   + qrPayload.ek);
-          if (qrPayload.md)  qrZeilen.push('<b>Medikamente:</b> '    + qrPayload.md);
-          if (qrPayload.ha)  qrZeilen.push('<b>Hausarzt:</b> '       + qrPayload.ha);
-        }
-
-        var jsonEncoded = encodeURIComponent(JSON.stringify(qrPayload, null, 2));
-        var dlFilename = 'Vivodepot_' + (titlesQR[type]||type).replace(/ /g,'_') + '.json';
-        var qrHtml = '<!DOCTYPE html><html lang=de><head><meta charset=UTF-8>'
-          + '<meta name=viewport content="width=device-width,initial-scale=1">'
-          + '<style>body{font-family:sans-serif;padding:16px;background:#f5f0e8;max-width:420px;margin:auto}'
-          + 'h3{color:#3d5a2a;margin-bottom:12px}p{margin:5px 0;font-size:.95rem;line-height:1.5}'
-          + '.dl{display:block;margin:18px 0;padding:14px;background:#3d5a2a;color:#fff;'
-          + 'text-align:center;border-radius:8px;font-size:1rem;text-decoration:none}'
-          + '.ft{font-size:.75rem;color:#aaa;text-align:center;margin-top:12px}'
-          + '</style></head><body>'
-          + '<h3>' + qrTitle + '</h3>'
-          + '<p>' + qrZeilen.join('</p><p>') + '</p>'
-          + '<a class=dl href="data:application/json;charset=utf-8,' + jsonEncoded
-          + '" download="' + dlFilename + '">\u2193 JSON herunterladen</a>'
-          + '<p class=ft>Vivodepot &middot; vivodepot.de</p>'
-          + '</body></html>';
-
-        var qrUrl = 'data:text/html;charset=utf-8,' + encodeURIComponent(qrHtml);
-
-        if (qrUrl.length < 4200) {
-          var qr = qrcode(0, 'L');
-          qr.addData(qrUrl);
+        var qrStr = JSON.stringify(qrPayload);
+        if (qrStr.length < 2000) {
+          var qr = qrcode(0, 'M');
+          qr.addData(qrStr);
           qr.make();
-          var qrImg = qr.createDataURL(3, 0);
-          var qrSize = 42;
+          var qrImg = qr.createDataURL(4, 0);
+          var qrSize = 38;
           var qrX = ml + pw - qrSize;
-          var qrY = y > 220 ? (pdf.addPage(), 20) : y + 6;
+          var qrY = y > 220 ? (pdf.addPage(), 20) : y + 4;
           pdf.addImage(qrImg, 'PNG', qrX, qrY, qrSize, qrSize);
-          pdf.setFont('helvetica','bold'); pdf.setFontSize(7); pdf.setTextColor(61,90,42);
-          pdf.text('QR scannen:', qrX, qrY + qrSize + 5);
-          pdf.setFont('helvetica','normal'); pdf.setTextColor(120,120,120);
-          pdf.text('Daten lesbar +', qrX, qrY + qrSize + 10);
-          pdf.text('JSON-Download', qrX, qrY + qrSize + 15);
+          pdf.setFont('helvetica','normal'); pdf.setFontSize(7); pdf.setTextColor(120,120,120);
+          pdf.text('QR-Code enth\u00E4lt Ihre Kerndaten', qrX, qrY + qrSize + 4);
+          pdf.text('als maschinenlesbares JSON --', qrX, qrY + qrSize + 8);
+          pdf.text('oder Foto des QR-Codes hochladen.', qrX, qrY + qrSize + 12);
         }
       } catch(qe) { console.warn('QR:', qe); }
 
