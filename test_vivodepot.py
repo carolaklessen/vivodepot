@@ -1082,6 +1082,9 @@ def main():
     check("Export: FHIR R4 Bundle", "Bundle" in html and "generateFHIR" in html)
     check("Export: FIM-JSON Struktur", "exportFIMJson" in html)
     check("Export: Behördendaten Kindergeld", "Kindergeld" in html or "generateBehoerdendaten" in html)
+    check("QR Behördendaten: Mini-Webseite statt rohem JSON", "data:text/html;charset=utf-8" in html and "qrHtml" in html)
+    check("QR Behördendaten: JSON-Download-Button vorhanden", "JSON herunterladen" in html)
+    check("QR Behördendaten: Lesbare Felder je PDF-Typ", "qrZeilen" in html and "qrPayload.n" in html)
 
     # ═══════════════════════════════════════
     print("\n=== 44. VOLLMACHTEN & DOKUMENTE ===")
