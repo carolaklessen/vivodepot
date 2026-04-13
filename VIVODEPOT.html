@@ -1120,6 +1120,64 @@ input[type=text], input[type=email], input[type=tel], input[type=date], select {
   .btn-sm.gold { font-size: 0.82rem; padding: 6px 14px; }
   .profile-btn { font-size: 0.78rem; padding: 4px 8px; }
 }
+
+/* ── Weitergabe-Datei Modal ─────────────────────────────────── */
+.wg-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9000; animation: fadeIn 0.2s ease;
+}
+.wg-modal {
+  background: #fff; border-radius: 16px; padding: 2rem;
+  max-width: 540px; width: 92%; max-height: 90vh; overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+}
+.wg-header { display: flex; align-items: center; gap: 10px; margin-bottom: 1.2rem; }
+.wg-header-icon { font-size: 1.8rem; }
+.wg-title { font-size: 1.1rem; font-weight: 700; color: var(--forest); }
+.wg-subtitle { font-size: 0.78rem; color: var(--ink3); }
+.wg-step-indicator { display: flex; gap: 6px; margin-bottom: 1.4rem; }
+.wg-step-dot { flex: 1; height: 4px; border-radius: 2px; background: var(--border); transition: background 0.3s; }
+.wg-step-dot.active { background: var(--forest); }
+.wg-step-dot.done { background: var(--gold); }
+.wg-step { display: none; }
+.wg-step.active { display: block; }
+.wg-section-title { font-size: 0.78rem; font-weight: 600; color: var(--ink2); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.8rem; }
+.wg-profile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1rem; }
+.wg-profile-card {
+  border: 2px solid var(--border); border-radius: 10px; padding: 1rem;
+  cursor: pointer; transition: all 0.15s; text-align: center; background: var(--surface);
+}
+.wg-profile-card:hover { border-color: var(--forest); }
+.wg-profile-card.selected { border-color: var(--forest); background: var(--forest-lt); }
+.wg-profile-card .pc-icon { font-size: 1.6rem; margin-bottom: 4px; }
+.wg-profile-card .pc-name { font-size: 0.82rem; font-weight: 600; color: var(--forest); }
+.wg-profile-card .pc-desc { font-size: 0.72rem; color: var(--ink3); margin-top: 2px; line-height: 1.4; }
+.wg-behoerde-select { width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 0.88rem; background: var(--surface); color: var(--ink); margin-top: 8px; }
+.wg-pw-field { width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 1rem; margin-top: 6px; box-sizing: border-box; }
+.wg-pw-field:focus { outline: none; border-color: var(--forest); }
+.wg-infobox { background: var(--beige); border-left: 3px solid var(--gold); border-radius: 0 8px 8px 0; padding: 0.7rem 1rem; font-size: 0.78rem; color: var(--ink2); line-height: 1.6; margin: 0.8rem 0; }
+.wg-warn { background: #fff3cd; border-left: 3px solid #f0ad4e; border-radius: 0 8px 8px 0; padding: 0.7rem 1rem; font-size: 0.78rem; color: #856404; line-height: 1.6; margin: 0.8rem 0; }
+.wg-begleit-box { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; font-size: 0.82rem; color: var(--ink2); line-height: 1.7; white-space: pre-wrap; margin: 0.8rem 0; }
+.wg-footer { display: flex; gap: 10px; margin-top: 1.4rem; flex-wrap: wrap; }
+.wg-btn { padding: 10px 20px; border-radius: 8px; font-size: 0.88rem; font-weight: 500; cursor: pointer; border: none; min-height: 44px; }
+.wg-btn.primary { background: var(--forest); color: #fff; flex: 1; }
+.wg-btn.primary:hover { background: var(--forest-dk,#1a4d3a); }
+.wg-btn.secondary { background: var(--surface); color: var(--ink2); border: 1.5px solid var(--border); }
+.wg-btn.secondary:hover { border-color: var(--forest); color: var(--forest); }
+.wg-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.wg-pw-strength { height: 4px; border-radius: 2px; margin-top: 6px; transition: all 0.3s; background: var(--border); }
+.wg-pw-strength.weak { background: #e74c3c; width: 33%; }
+.wg-pw-strength.ok { background: var(--gold); width: 66%; }
+.wg-pw-strength.strong { background: var(--forest); width: 100%; }
+.wg-reminder { background: var(--forest-lt); border-radius: 10px; padding: 0.9rem 1.1rem; font-size: 0.82rem; color: var(--ink2); line-height: 1.6; border-left: 3px solid var(--forest); margin-bottom: 1rem; display: flex; align-items: flex-start; gap: 10px; }
+.wg-reminder button { margin-left: auto; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--forest); background: transparent; color: var(--forest); cursor: pointer; font-size: 0.75rem; white-space: nowrap; }
+.wg-link-zeile { font-size: 0.82rem; color: var(--ink2); margin: 0.5rem 0 0.8rem; }
+.wg-link-btn { background: none; border: none; padding: 0; font-size: 0.82rem; color: var(--teal); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; text-align: left; }
+@media (max-width: 480px) {
+  .wg-profile-grid { grid-template-columns: 1fr; }
+  .wg-modal { padding: 1.4rem; }
+}
 </style>
 <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB8AAAAgCAYAAADqgqNBAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAGYktHRAD/AP8A/6C9p5MAAAAHdElNRQfqBAYJFyCa3PSJAAAKmUlEQVRIx5WXWWxc133Gf/fOPsMZDmfliIuGu0hJFFdR1GZZimTLjizHtlLbbZwNcNAGiPtUFCgKSQXykKJ24gfDSe3YSKHCqI0ATYDElh052kVR3CRS3LfhkBySM+TMcPY7c+/tgyDZru2o/R4Pzjm/c/84//t9R1AUReUvSBAEclKOydlprg/0MD49yWYygSTlMBiMVPjKMBqMmE0mSt1emuq2UVVRhclo5GESvg4uCAK5XI7rAzf5w6cfEQwtUVNZReeuNrbV1OOwOzAZTeh1OqS8RDKVYi2yRmhthYIss8W7haa6BkxGE6qq/t/hgiAwPT/Dr9//D26PjbC3rYOnjjxBY10TOp3uwbzPbyoIAgDZdIzA5DWW15MIRhf1tU2UerwICF+Ca//3gKqqXLp5lV+88wZ2WzGvvPAcNaV2XKUeNBrN137F/XGNzoTeaMOhC6HIKYJzeTLZeqoq/A8O+LXwjy9f4Ge/+jn72jo52b2dYpNIibcea7HnS4u/ShqNDqevCUQD8fAc2kyA+HKanMeL0WSBz1frftkFQeBizxVO//yn7Gvr4Ln9zTgdDnzV3egMX1z0cAkoSp7V4CiB6SFEJY3Z6qa2+RhGi+3BXuJ98FwwwOvvvEGdv5qT3c34fH7K6x9Fpzf/P8EAKqKoxbe1mcr63aiimej6CpO3P6YgZR/MEgEy2SxvnnuLZDrN3xz/BuUV1ejs1Q8tsyzLX3sH7svu9lNW2wGKTDS8xOzdy5/BBUGgd+gWF3uucnz/fsrcbi70j/PhxU/utVs2RToZJRlfQ1VV8lKWVHKD2EaIQHCaRCJKXsqSlzLkpSyZVAy5IAECgiAwOTPBuT98iNFVRzqdZjU4RiQ0iyAIaNOZNL/96Hd4XS6qvE5uzywiihoO7zsEqOTzWeLrQQwWF4nQDMnwBKX+TsLrYQKLAUx6PYIqs7EyTrYgojNaMekErPZSimwu6qpqWVheJJSUicRS1JoszE32U+wqR/P0qWfOvPvBOU48ehSP28dmNs/RA0dw2IqZH79COhVjPdBLKpViKRLHWeIkGQ0yNDaOTqfDbtaR2lzFUuxjYSWMkt0gGeoH0Ug8MofdWU6px0c8kSC0EceuyVBQQWcqQuwZ7EVRFfZ17iOWzrK0EuL8pU8QRA2e8u24fA3o3K0YbT7MVgfToRgWVwMpSWarx0leVtFYtjCzGCKdlShxVaB3tyEVIJ3OIIoa+u70c6X3KllFxOLaSi6TIBpeRNs3PIjX5cZksrCwvMjjjxyjrqoGvV6PKDiYGr7EwtIKm3kVvagyPjVCdDOK2VxEOrpMaG2FuMbJyuoSNf56BsYm8JSUkF26hdFgoGrbXg7vPURDdT0fXfqEBBbyUoZMOoG4tBqirLSMu5OjlJVuYSO2QaFQQFFk5qb6mR65RlPDDg51HcAix3n84DGy6SSzgWk81Z0EojmisQgnH/sWlU4bRdlFnBY9VkcFJns5BpMVRVGYXwzgL68ksBpBNFhJxNbQRjYiVFf4ud7fgwDE4nH2duyhUMizODWAojVhsZdSZDbj9PrRKDm8BomI3sCnPVeI52Q6Sq0kVqcQDDZ0IsiIxDY3adrRhSiK6HQ6VsKr3Lrdh4KAzmfFa06icVf7zlgtRXidHn783R/xyJ79hNZWQBDYWr2DcGieVF4lkcmgM5cwNjeL0WLH7S7jg9+/x2OHHseg1zERXMbuKqPI5UfVGtEjUVnXhoJIYDFAd3sXu3d1kM6kWVyaw6XNotm6vfbMenSdl559kS1eH7/98HcMjAwxMz9Ly/ZWyrfWk1ibITjVz0Z4kZSU587UNGvra6xEQliLbPcOZDRj0eTZDI1jRKKx5VH0xiKu9F7nw4sfE0/EURSVlqZm+ocHMUthtB6nm2BoCVuRFZvVxsWbVzEZDEj5PMW2Yk498TRajYa6hhYkKUtFfSd5GV5769+IRMPMzI7yk5f/EY/DyUjfeUy2GgRUjGYrt4aH+OOfz5NKp+gbGeTs3/8TDrsDUdQQja6jrfXXsBBaRFFVbEVWKn1lzAUDuB0uZgKz5KQ82zuPo97zTe57wZ62vfQOXKW5sYWarTWoqkrXI6fu/TZFEUVRGJ+ZJJ6Ik5MkTAYTVRV+ZEVGkfPk83nE7tZONKJIeD0MQNuOFiLRdWxWK26Hi1ffep3+4cEvRQGz0YQgiOj0hs+8TBAQRZGFpSA/e/M1JEmi1OVhM5mg1l9NsdVGZGMdKZem2OFBbKprxOcupW94EFVVaN3RAkB4I4LTXsLU/Az//Oq/MDgy+AWjUWQZu7WYZCKGrCgP4CtrIc7+4qdcuH6JIrOFRCrJ6nqYfe17ABidHCMRC1PiqkDUiCK7d7UzNHqH+eACTruDZx8/ya07A/QM9fGtYycoyAVe+9W/0jd4A1mWicZj9PReIJVMcHf8DsHlIABz85O8/Z+/ZHJ+mudPPEswtMS1gZvsbd1Nnb+G0FqI+cUAopyhvHonmrNnz55ZjayysLxIVsoR2YiQyaYxGU2cv3yBlcgqTTUN3B4fZejOTZLxMKlsjht9V1kKr6MiYLM5GRm5yW/+622uDd2mbWc704FZPr7yKT5PKd88cpwLV/+MqkIgOEeRusmho8+jdZY4cNgdtDQ2c/XWDbp2taOoCj/89kvcnRpneOIuK+FVEETGgius/vf77G7azrZtbUyvRGlqbOdmzycMTowRSeYwG82MTI4SWlvFYDDwg1PfodhWjFTIMxucJx0PsX9nBy6v/56f7+vopiAXqKn0MzE7RanLw7baBl753t9SU1lNNB4jlthEEAQ2UgV6J2ZJpNO8cOI55HyG3tFRwsl7Hp7OplkJr+F1eXj5+e/z1NEnMeh0aDUatKKAXSvR2vUYWq0WzenTp89YzGZEQeDyzWv4PF56bw9Q56+hu7WdXXW1uF1eItF14olNBAFy+TyxeJRDew7w6Y3LLEXWERBQVRVniYOnjjzBK99/mScPHyebzfL6u28iCAIWNcXBrgPU79h3L2yePn36DEDllgriiU16Bm9RV1XD2PQE7mIb8dlrNG718c0nXmBheZlgaBGAdDaL3WrjzuQ4OUlCVVXq/DX8ww//jkYH2PVZTPYK3jz3NpPzM3TU11KzxcveR55Bo9V9luHut8lfP/1tHjt4hJ7BW2wmNrnc30/BVo0smqiu8POjF39AsdWGoihYzGZ0Oj05KQeAVqPlO8+8QHN9HXqjhYxo59Vfv8Gl3mscbNlFXZmHw8eeR28wP2jXL+R2nVbHS8++iEaj4d0PzrG0uoysdNPSuJNoIklDdR0NVbVMzs9wqOsA84sBMtksKuBzumjf0YLR6iCYMfLe+79BknL81ZHD1Pv97Go9iNFs/erc/nkpisKNgV7+/b13GJ2ewON0sbO+iV2NO1mNrLG2HmYhtMjwxCj5fB6T0cTJo09SU1nF+ct/YjY4z/72PZw6+g0qfGX3brbmS++Tv/xQjG3GuNhzhd//6Y+MTU+STCfRiBoKcgFZljEZTWzxlFJfVctKZI3QWojmbTt4+tgJ9rR2otNq0XwF9KHwzyuZSjI2M0n/8ACzC/PkCwVsRUW4S5wUZJnNZIJSt5futi7qq2sxGowPzfMA/wMB/tZ56biizgAAAABJRU5ErkJggg==">
 </head>
@@ -1299,10 +1357,18 @@ input[type=text], input[type=email], input[type=tel], input[type=date], select {
 
 // Globaler Fehler-Handler: zeigt Welcome-Overlay bei kritischen JS-Fehlern
 window.onerror = function(msg, src, line, col, err) {
+  // "Script error." ohne Quelle und Zeile 0 = Cross-Origin-Fehler (Safari/file://)
+  // → kein echter App-Fehler, Welcome-Overlay NICHT anzeigen, Fehler als behandelt markieren
+  if (!src && line === 0) return true;
   console.error('Fehler:', msg, 'in', src, 'Zeile', line);
   try {
-    var wo = document.getElementById('welcome-overlay');
-    if (wo) wo.style.display = 'flex';
+    var ro = document.getElementById('return-overlay');
+    var mc = document.getElementById('main-content');
+    var appStarted = (ro && ro.style.display !== 'none') || (mc && mc.innerHTML.trim() !== '');
+    if (!appStarted) {
+      var wo = document.getElementById('welcome-overlay');
+      if (wo) wo.style.display = 'flex';
+    }
   } catch(e) {}
   return false;
 };
@@ -2340,13 +2406,13 @@ function getNotfallData() {
 
 // ── Welcome flow ──────────────────────────────────────
 function showOverlay(id) {
-  ['welcome-overlay','return-overlay','angehoerigenauswahl-overlay','set-password-overlay','crypto-overlay','gwiz-overlay','vvwiz-overlay','pvwiz-overlay','bwiz-overlay','hwiz-overlay','gvwiz-overlay','goal-wizard']
+  ['welcome-overlay','return-overlay','angehoerigenauswahl-overlay','set-password-overlay','crypto-overlay','gwiz-overlay','vvwiz-overlay','pvwiz-overlay','bwiz-overlay','hwiz-overlay','gvwiz-overlay','goal-wizard','wg-overlay']
     .forEach(oid => { const el = document.getElementById(oid); if (el) el.style.display = 'none'; });
   const el = document.getElementById(id);
   if (el) el.style.display = 'flex';
 }
 function hideAllOverlays() {
-  ['welcome-overlay','return-overlay','angehoerigenauswahl-overlay','set-password-overlay','crypto-overlay','gwiz-overlay','vvwiz-overlay','pvwiz-overlay','bwiz-overlay','hwiz-overlay','gvwiz-overlay','goal-wizard']
+  ['welcome-overlay','return-overlay','angehoerigenauswahl-overlay','set-password-overlay','crypto-overlay','gwiz-overlay','vvwiz-overlay','pvwiz-overlay','bwiz-overlay','hwiz-overlay','gvwiz-overlay','goal-wizard','wg-overlay']
     .forEach(id => {
       // Im Angehörigen-Modus darf der Auswahl-Overlay nicht versteckt werden,
       // solange kein expliziter Fokuswechsel stattgefunden hat.
@@ -2976,7 +3042,7 @@ async function loadData() {
 
   // Parse stored data
   let parsedStored;
-  try { parsedStored = JSON.parse(stored); } catch { data = {}; showOverlay('welcome-overlay'); return; }
+  try { parsedStored = JSON.parse(stored); } catch { data = {}; var _ro = document.getElementById('return-overlay'); var _mc = document.getElementById('main-content'); var _appStarted = (_ro && _ro.style.display !== 'none') || (_mc && _mc.innerHTML.trim() !== ''); if (!_appStarted) { showOverlay('welcome-overlay'); } return; }
 
   // Plain (unencrypted) data
   if (parsedStored.plain) {
@@ -5420,6 +5486,10 @@ const STEP_RENDERERS = {
       <button class="etab" onclick="switchExportTab('behoerden',this)"> Ämter & Einrichtungen</button>
     </div>
 
+    <div class="wg-link-zeile">
+      🔒 <button class="wg-link-btn" onclick="weitergabeOpen()">Daten gezielt weitergeben — verschlüsselte Datei für Arzt, Familie oder Behörde erstellen</button>
+    </div>
+
     <div class="infobox" id="export-hint" style="margin-bottom:1rem">${tl('Die Dokumente werden direkt in Ihrem Browser erstellt — keine Daten verlassen Ihr Gerät.')}</div>
 
     <div id="etab-drucken" class="etab-content" style="display:block">
@@ -5533,21 +5603,6 @@ const STEP_RENDERERS = {
     </div>
 
     <div id="etab-behoerden" class="etab-content" style="display:none">
-    <div class="field-section-title">${tl('Für Pflegeeinrichtung & Klinik')}</div>
-    <div class="export-grid">
-      <div class="export-card" onclick="generateHeimaufnahme()">
-        <div class="ec-icon">🏠</div>
-        <div class="ec-title">Heimaufnahme-Paket</div>
-        <div class="ec-sub">Stammdaten, Medikamente, Vollmachten — kompakt für die Einrichtung</div>
-        <div class="ec-btn">PDF erstellen</div>
-      </div>
-      <div class="export-card" onclick="generateFHIR()">
-        <div class="ec-icon">🏥</div>
-        <div class="ec-title">Gesundheitsdaten für Klinik</div>
-        <div class="ec-sub">Internationaler Standard (FHIR R4) — digital übertragbar an Krankenhäuser</div>
-        <div class="ec-btn">JSON exportieren</div>
-      </div>
-    </div>
     <div class="field-section-title">${tl('Beh\u00F6rdendaten')}</div>
     <div class="infobox">${tl('Diese Datenbl\u00E4tter fassen Ihre Vivodepot-Daten f\u00FCr einen konkreten Beh\u00F6rdengang zusammen. Ausdrucken und mitnehmen -- oder als maschinenlesbares JSON exportieren.')}</div>
     <div class="export-grid">
@@ -5591,6 +5646,22 @@ const STEP_RENDERERS = {
         <div class="ec-icon"></div>
         <div class="ec-title">Beh\u00F6rdendaten (JSON)</div>
         <div class="ec-sub">Maschinenlesbar -- FIM-Stammdaten f\u00FCr Verwaltungsportale</div>
+        <div class="ec-btn">JSON exportieren</div>
+      </div>
+    </div>
+
+    <div class="field-section-title">${tl('Für Pflegeeinrichtung & Klinik')}</div>
+    <div class="export-grid">
+      <div class="export-card" onclick="generateHeimaufnahme()">
+        <div class="ec-icon">🏠</div>
+        <div class="ec-title">Heimaufnahme-Paket</div>
+        <div class="ec-sub">Stammdaten, Medikamente, Vollmachten — kompakt für die Einrichtung</div>
+        <div class="ec-btn">PDF erstellen</div>
+      </div>
+      <div class="export-card" onclick="generateFHIR()">
+        <div class="ec-icon">🏥</div>
+        <div class="ec-title">Gesundheitsdaten für Klinik</div>
+        <div class="ec-sub">Internationaler Standard (FHIR R4) — digital übertragbar an Krankenhäuser</div>
         <div class="ec-btn">JSON exportieren</div>
       </div>
     </div>
@@ -10300,8 +10371,516 @@ function installApp() {
   }
 })();
 
+// ═══════════════════════════════════════════════
+// WEITERGABE-DATEI — Hilfsfunktionen
+// ═══════════════════════════════════════════════
+
+// Profildefinitionen: Felder je Profil
+const WG_PROFILE_FELDER = {
+  notfall: [
+    'vorname','nachname','geburtsdatum','blutgruppe',
+    'allergien','medikamente','krankheiten','hausarzt',
+    'notfallkontakte','patientenverf_vorhanden','patientenverf_ort'
+  ],
+  vollmacht: [
+    'vorname','nachname','geburtsdatum','adresse','plz','ort',
+    'vollmacht_person','vollmacht_ort','vollmacht_vorhanden',
+    'patientenverf_vorhanden','patientenverf_ort',
+    'betreuer','nachlassgericht'
+  ],
+  familie: [
+    'vorname','nachname','geburtsdatum','adresse','plz','ort',
+    'konten','versicherungen','vertraege',
+    'testament_vorhanden','testament_ort','testamentsvollstrecker',
+    'bestattungswunsch','persoenliche_botschaft','notfallkontakte'
+  ],
+  behoerde: [
+    'vorname','nachname','geburtsdatum','adresse','plz','ort',
+    'ausweis_nr','steuer_id','iban','kv_name','kv_nr','rv_nr'
+  ]
+};
+
+// Lesbare Feldnamen
+const WG_FELDNAMEN = {
+  vorname: 'Vorname', nachname: 'Nachname', geburtsdatum: 'Geburtsdatum',
+  adresse: 'Anschrift', plz: 'Postleitzahl', ort: 'Ort',
+  blutgruppe: 'Blutgruppe', allergien: 'Allergien',
+  medikamente: 'Medikamente', krankheiten: 'Diagnosen / Erkrankungen',
+  hausarzt: 'Hausarzt', notfallkontakte: 'Notfallkontakte',
+  patientenverf_vorhanden: 'Patientenverfuegung vorhanden',
+  patientenverf_ort: 'Ablageort Patientenverfuegung',
+  vollmacht_person: 'Bevollmaechtigte Person',
+  vollmacht_ort: 'Ablageort Vollmacht',
+  vollmacht_vorhanden: 'Vollmacht vorhanden',
+  betreuer: 'Rechtlicher Betreuer',
+  nachlassgericht: 'Nachlassgericht',
+  konten: 'Bankkonten', versicherungen: 'Versicherungen',
+  vertraege: 'Vertraege',
+  testament_vorhanden: 'Testament vorhanden',
+  testament_ort: 'Ablageort Testament',
+  testamentsvollstrecker: 'Testamentsvollstrecker',
+  bestattungswunsch: 'Bestattungswunsch',
+  persoenliche_botschaft: 'Persoenliche Botschaft',
+  ausweis_nr: 'Ausweis- / Reisepass-Nr.',
+  steuer_id: 'Steuer-Identifikationsnummer',
+  iban: 'IBAN', kv_name: 'Krankenkasse',
+  kv_nr: 'Krankenversicherungs-Nr.', rv_nr: 'Rentenversicherungs-Nr.'
+};
+
+// Profiltexte
+const WG_PROFIL_INFO = {
+  notfall: {
+    icon: '\uD83C\uDFE5',
+    name: 'Notfall',
+    desc: 'Medizin, Allergien, Arzt',
+    fuer: 'Krankenhaus, Rettungsdienst',
+    begleit: (n) =>
+      `Betreff: Medizinische Notfallinformationen fuer ${n}\n\n` +
+      `Sehr geehrte Damen und Herren,\n\n` +
+      `anbei erhalten Sie die Weitergabe-Datei von ${n} mit den wichtigsten medizinischen Informationen fuer den Notfall.\n\n` +
+      `Die Datei ist verschluesselt. Das Passwort erhalten Sie separat.\n\n` +
+      `Oeffnen Sie die Datei im Browser (Doppelklick), geben Sie das Passwort ein und Sie sehen alle relevanten Daten.\n\n` +
+      `Mit freundlichen Gruessen`
+  },
+  vollmacht: {
+    icon: '\uD83D\uDCCB',
+    name: 'Vollmacht',
+    desc: 'Bevollmaechtigte, Ablageorte',
+    fuer: 'Notar, Sozialdienst',
+    begleit: (n) =>
+      `Betreff: Vollmacht- und Vorsorgeinformationen von ${n}\n\n` +
+      `Sehr geehrte Damen und Herren,\n\n` +
+      `anbei die Weitergabe-Datei von ${n} mit den Angaben zu Vollmachten, Patientenverfuegung und Betreuung.\n\n` +
+      `Die Datei ist verschluesselt. Das Passwort erhalten Sie auf Anfrage.\n\n` +
+      `Oeffnen Sie die Datei im Browser, geben Sie das Passwort ein.\n\n` +
+      `Mit freundlichen Gruessen`
+  },
+  familie: {
+    icon: '\uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67',
+    name: 'Familie',
+    desc: 'Konten, Testament, Botschaft',
+    fuer: 'Angehoerige, Erben',
+    begleit: (n) =>
+      `Liebe Familie,\n\n` +
+      `diese Datei enthaelt wichtige Informationen von ${n} fuer den Erbfall: Konten, Versicherungen, Testament-Ablageort und eine persoenliche Botschaft.\n\n` +
+      `Das Passwort ist: (bitte separat mitteilen)\n\n` +
+      `Oeffne die Datei im Browser (Doppelklick auf die HTML-Datei) und gib das Passwort ein.\n\n` +
+      `In Liebe`
+  },
+  behoerde: {
+    icon: '\uD83C\uDFDB',
+    name: 'Behoerde',
+    desc: 'Stammdaten, IDs, IBAN',
+    fuer: 'Aemter und Einrichtungen',
+    begleit: (n) =>
+      `Betreff: Stammdaten von ${n}\n\n` +
+      `Sehr geehrte Damen und Herren,\n\n` +
+      `anbei die Weitergabe-Datei von ${n} mit den beantragungsrelevanten Stammdaten.\n\n` +
+      `Die Datei ist passwortgeschuetzt. Das Passwort erhalten Sie auf Anfrage.\n\n` +
+      `Bitte oeffnen Sie die Datei im Browser und geben Sie das Passwort ein.\n\n` +
+      `Mit freundlichen Gruessen`
+  }
+};
+
+// Zustandsvariablen fuer das Modal
+let _wgProfil = null;
+let _wgBehoerde = null;
+let _wgSchritt = 1;
+
+function weitergabeOpen() {
+  // Reminder-Datum pruefen
+  _wgProfil = null; _wgBehoerde = null; _wgSchritt = 1;
+  document.getElementById('wg-overlay').style.display = 'flex';
+  wgZeigeSchritt(1);
+}
+
+function weitergabeClose() {
+  document.getElementById('wg-overlay').style.display = 'none';
+}
+
+function wgZeigeSchritt(nr) {
+  _wgSchritt = nr;
+  document.querySelectorAll('.wg-step').forEach(el => el.classList.remove('active'));
+  document.getElementById('wg-step-' + nr).classList.add('active');
+  // Fortschritts-Punkte aktualisieren
+  [1,2,3].forEach(i => {
+    const dot = document.getElementById('wg-dot-' + i);
+    if (i < nr) { dot.className = 'wg-step-dot done'; }
+    else if (i === nr) { dot.className = 'wg-step-dot active'; }
+    else { dot.className = 'wg-step-dot'; }
+  });
+}
+
+function wgWaehleProfilCard(profil) {
+  _wgProfil = profil;
+  document.querySelectorAll('.wg-profile-card').forEach(el => el.classList.remove('selected'));
+  const card = document.getElementById('wg-card-' + profil);
+  if (card) card.classList.add('selected');
+  // Behoerde-Dropdown zeigen/verstecken
+  document.getElementById('wg-behoerde-wrap').style.display = (profil === 'behoerde') ? 'block' : 'none';
+  document.getElementById('wg-weiter-1').disabled = false;
+}
+
+function wgPwInput() {
+  const pw1 = document.getElementById('wg-pw1').value;
+  const pw2 = document.getElementById('wg-pw2').value;
+  const bar = document.getElementById('wg-pw-strength');
+  const err = document.getElementById('wg-pw-err');
+  // Staerke
+  let staerke = '';
+  if (pw1.length >= 10) staerke = 'strong';
+  else if (pw1.length >= 6) staerke = 'ok';
+  else if (pw1.length > 0) staerke = 'weak';
+  bar.className = 'wg-pw-strength' + (staerke ? ' ' + staerke : '');
+  // Weiter-Button
+  const ok = pw1.length >= 6 && pw1 === pw2;
+  document.getElementById('wg-weiter-2').disabled = !ok;
+  if (pw2.length > 0 && pw1 !== pw2) {
+    err.textContent = 'Die Passwoerter stimmen nicht ueberein.';
+    err.style.display = 'block';
+  } else {
+    err.style.display = 'none';
+  }
+}
+
+async function wgErstellen() {
+  const pw = document.getElementById('wg-pw1').value;
+  if (!pw || pw.length < 6 || !_wgProfil) return;
+  if (_wgProfil === 'behoerde') {
+    _wgBehoerde = document.getElementById('wg-behoerde-select').value;
+  }
+
+  const btn = document.getElementById('wg-weiter-2');
+  btn.disabled = true;
+  btn.textContent = 'Wird erstellt …';
+
+  try {
+    // Daten filtern
+    const felder = WG_PROFILE_FELDER[_wgProfil] || [];
+    const gefilterteData = {};
+    felder.forEach(k => {
+      const v = data[k];
+      if (v !== undefined && v !== null && v !== '') {
+        gefilterteData[k] = v;
+      }
+    });
+
+    // Eigenen Salt erzeugen (KRITISCH: getrennt vom Hauptpasswort)
+    const wgSalt = crypto.getRandomValues(new Uint8Array(16));
+    const wgKey = await deriveKey(pw, wgSalt);
+    const verschluesselt = await encryptData(gefilterteData, wgKey);
+
+    // Base64-kodierter Salt fuer die generierte Datei
+    const saltB64 = btoa(String.fromCharCode(...wgSalt));
+
+    // Name und Datum
+    const name = ((data.vorname || '') + ' ' + (data.nachname || '')).trim() || 'Unbekannt';
+    const heute = new Date().toISOString().slice(0,10);
+    const profilInfo = WG_PROFIL_INFO[_wgProfil];
+
+    // Generierte HTML-Datei aufbauen
+    const wgHtml = wgBaueHtmlDatei(verschluesselt, saltB64, profilInfo, name, heute, _wgBehoerde);
+
+    // Download ausloesen
+    const blob = new Blob([wgHtml], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'VIVODEPOT_Weitergabe_' + heute + '.html';
+    a.click();
+    URL.revokeObjectURL(url);
+
+    // Reminder-Datum speichern
+    try { localStorage.setItem('vivodepot_wg_datum', heute); } catch(e) {}
+
+    // Begleittext erzeugen und Schritt 3 anzeigen
+    const begleitText = profilInfo.begleit(name);
+    document.getElementById('wg-begleit-inhalt').textContent = begleitText;
+    document.getElementById('wg-profil-name-3').textContent = profilInfo.name;
+    wgZeigeSchritt(3);
+
+  } catch(e) {
+    console.error('Weitergabe-Datei Fehler:', e);
+    toast('Fehler beim Erstellen der Weitergabe-Datei.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Datei erstellen und herunterladen';
+  }
+}
+
+function wgBegleitKopieren() {
+  const text = document.getElementById('wg-begleit-inhalt').textContent;
+  try {
+    navigator.clipboard.writeText(text).then(() => toast('Begleittext kopiert.'));
+  } catch(e) {
+    toast('Bitte Text manuell markieren und kopieren.');
+  }
+}
+
+function wgBaueHtmlDatei(verschluesselt, saltB64, profilInfo, name, datum, behoerde) {
+  const behoerdeInfo = behoerde ? ' — ' + behoerde : '';
+  return `<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VIVODEPOT Weitergabe — ${profilInfo.name}${behoerdeInfo}</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, sans-serif; background: #f5f5f5; color: #1a1a1a; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+  .card { background: #fff; border-radius: 14px; padding: 2rem; max-width: 600px; width: 100%; box-shadow: 0 4px 24px rgba(0,0,0,0.10); }
+  .logo { font-size: 0.75rem; color: #888; margin-bottom: 0.5rem; letter-spacing: 0.08em; text-transform: uppercase; }
+  h1 { font-size: 1.3rem; color: #1e5c3e; margin-bottom: 0.3rem; }
+  .meta { font-size: 0.82rem; color: #666; margin-bottom: 1.5rem; }
+  .info { background: #f0f9f4; border-left: 3px solid #1e5c3e; border-radius: 0 8px 8px 0; padding: 0.8rem 1rem; font-size: 0.82rem; color: #2a4a38; line-height: 1.6; margin-bottom: 1.5rem; }
+  label { display: block; font-size: 0.82rem; font-weight: 600; color: #444; margin-bottom: 4px; }
+  input[type=password] { width: 100%; padding: 10px 14px; border: 1.5px solid #ccc; border-radius: 8px; font-size: 1rem; margin-bottom: 12px; }
+  input[type=password]:focus { outline: none; border-color: #1e5c3e; }
+  button { width: 100%; padding: 12px; background: #1e5c3e; color: #fff; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 500; }
+  button:hover { background: #174d34; }
+  .error { color: #c0392b; font-size: 0.82rem; margin-bottom: 10px; display: none; }
+  .daten { display: none; margin-top: 1.5rem; }
+  .daten h2 { font-size: 1rem; color: #1e5c3e; margin-bottom: 1rem; border-bottom: 1px solid #e0e0e0; padding-bottom: 0.5rem; }
+  .zeile { display: flex; gap: 8px; padding: 7px 0; border-bottom: 1px solid #f0f0f0; font-size: 0.85rem; }
+  .zeile:last-child { border-bottom: none; }
+  .feld { font-weight: 600; color: #444; min-width: 180px; flex-shrink: 0; }
+  .wert { color: #1a1a1a; word-break: break-word; flex: 1; }
+  .abschnitt { background: #f9f9f9; border-radius: 8px; padding: 0.8rem 1rem; margin-bottom: 1rem; }
+  .abschnitt-titel { font-size: 0.72rem; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.5rem; }
+  .footer { margin-top: 1.5rem; font-size: 0.72rem; color: #aaa; text-align: center; }
+  @media (max-width: 480px) { .zeile { flex-direction: column; gap: 2px; } .feld { min-width: unset; } }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">VIVODEPOT Weitergabe</div>
+  <h1>${profilInfo.icon} Profil: ${profilInfo.name}${behoerdeInfo}</h1>
+  <div class="meta">Erstellt am ${datum} &nbsp;|&nbsp; ${name}</div>
+  <div class="info">
+    Diese Datei enthaelt verschluesselte persoenliche Daten.<br>
+    Geben Sie das Passwort ein, das Sie separat erhalten haben.<br>
+    <strong>Fuer: ${profilInfo.fuer}</strong>
+  </div>
+  <div id="login-bereich">
+    <label for="pw-eingabe">Passwort</label>
+    <input type="password" id="pw-eingabe" placeholder="Passwort eingeben" autocomplete="off">
+    <div class="error" id="pw-fehler">Falsches Passwort. Bitte erneut versuchen.</div>
+    <button onclick="entschluesseln()">Daten anzeigen</button>
+  </div>
+  <div class="daten" id="daten-bereich">
+    <h2>Ihre Daten — ${profilInfo.name}${behoerdeInfo}</h2>
+    <div id="daten-inhalt"></div>
+  </div>
+  <div class="footer">Erstellt mit VIVODEPOT &nbsp;|&nbsp; Alle Daten verbleiben auf diesem Geraet &nbsp;|&nbsp; Kein Netzwerkzugriff</div>
+</div>
+<script>
+const VERSCHLUESSELT = ${JSON.stringify(verschluesselt)};
+const SALT_B64 = '${saltB64}';
+const FELDNAMEN = ${JSON.stringify(WG_FELDNAMEN)};
+
+async function deriveKey(password, salt) {
+  const enc = new TextEncoder();
+  const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt, iterations: 200000, hash: 'SHA-256' },
+    keyMaterial, { name: 'AES-GCM', length: 256 }, false, ['encrypt','decrypt']
+  );
+}
+async function decryptData(stored, key) {
+  const iv = Uint8Array.from(atob(stored.iv), c=>c.charCodeAt(0));
+  const ct = Uint8Array.from(atob(stored.ct), c=>c.charCodeAt(0));
+  const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, ct);
+  return JSON.parse(new TextDecoder().decode(plain));
+}
+async function entschluesseln() {
+  const pw = document.getElementById('pw-eingabe').value;
+  if (!pw) return;
+  const fehler = document.getElementById('pw-fehler');
+  fehler.style.display = 'none';
+  try {
+    const salt = Uint8Array.from(atob(SALT_B64), c=>c.charCodeAt(0));
+    const key = await deriveKey(pw, salt);
+    const daten = await decryptData(VERSCHLUESSELT, key);
+    zeigeFelder(daten);
+    document.getElementById('login-bereich').style.display = 'none';
+    document.getElementById('daten-bereich').style.display = 'block';
+  } catch(e) {
+    fehler.style.display = 'block';
+    document.getElementById('pw-eingabe').value = '';
+    document.getElementById('pw-eingabe').focus();
+  }
+}
+function zeigeFelder(daten) {
+  const container = document.getElementById('daten-inhalt');
+  container.innerHTML = '';
+  const abschnitt = document.createElement('div');
+  abschnitt.className = 'abschnitt';
+  for (const [k, v] of Object.entries(daten)) {
+    if (v === null || v === undefined || v === '') continue;
+    const zeile = document.createElement('div');
+    zeile.className = 'zeile';
+    const label = FELDNAMEN[k] || k;
+    let wertText = '';
+    if (Array.isArray(v)) {
+      wertText = v.map(el => typeof el === 'object' ? Object.values(el).filter(Boolean).join(', ') : el).join(' | ');
+    } else {
+      wertText = String(v);
+    }
+    zeile.innerHTML = '<span class="feld">' + label + '</span><span class="wert">' + wertText.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</span>';
+    abschnitt.appendChild(zeile);
+  }
+  container.appendChild(abschnitt);
+}
+document.getElementById('pw-eingabe').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') entschluesseln();
+});
+<\/script>
+</body>
+</html>`;
+}
+
+// Reminder pruefen — einmal pro Woche, nicht-blockierend
+function wgReminderPruefen() {
+  try {
+    const gespeichert = localStorage.getItem('vivodepot_wg_datum');
+    if (!gespeichert) return; // Noch nie erstellt — kein Reminder
+    const letztes = new Date(gespeichert);
+    const jetzt = new Date();
+    const tage = Math.floor((jetzt - letztes) / 86400000);
+    if (tage < 365) return;
+    // Max. 1x pro Woche erinnern
+    const letzterHinweis = localStorage.getItem('vivodepot_wg_hinweis');
+    if (letzterHinweis) {
+      const tageHinweis = Math.floor((jetzt - new Date(letzterHinweis)) / 86400000);
+      if (tageHinweis < 7) return;
+    }
+    localStorage.setItem('vivodepot_wg_hinweis', jetzt.toISOString().slice(0,10));
+    // Reminder anzeigen
+    setTimeout(() => {
+      const banner = document.createElement('div');
+      banner.className = 'wg-reminder';
+      banner.id = 'wg-reminder-banner';
+      banner.innerHTML =
+        '<span>Ihre Weitergabe-Datei ist ueber 12 Monate alt. Es empfiehlt sich, eine aktualisierte Version zu erstellen.</span>' +
+        '<button onclick="document.getElementById(\'wg-reminder-banner\').remove()">Schliessen</button>';
+      const exportBereich = document.getElementById('etab-drucken');
+      if (exportBereich) exportBereich.prepend(banner);
+    }, 800);
+  } catch(e) { /* localStorage kann blockiert sein */ }
+}
+
+// Reminder beim Laden der Export-Seite pruefen
+(function() {
+  const orig = window.switchExportTab;
+  if (typeof orig === 'function') {
+    window.switchExportTab = function(tab, el) {
+      orig(tab, el);
+      if (tab === 'drucken') wgReminderPruefen();
+    };
+  }
+})();
 
 </script>
+
+<!-- ══ Weitergabe-Datei Modal ══════════════════════════════════ -->
+<div class="wg-overlay" id="wg-overlay" style="display:none" onclick="if(event.target===this)weitergabeClose()">
+  <div class="wg-modal">
+    <div class="wg-header">
+      <div class="wg-header-icon">🔒</div>
+      <div>
+        <div class="wg-title">Weitergabe-Datei erstellen</div>
+        <div class="wg-subtitle">Verschluesselt — nur mit eigenem Passwort lesbar</div>
+      </div>
+    </div>
+
+    <div class="wg-step-indicator">
+      <div class="wg-step-dot active" id="wg-dot-1"></div>
+      <div class="wg-step-dot" id="wg-dot-2"></div>
+      <div class="wg-step-dot" id="wg-dot-3"></div>
+    </div>
+
+    <!-- Schritt 1: Profil waehlen -->
+    <div class="wg-step active" id="wg-step-1">
+      <div class="wg-section-title">Schritt 1 von 3 — Fuer wen ist die Datei?</div>
+      <div class="wg-profile-grid">
+        <div class="wg-profile-card" id="wg-card-notfall" onclick="wgWaehleProfilCard('notfall')">
+          <div class="pc-icon">🏥</div>
+          <div class="pc-name">Notfall</div>
+          <div class="pc-desc">Medikamente, Allergien, Blutgruppe, Hausarzt</div>
+        </div>
+        <div class="wg-profile-card" id="wg-card-vollmacht" onclick="wgWaehleProfilCard('vollmacht')">
+          <div class="pc-icon">📋</div>
+          <div class="pc-name">Vollmacht</div>
+          <div class="pc-desc">Bevollmaechtigte, Patientenverfuegung, Ablageorte</div>
+        </div>
+        <div class="wg-profile-card" id="wg-card-familie" onclick="wgWaehleProfilCard('familie')">
+          <div class="pc-icon">👨‍👩‍👧</div>
+          <div class="pc-name">Familie</div>
+          <div class="pc-desc">Konten, Versicherungen, Testament, persoenliche Botschaft</div>
+        </div>
+        <div class="wg-profile-card" id="wg-card-behoerde" onclick="wgWaehleProfilCard('behoerde')">
+          <div class="pc-icon">🏛</div>
+          <div class="pc-name">Behoerde</div>
+          <div class="pc-desc">Stammdaten, Steuer-ID, IBAN, Versicherungsnummern</div>
+        </div>
+      </div>
+      <div id="wg-behoerde-wrap" style="display:none">
+        <label style="font-size:0.82rem;font-weight:600;color:var(--ink2)">Behoerde / Verwendungszweck</label>
+        <select class="wg-behoerde-select" id="wg-behoerde-select">
+          <option value="Allgemein">Allgemein</option>
+          <option value="Familienkasse / Kindergeld">Familienkasse / Kindergeld</option>
+          <option value="Elterngeldstelle">Elterngeldstelle</option>
+          <option value="Pflegekasse / Pflegegrad">Pflegekasse / Pflegegrad</option>
+          <option value="Deutsche Rentenversicherung">Deutsche Rentenversicherung</option>
+          <option value="Einwohnermeldeamt">Einwohnermeldeamt</option>
+          <option value="Krankenkassenwechsel">Krankenkassenwechsel</option>
+          <option value="Finanzamt">Finanzamt</option>
+          <option value="Jobcenter / Arbeitsagentur">Jobcenter / Arbeitsagentur</option>
+        </select>
+      </div>
+      <div class="wg-footer" style="margin-top:1.2rem">
+        <button class="wg-btn secondary" onclick="weitergabeClose()">Abbrechen</button>
+        <button class="wg-btn primary" id="wg-weiter-1" disabled onclick="wgZeigeSchritt(2)">Weiter</button>
+      </div>
+    </div>
+
+    <!-- Schritt 2: Passwort festlegen -->
+    <div class="wg-step" id="wg-step-2">
+      <div class="wg-section-title">Schritt 2 von 3 — Passwort fuer die Weitergabe-Datei</div>
+      <div class="wg-warn">
+        Dieses Passwort ist <strong>unabhaengig</strong> vom Vivodepot-Hauptpasswort.<br>
+        Ihr Hauptpasswort kann diese Datei <strong>nicht</strong> oeffnen.<br>
+        Teilen Sie dieses Passwort separat mit — z. B. per Telefon.
+      </div>
+      <label style="font-size:0.82rem;font-weight:600;color:var(--ink2);display:block;margin-bottom:4px">Passwort waehlen (mindestens 6 Zeichen)</label>
+      <input class="wg-pw-field" type="password" id="wg-pw1" placeholder="Passwort" autocomplete="new-password" oninput="wgPwInput()">
+      <div class="wg-pw-strength" id="wg-pw-strength"></div>
+      <label style="font-size:0.82rem;font-weight:600;color:var(--ink2);display:block;margin:10px 0 4px">Passwort wiederholen</label>
+      <input class="wg-pw-field" type="password" id="wg-pw2" placeholder="Passwort wiederholen" autocomplete="new-password" oninput="wgPwInput()">
+      <div style="color:var(--red);font-size:0.78rem;margin-top:4px;display:none" id="wg-pw-err"></div>
+      <div class="wg-footer" style="margin-top:1.2rem">
+        <button class="wg-btn secondary" onclick="wgZeigeSchritt(1)">Zurueck</button>
+        <button class="wg-btn primary" id="wg-weiter-2" disabled onclick="wgErstellen()">Datei erstellen und herunterladen</button>
+      </div>
+    </div>
+
+    <!-- Schritt 3: Begleittext -->
+    <div class="wg-step" id="wg-step-3">
+      <div class="wg-section-title">Schritt 3 von 3 — Datei heruntergeladen</div>
+      <div class="wg-infobox">
+        Die Weitergabe-Datei (<strong>Profil: <span id="wg-profil-name-3"></span></strong>) wurde heruntergeladen.<br>
+        Senden Sie die Datei per E-Mail oder USB-Stick — das Passwort bitte <strong>separat</strong> mitteilen (z. B. per Telefon).
+      </div>
+      <div class="wg-section-title" style="margin-top:1rem">Begleittext (kopierbar)</div>
+      <div class="wg-begleit-box" id="wg-begleit-inhalt"></div>
+      <div class="wg-footer" style="margin-top:1rem">
+        <button class="wg-btn secondary" onclick="wgBegleitKopieren()">Begleittext kopieren</button>
+        <button class="wg-btn primary" onclick="weitergabeClose()">Fertig</button>
+      </div>
+    </div>
+
+  </div>
+</div>
 
 </body>
 </html>

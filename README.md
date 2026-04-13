@@ -2,10 +2,10 @@
 
 **Ihr persönlicher Vorsorge-Assistent. Keine Cloud. Kein Abo. Volle Kontrolle.**
 
-[![Version](https://img.shields.io/badge/Version-1.0.0--beta.7-gold)](https://github.com/carolaklessen/vivodepot)
+[![Version](https://img.shields.io/badge/Version-1.0.0--beta.8-gold)](https://github.com/carolaklessen/vivodepot)
 [![Lizenz](https://img.shields.io/badge/Lizenz-EUPL--1.2-green)](LICENSE)
 [![Offline](https://img.shields.io/badge/Offline-100%25-brightgreen)](#offline)
-[![Tests](https://img.shields.io/badge/Tests-846%2F846-brightgreen)](#tests)
+[![Tests](https://img.shields.io/badge/Tests-877%2F877-brightgreen)](#tests)
 [![ZenDiS](https://img.shields.io/badge/ZenDiS-20%2F20-blue)](#souveränität)
 
 VIVODEPOT ist eine vollständig offline-fähige Einzeldatei-HTML-Anwendung zur Vorsorgedokumentation. Alle Daten bleiben ausschließlich auf Ihrem Gerät — keine Cloud, kein Server, keine Übertragung.
@@ -34,7 +34,7 @@ VIVODEPOT hilft Menschen dabei, alle wichtigen Informationen für den Notfall an
 - Notfall & Katastrophenschutz (BBK-Empfehlungen)
 - Persönliche Erinnerungen und Botschaften
 
-Am Ende erstellt VIVODEPOT mit einem Klick druckfertige Dokumente: PDF, Word, Notfallblatt, Arztbogen und mehr.
+Am Ende erstellt VIVODEPOT mit einem Klick druckfertige Dokumente: PDF, Word, Notfallblatt, Arztbogen und mehr. Und mit der neuen Weitergabe-Funktion können gezielt ausgewählte Daten verschlüsselt an Dritte weitergegeben werden — ohne Stick, ohne App, ohne Account.
 
 ---
 
@@ -80,6 +80,19 @@ Am Ende erstellt VIVODEPOT mit einem Klick druckfertige Dokumente: PDF, Word, No
 - QR-Aufkleber
 - vCard-Export
 
+### Weitergabe-Datei (neu in beta.8)
+
+Eine zweite, eigenständige HTML-Datei — verschlüsselt mit einem separaten Passwort, geöffnet im Browser, ohne Installation.
+
+| Profil | Empfängerin |
+|---|---|
+| Notfall | Krankenhaus, Rettungsdienst, Hausarzt |
+| Vollmacht | Notar, Klinik-Sozialdienst |
+| Familie | Angehörige, Erben |
+| Behörde | Ämter, Kassen, Rentenversicherung |
+
+Das Hauptpasswort kann die Weitergabe-Datei nicht entschlüsseln — vollständig separate Verschlüsselung.
+
 ### Barrierefreiheit
 
 - Schriftgröße A+ (3 Stufen)
@@ -99,6 +112,7 @@ Am Ende erstellt VIVODEPOT mit einem Klick druckfertige Dokumente: PDF, Word, No
 | Verschlüsselung | AES-256-GCM |
 | Schlüsselableitung | PBKDF2-HMAC-SHA256 (100.000 Iterationen) |
 | Salt | Zufällig, in gespeicherter Datei eingebettet (seit beta.7) |
+| Weitergabe-Datei | Eigener Salt, eigenes Passwort — unabhängig vom Hauptpasswort |
 | Datenspeicherung | Ausschließlich `localStorage` des Browsers |
 | Netzwerkanfragen | Keine — vollständig offline |
 | Cloud | Nicht vorhanden |
@@ -148,7 +162,7 @@ Funktioniert auf: USB-Stick (ohne Internet), im Flugmodus, auf Krankenhaus-Compu
 python3 test_vivodepot.py VIVODEPOT.html
 ```
 
-**842 Tests** in 33 Sektionen: Syntax, Verschlüsselung, Navigation, PDF-Export, Word-Export, Barrierefreiheit, Mobile, Offline, Krypto-Portabilität, Rechtsinhalte und mehr.
+**877 Tests** in 52 Sektionen: Syntax, Verschlüsselung, Navigation, PDF-Export, Word-Export, Barrierefreiheit, Mobile, Offline, Krypto-Portabilität, Rechtsinhalte, Weitergabe-Datei und mehr.
 
 ---
 

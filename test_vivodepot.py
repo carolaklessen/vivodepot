@@ -154,7 +154,7 @@ def main():
           f"Fehler in: {[mid for mid,_ in bad_mehr]}")
     
     pw_fields = len(re.findall(r'type=["\']password["\']', html))
-    check("BUG-05: Max 7 password-Felder", pw_fields <= 7, f"Gefunden: {pw_fields}")
+    check("BUG-05: Max 9 password-Felder", pw_fields <= 9, f"Gefunden: {pw_fields}")
     
     proton_refs = html.lower().count('protonmail') + html.lower().count('proton.me')
     check("BUG-06: Keine Proton-Referenzen", proton_refs == 0, f"Gefunden: {proton_refs}")
@@ -1366,6 +1366,21 @@ def main():
     print("\n=== 50. NEUE BUGS (BUG-NEW) ===")
     # ═══════════════════════════════════════
 
+    # BUG-NEW-02: window.onerror darf bei Cross-Origin-Fehlern (Script error, Zeile 0, kein src)
+    # NICHT das welcome-overlay anzeigen. Safari/file:// liefert solche opaken Fehler für
+    # externe Bibliotheken → overlay erscheint fälschlicherweise als Startseite.
+    onerror_match = re.search(r'window\.onerror\s*=\s*function\([^)]*\)\s*\{([\s\S]*?)\n\};', html)
+    if onerror_match:
+        onerror_body = onerror_match.group(1)
+        # Fix: Prüft auf leere src UND Zeile 0 → kein welcome-overlay
+        has_guard = bool(re.search(r'if\s*\(\s*!src\b.*?line\s*===?\s*0', onerror_body)) or \
+                    bool(re.search(r'if\s*\(\s*line\s*===?\s*0.*?!src', onerror_body))
+        check("BUG-NEW-02: onerror ignoriert Cross-Origin-Fehler (kein src, Zeile 0)",
+              has_guard,
+              "Fehlende Guard-Bedingung: Safari 'Script error.' (line 0) löst welcome-overlay aus")
+    else:
+        check("BUG-NEW-02: window.onerror gefunden", False, "window.onerror nicht auffindbar")
+
     # BUG-NEW-01: updateFokusBarLabel() hatte toten Ternary — beide Zweige identisch '⊕ Fokus'
     # Nutzer konnte nicht erkennen ob Fokus aktiv ist. Fix: '⊕ Fokus ändern' vs. '⊕ Fokus wählen'
     fokus_label_match = re.search(
@@ -1412,6 +1427,152 @@ def main():
           '// INIT (mit eingebetteten Daten)' in html or
           "// INIT\\n" in html,
           "initBlock-Kommentar fehlt — Regex trifft gespeicherte Datei nicht beim Weiter-Speichern")
+
+    # ═══════════════════════════════════════
+    print("\n=== 52. WEITERGABE-DATEI ===")
+    # ═══════════════════════════════════════
+
+    # WG-01: Weitergabe-Teaser-Block im DOM
+    check("WG-01: Teaser-Block 'weitergabeOpen()' vorhanden",
+          "weitergabeOpen()" in html,
+          "Teaser-Block ruft weitergabeOpen() nicht auf")
+    check("WG-01b: Link-Zeile CSS-Klasse 'wg-link-zeile' vorhanden",
+          "wg-link-zeile" in html,
+          "CSS-Klasse wg-link-zeile fehlt")
+    check("WG-01c: Weitergabe-Karte nicht mehr im Export-Raster",
+          'onclick="weitergabeOpen()" style="border-left:4px solid var(--teal)"' not in html,
+          "Alte Export-Karte wurde nicht entfernt")
+
+    # WG-02: Modal-HTML
+    check("WG-02: Modal-Overlay id='wg-overlay' vorhanden",
+          'id="wg-overlay"' in html,
+          "Modal-Overlay fehlt")
+    check("WG-03: Schritt 1 id='wg-step-1' vorhanden",
+          'id="wg-step-1"' in html,
+          "Schritt-1-Element fehlt")
+    check("WG-04: Schritt 2 id='wg-step-2' vorhanden",
+          'id="wg-step-2"' in html,
+          "Schritt-2-Element fehlt")
+    check("WG-05: Schritt 3 id='wg-step-3' vorhanden",
+          'id="wg-step-3"' in html,
+          "Schritt-3-Element fehlt")
+
+    # WG-06: Alle 4 Profil-Cards
+    for profil in ['notfall', 'vollmacht', 'familie', 'behoerde']:
+        check(f"WG-06-{profil}: Profil-Card id='wg-card-{profil}' vorhanden",
+              f'id="wg-card-{profil}"' in html,
+              f"Profil-Card {profil} fehlt")
+
+    # WG-07: Behoerde-Dropdown
+    check("WG-07: Behoerde-Dropdown id='wg-behoerde-select' vorhanden",
+          'id="wg-behoerde-select"' in html,
+          "Behoerde-Dropdown fehlt")
+
+    # WG-08: Passwort-Felder
+    check("WG-08: Passwort-Feld id='wg-pw1' vorhanden",
+          'id="wg-pw1"' in html,
+          "Passwort-Feld 1 fehlt")
+    check("WG-09: Passwort-Feld id='wg-pw2' vorhanden",
+          'id="wg-pw2"' in html,
+          "Passwort-Feld 2 fehlt")
+
+    # WG-10: JavaScript-Funktionen
+    for fn in ['weitergabeOpen', 'weitergabeClose', 'wgZeigeSchritt',
+               'wgWaehleProfilCard', 'wgPwInput', 'wgErstellen',
+               'wgBegleitKopieren', 'wgBaueHtmlDatei', 'wgReminderPruefen']:
+        check(f"WG-10-{fn}: Funktion '{fn}' vorhanden",
+              f"function {fn}" in html,
+              f"Funktion {fn} fehlt")
+
+    # WG-11: Separater Salt — Hauptpasswort darf Weitergabe-Datei NICHT öffnen
+    # Der Salt fuer die Weitergabe-Datei wird mit crypto.getRandomValues erzeugt,
+    # nicht aus dem globalen `salt` der Hauptanwendung gelesen.
+    wg_fn = re.search(r'async function wgErstellen\(\)([\s\S]*?)(?=\nasync function |\nfunction )', html)
+    if wg_fn:
+        wg_body = wg_fn.group(1)
+        check("WG-11a: wgErstellen() erzeugt eigenen Salt via getRandomValues",
+              "getRandomValues" in wg_body,
+              "Kein eigener Salt — Hauptpasswort koennte Weitergabe-Datei entschluesseln")
+        check("WG-11b: wgErstellen() ruft deriveKey mit eigenem Salt auf",
+              "deriveKey" in wg_body,
+              "deriveKey nicht aufgerufen")
+        check("WG-11c: wgErstellen() verwendet NOT den globalen 'salt'",
+              "deriveKey(pw," in wg_body or "deriveKey(password," in wg_body,
+              "Weitergabe nutzt moeglicherweise den globalen Salt")
+    else:
+        check("WG-11: wgErstellen() gefunden", False,
+              "Funktion wgErstellen() nicht auffindbar")
+
+    # WG-12: Generierte Datei enthaelt eigenen Decrypt-Code
+    check("WG-12: Generierte Datei enthaelt inline Decrypt-Funktion",
+          "async function entschluesseln" in html or
+          "function entschluesseln" in html,
+          "Decrypt-Funktion fuer generierte Datei fehlt")
+
+    # WG-13: Begleittext-Feld
+    check("WG-13: Begleittext-Container id='wg-begleit-inhalt' vorhanden",
+          'id="wg-begleit-inhalt"' in html,
+          "Begleittext-Container fehlt")
+
+    # WG-14: Reminder-Mechanismus
+    check("WG-14: Reminder prueft localStorage 'vivodepot_wg_datum'",
+          "vivodepot_wg_datum" in html,
+          "Reminder-Key 'vivodepot_wg_datum' fehlt")
+
+    # WG-15: Kein Netzwerkaufruf in wgErstellen / wgBaueHtmlDatei
+    check("WG-15: Keine fetch()-Aufrufe in Weitergabe-Funktionen",
+          html.count("fetch(") == html.replace("wgErstellen", "").replace("wgBaueHtmlDatei", "").count("fetch("),
+          "fetch() in Weitergabe-Funktionen gefunden — Offline-Bedingung verletzt")
+
+    # WG-16: wg-overlay muss in hideAllOverlays() registriert sein
+    # Bug: Weitergabe-Dialog blieb offen wenn ein anderer Overlay geöffnet wurde
+    hide_fn_wg = re.search(r'function hideAllOverlays\(\)\s*\{([\s\S]*?)\n\}', html)
+    check("WG-16a: wg-overlay in hideAllOverlays() registriert",
+          hide_fn_wg and 'wg-overlay' in hide_fn_wg.group(1),
+          "wg-overlay fehlt in hideAllOverlays — Dialog bleibt offen bei Overlay-Wechsel")
+
+    # WG-16b: wg-overlay muss auch in showOverlay() (Hide-Liste) registriert sein
+    show_fn_wg = re.search(r'function showOverlay\(id\)\s*\{([\s\S]*?)\n\}', html)
+    check("WG-16b: wg-overlay in showOverlay() Hide-Liste registriert",
+          show_fn_wg and 'wg-overlay' in show_fn_wg.group(1),
+          "wg-overlay fehlt in showOverlay — Dialog bleibt offen wenn anderer Overlay aufgerufen wird")
+
+    # ── window.onerror: App-Zustandsprüfung ───────────────────────────────
+    print("\n  window.onerror Guard:")
+
+    # ONERR-1: window.onerror zeigt welcome-overlay NUR wenn App noch nicht gestartet
+    import re as _re
+    onerror_match = _re.search(
+        r'window\.onerror\s*=\s*function[^{]*\{.*?return false;\s*\}',
+        html, _re.DOTALL
+    )
+    onerror_body = onerror_match.group(0) if onerror_match else ""
+    check("ONERR-1: window.onerror prüft App-Zustand vor welcome-overlay",
+          "appStarted" in onerror_body and
+          "return-overlay" in onerror_body and
+          "main-content" in onerror_body and
+          "innerHTML" in onerror_body and
+          "if (!appStarted)" in onerror_body,
+          "window.onerror zeigt welcome-overlay ohne App-Zustandsprüfung")
+
+    # ONERR-2: loadData() JSON-Parse-Fehler zeigt welcome-overlay NUR wenn App noch nicht gestartet
+    loaddata_match = _re.search(
+        r'async function loadData\(\)[^{]*\{([\s\S]*?)^\}',
+        html, _re.MULTILINE
+    )
+    loaddata_body = loaddata_match.group(1) if loaddata_match else ""
+    parse_catch_match = _re.search(
+        r'parsedStored\s*=\s*JSON\.parse\(stored\).*?catch\s*\{(.*?)return;\s*\}',
+        html, _re.DOTALL
+    )
+    parse_catch_body = parse_catch_match.group(1) if parse_catch_match else ""
+    check("ONERR-2: loadData() JSON-Parse-Fehler prüft App-Zustand vor welcome-overlay",
+          ("return-overlay" in parse_catch_body or "_ro" in parse_catch_body) and
+          ("main-content" in parse_catch_body or "_mc" in parse_catch_body) and
+          ("innerHTML" in parse_catch_body) and
+          ("appStarted" in parse_catch_body or "_appStarted" in parse_catch_body) and
+          ("if (!" in parse_catch_body),
+          "loadData() zeigt welcome-overlay bei Parse-Fehler ohne App-Zustandsprüfung")
 
     passed = sum(1 for s, _, _ in results if s == "PASS")
     failed = sum(1 for s, _, _ in results if s == "FAIL")

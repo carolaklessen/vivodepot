@@ -1,6 +1,6 @@
 # VIVODEPOT — Technische Dokumentation
 
-*Version 1.0.0-beta.7 · April 2026*
+*Version 1.0.0-beta.8 · April 2026*
 
 ---
 
@@ -20,6 +20,7 @@ VIVODEPOT.html
 │   ├── STEP_RENDERERS (20 Schritte)
 │   ├── Export-Funktionen (13 Formate)
 │   ├── Wizard-System
+│   ├── Weitergabe-Datei-System (neu in beta.8)
 │   └── Barrierefreiheits-Funktionen
 └── HTML (UI-Struktur)
 ```
@@ -79,6 +80,71 @@ Der Kommentar lautet in allen Varianten:
 
 ---
 
+## Weitergabe-Datei (neu in beta.8)
+
+### Übersicht
+
+Die Weitergabe-Funktion erstellt eine eigenständige HTML-Datei mit einem gefilterten Datensatz und separater Verschlüsselung. Die Empfängerin öffnet die Datei im Browser — ohne VIVODEPOT, ohne Installation.
+
+### Sicherheitsarchitektur
+
+```
+Nutzerdaten (gefiltert nach Profil)
+  + eigener Salt (getRandomValues())
+  + separates Passwort
+  → PBKDF2 → AES-256-GCM
+  → eigenständige HTML-Datei
+```
+
+Das Hauptpasswort kann die Weitergabe-Datei nicht entschlüsseln. Die Verschlüsselungen sind vollständig unabhängig.
+
+### Profile und Felder
+
+| Profil | Felder |
+|---|---|
+| Notfall | vorname, nachname, geburtsdatum, adresse, plz, ort, blutgruppe, allergien, medikamente, krankheiten, hausarzt, notfallkontakte, patientenverf_vorhanden, patientenverf_ort |
+| Vollmacht | vorname, nachname, geburtsdatum, adresse, plz, ort, vollmacht_person, vollmacht_ort, vollmacht_vorhanden, patientenverf_vorhanden, patientenverf_ort, betreuer, nachlassgericht |
+| Familie | vorname, nachname, geburtsdatum, adresse, plz, ort, konten, versicherungen, vertraege, testament_vorhanden, testament_ort, testamentsvollstrecker, bestattungswunsch, persoenliche_botschaft, notfallkontakte |
+| Behörde | vorname, nachname, geburtsdatum, adresse, plz, ort, ausweis_nr, steuer_id, iban, kv_name, kv_nr, rv_nr |
+
+### Zentrale Funktionen
+
+| Funktion | Aufgabe |
+|---|---|
+| `weitergabeOpen()` | Öffnet das Modal, setzt Zustand zurück |
+| `weitergabeClose()` | Schliesst das Modal |
+| `wgZeigeSchritt(nr)` | Wechselt zwischen Schritt 1, 2 und 3 |
+| `wgWaehleProfilCard(profil)` | Profil-Auswahl, zeigt Behörden-Dropdown bei Bedarf |
+| `wgPwInput()` | Passwort-Stärke prüfen, Weiter-Button freischalten |
+| `wgErstellen()` | Kern-Logik: filtern, verschlüsseln, HTML bauen, herunterladen |
+| `wgBegleitKopieren()` | Begleittext in Zwischenablage |
+| `wgBaueHtmlDatei()` | Generiert die eigenständige Empfänger-HTML |
+| `wgReminderPruefen()` | Hinweis nach 12 Monaten, max. 1x pro Woche |
+
+### Overlay-Verwaltung
+
+`wg-overlay` ist in beiden zentralen Overlay-Verwaltungsfunktionen registriert:
+
+```javascript
+// showOverlay(id) — schliesst alle anderen Overlays zuerst
+['welcome-overlay', 'return-overlay', ..., 'wg-overlay']
+
+// hideAllOverlays() — schliesst alle Overlays
+['welcome-overlay', 'return-overlay', ..., 'wg-overlay']
+```
+
+### Reminder
+
+Beim Wechsel zum Export-Tab wird `wgReminderPruefen()` aufgerufen. Der Reminder erscheint, wenn:
+
+- eine Weitergabe-Datei erstellt wurde (`localStorage: vivodepot_wg_datum`)
+- diese älter als 365 Tage ist
+- der letzte Hinweis mindestens 7 Tage zurückliegt
+
+Der Banner ist nicht blockierend und hat einen Schliessen-Button.
+
+---
+
 ## Step-System
 
 20 Schritte (0-indexiert):
@@ -126,6 +192,7 @@ Der Kommentar lautet in allen Varianten:
 | `exportVCard()` | VCF | vanilla |
 | `exportJSON()` | JSON | vanilla |
 | `generateFHIR()` | JSON | vanilla |
+| `wgErstellen()` | HTML (verschlüsselt) | Web Crypto API |
 
 ---
 
@@ -135,7 +202,7 @@ Der Kommentar lautet in allen Varianten:
 python3 test_vivodepot.py VIVODEPOT.html
 ```
 
-**842 Tests in 33 Sektionen:**
+**877 Tests in 52 Sektionen:**
 
 1. JavaScript-Syntax
 2. Bekannte Bugs
@@ -169,18 +236,28 @@ python3 test_vivodepot.py VIVODEPOT.html
 30. Update-Integration
 31. Eingabe-Hilfe
 32. Vollständigkeits-Regression
-33. Krypto-Portabilität (Salt in Datei) — neu in beta.7
+33. Krypto-Portabilität (Salt in Datei)
+34–51. Weitere Regressions- und Qualitätssektionen
+52. Weitergabe-Datei (WG-01 bis WG-16b) — neu in beta.8
 
 ---
 
 ## Krypto-Details
 
-### Schlüssel-Lifecycle
+### Schlüssel-Lifecycle (Hauptdatei)
 
 ```
 Passwort + Salt → PBKDF2 → sessionKey (im RAM, nie persistent)
 sessionKey + IV  → AES-GCM-Encrypt → ct (in localStorage)
 Salt             → localStorage (STORE_META) + HTML-Datei (seit beta.7)
+```
+
+### Schlüssel-Lifecycle (Weitergabe-Datei)
+
+```
+Separates Passwort + eigener Salt (getRandomValues())
+  → PBKDF2 → wgKey (im RAM, nie persistent)
+  → AES-GCM-Encrypt → in generierter HTML-Datei eingebettet
 ```
 
 ### Fehlversuche

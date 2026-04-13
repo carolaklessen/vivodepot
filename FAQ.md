@@ -1,6 +1,6 @@
 # VIVODEPOT — Häufige Fragen
 
-*Version 1.0.0-beta.7 · April 2026*
+*Version 1.0.0-beta.8 · April 2026*
 
 ---
 
@@ -39,6 +39,31 @@ Ja — über das Menü → „Daten importieren". Unterstützt werden HTML-Datei
 
 ---
 
+## Weitergabe-Datei
+
+**Was ist die Weitergabe-Datei?**
+Eine zweite, eigenständige HTML-Datei mit ausgewählten Daten — verschlüsselt mit einem eigenen Passwort. Die Empfängerin öffnet sie im Browser, gibt das Passwort ein und sieht die Daten. Keine Installation, kein Stick, kein Account nötig.
+
+**Wie erstelle ich eine Weitergabe-Datei?**
+Im Bereich „Dokumente erstellen" auf „Daten gezielt weitergeben" klicken. Der Dialog führt in drei Schritten durch: Profil wählen → Passwort festlegen → Datei herunterladen.
+
+**Welche Profile gibt es?**
+Vier Profile stehen zur Wahl: Notfall (Medizin, Allergien, Hausarzt), Vollmacht (Bevollmächtigte, Ablageorte), Familie (Konten, Testament, persönliche Botschaft) und Behörde (Stammdaten, IDs, IBAN). Das Behörden-Profil enthält ein Dropdown zur Auswahl der konkreten Behörde.
+
+**Kann das Hauptpasswort die Weitergabe-Datei öffnen?**
+Nein. Die Weitergabe-Datei verwendet einen eigenen kryptographischen Schlüssel mit eigenem Salt — vollständig unabhängig vom Hauptpasswort.
+
+**Was passiert, wenn ich das Passwort der Weitergabe-Datei vergesse?**
+Es gibt keinen Reset. Das Passwort wird nicht gespeichert. Teilen Sie es Ihrer Empfängerin separat mit — zum Beispiel per Telefon, nie in derselben E-Mail wie die Datei.
+
+**Wie oft sollte ich die Weitergabe-Datei aktualisieren?**
+VIVODEPOT erinnert Sie automatisch, wenn die Datei älter als 12 Monate ist. Der Hinweis erscheint beim Öffnen des Export-Bereichs — einmal pro Woche, nicht blockierend.
+
+**Ist die Weitergabe-Datei offline nutzbar?**
+Ja, vollständig. Weder das Erstellen noch das Öffnen der Datei erfordert eine Internetverbindung.
+
+---
+
 ## Technisches
 
 **Welche Browser werden unterstützt?**
@@ -69,7 +94,7 @@ Die PDF-Bibliothek ist vollständig eingebettet und benötigt kein Internet. Fal
 ## Inhalt & Exporte
 
 **Welche Dokumente kann ich erstellen?**
-PDF (Notfallmappe), Word (bearbeitbar), Notfall-Blatt (Katastrophenschutz), Arztbogen, Szenario-PDFs (Krankenhaus, Todesfall, Notfall-Tasche), Vorsorgevollmacht (Word), Patientenverfügung (Word), Gesundheitsvollmacht (Word), QR-Aufkleber, vCard-Export.
+PDF (Notfallmappe), Word (bearbeitbar), Notfall-Blatt (Katastrophenschutz), Arztbogen, Szenario-PDFs (Krankenhaus, Todesfall, Notfall-Tasche), Vorsorgevollmacht (Word), Patientenverfügung (Word), Gesundheitsvollmacht (Word), QR-Aufkleber, vCard-Export, Weitergabe-Datei (HTML, verschlüsselt).
 
 **Sind die Dokumente rechtsgültig?**
 VIVODEPOT erstellt Entwürfe und Vorlagen. Für rechtliche Gültigkeit (besonders Vorsorgevollmacht, Patientenverfügung, Testament) ist in der Regel eine notarielle Beglaubigung oder eigenhändige Unterschrift erforderlich. VIVODEPOT ist keine Rechtsberatung.

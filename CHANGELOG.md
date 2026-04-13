@@ -4,6 +4,43 @@ Alle wichtigen Änderungen werden in dieser Datei dokumentiert.
 
 ---
 
+## [1.0.0-beta.8] — April 2026
+
+### Neu
+
+- **Weitergabe-Datei** — Nutzer können eine zweite, verschlüsselte HTML-Datei erstellen und an Dritte weitergeben: Angehörige, Ärzte, Notarinnen oder Behörden. Die Empfängerin öffnet die Datei im Browser, gibt ein separates Passwort ein und sieht ausschliesslich die Felder des gewählten Profils. Kein Server, keine Cloud, vollständig offline.
+
+  Vier Profile stehen zur Wahl:
+
+  | Profil | Enthaltene Felder | Typische Empfängerin |
+  |---|---|---|
+  | Notfall | Medikamente, Allergien, Blutgruppe, Hausarzt, Notfallkontakte, Patientenverfügung (Ablageort) | Krankenhaus, Rettungsdienst |
+  | Vollmacht | Bevollmächtigte Person, Ablageorte, Patientenverfügung, Betreuer, Nachlassgericht | Notar, Sozialdienst |
+  | Familie | Konten, Versicherungen, Verträge, Testament, Bestattungswunsch, persönliche Botschaft | Angehörige, Erben |
+  | Behörde | Stammdaten, Steuer-ID, IBAN, KV-Nr., RV-Nr. | Ämter, Kassen, Rentenversicherung |
+
+  Das Behörden-Profil enthält zusätzlich ein Dropdown mit 9 Optionen (Familienkasse, Elterngeldstelle, Pflegekasse, Deutsche Rentenversicherung, Einwohnermeldeamt, Krankenkassenwechsel, Finanzamt, Jobcenter u. a.).
+
+  Der 3-Schritt-Dialog führt durch: Profil wählen → Passwort festlegen → Datei herunterladen und Begleittext kopieren.
+
+  Ein Reminder erscheint, wenn die Weitergabe-Datei älter als 12 Monate ist (maximal einmal pro Woche, nicht blockierend).
+
+### Behoben
+
+- **Overlay-Konflikt (wg-overlay)** — Der Weitergabe-Dialog blieb offen, wenn ein anderer Dialog per Code geöffnet oder geschlossen wurde. Beide Dialoge überlagerten sich sichtbar auf dem Bildschirm. Fix: `wg-overlay` in `showOverlay()` und `hideAllOverlays()` eingetragen.
+
+### Sicherheit
+
+- Weitergabe-Datei verwendet eigenen Salt (`getRandomValues()`) und eigenes Passwort — vollständig unabhängig vom Hauptpasswort. Das Hauptpasswort kann die Weitergabe-Datei nicht entschlüsseln.
+- Kein Netzwerkaufruf beim Erstellen oder Öffnen der Weitergabe-Datei.
+
+### Tests
+
+- 22 neue Tests: WG-01 bis WG-16b
+- Gesamt: 877 Tests, 0 Fehler
+
+---
+
 ## [1.0.0-beta.7] — April 2026
 
 ### Behoben
