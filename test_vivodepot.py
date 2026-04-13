@@ -403,7 +403,7 @@ def main():
     check("Sicherheit: angehoerigenZurueck() vorhanden", "function angehoerigenZurueck" in html)
 
     # Barrierefreiheit
-    check("A11y: Basis-Schrift 16px", "font-size: 16px" in html)
+    check("A11y: Basis-Schrift >= 16px", "font-size: 17px" in html or "font-size: 16px" in html)
     check("A11y: Input-Rahmen 2px", "border: 2px solid #a89e90" in html)
     check("A11y: Touch-Ziele 44px", "min-height: 44px" in html)
     check("A11y: Schriftgrößen-Hinweis Welcome", "A⁺" in html)
@@ -456,7 +456,7 @@ def main():
     check("Mobile: type=date vorhanden", 'type="date"' in html or "type='date'" in html)
     check("Mobile: type=email vorhanden", 'type="email"' in html or "type='email'" in html)
     check("Mobile: autocomplete-Attribute", "autocomplete" in html)
-    check("Mobile: font-size 16px (iOS-Zoom-Schutz)", "font-size: 16px" in html)
+    check("Mobile: font-size >= 16px (iOS-Zoom-Schutz)", "font-size: 17px" in html or "font-size: 16px" in html)
     check("Mobile: display:flex Layout", "display:flex" in html or "display: flex" in html)
     check("Mobile: flex-wrap vorhanden", "flex-wrap" in html)
     check("Mobile: grid-template-columns", "grid-template-columns" in html)
