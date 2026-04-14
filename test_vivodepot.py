@@ -2604,6 +2604,35 @@ def main():
           "min-width: 701px" in html and "save-reminder-bar" in html,
           "Desktop-Ausblendung der mobilen Navigationsleiste fehlt")
 
+    # ═══════════════════════════════════════
+    print("\n=== FEEDBACK-03 (April 2026) ===")
+    # ═══════════════════════════════════════
+
+    # Punkt 8: Telefon-Validierung
+    check("FB03-08: Telefon-Validierung im validateField vorhanden",
+          "Telefonnummer-Format pr\u00fcfen" in html,
+          "Telefon-Fehlermeldung fehlt in validateField")
+
+    # Punkt 12: E-Mail-Validierung
+    check("FB03-12: E-Mail-Validierung im validateField vorhanden",
+          "E-Mail-Format ung\u00fcltig" in html,
+          "E-Mail-Fehlermeldung fehlt in validateField")
+
+    # Fehlermeldung im aeusseren Container
+    check("FB03-08b: Fehlermeldung wird in aeusseren Container eingefuegt",
+          "container.appendChild" in html,
+          "Fehlermeldung landet nicht im aeusseren Container")
+
+    # Validierung beim Weiter-Klick
+    check("FB03-08c: validateAllVisibleFields wird in nextStep aufgerufen",
+          "validateAllVisibleFields" in html and "function validateAllVisibleFields" in html,
+          "validateAllVisibleFields fehlt oder wird nicht aufgerufen")
+
+    # Warnzeichen in Fehlermeldung
+    check("FB03-08d: Fehlermeldung hat Warnzeichen (\\u26a0)",
+          "\u26a0" in html,
+          "Warnzeichen in Fehlermeldung fehlt")
+
     passed = sum(1 for s, _, _ in results if s == "PASS")
     failed = sum(1 for s, _, _ in results if s == "FAIL")
     total = len(results)

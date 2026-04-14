@@ -13533,6 +13533,7 @@ function barPrevStep() {
 }
 
 function barNextStep() {
+  validateAllVisibleFields();
   if (window._goalMode && window._goalRelevant) {
     var relSteps = STEPS.map(function(s,i){return{s:s,i:i};}).filter(function(x){return window._goalRelevant[x.s.id];});
     var pos = relSteps.findIndex(function(x){return x.i===currentStep;});
@@ -13631,12 +13632,15 @@ function validateField(el) {
   if (el.hasAttribute('required') && !el.value.trim()) { el.classList.add('invalid'); return; }
   else el.classList.remove('invalid');
 
-  // Remove old warning
-  var old = el.parentElement.querySelector('.field-warn, .field-ok');
+  // Äusserer Container (der die label, den input-wrapper und ggf. hint enthält)
+  var container = el.parentElement.parentElement || el.parentElement;
+
+  // Alte Meldung entfernen
+  var old = container.querySelector('.field-warn, .field-ok');
   if (old) old.remove();
 
   var v = el.value.trim();
-  if (!v) return;
+  if (!v) { el.classList.remove('invalid'); return; }
   var key = el.id || el.name || '';
   var msg = '';
   var ok = '';
@@ -13721,15 +13725,19 @@ function validateField(el) {
   }
 
   if (msg) {
+    el.classList.add('invalid');
     var span = document.createElement('span');
     span.className = 'field-warn';
-    span.textContent = ' ' + msg;
-    el.parentElement.appendChild(span);
+    span.textContent = '\u26a0\ufe0f ' + msg;
+    container.appendChild(span);
   } else if (ok) {
+    el.classList.remove('invalid');
     var span = document.createElement('span');
     span.className = 'field-ok';
     span.textContent = ok;
-    el.parentElement.appendChild(span);
+    container.appendChild(span);
+  } else {
+    el.classList.remove('invalid');
   }
 }
 
@@ -16061,7 +16069,12 @@ function renderStep() {
   renderSidebar();
 }
 
+function validateAllVisibleFields() {
+  var inputs = document.querySelectorAll('#main-content input, #main-content select');
+  inputs.forEach(function(el) { if (el.type !== 'file' && el.type !== 'hidden') validateField(el); });
+}
 function nextStep() {
+  validateAllVisibleFields();
   if (window._goalMode && window._goalRelevant) {
     var keys = Object.keys(window._goalRelevant);
     var pos = keys.indexOf(STEPS[currentStep].id);
