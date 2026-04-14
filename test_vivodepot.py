@@ -2582,6 +2582,28 @@ def main():
           "Als erledigt markieren" in html,
           "Neue Button-Beschriftung fehlt")
 
+    # ═══════════════════════════════════════
+    print("\n=== FEEDBACK-02 (April 2026) ===")
+    # ═══════════════════════════════════════
+
+    # Punkt 5: Fokus-Wizard Erklärung verbessert
+    check("FB02-05: Fokus-Wizard erklaert dass Fokus aenderbar ist",
+          "k\u00f6nnen den Fokus jederzeit \u00e4ndern" in html,
+          "Hinweis auf Fokus-Aenderbarkeit fehlt")
+
+    # Punkt 11: Adresse direkt sichtbar (nicht mehr im Aufklapp-Bereich)
+    check("FB02-11: Strasse nicht mehr im Aufklapp-Bereich (mehr-Block ohne strasse)",
+          "'strasse','plz_ort','email','nationalitaet','kinder_erwachsen','unterhalt'" not in html,
+          "Alter Aufklapp-Block mit Adresse noch vorhanden")
+    check("FB02-11b: Strasse direkt im start-Renderer sichtbar (vor renderKinderBlocks)",
+          "field('strasse','Strasse" in html,
+          "Strassen-Feld fehlt ganz")
+
+    # Punkt 16: Footer-Bar auf Desktop ausgeblendet
+    check("FB02-16: save-reminder-bar auf Desktop (min-width 701px) ausgeblendet",
+          "min-width: 701px" in html and "save-reminder-bar" in html,
+          "Desktop-Ausblendung der mobilen Navigationsleiste fehlt")
+
     passed = sum(1 for s, _, _ in results if s == "PASS")
     failed = sum(1 for s, _, _ in results if s == "FAIL")
     total = len(results)

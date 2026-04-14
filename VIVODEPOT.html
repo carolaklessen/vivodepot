@@ -11221,6 +11221,10 @@ textarea { min-height: 44px; }
   .etab { font-size: 0.82rem; padding: 8px 12px; white-space: nowrap; flex-shrink: 0; }
   .step-header h1 { font-size: 1.3rem; }
 }
+@media (min-width: 701px) {
+  /* Auf Desktop ist die Sidebar sichtbar — die mobile Navigationsleiste wird nicht benoetigt */
+  #save-reminder-bar { display: none !important; }
+}
 @media (max-width: 500px) {
   .step-nav { flex-wrap: wrap; }
   .btn-nav.primary { order: -1; width: 100%; text-align: center; padding: 13px; }
@@ -12727,7 +12731,7 @@ function showGoalWizard() {
     '<div style="text-align:center;margin-bottom:1rem">' +
     '' +
     '<h2 style="font-size:1.1rem;color:var(--forest)">Welchen Fokus möchten Sie setzen?</h2>' +
-    '<p style="font-size:0.82rem;color:var(--ink2);margin-top:0.4rem">Vivodepot zeigt Ihnen dann nur die passenden Bereiche. Sie können jederzeit alles andere ergänzen.</p>' +
+    '<p style="font-size:0.82rem;color:var(--ink2);margin-top:0.4rem">Vivodepot blendet dann unwichtigere Bereiche aus und führt Sie direkt zu den für Sie relevanten Schritten. Sie können den Fokus jederzeit ändern — alle Ihre Daten bleiben erhalten.</p>' +
     '</div>' +
     '<div style="display:grid;gap:8px;margin-bottom:1.2rem">' +
     goalBtn('health', '', 'Für den Arztbesuch vorbereiten', 'Gesundheitsdaten, Medikamente, Arztbesuch-Bogen') +
@@ -14561,18 +14565,18 @@ const STEP_RENDERERS = {
       </div>
       ${field('ehepartner','Ehepartner*in / Lebenspartner*in','z. B. Maria Mustermann','false','text','Aktuell zusammenlebende Person. Bei Scheidung: leer lassen oder ex-Partner*in eintragen, falls Unterhalt besteht.')}
     </div>
+    <div class="field-row" style="margin-top:12px">
+      ${field('strasse','Strasse & Hausnummer','')}
+      ${field('plz_ort','PLZ & Ort','')}
+    </div>
+    <div class="field-row" style="margin-top:12px">
+      ${field('email','E-Mail','','false','email')}
+      ${field('nationalitaet','Staatsangehörigkeit','z. B. Deutschland')}
+    </div>
     ${renderKinderBlocks()}
 
-    ${mehr('start_mehr','Adresse, E-Mail, volljährige Kinder, Unterhalt …',
-      ['strasse','plz_ort','email','nationalitaet','kinder_erwachsen','unterhalt'],`
-      <div class="field-row" style="margin-top:12px">
-        ${field('strasse','Strasse & Hausnummer','')}
-        ${field('plz_ort','PLZ & Ort','')}
-      </div>
-      <div class="field-row" style="margin-top:12px">
-        ${field('email','E-Mail','','false','email')}
-        ${field('nationalitaet','Staatsangehörigkeit','z. B. Deutschland')}
-      </div>
+    ${mehr('start_mehr','Volljährige Kinder, Unterhalt …',
+      ['kinder_erwachsen','unterhalt'],`
       <div class="field-row" style="margin-top:12px">
         ${field('kinder_erwachsen','Volljährige Kinder','z. B. Max (2001, studiert Köln)','false','text','Kinder über 18 — relevant für Erbfolge, Unterhaltspflichten und Notfallkontakte.')}
         ${field('unterhalt','Unterhalt','z. B. Kindesunterhalt EUR 450/Monat, Elternunterhalt EUR 600/Monat','false','text','Laufende Zahlungen — empfangen und gezahlt angeben. Elternunterhalt gilt nur für leibliche Kinder.')}
