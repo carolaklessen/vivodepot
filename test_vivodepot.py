@@ -2704,6 +2704,134 @@ def main():
           "id === 'einstellungen'" in html,
           "Einstellungen-Schritt hat keinen Schutz gegen den Weiter-Button")
 
+
+    # ═══════════════════════════════════════
+    print("\n=== 56. UX-OPTIMIERUNGEN (Session April 2026) ===")
+    # ═══════════════════════════════════════
+
+    # Schriftgrößen-Korrektur
+    check("UX-01: SCHRIFTGRÖSSEN-KORREKTUR CSS-Block vorhanden",
+          "SCHRIFTGR\u00d6SSEN-KORREKTUR" in html,
+          "CSS-Korrekturblock fehlt")
+    check("UX-02: .nav-label font-size 0.95rem",
+          ".nav-label       { font-size: 0.95rem; }" in html,
+          "nav-label Schriftgröße nicht erhöht")
+    check("UX-03: .field-hint font-size 0.88rem",
+          ".field-hint      { font-size: 0.88rem; }" in html,
+          "field-hint Schriftgröße nicht erhöht")
+    check("UX-04: .fs-btn font-size 0.82rem",
+          ".fs-btn          { font-size: 0.82rem; }" in html,
+          "fs-btn Schriftgröße nicht erhöht")
+
+    # Touch-Targets
+    check("UX-05: Input padding 12px (Touch-Target 44px)",
+          "padding: 12px 12px;" in html,
+          "Input padding unter 44px-Schwelle")
+    check("UX-06: textarea min-height 44px",
+          "textarea { min-height: 44px; }" in html,
+          "textarea min-height fehlt")
+
+    # Passwort-Warnung
+    check("UX-07: Passwort-Warnung nicht mehr rot",
+          "#fdf3f3" not in html,
+          "Rote Passwort-Warnung noch vorhanden")
+    check("UX-08: Passwort-Warnung Bernstein (Bitte notieren)",
+          "Bitte notieren" in html,
+          "Neuer Passwort-Warntext fehlt")
+    check("UX-09: Passwort-Warnung nach Feldern (Reihenfolge)",
+          html.index("set-pw-confirm") < html.index("Bitte notieren"),
+          "Passwort-Warnung steht noch vor den Eingabefeldern")
+
+    # Emojis entfernt
+    check("UX-10: Kein Emoji im Rolle-Auswahl-Button",
+          "\U0001f464 F\u00fcr mich" not in html,
+          "Emoji im Button noch vorhanden")
+    check("UX-11: Kein Emoji im Angehörigen-Button",
+          "\U0001f468\u200d\U0001f469\u200d\U0001f467 Angeh" not in html,
+          "Emoji in Angehörigen-Button noch vorhanden")
+    check("UX-12: Button-Text parallel (Für mich / Für Angehörige)",
+          "F\u00fcr mich \u2014 Vorsorge anlegen" in html and
+          "F\u00fcr Angeh\u00f6rige \u2014 Notfall-Informationen" in html,
+          "Parallele Button-Texte fehlen")
+
+    # Sidebar-Gruppen
+    nav_group = html.split(".nav-group-label {")[1].split("}")[0] if ".nav-group-label {" in html else ""
+    check("UX-13: nav-group-label ohne text-transform uppercase",
+          "text-transform" not in nav_group,
+          "nav-group-label hat noch text-transform")
+    check("UX-14: nav-group-label Kontrast 0.55",
+          "rgba(255,255,255,0.55)" in html,
+          "nav-group-label Kontrast nicht erhöht")
+    check("UX-15: nav-group-label kein Inline-Style im JS",
+          'style="font-size:0.65rem"' not in html,
+          "nav-group-label hat noch Inline-Style im JS")
+
+    # Schritt-Beschreibungen
+    check("UX-16: Neue Beschreibung Über mich",
+          "das Deckblatt Ihres Vivodepots" in html,
+          "Neue Beschreibung fehlt")
+    check("UX-17: Neue Beschreibung Vertrauenspersonen",
+          "Wer soll im Notfall angerufen werden?" in html,
+          "Neue Beschreibung fehlt")
+    check("UX-18: Neue Beschreibung Meine Gesundheit",
+          "im Notfall sofort zur Hand" in html,
+          "Neue Beschreibung fehlt")
+    check("UX-19: Neue Beschreibung Mein Wille",
+          "damit Ihr Wille gilt" in html,
+          "Neue Beschreibung fehlt")
+    check("UX-20: Neue Beschreibung Notfall-Vorsorge",
+          "was haben Sie f\u00fcr den Ernstfall?" in html,
+          "Neue Beschreibung fehlt")
+
+    # Notfallmappe → Vivodepot
+    check("UX-21: Angehörigen-Überschrift auf Vivodepot umgestellt",
+          "Vivodepot \u2014 ' + esc(name)" in html,
+          "Angehörigen-Überschrift nicht umgestellt")
+    check("UX-22: Kein Notfallmappe mehr in Angehörigen-Überschrift",
+          "Notfallmappe \u2014 ' + esc(name)" not in html,
+          "Alte Angehörigen-Überschrift noch vorhanden")
+
+    # Infoboxen
+    check("UX-23: Vertrauenspersonen-Infobox entfernt",
+          "Tragen Sie mindestens eine Hauptkontaktperson ein" not in html,
+          "Redundante Infobox noch vorhanden")
+    check("UX-24: Gesundheit-Infobox entfernt (nicht mehr als infobox-div)",
+          'class="infobox">${tl(\'Diese Angaben k' not in html,
+          "Redundante Gesundheit-Infobox noch vorhanden")
+    check("UX-25: Versicherungen-Infobox gekürzt",
+          "Fristen beachten \u2014 im Todesfall" in html,
+          "Gekürzte Infobox fehlt")
+    check("UX-26: Wohnen-Infobox gekürzt",
+          "Ein Mietvertrag l\u00e4uft nach einem Todesfall weiter" in html,
+          "Gekürzte Infobox fehlt")
+
+    # Willkommen
+    check("UX-27: Willkommen-Text vereinfacht",
+          "Ihre Daten bleiben auf Ihrem Ger\u00e4t \u2014 keine Cloud, kein Server." in html,
+          "Vereinfachter Willkommen-Text fehlt")
+    check("UX-28: USB-Stick-Erklärungs-Text entfernt",
+          "Wenn Sie die Datei auf einen USB-Stick speichern, haben Sie alles dabei" not in html,
+          "Alter Erklärungs-Text noch vorhanden")
+
+    # Formularabstände
+    check("UX-29: margin-top:8px in Renderern stark reduziert",
+          html.count('style="margin-top:8px"') <= 5,
+          f"Noch {html.count('style="margin-top:8px"')} Vorkommen")
+
+    # Mobile-Fixes
+    check("UX-30: fs-btn auf Mobile nicht ausgeblendet",
+          ".fs-btn { display: none !important; }" not in html,
+          "fs-btn wird auf Mobile noch ausgeblendet")
+    check("UX-31: safe-area-inset-bottom in Bottom-Bar",
+          "safe-area-inset-bottom" in html,
+          "safe-area-inset-bottom fehlt")
+    check("UX-32: export-grid 2-spaltig bei 900px",
+          "max-width: 900px" in html and "grid-template-columns: 1fr 1fr" in html,
+          "export-grid 900px-Breakpoint fehlt")
+    check("UX-33: main-content margin auto",
+          "margin-left: auto;" in html and "margin-right: auto;" in html,
+          "main-content nicht zentriert")
+
     sys.exit(0 if failed == 0 else 1)
 
 if __name__ == '__main__':
