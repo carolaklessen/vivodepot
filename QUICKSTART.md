@@ -1,6 +1,6 @@
 # VIVODEPOT — Schnellstart
 
-*Version 1.0.0-beta.8 · April 2026*
+*Version 1.0.0-beta.9 · April 2026*
 
 ---
 
@@ -48,23 +48,6 @@ Gehen Sie zum Schritt „Dokumente erstellen" (letzter Punkt in der Seitenleiste
 
 ---
 
-## Weitergabe-Datei (neu in beta.8)
-
-Sie können ausgewählte Daten verschlüsselt an Dritte weitergeben — ohne dass diese VIVODEPOT kennen oder installieren müssen.
-
-**So funktioniert es:**
-
-1. Im Bereich „Dokumente erstellen" auf „Daten gezielt weitergeben" klicken.
-2. Profil wählen: Notfall, Vollmacht, Familie oder Behörde.
-3. Eigenes Passwort festlegen (mindestens 6 Zeichen, unabhängig vom Hauptpasswort).
-4. Datei wird heruntergeladen. Begleittext zum Einfügen in eine E-Mail wird angezeigt.
-
-Die Empfängerin öffnet die Datei im Browser, gibt das Passwort ein und sieht die Daten. Kein Account, keine App, kein Internet nötig.
-
-**Wichtig:** Passwort und Datei immer getrennt übermitteln — Datei per E-Mail oder USB, Passwort per Telefon.
-
----
-
 ## Passwortschutz
 
 Empfohlen, wenn Sie die Datei weitergeben oder in der Cloud ablegen:
@@ -79,7 +62,7 @@ Wichtig: Notieren Sie das Passwort und teilen Sie es Ihren Vertrauenspersonen mi
 
 ## Datei auf anderem Gerät öffnen
 
-Seit Version 1.0.0-beta.7 ist die gespeicherte Datei auf jedem Gerät entschlüsselbar — auch auf einem frischen Browser ohne Vorgeschichte. Das Passwort genügt.
+Seit Version 1.0.0-beta.9 ist die gespeicherte Datei auf jedem Gerät entschlüsselbar — auch auf einem frischen Browser ohne Vorgeschichte. Das Passwort genügt.
 
 ---
 

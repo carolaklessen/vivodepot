@@ -1,0 +1,130 @@
+1.0.0-beta.9 -- ANF-05 Solid Pod, Datenaustausch-Step, Strukturumstellung,
+Code-Optimierung, alle Dokumentationsdateien aktualisiert
+
+1093 Tests grün, 0 Fehler. Keine Regressionen.
+
+════════════════════════════════════════════════════════
+GEÄNDERTE DATEIEN
+════════════════════════════════════════════════════════
+
+VIVODEPOT.html      -- Version beta.8 → beta.9; neue Funktionen; −26 Zeilen
+test_vivodepot.py   -- 43 neue Tests, 45 Duplikate entfernt; 986 check()-Aufrufe
+README.md           -- Badges, Schritte, Exporte, Funktionsübersicht aktualisiert
+CHANGELOG.md        -- Abschnitt beta.9 vollständig dokumentiert
+DOCS.md             -- Step-Tabelle, Export-Tabelle, neue Abschnitte
+FAQ.md              -- Versionsangabe auf beta.9
+QUICKSTART.md       -- Versionsangabe auf beta.9
+CONTRIBUTING.md     -- Versionsangabe und Testanzahl aktualisiert
+SECURITY.md         -- Versionsangabe, Unterstützungstabelle aktualisiert
+
+════════════════════════════════════════════════════════
+VIVODEPOT.html -- Neue Funktionen
+════════════════════════════════════════════════════════
+
+ANF-05 Solid Pod Export:
+- Modal sp-overlay mit Auswahl der Datenkategorien
+  (Persönliche Angaben, Gesundheit, Finanzen, Vollmachten).
+- Export im Turtle-Format (.ttl) mit Linked-Data-Präfixen
+  vcard: und schema: (EUPL-konform).
+- Neue Funktionen: solidPodOpen(), solidPodClose(),
+  solidPodExport(), solidPodZeigStatus(), solidPodEsc().
+- sp-overlay in showOverlay() und hideAllOverlays()
+  eingetragen.
+- Solid-Pod-Karte im Datenaustausch-Step.
+
+Datenaustausch-Step (neuer Navigationsschritt):
+- Step-ID 'datenaustausch', zwischen dokumente und erinnerung.
+- Bündelt alle Import- und Export-Wege: FHIR, FIM, JSON,
+  EUDI-Wallet, Weitergabe-Datei, QR-Übergabe, QR-Empfang,
+  Solid Pod.
+- Import-Block aus dem Behördendaten-Tab verschoben.
+- wg-Link-Zeilen aus dem Export-Tab verschoben.
+
+Strukturumstellung Sidebar:
+- 21 Schritte (bisher 20).
+- Neue Sidebar-Gruppen: 'Gesundheit & Abschluss' (ab Index 7)
+  und 'Besonderes' (ab Index 12).
+- Alte Gruppen 'Gesundheit & Leben' und
+  'Persönliches & Wünsche' entfernt.
+- Einstellungen ist jetzt immer letzter Schritt;
+  isExport-Bedingung schliesst einstellungen ein
+  (kein Weiter-Button am Ende).
+
+════════════════════════════════════════════════════════
+VIVODEPOT.html -- Optimierungen (−26 Zeilen)
+════════════════════════════════════════════════════════
+
+- _loadScript() entfernt (CDN-Fallback, nie aufgerufen, −6)
+- console.warn für docx entfernt (−1)
+- Leerkommentar DATENSCHUTZ-MODAL entfernt (−4)
+- Whitespace Wizard-Overlays + Export-Tab bereinigt (−4)
+- solidPodBaueVcard() entfernt: toter Code mit Tippfehler
+  zeilan.push statt zeilen.push -- hätte beim ersten Aufruf
+  mit E-Mail-Adresse sofort gecrasht (−11)
+
+════════════════════════════════════════════════════════
+test_vivodepot.py -- Änderungen
+════════════════════════════════════════════════════════
+
+Neue Tests (43):
+- ANF05-01 bis ANF05-12: Solid Pod Export
+- Datenaustausch: 11 Tests (Step, Karten, Verschiebungen)
+- Strukturumstellung: 13 Tests (Schritte, Reihenfolge,
+  Sidebar-Gruppen, Einstellungen-Schutz)
+- Sonstige: 7 Tests
+
+Entfernte Duplikate (45):
+- Fokus-Gruppe §28 (Kopie von §16): 5 Tests
+- vCard-Gruppe §30 + §48 (Kopien von §19): 6 Tests
+- PWA §36 (Kopie von §22): 2 Tests
+- Notfall §48 (Kopie von §31): 3 Tests
+- FHIR Export §48 (Kopie von §33): 1 Test
+- Weitere Duplikate: 28 Tests
+
+Vorher: 1050 Tests (1031 check()-Aufrufe)
+Nachher: 1093 Tests (986 check()-Aufrufe)
+Differenz: +43 Tests, −45 Duplikate, −45 check()-Aufrufe
+
+════════════════════════════════════════════════════════
+DOKUMENTATION -- Wesentliche Änderungen
+════════════════════════════════════════════════════════
+
+README.md:
+- Badge Tests: 1050/1050 → 1093/1093
+- Schritte: 20 → 21 (Datenaustausch-Step ergänzt)
+- Exporte: 15 → 16 (Solid Pod TTL ergänzt)
+- Solid Pod Export und Datenaustausch-Step in Übersicht
+
+DOCS.md:
+- Step-Tabelle: 21 Schritte mit korrekter neuer Reihenfolge
+- Export-Tabelle: solidPodExport() ergänzt (16 Formate)
+- Neuer Abschnitt: Solid Pod Export
+- Neuer Abschnitt: Datenaustausch-Step
+- Testsektionsliste: 33 → 55 Sektionen vollständig aufgelistet
+- Architektur-Baum: jsQR und neue Systemblöcke ergänzt
+
+SECURITY.md:
+- Unterstützungstabelle:
+    1.0.0-beta.9 | Aktiv
+    1.0.0-beta.8 | Unterstützt -- Update empfohlen
+    1.0.0-beta.7 | Unterstützt
+    1.0.0-beta.6 | BUG-SALT -- Update empfohlen
+    < beta.6     | Nicht unterstützt
+
+CONTRIBUTING.md:
+- Testanzahl: (842/842) → (1093/1093)
+
+════════════════════════════════════════════════════════
+TESTSTAND
+════════════════════════════════════════════════════════
+
+Vorher (beta.8): 1050 Tests, 0 Fehler
+Nachher (beta.9): 1093 Tests, 0 Fehler
+Keine Regressionen.
+
+════════════════════════════════════════════════════════
+NÄCHSTER SCHRITT
+════════════════════════════════════════════════════════
+
+Laut Roadmap: ANF-08 WCAG 2.2 oder ANF-09 Mehrsprachigkeit.
+Bestätigung erforderlich, bevor gebaut wird.

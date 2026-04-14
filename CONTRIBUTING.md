@@ -1,6 +1,6 @@
 # VIVODEPOT — Mitmachen
 
-*Version 1.0.0-beta.7 · April 2026*
+*Version 1.0.0-beta.9 · April 2026*
 
 Vielen Dank für Ihr Interesse an VIVODEPOT. Jede Rückmeldung hilft.
 
@@ -10,7 +10,7 @@ Vielen Dank für Ihr Interesse an VIVODEPOT. Jede Rückmeldung hilft.
 
 ### Fehler melden
 
-1. Prüfen Sie, ob der Fehler in der aktuellen Version (1.0.0-beta.7) noch vorhanden ist
+1. Prüfen Sie, ob der Fehler in der aktuellen Version (1.0.0-beta.9) noch vorhanden ist
 2. Öffnen Sie ein [GitHub Issue](https://github.com/carolaklessen/vivodepot/issues)
 3. Beschreiben Sie: Was haben Sie getan? Was ist passiert? Was hätten Sie erwartet?
 4. Nennen Sie Browser, Betriebssystem und Gerätetyp
@@ -32,7 +32,7 @@ Da VIVODEPOT eine Einzeldatei-HTML-App ist, sind Code-Beiträge direkt möglich:
 **Bitte beachten:**
 - Keine externen Abhängigkeiten einführen (alles muss inline bleiben)
 - Barrierefreiheit nicht verschlechtern (Touch-Targets 44px, ARIA-Labels)
-- Bestehende Tests müssen weiterhin bestehen (842/842)
+- Bestehende Tests müssen weiterhin bestehen (1093/1093)
 - Neue Funktionen sollten von Tests abgedeckt werden
 - Korrekte Orthographie und Kommasetzung in allen Texten, Labels und Fehlermeldungen
 

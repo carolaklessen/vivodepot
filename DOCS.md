@@ -1,6 +1,6 @@
 # VIVODEPOT — Technische Dokumentation
 
-*Version 1.0.0-beta.8 · April 2026*
+*Version 1.0.0-beta.9 · April 2026*
 
 ---
 
@@ -14,13 +14,17 @@ VIVODEPOT.html
 ├── Inline-Bibliotheken
 │   ├── jsPDF 2.5.1 (364 KB) — PDF-Erstellung
 │   ├── docx.js 8.5.0 (368 KB) — Word-Erstellung
-│   └── QRCode-Generator 1.4.4 (20 KB) — QR-Codes
+│   ├── QRCode-Generator 1.4.4 (20 KB) — QR-Codes
+│   └── jsQR 1.4.0 (256 KB) — QR-Code-Scan (Empfang)
 ├── JavaScript (Hauptlogik)
 │   ├── Datenspeicherung (localStorage + AES-256-GCM)
-│   ├── STEP_RENDERERS (20 Schritte)
-│   ├── Export-Funktionen (13 Formate)
+│   ├── STEP_RENDERERS (21 Schritte)
+│   ├── Export-Funktionen (16 Formate)
+│   ├── Import-Funktionen (FHIR, FIM, JSON, EUDI, QR)
+│   ├── Weitergabe-Datei-System (wg-*)
+│   ├── QR-Übergabe-System (qr-* / qre-*)
+│   ├── Solid Pod Export (sp-*)
 │   ├── Wizard-System
-│   ├── Weitergabe-Datei-System (neu in beta.8)
 │   └── Barrierefreiheits-Funktionen
 └── HTML (UI-Struktur)
 ```
@@ -49,19 +53,6 @@ Vor beta.7 wurde der Salt ausschließlich in `localStorage` (Schlüssel `STORE_M
 
 **Fix:** `saveAsHTML()` liest den Salt vor dem Speichern aus `localStorage` und bettet ihn in den INIT-Block der HTML-Datei ein. Beim Öffnen auf einem neuen Gerät schreibt der INIT-Block den Salt synchron in `localStorage`, bevor `loadData()` ihn benötigt. Der bestehende Salt wird dabei nicht überschrieben (idempotent).
 
-```javascript
-// Eingebettet in die gespeicherte Datei (vereinfacht):
-(function(){
-  try { data = { /* Nutzerdaten */ }; } catch(e){ data={}; }
-  try {
-    if (!localStorage.getItem('vivodepot_v1_meta')) {
-      localStorage.setItem('vivodepot_v1_meta', '<salt-base64>');
-    }
-  } catch(e) {}
-  showSavedFileWelcome();
-})();
-```
-
 ### Datei-Speicherung
 
 `saveAsHTML()` erstellt eine HTML-Datei mit eingebetteten Daten und eingebettetem Salt. Der INIT-Block wird durch regulären Ausdruck ersetzt:
@@ -70,21 +61,43 @@ Vor beta.7 wurde der Salt ausschließlich in `localStorage` (Schlüssel `STORE_M
 /\/\/ [═]+\s*\/\/ INIT[\s\S]*?\}\)\(\);/
 ```
 
-Der Kommentar lautet in allen Varianten:
+---
 
-```
-// ═══════════════════════════════════════════════
-// INIT  (bzw. INIT (mit eingebetteten Daten))
-// ═══════════════════════════════════════════════
-```
+## Step-System
+
+21 Schritte (seit beta.9, zuvor 20):
+
+| Index | ID | Label |
+|---|---|---|
+| 0 | start | Über mich |
+| 1 | kontakte | Vertrauenspersonen |
+| 2 | infokontakte | Zu informieren |
+| 3 | finanzen | Finanzen |
+| 4 | versich | Versicherungen |
+| 5 | immobilien | Immobilien |
+| 6 | vertraege | Verträge & Abos |
+| 7 | gesundheit | Gesundheit |
+| 8 | pflege | Pflege |
+| 9 | testament | Mein Wille |
+| 10 | bestattung | Mein Abschied |
+| 11 | persoenliches | Erinnerungsstücke |
+| 12 | haustiere | Haustiere |
+| 13 | digital | Digitales Erbe |
+| 14 | assistenten | Assistenten |
+| 15 | notfall | Notfall & Katastrophenschutz |
+| 16 | dokumente | Dokumente erstellen |
+| 17 | datenaustausch | Datenaustausch (neu in beta.9) |
+| 18 | erinnerung | Erinnerungen |
+| 19 | exportStep | Export (intern) |
+| 20 | einstellungen | Einstellungen |
 
 ---
 
-## Weitergabe-Datei (neu in beta.8)
+## Weitergabe-Datei (seit beta.8)
 
 ### Übersicht
 
-Die Weitergabe-Funktion erstellt eine eigenständige HTML-Datei mit einem gefilterten Datensatz und separater Verschlüsselung. Die Empfängerin öffnet die Datei im Browser — ohne VIVODEPOT, ohne Installation.
+Die Weitergabe-Funktion erstellt eine eigenständige HTML-Datei mit einem gefilterten Datensatz und separater Verschlüsselung.
 
 ### Sicherheitsarchitektur
 
@@ -96,16 +109,7 @@ Nutzerdaten (gefiltert nach Profil)
   → eigenständige HTML-Datei
 ```
 
-Das Hauptpasswort kann die Weitergabe-Datei nicht entschlüsseln. Die Verschlüsselungen sind vollständig unabhängig.
-
-### Profile und Felder
-
-| Profil | Felder |
-|---|---|
-| Notfall | vorname, nachname, geburtsdatum, adresse, plz, ort, blutgruppe, allergien, medikamente, krankheiten, hausarzt, notfallkontakte, patientenverf_vorhanden, patientenverf_ort |
-| Vollmacht | vorname, nachname, geburtsdatum, adresse, plz, ort, vollmacht_person, vollmacht_ort, vollmacht_vorhanden, patientenverf_vorhanden, patientenverf_ort, betreuer, nachlassgericht |
-| Familie | vorname, nachname, geburtsdatum, adresse, plz, ort, konten, versicherungen, vertraege, testament_vorhanden, testament_ort, testamentsvollstrecker, bestattungswunsch, persoenliche_botschaft, notfallkontakte |
-| Behörde | vorname, nachname, geburtsdatum, adresse, plz, ort, ausweis_nr, steuer_id, iban, kv_name, kv_nr, rv_nr |
+Das Hauptpasswort kann die Weitergabe-Datei nicht entschlüsseln.
 
 ### Zentrale Funktionen
 
@@ -114,63 +118,63 @@ Das Hauptpasswort kann die Weitergabe-Datei nicht entschlüsseln. Die Verschlüs
 | `weitergabeOpen()` | Öffnet das Modal, setzt Zustand zurück |
 | `weitergabeClose()` | Schliesst das Modal |
 | `wgZeigeSchritt(nr)` | Wechselt zwischen Schritt 1, 2 und 3 |
-| `wgWaehleProfilCard(profil)` | Profil-Auswahl, zeigt Behörden-Dropdown bei Bedarf |
-| `wgPwInput()` | Passwort-Stärke prüfen, Weiter-Button freischalten |
+| `wgWaehleProfilCard(profil)` | Profil-Auswahl |
 | `wgErstellen()` | Kern-Logik: filtern, verschlüsseln, HTML bauen, herunterladen |
-| `wgBegleitKopieren()` | Begleittext in Zwischenablage |
 | `wgBaueHtmlDatei()` | Generiert die eigenständige Empfänger-HTML |
 | `wgReminderPruefen()` | Hinweis nach 12 Monaten, max. 1x pro Woche |
 
-### Overlay-Verwaltung
+---
 
-`wg-overlay` ist in beiden zentralen Overlay-Verwaltungsfunktionen registriert:
+## QR-Übergabe (seit beta.8)
 
-```javascript
-// showOverlay(id) — schliesst alle anderen Overlays zuerst
-['welcome-overlay', 'return-overlay', ..., 'wg-overlay']
+### Übersicht
 
-// hideAllOverlays() — schliesst alle Overlays
-['welcome-overlay', 'return-overlay', ..., 'wg-overlay']
+Verschlüsselte Datenübergabe per QR-Code. Erzeuger-Seite (qr-*) und Empfänger-Seite (qre-*) sind vollständig getrennt — keine gemeinsamen Zustandsvariablen.
+
+### Sicherheitsarchitektur
+
+```
+Nutzerdaten (gefiltert nach Profil)
+  + eigener Salt (getRandomValues())
+  + PIN
+  + Zeitstempel iat + Ablauf exp (24 Stunden)
+  → PBKDF2 → AES-256-GCM → QR-Code
 ```
 
-### Reminder
+### Zentrale Funktionen
 
-Beim Wechsel zum Export-Tab wird `wgReminderPruefen()` aufgerufen. Der Reminder erscheint, wenn:
-
-- eine Weitergabe-Datei erstellt wurde (`localStorage: vivodepot_wg_datum`)
-- diese älter als 365 Tage ist
-- der letzte Hinweis mindestens 7 Tage zurückliegt
-
-Der Banner ist nicht blockierend und hat einen Schliessen-Button.
+| Funktion | Aufgabe |
+|---|---|
+| `qrErstellen()` | Verschlüsselt Payload, erzeugt QR-Code |
+| `qrEmpfangOpen()` | Öffnet Empfänger-Modal |
+| `qreStartKamera()` | Startet getUserMedia + jsQR-Scan |
+| `qreScanFrame()` | Liest Kamerabild alle 200 ms |
+| `qreEntschluesseln()` | Entschlüsselt und prüft Ablauf (payload.exp) |
 
 ---
 
-## Step-System
+## Solid Pod Export (seit beta.9)
 
-20 Schritte (0-indexiert):
+### Übersicht
 
-| Index | ID | Label |
-|---|---|---|
-| 0 | start | Über mich |
-| 1 | kontakte | Vertrauenspersonen |
-| 2 | infokontakte | Zu informieren |
-| 3 | finanzen | Finanzen |
-| 4 | versich | Versicherungen |
-| 5 | immobilien | Immobilien |
-| 6 | vertraege | Verträge & Abos |
-| 7 | testament | Testament & Vollmachten |
-| 8 | gesundheit | Gesundheit |
-| 9 | pflege | Pflege |
-| 10 | haustiere | Haustiere |
-| 11 | digital | Digitales Erbe |
-| 12 | persoenliches | Persönliches |
-| 13 | bestattung | Bestattung |
-| 14 | assistenten | Assistenten |
-| 15 | notfall | Notfall & Katastrophenschutz |
-| 16 | dokumente | Dokumente erstellen |
-| 17 | erinnerung | Erinnerungen |
-| 18 | einstellungen | Einstellungen |
-| 19 | exportStep | Export (intern) |
+Export persönlicher Daten im Turtle-Format (.ttl) für den Upload in einen Solid Pod. Vollständig offline, EUPL-konform.
+
+### Format
+
+```turtle
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
+@prefix schema: <https://schema.org/> .
+```
+
+### Zentrale Funktionen
+
+| Funktion | Aufgabe |
+|---|---|
+| `solidPodOpen()` | Öffnet Modal sp-overlay |
+| `solidPodClose()` | Schliesst Modal |
+| `solidPodExport()` | Baut Turtle-Datei und löst Download aus |
+| `solidPodZeigStatus(meldung)` | Zeigt Statusmeldung im Modal |
+| `solidPodEsc(s)` | Escaped Sonderzeichen für Turtle |
 
 ---
 
@@ -193,6 +197,19 @@ Der Banner ist nicht blockierend und hat einen Schliessen-Button.
 | `exportJSON()` | JSON | vanilla |
 | `generateFHIR()` | JSON | vanilla |
 | `wgErstellen()` | HTML (verschlüsselt) | Web Crypto API |
+| `solidPodExport()` | TTL (Turtle) | vanilla |
+
+---
+
+## Datenaustausch-Step (seit beta.9)
+
+Der neue Schritt `datenaustausch` bündelt alle Import- und Export-Wege:
+
+Import-Karten: FHIR R4, FIM-JSON, JSON (automatisch), EUDI-Wallet (SD-JWT).
+
+Export-/Übergabe-Karten: Weitergabe-Datei (wgErstellen), QR-Übergabe (qrErstellen), QR-Empfang (qrEmpfangOpen), Solid Pod (solidPodOpen).
+
+Der Import-Block wurde aus dem Behördendaten-Tab verschoben. Die wg-Link-Zeilen wurden aus dem Export-Tab verschoben.
 
 ---
 
@@ -202,7 +219,7 @@ Der Banner ist nicht blockierend und hat einen Schliessen-Button.
 python3 test_vivodepot.py VIVODEPOT.html
 ```
 
-**877 Tests in 52 Sektionen:**
+**1093 Tests in 55 Sektionen:**
 
 1. JavaScript-Syntax
 2. Bekannte Bugs
@@ -220,25 +237,45 @@ python3 test_vivodepot.py VIVODEPOT.html
 14. Update-System
 15. Mobile und Responsive
 16. Fokus-System
-17. Barrierefreiheit
-18. vCard
-19. Notfall/BBK
-20. Browser-Kompatibilität
-21. Export-Qualität
-22. Datenspeicherung
-23. Internationalisierung
-24. PWA
-25. Rechtliche Inhalte
-26. Externe Links
-27. Exporte gesamt
-28. Vollmachten
-29. Robustheit (erweitert)
-30. Update-Integration
-31. Eingabe-Hilfe
-32. Vollständigkeits-Regression
-33. Krypto-Portabilität (Salt in Datei)
-34–51. Weitere Regressions- und Qualitätssektionen
-52. Weitergabe-Datei (WG-01 bis WG-16b) — neu in beta.8
+17. Keyboard und Navigation
+18. FAB und Draggable
+19. vCard Export
+20. ARIA und Barrierefreiheit
+21. Notfallvorsorge und BBK
+22. PWA Details
+23. Verschlüsselung Details
+24. Datenspeicher und Profil
+25. Schritt-Inhalte
+26. Recht und externe Links
+27. Mobile und Responsive
+28. Fokus-System
+29. Barrierefreiheit (erweitert)
+30. vCard und Kontakte
+31. Notfall und Katastrophenschutz
+32. Browser-Verhalten und Robustheit
+33. Export-Qualität
+34. Datenspeicherung
+35. Internationalisierung
+36. PWA und Installation
+37. Legal und Compliance
+38. Wizards (erweitert)
+39. Import-System
+40. UX-Details
+41. Inhaltliche Vollständigkeit
+42. Update-System (erweitert)
+43. Exporte — Qualität
+44. Vollmachten und Dokumente
+45. Robustheit und Fehlerbehandlung
+46. Update-System Integration
+47. Eingabe-Hilfe und Validierung
+48. Vollständigkeits-Regression (Chat-Abgleich)
+49. Viewport und Layout-Regression
+50. Neue Bugs (BUG-NEW)
+51. Krypto-Portabilität (Salt in Datei) — neu in beta.7
+52. Weitergabe-Datei — neu in beta.8
+53. ANF-01 Einkommensdaten / ANF-05 Solid Pod — neu in beta.8/9
+54. ANF-02 Kind-Daten / Datenaustausch-Step — neu in beta.8/9
+55. Strukturumstellung April 2026 — neu in beta.9
 
 ---
 
@@ -252,12 +289,12 @@ sessionKey + IV  → AES-GCM-Encrypt → ct (in localStorage)
 Salt             → localStorage (STORE_META) + HTML-Datei (seit beta.7)
 ```
 
-### Schlüssel-Lifecycle (Weitergabe-Datei)
+### Schlüssel-Lifecycle (Weitergabe-Datei / QR-Übergabe)
 
 ```
-Separates Passwort + eigener Salt (getRandomValues())
-  → PBKDF2 → wgKey (im RAM, nie persistent)
-  → AES-GCM-Encrypt → in generierter HTML-Datei eingebettet
+Separates Passwort / PIN + eigener Salt (getRandomValues())
+  → PBKDF2 → wgKey / qrKey (im RAM, nie persistent)
+  → AES-GCM-Encrypt → in generierter HTML-Datei / QR-Code eingebettet
 ```
 
 ### Fehlversuche
@@ -271,8 +308,6 @@ Bis zu 5 Passwort-Fehlversuche. Danach wird die Sitzung beendet. Kein automatisc
 ---
 
 ## Notfall-Ampelkarten
-
-Die Katastrophenschutz-Karten haben drei Zustände:
 
 | Wert | Farbe | Label |
 |---|---|---|
@@ -300,7 +335,7 @@ startDiktat()       // SpeechRecognition API
 
 ## Bekannte Einschränkungen
 
-- **iOS/PocketBook:** HTML-Dateien werden von PocketBook als Standard-App geöffnet. Workaround: Datei auf iOS mit `.htm`-Endung speichern und in der Dateien-App über Teilen → Safari öffnen.
+- **iOS/PocketBook:** HTML-Dateien werden von PocketBook als Standard-App geöffnet. Workaround: Datei mit `.htm`-Endung speichern und über Teilen → Safari öffnen.
 - **DuckDuckGo Browser:** Unterstützt keine lokalen HTML-Dateien (file://-Protokoll).
 - **localStorage-Limit:** Ca. 5 MB pro Domain. Bei vielen hochgeladenen Dateien kann dieses Limit erreicht werden.
 - **Safari iOS:** `showSaveFilePicker` nicht unterstützt — Fallback auf `a.click()` mit iOS-spezifischer Anleitung.
