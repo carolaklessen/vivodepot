@@ -11452,6 +11452,7 @@ textarea { min-height: 44px; }
       <p style="font-size:0.82rem;color:var(--ink2);margin-top:0.4rem;line-height:1.6">Ihr persönlicher Vorsorge-Assistent.<br>Keine Cloud. Kein Abo. Volle Kontrolle.</p>
     </div>
     <div style="background:var(--forest-lt);border-radius:8px;padding:0.9rem 1rem;margin-bottom:1.2rem;font-size:0.92rem;color:var(--ink2);line-height:1.7;border-left:3px solid var(--gold)">
+      Vivodepot ist Ihr persönlicher Vorsorge-Ordner — für den Fall, dass jemand anderes schnell wichtige Informationen über Sie braucht: Kontakte, Finanzen, Gesundheit, Vollmachten und mehr. Sie sammeln alles an einem Ort und können am Ende druckfertige Dokumente erstellen.<br><br>
       Ihre Daten bleiben auf Ihrem Gerät — keine Cloud, kein Server.<br>
       Füllen Sie aus, was Ihnen wichtig ist. Alles andere können Sie später ergänzen.
     </div>
@@ -11459,7 +11460,7 @@ textarea { min-height: 44px; }
       <button class="btn-nav primary" onclick="welcomeStart()" style="padding:12px 36px;font-size:1rem;background:var(--forest)">Loslegen →</button>
     </div>
     <p style="text-align:center;font-size:0.75rem;color:var(--ink3);margin-top:0.8rem">Passwortschutz können Sie jederzeit unter Einstellungen aktivieren.</p>
-    <div style="text-align:center;margin-top:0.6rem;padding:0.6rem;background:var(--beige);border-radius:8px;font-size:0.8rem;color:var(--ink2)">Schrift zu klein? Klicken Sie oben rechts auf <strong>A⁺</strong> um die Schrift zu vergrößern.
+    <div style="text-align:center;margin-top:0.6rem;padding:0.6rem;background:var(--beige);border-radius:8px;font-size:0.8rem;color:var(--ink2)">Schrift zu klein? Klicken Sie oben rechts auf <strong>⋮</strong> und wählen Sie <strong>Schriftgröße A⁺</strong>.
     </div>
   </div>
 </div>
@@ -12737,7 +12738,7 @@ function showGoalWizard() {
     '</div>' +
 
     '<div style="display:flex;justify-content:space-between;align-items:center">' +
-    '<button onclick="skipGoalWizard()" style="background:none;border:none;font-size:0.8rem;color:var(--ink3);cursor:pointer;padding:4px 0;min-height:36px">Ohne Auswahl starten</button>' +
+    '<button onclick="skipGoalWizard()" style="background:none;border:none;font-size:0.8rem;color:var(--ink3);cursor:pointer;padding:4px 0;min-height:36px">Alle Bereiche anzeigen (ohne Fokus starten)</button>' +
     '<button class="btn-nav primary" onclick="applyGoalWizard()" style="padding:10px 28px;background:var(--forest)">Los geht\'s →</button>' +
     '</div>' +
     '</div>';
@@ -14415,6 +14416,13 @@ function addItem(key, template) {
   list.push({...template});
   saveList(key, list);
   renderStep();
+  // Zum neuen Eintrag scrollen, damit er sichtbar ist
+  setTimeout(function() {
+    var blocks = document.querySelectorAll('.repeat-block');
+    if (blocks.length > 0) {
+      blocks[blocks.length - 1].scrollIntoView({behavior: 'smooth', block: 'start'});
+    }
+  }, 100);
 }
 function removeItem(key, i) {
   const list = getList(key);
@@ -14495,7 +14503,7 @@ function navButtons(hideBack=false, lastStep=false) {
     return `<div class="step-nav">
       <button class="btn-nav" onclick="${prevIdx>=0?`goToStep(${prevIdx})`:'void(0)'}" ${prevIdx<0?'style="visibility:hidden"':''}>← Zurück</button>
       ${counter}
-      ${isExport ? '' : `<button class="btn-done ${done?'marked':''}" onclick="toggleDone(${currentStep})" title="Abschnitt als vollständig markieren">${done?'\u00A0Erledigt':'○\u00A0Fertig?'}</button>`}
+      ${isExport ? '' : `<button class="btn-done ${done?'marked':''}" onclick="toggleDone(${currentStep})" title="Abschnitt als vollständig markieren">${done?'\u2611\u00A0Erledigt':'\u2610\u00A0Als erledigt markieren'}</button>`}
       ${isExport ? '' : nextIdx>=0
         ? `<button class="btn-nav primary" onclick="goToStep(${nextIdx})">Weiter →</button>`
         : `<button class="btn-nav primary" onclick="goToStep(${exportIdx})" style="background:var(--gold);color:var(--forest)">Dokumente →</button>`}
@@ -14508,7 +14516,7 @@ function navButtons(hideBack=false, lastStep=false) {
   return `<div class="step-nav">
     <button class="btn-nav" onclick="prevStep()" ${hideBack?'style="visibility:hidden"':''}>← Zurück</button>
     ${isExport ? '' : `<button class="btn-done ${done?'marked':''}" onclick="toggleDone(${currentStep})" title="Abschnitt als vollständig markieren">
-      ${done ? '\u00A0Erledigt' : '○\u00A0Fertig? Abhaken'}
+      ${done ? '\u2611\u00A0Erledigt' : '\u2610\u00A0Als erledigt markieren'}
     </button>`}
     ${isExport
       ? ''
@@ -14533,7 +14541,7 @@ const STEP_RENDERERS = {
         <label class="btn-nav" style="font-size:0.82rem;padding:8px 16px;cursor:pointer;display:inline-block">Foto hochladen
           <input type="file" id="foto-input" accept="image/*" style="display:none" onchange="handleFotoUpload(event)">
         </label>
-        ${get('profilfoto') ? '<button class="btn-nav" style="font-size:0.78rem;padding:6px 12px;margin-left:6px" onclick="removeFoto()"></button>' : ''}
+        ${get('profilfoto') ? '<button class="btn-nav" style="font-size:0.78rem;padding:6px 12px;margin-left:6px" onclick="removeFoto()">Foto entfernen</button>' : ''}
       </div>
     </div>
     <div class="field-row">
@@ -14545,7 +14553,12 @@ const STEP_RENDERERS = {
       ${field('telefon','Telefon','')}
     </div>
     <div class="field-row" style="margin-top:12px">
-      ${field('familienstand','Familienstand','z. B. verheiratet, geschieden, verwitwet','false','text','Bestimmt die gesetzliche Erbfolge.')}
+      <div><label class="sub-label">Familienstand <span style="color:var(--ink3);font-size:0.78rem" title="Bestimmt die gesetzliche Erbfolge.">ⓘ</span></label>
+        <select oninput="set('familienstand',this.value)" style="width:100%">
+          <option value="">— bitte wählen —</option>
+          ${['ledig','verheiratet','eingetragene Lebenspartnerschaft','getrennt lebend','geschieden','verwitwet'].map(o=>`<option value="${o}" ${get('familienstand')===o?'selected':''}>${o.charAt(0).toUpperCase()+o.slice(1)}</option>`).join('')}
+        </select>
+      </div>
       ${field('ehepartner','Ehepartner*in / Lebenspartner*in','z. B. Maria Mustermann','false','text','Aktuell zusammenlebende Person. Bei Scheidung: leer lassen oder ex-Partner*in eintragen, falls Unterhalt besteht.')}
     </div>
     ${renderKinderBlocks()}

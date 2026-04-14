@@ -2531,6 +2531,57 @@ def main():
           "function solidPodEsc fehlt")
 
 
+    # ═══════════════════════════════════════
+    print("\n=== FEEDBACK-01 (April 2026) ===")
+    # ═══════════════════════════════════════
+
+    # Punkt 2: A+-Hinweis korrigiert
+    check("FB01-02: A+-Hinweis nennt Drei-Punkte-Menue statt 'oben rechts auf A+'",
+          "Schriftgr\u00f6\u00dfe A\u207a" in html and "A\u207a um die Schrift zu vergr\u00f6\u00dfern" not in html,
+          "Alter A+-Hinweis noch vorhanden oder neuer Hinweis fehlt")
+
+    # Punkt 3: Einleitungstext
+    check("FB01-03: Einleitungstext erklaert was Vivodepot ist",
+          "Ihr pers\u00f6nlicher Vorsorge-Ordner" in html,
+          "Einleitungstext fehlt")
+
+    # Punkt 4: 'Ohne Auswahl starten' umbenannt
+    check("FB01-04: 'Ohne Auswahl starten' umbenannt",
+          "Ohne Auswahl starten" not in html,
+          "'Ohne Auswahl starten' noch vorhanden")
+    check("FB01-04b: Neuer Text 'Alle Bereiche anzeigen' vorhanden",
+          "Alle Bereiche anzeigen" in html,
+          "Neuer Fokus-Skip-Text fehlt")
+
+    # Punkt 6: Foto-Loeschen-Button beschriftet
+    check("FB01-06: Foto-Loeschen-Button hat Beschriftung 'Foto entfernen'",
+          "Foto entfernen" in html,
+          "Beschriftung 'Foto entfernen' fehlt")
+
+    # Punkt 7: Familienstand als Dropdown
+    check("FB01-07: Familienstand ist Dropdown (select-Element)",
+          "verheiratet" in html and "verwitwet" in html and "ledig" in html,
+          "Familienstand-Dropdown-Optionen fehlen")
+    check("FB01-07b: Familienstand nicht mehr als Freitext-Feld",
+          "z. B. verheiratet, geschieden, verwitwet" not in html,
+          "Alter Freitext-Platzhalter fuer Familienstand noch vorhanden")
+
+    # Punkt 9: Scroll nach Kind hinzufuegen
+    check("FB01-09: Nach 'Kind hinzufuegen' wird zum neuen Eintrag gescrollt",
+          "scrollIntoView" in html,
+          "scrollIntoView-Aufruf in addItem fehlt")
+
+    # Punkte 13+14: Button vereinheitlicht
+    check("FB01-13: 'Abhaken' nicht mehr als Button-Text vorhanden",
+          "Abhaken" not in html,
+          "'Abhaken' noch als Button-Text vorhanden")
+    check("FB01-14: 'Fertig?' nicht mehr als alleiniger Button-Text",
+          "Fertig?' " not in html,
+          "'Fertig?' noch als Button-Text vorhanden")
+    check("FB01-13b: Neue Beschriftung 'Als erledigt markieren' vorhanden",
+          "Als erledigt markieren" in html,
+          "Neue Button-Beschriftung fehlt")
+
     passed = sum(1 for s, _, _ in results if s == "PASS")
     failed = sum(1 for s, _, _ in results if s == "FAIL")
     total = len(results)
