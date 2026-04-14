@@ -2542,7 +2542,7 @@ def main():
 
     # Punkt 3: Einleitungstext
     check("FB01-03: Einleitungstext erklaert was Vivodepot ist",
-          "Ihr pers\u00f6nlicher Vorsorge-Ordner" in html,
+          "Vivodepot ist Ihr pers\u00f6nlicher Speicher" in html,
           "Einleitungstext fehlt")
 
     # Punkt 4: 'Ohne Auswahl starten' umbenannt
@@ -2632,6 +2632,18 @@ def main():
     check("FB03-08d: Fehlermeldung hat Warnzeichen (\\u26a0)",
           "\u26a0" in html,
           "Warnzeichen in Fehlermeldung fehlt")
+
+    # ═══════════════════════════════════════
+    print("\n=== FEEDBACK-04 (April 2026) ===")
+    # ═══════════════════════════════════════
+
+    # Bug: 'false' als String war truthy — alle Felder mit required='false' zeigten ein Sternchen
+    check("FB04-BUG: field() behandelt String 'false' korrekt als nicht-Pflichtfeld",
+          "required === true || required === 'true'" in html,
+          "Bug-Fix fuer required='false' fehlt in field()")
+    check("FB04-BUG-b: Nur Vorname und Nachname sind echte Pflichtfelder (required='true')",
+          html.count(",'true')") == 2,
+          f"Unerwartete Anzahl von required='true' Feldern: {html.count(chr(39)+'true'+chr(39)+')')}")
 
     passed = sum(1 for s, _, _ in results if s == "PASS")
     failed = sum(1 for s, _, _ in results if s == "FAIL")

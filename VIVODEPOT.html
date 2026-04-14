@@ -11456,9 +11456,9 @@ textarea { min-height: 44px; }
       <p style="font-size:0.82rem;color:var(--ink2);margin-top:0.4rem;line-height:1.6">Ihr persönlicher Vorsorge-Assistent.<br>Keine Cloud. Kein Abo. Volle Kontrolle.</p>
     </div>
     <div style="background:var(--forest-lt);border-radius:8px;padding:0.9rem 1rem;margin-bottom:1.2rem;font-size:0.92rem;color:var(--ink2);line-height:1.7;border-left:3px solid var(--gold)">
-      Vivodepot ist Ihr persönlicher Vorsorge-Ordner — für den Fall, dass jemand anderes schnell wichtige Informationen über Sie braucht: Kontakte, Finanzen, Gesundheit, Vollmachten und mehr. Sie sammeln alles an einem Ort und können am Ende druckfertige Dokumente erstellen.<br><br>
-      Ihre Daten bleiben auf Ihrem Gerät — keine Cloud, kein Server.<br>
-      Füllen Sie aus, was Ihnen wichtig ist. Alles andere können Sie später ergänzen.
+      Vivodepot ist Ihr persönlicher Speicher für alles, was wirklich wichtig ist — Ihre Kontakte, Gesundheit, Finanzen, Vollmachten und persönlichen Wünsche.<br>
+      Alles gehört Ihnen, bleibt auf Ihrem Gerät und ist jederzeit abrufbar — für Sie selbst, und für den Fall, dass Ihre Familie oder Ihr Arzt es eines Tages braucht.<br>
+      Füllen Sie aus, was Ihnen heute wichtig ist. Den Rest können Sie später ergänzen.
     </div>
     <div class="btn-row" style="justify-content:center">
       <button class="btn-nav primary" onclick="welcomeStart()" style="padding:12px 36px;font-size:1rem;background:var(--forest)">Loslegen →</button>
@@ -13589,8 +13589,10 @@ function mehr(id, label, keys, content) {
 
 function field(key, label, placeholder='', required=false, type='text', hintText='') {
   const val = get(key);
-  const req = required ? 'required' : '';
-  const reqLabel = required ? ' required' : '';
+  // Sicherheitscheck: der String 'false' wird wie false behandelt
+  const isRequired = required === true || required === 'true';
+  const req = isRequired ? 'required' : '';
+  const reqLabel = isRequired ? ' required' : '';
   const showMic = (type === 'text') && mikrofon();
   return `<div>
     <label class="field-label${reqLabel}" for="${key}">${tl(label)}</label>
