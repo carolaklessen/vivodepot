@@ -2946,6 +2946,32 @@ def main():
           "margin-left: auto;" in html and "margin-right: auto;" in html,
           "main-content nicht zentriert")
 
+    # ═══════════════════════════════════════
+    print("\n=== 57. OVERLAY CLOSE-BUTTONS ===")
+    # ═══════════════════════════════════════
+
+    # BUG-18: Kein Wizard-Overlay darf mehr als einen Schließen-Button haben
+    # (absolut positionierter + Flex-Header = zwei sichtbare ✕)
+    for overlay_id, close_fn in [
+        ('gwiz-overlay',  'gwizClose'),
+        ('vvwiz-overlay', 'vvwizClose'),
+        ('pvwiz-overlay', 'pvwizClose'),
+        ('bwiz-overlay',  'bwizClose'),
+        ('hwiz-overlay',  'hwizClose'),
+        ('gvwiz-overlay', 'gvwizClose'),
+    ]:
+        m = re.search(
+            r'id="' + overlay_id + r'"[\s\S]*?class="wizard-header"([\s\S]*?)class="wizard-body"',
+            html)
+        if m:
+            count = len(re.findall(re.escape(close_fn + '()'), m.group(1)))
+            check(f"BUG-18: {overlay_id} hat nicht mehr als einen Schließen-Button",
+                  count <= 1,
+                  f"Gefunden: {count} {close_fn}()-Aufrufe im Header (doppeltes X sichtbar)")
+        else:
+            check(f"BUG-18: {overlay_id} Header gefunden", False,
+                  f"{overlay_id} Header nicht gefunden")
+
     sys.exit(0 if failed == 0 else 1)
 
 if __name__ == '__main__':
