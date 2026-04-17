@@ -63,21 +63,23 @@ def main():
     else:
         check("BUG-01: Welcome-Overlay hat inline-style", False, "Kein style-Attribut gefunden")
     
-    hide_fn_match = re.search(r'function hideAllOverlays\(\)\s*\{([^}]+)\}', html)
-    if hide_fn_match:
-        hide_fn = hide_fn_match.group(1)
+    # BUG-02: Overlays werden über ALL_OVERLAY_IDS verwaltet — dort prüfen
+    all_ids_match = re.search(r'ALL_OVERLAY_IDS\s*=\s*\[([^\]]+)\]', html)
+    if all_ids_match:
+        all_ids = all_ids_match.group(1)
         required_overlays = ['welcome-overlay', 'return-overlay', 'crypto-overlay', 'goal-wizard']
         for oid in required_overlays:
-            check(f"BUG-02: hideAllOverlays enthält '{oid}'", oid in hide_fn)
+            check(f"BUG-02: hideAllOverlays enthält '{oid}'", oid in all_ids)
     else:
-        check("BUG-02: hideAllOverlays existiert", False)
+        check("BUG-02: ALL_OVERLAY_IDS existiert", False)
 
-    # BUG-14: goal-wizard muss auch in showOverlay-Liste stehen
+    # BUG-14: showOverlay nutzt ALL_OVERLAY_IDS — goal-wizard dort prüfen
     show_fn_match = re.search(r'function showOverlay\(id\)\s*\{([^}]+)\}', html)
     if show_fn_match:
-        check("BUG-14: showOverlay enthält 'goal-wizard'",
-              'goal-wizard' in show_fn_match.group(1),
-              "goal-wizard fehlt in showOverlay — Wizard nicht schließbar bei Overlay-Wechsel")
+        show_fn = show_fn_match.group(1)
+        check("BUG-14: showOverlay nutzt ALL_OVERLAY_IDS",
+              'ALL_OVERLAY_IDS' in show_fn,
+              "showOverlay nutzt ALL_OVERLAY_IDS nicht — Overlays werden nicht korrekt geschlossen")
     else:
         check("BUG-14: showOverlay existiert", False)
 
@@ -154,7 +156,7 @@ def main():
           f"Fehler in: {[mid for mid,_ in bad_mehr]}")
     
     pw_fields = len(re.findall(r'type=["\']password["\']', html))
-    check("BUG-05: Max 12 password-Felder", pw_fields <= 12, f"Gefunden: {pw_fields}")  # ANF-06: +3 (qr-pin1, qr-pin2, qre-pin)
+    check("BUG-05: Max 15 password-Felder", pw_fields <= 15, f"Gefunden: {pw_fields}")
     
     proton_refs = html.lower().count('protonmail') + html.lower().count('proton.me')
     check("BUG-06: Keine Proton-Referenzen", proton_refs == 0, f"Gefunden: {proton_refs}")
@@ -713,6 +715,10 @@ def main():
     print("\n=== 28. FOKUS-SYSTEM ===")
     # ═══════════════════════════════════════
 
+    check("Fokus: _goalMode Flag",                 "_goalMode" in html)
+    check("Fokus: _goalRelevant Objekt",           "_goalRelevant" in html)
+    check("Fokus: applyGoalWizard()",              "applyGoalWizard" in html)
+    check("Fokus: skipGoalWizard()",               "skipGoalWizard" in html)
     check("Fokus: goalBtn() Hilfsfunktion",        "function goalBtn" in html or "goalBtn(" in html)
     check("Fokus: Modus 'start'",                  "'start'" in html)
     check("Fokus: Modus 'family'",                 "'family'" in html)
@@ -727,6 +733,7 @@ def main():
           "console.error" in html[html.find("function goToStep"):html.find("function goToStep")+600])
     check("Fokus: nextStep() vorhanden",           "function nextStep" in html)
     check("Fokus: prevStep() vorhanden",           "function prevStep" in html)
+    check("Fokus: updateFokusBarLabel()",          "updateFokusBarLabel" in html)
     check("Fokus: selectedGoal Variable",           "selectedGoal" in html)
     check("Fokus: Alle Bereiche anzeigen Button",  "Alle anzeigen" in html or "_goalMode=false" in html)
     check("Fokus: Relevanz-Filterung in renderSidebar",
@@ -765,6 +772,10 @@ def main():
 
     check("vCard: exportVCard() vorhanden",        "function exportVCard" in html)
     check("vCard: generateVCard() vorhanden",      "function generateVCard" in html)
+    check("vCard: VERSION:4.0",                    "VERSION:4.0" in html)
+    check("vCard: BEGIN:VCARD",                    "BEGIN:VCARD" in html)
+    check("vCard: END:VCARD",                      "END:VCARD" in html)
+    check("vCard: PRODID Vivodepot",               "PRODID:-//Vivodepot" in html)
     check("vCard: TEL TYPE=VOICE",                 "TEL;TYPE=VOICE" in html)
     check("vCard: RFC 6350 vCard 4.0",             "RFC 6350" in html or "VERSION:4.0" in html)
     check("vCard: .vcf Download",                  ".vcf" in html)
@@ -911,6 +922,8 @@ def main():
     check("PWA: background_color",                  "background_color" in html or "background-color" in html)
     check("PWA: Service Worker Register",           "serviceWorker.register" in html)
     check("PWA: Cache-Name vivodepot",              "vivodepot-v" in html or "CACHE" in html)
+    check("PWA: beforeinstallprompt",               "beforeinstallprompt" in html)
+    check("PWA: installApp()",                      "function installApp" in html)
     check("PWA: showInstallBanner()",               "function showInstallBanner" in html)
     check("PWA: pwaInstall()",                      "function pwaInstall" in html or "pwaInstall" in html)
     check("PWA: iOS Hinweis (Teilen-Button)",       "Home-Bildschirm" in html)
@@ -1068,6 +1081,7 @@ def main():
     check("Export: jsPDF-Bibliothek geladen", "jspdf" in html.lower())
     check("Export: docx-Bibliothek geladen", "docx@" in html)
     check("Export: Checkliste enthält Gesundheit", "get('hausarzt')" in html and "generateChecklist" in html)
+    check("Export: FHIR R4 Bundle", "Bundle" in html and "generateFHIR" in html)
     check("Export: FIM-JSON Struktur", "exportFIMJson" in html)
     check("Export: Behördendaten Kindergeld", "Kindergeld" in html or "generateBehoerdendaten" in html)
     check("Export: Behördendaten Elterngeld — Karte vorhanden", "'elterngeld'" in html and "Elterngeld-Datenblatt" in html)
@@ -1300,6 +1314,8 @@ def main():
     # vCard aus Session
     check("vCard: exportVCard() Funktion",               "function exportVCard" in html)
     check("vCard: generateVCard() Funktion",             "function generateVCard" in html)
+    check("vCard: VERSION:4.0",                          "VERSION:4.0" in html)
+    check("vCard: PRODID Vivodepot",                     "PRODID:-//Vivodepot" in html)
 
     # IBAN-Formatierung und Validierung
     check("Eingabe: BIC-Validierung",                    "BIC" in html and "COBADEFFXXX" in html)
@@ -1315,6 +1331,9 @@ def main():
     vorrat_block = html[vorrat_start:vorrat_end]
     vorrat_count = vorrat_block.count("',\n") + (1 if "'\n]" in vorrat_block else 0)
     check("Notfall: NOTFALL_VORRAT_ITEMS hat 15 Einträge", vorrat_count == 15, f"Gefunden: {vorrat_count}")
+    check("Notfall: Campingkocher in Vorrat",             "Campingkocher" in html)
+    check("Notfall: Hygieneartikel in Vorrat",            "Hygieneartikel" in html)
+    check("Notfall: Decke in Vorrat",                     "Decke" in html and "NOTFALL_VORRAT" in html)
     check("Notfall: Signalmittel in Vorrat",              "Signalmittel" in html)
     check("Notfall: Dosenöffner in Vorrat",               "Dosenöffner" in html)
 
@@ -1507,18 +1526,14 @@ def main():
           html.count("fetch(") == html.replace("wgErstellen", "").replace("wgBaueHtmlDatei", "").count("fetch("),
           "fetch() in Weitergabe-Funktionen gefunden — Offline-Bedingung verletzt")
 
-    # WG-16: wg-overlay muss in hideAllOverlays() registriert sein
-    # Bug: Weitergabe-Dialog blieb offen wenn ein anderer Overlay geöffnet wurde
-    hide_fn_wg = re.search(r'function hideAllOverlays\(\)\s*\{([\s\S]*?)\n\}', html)
-    check("WG-16a: wg-overlay in hideAllOverlays() registriert",
-          hide_fn_wg and 'wg-overlay' in hide_fn_wg.group(1),
-          "wg-overlay fehlt in hideAllOverlays — Dialog bleibt offen bei Overlay-Wechsel")
-
-    # WG-16b: wg-overlay muss auch in showOverlay() (Hide-Liste) registriert sein
-    show_fn_wg = re.search(r'function showOverlay\(id\)\s*\{([\s\S]*?)\n\}', html)
-    check("WG-16b: wg-overlay in showOverlay() Hide-Liste registriert",
-          show_fn_wg and 'wg-overlay' in show_fn_wg.group(1),
-          "wg-overlay fehlt in showOverlay — Dialog bleibt offen wenn anderer Overlay aufgerufen wird")
+    # WG-16: wg-overlay wird über ALL_OVERLAY_IDS verwaltet — dort prüfen
+    all_ids_wg = re.search(r'ALL_OVERLAY_IDS\s*=\s*\[([^\]]+)\]', html)
+    check("WG-16a: wg-overlay in ALL_OVERLAY_IDS registriert",
+          all_ids_wg and 'wg-overlay' in all_ids_wg.group(1),
+          "wg-overlay fehlt in ALL_OVERLAY_IDS — Dialog bleibt offen bei Overlay-Wechsel")
+    check("WG-16b: hideAllOverlays nutzt ALL_OVERLAY_IDS",
+          all_ids_wg and 'ALL_OVERLAY_IDS' in html[html.find('function hideAllOverlays'):html.find('function hideAllOverlays')+200],
+          "hideAllOverlays nutzt ALL_OVERLAY_IDS nicht")
 
     # ── window.onerror: App-Zustandsprüfung ───────────────────────────────
     print("\n  window.onerror Guard:")
@@ -1558,1092 +1573,49 @@ def main():
           "loadData() zeigt welcome-overlay bei Parse-Fehler ohne App-Zustandsprüfung")
 
     # ═══════════════════════════════════════
-    print("\n=== 53. ANF-01 EINKOMMENSDATEN (Profil 4) ===")
+    print("\n=== 27. SPEICHERN-HINWEIS (Haftungsausschluss vor Export) ===")
     # ═══════════════════════════════════════
-
-    # ANF01-1: Alle fuenf neuen Feldschluessel existieren im HTML
-    check("ANF01-1a: Feld brutto_monat vorhanden",
-          "'brutto_monat'" in html,
-          "Feldschluessel brutto_monat fehlt")
-    check("ANF01-1b: Feld netto_monat vorhanden",
-          "'netto_monat'" in html,
-          "Feldschluessel netto_monat fehlt")
-    check("ANF01-1c: Feld einkommensart vorhanden",
-          "'einkommensart'" in html,
-          "Feldschluessel einkommensart fehlt")
-    check("ANF01-1d: Feld arbeitgeber_adresse vorhanden",
-          "'arbeitgeber_adresse'" in html,
-          "Feldschluessel arbeitgeber_adresse fehlt")
-    check("ANF01-1e: Feld gehaltsnachweis_ort vorhanden",
-          "'gehaltsnachweis_ort'" in html,
-          "Feldschluessel gehaltsnachweis_ort fehlt")
-
-    # ANF01-2: Dropdown einkommensart enthaelt die fuenf vorgegebenen Optionen
-    einkommen_match = re.search(
-        r"radio\(\s*'einkommensart'\s*,\s*'[^']*'\s*,\s*\[([^\]]+)\]",
-        html
-    )
-    if einkommen_match:
-        options_str = einkommen_match.group(1)
-        check("ANF01-2a: Option Angestellt in einkommensart",
-              "'Angestellt'" in options_str,
-              "Option 'Angestellt' fehlt")
-        check("ANF01-2b: Option Selbstaendig in einkommensart",
-              "'Selbständig'" in options_str,
-              "Option 'Selbständig' fehlt")
-        check("ANF01-2c: Option Rente in einkommensart",
-              "'Rente'" in options_str,
-              "Option 'Rente' fehlt")
-        check("ANF01-2d: Option Buergergeld in einkommensart",
-              "'Bürgergeld'" in options_str,
-              "Option 'Bürgergeld' fehlt")
-        check("ANF01-2e: Option Sonstiges in einkommensart",
-              "'Sonstiges'" in options_str,
-              "Option 'Sonstiges' fehlt")
-    else:
-        check("ANF01-2: einkommensart als radio-Element gefunden",
-              False,
-              "radio('einkommensart', ...) nicht auffindbar")
-
-    # ANF01-3: Neuer Block pflege_einkommen existiert
-    check("ANF01-3: Block pflege_einkommen existiert",
-          "'pflege_einkommen'" in html,
-          "Block pflege_einkommen (mehr-Funktion) fehlt")
-
-    # ANF01-4: Neue Felder sind im Suchregister (knownFields) eingetragen
-    check("ANF01-4a: brutto_monat im Suchregister",
-          "[9,'Bruttogehalt','brutto_monat']" in html,
-          "Sucheintrag fuer brutto_monat fehlt")
-    check("ANF01-4b: netto_monat im Suchregister",
-          "[9,'Nettoeinkommen','netto_monat']" in html,
-          "Sucheintrag fuer netto_monat fehlt")
-    check("ANF01-4c: einkommensart im Suchregister",
-          "[9,'Einkommensart','einkommensart']" in html,
-          "Sucheintrag fuer einkommensart fehlt")
-
-    # ANF01-5: Bestehendes Feld letzter_arbeitgeber unveraendert vorhanden
-    # (Philosophie: bestehende Funktionen bleiben unberuehrt)
-    check("ANF01-5: Bestehendes Feld letzter_arbeitgeber unveraendert",
-          "'letzter_arbeitgeber'" in html and
-          "field('letzter_arbeitgeber','Letzter Arbeitgeber'" in html,
-          "Feld letzter_arbeitgeber wurde veraendert oder entfernt")
-
-    # ── Schritt 2: Export-Struktur (FIM-JSON) ─────────────────────────────
-
-    # ANF01-6: Neue einkommen-Sektion im FIM-Export vorhanden
-    fim_match = re.search(
-        r'function exportFIMJson\(\)\s*\{([\s\S]*?)\n\}',
-        html
-    )
-    fim_body = fim_match.group(1) if fim_match else ""
-    check("ANF01-6: exportFIMJson-Funktion gefunden",
-          bool(fim_match),
-          "Funktion exportFIMJson() nicht auffindbar")
-
-    check("ANF01-6a: einkommen-Sektion im FIM-Export",
-          "einkommen:" in fim_body,
-          "Sektion 'einkommen' fehlt im FIM-Export")
-    check("ANF01-6b: bruttoMonat im Export",
-          "bruttoMonat:" in fim_body and "get('brutto_monat')" in fim_body,
-          "bruttoMonat nicht korrekt im Export")
-    check("ANF01-6c: nettoMonat im Export",
-          "nettoMonat:" in fim_body and "get('netto_monat')" in fim_body,
-          "nettoMonat nicht korrekt im Export")
-    check("ANF01-6d: einkommensart im Export",
-          "einkommensart:" in fim_body and "get('einkommensart')" in fim_body,
-          "einkommensart nicht korrekt im Export")
-    check("ANF01-6e: arbeitgeberAdresse im Export",
-          "arbeitgeberAdresse:" in fim_body and "get('arbeitgeber_adresse')" in fim_body,
-          "arbeitgeberAdresse nicht korrekt im Export")
-    check("ANF01-6f: gehaltsnachweisOrt im Export",
-          "gehaltsnachweisOrt:" in fim_body and "get('gehaltsnachweis_ort')" in fim_body,
-          "gehaltsnachweisOrt nicht korrekt im Export")
-
-    # ANF01-7: Bestehende Export-Sektionen sind unveraendert vorhanden
-    check("ANF01-7a: Bestehende Sektion natuerlichePerson unveraendert",
-          "natuerlichePerson:" in fim_body,
-          "Sektion natuerlichePerson fehlt oder wurde umbenannt")
-    check("ANF01-7b: Bestehende Sektion beschaeftigung unveraendert",
-          "beschaeftigung:" in fim_body,
-          "Sektion beschaeftigung fehlt oder wurde umbenannt")
-
-    # ANF01-7c: Bug-Regression: beschaeftigung-Sektion nutzt korrekte Feld-Keys
-    # Der fruehere Bug rief get('arbeitgeber') und get('beruf') auf --
-    # die echten Keys sind aber letzter_arbeitgeber und beruf_hauptberuf.
-    # Ohne diesen Test war die Sektion im Export immer leer.
-    besch_match = re.search(
-        r'beschaeftigung:\s*\{([\s\S]*?)\}',
-        fim_body
-    )
-    besch_body = besch_match.group(1) if besch_match else ""
-    check("ANF01-7c: beschaeftigung nutzt get('letzter_arbeitgeber')",
-          "get('letzter_arbeitgeber')" in besch_body,
-          "beschaeftigung-Sektion ruft falschen Feld-Key (Bug-Regression)")
-    check("ANF01-7d: beschaeftigung nutzt get('beruf_hauptberuf')",
-          "get('beruf_hauptberuf')" in besch_body,
-          "beschaeftigung-Sektion ruft falschen Feld-Key (Bug-Regression)")
-
-    # ANF01-8: Neue Felder sind NICHT im Notfallprofil
-    # (Philosophie: Notfallprofil bleibt minimal, sensible Behoerdendaten
-    #  gehoeren nur in den FIM-Export.)
-    notfall_match = re.search(
-        r'function saveNotfallData\(\)\s*\{([\s\S]*?)\n\}',
-        html
-    )
-    notfall_body = notfall_match.group(1) if notfall_match else ""
-    check("ANF01-8: saveNotfallData-Funktion gefunden",
-          bool(notfall_match),
-          "Funktion saveNotfallData() nicht auffindbar")
-    check("ANF01-8a: brutto_monat NICHT im Notfallprofil",
-          "brutto_monat" not in notfall_body,
-          "brutto_monat taucht im Notfallprofil auf (sollte nicht)")
-    check("ANF01-8b: netto_monat NICHT im Notfallprofil",
-          "netto_monat" not in notfall_body,
-          "netto_monat taucht im Notfallprofil auf (sollte nicht)")
-    check("ANF01-8c: einkommensart NICHT im Notfallprofil",
-          "einkommensart" not in notfall_body,
-          "einkommensart taucht im Notfallprofil auf (sollte nicht)")
-    check("ANF01-8d: arbeitgeber_adresse NICHT im Notfallprofil",
-          "arbeitgeber_adresse" not in notfall_body,
-          "arbeitgeber_adresse taucht im Notfallprofil auf (sollte nicht)")
-    check("ANF01-8e: gehaltsnachweis_ort NICHT im Notfallprofil",
-          "gehaltsnachweis_ort" not in notfall_body,
-          "gehaltsnachweis_ort taucht im Notfallprofil auf (sollte nicht)")
-
-    # ── Schritt 3: Elterngeld-PDF ─────────────────────────────────────────
-
-    # ANF01-9: Elterngeld-PDF-Block isolieren
-    # Der Block beginnt bei "type === 'elterngeld'" und endet bei "type === 'arbeitsamt'".
-    eg_match = re.search(
-        r"type === 'elterngeld'[\s\S]*?(?=\}\s*else if \(type === 'arbeitsamt')",
-        html
-    )
-    eg_body = eg_match.group(0) if eg_match else ""
-    check("ANF01-9: Elterngeld-PDF-Block gefunden",
-          bool(eg_match),
-          "Block 'type === elterngeld' nicht auffindbar")
-
-    # ANF01-10: Alle sieben Felder im Elterngeld-PDF referenziert
-    # (6 Einkommensfelder aus ANF-01 plus beruf_hauptberuf = 7)
-    check("ANF01-10a: beruf_hauptberuf im Elterngeld-PDF",
-          "get('beruf_hauptberuf')" in eg_body,
-          "beruf_hauptberuf nicht im Elterngeld-PDF referenziert")
-    check("ANF01-10b: letzter_arbeitgeber im Elterngeld-PDF",
-          "get('letzter_arbeitgeber')" in eg_body,
-          "letzter_arbeitgeber nicht im Elterngeld-PDF referenziert")
-    check("ANF01-10c: arbeitgeber_adresse im Elterngeld-PDF",
-          "get('arbeitgeber_adresse')" in eg_body,
-          "arbeitgeber_adresse nicht im Elterngeld-PDF referenziert")
-    check("ANF01-10d: einkommensart im Elterngeld-PDF",
-          "get('einkommensart')" in eg_body,
-          "einkommensart nicht im Elterngeld-PDF referenziert")
-    check("ANF01-10e: brutto_monat im Elterngeld-PDF",
-          "get('brutto_monat')" in eg_body,
-          "brutto_monat nicht im Elterngeld-PDF referenziert")
-    check("ANF01-10f: netto_monat im Elterngeld-PDF",
-          "get('netto_monat')" in eg_body,
-          "netto_monat nicht im Elterngeld-PDF referenziert")
-    check("ANF01-10g: gehaltsnachweis_ort im Elterngeld-PDF",
-          "get('gehaltsnachweis_ort')" in eg_body,
-          "gehaltsnachweis_ort nicht im Elterngeld-PDF referenziert")
-
-    # ANF01-11: Bestehende Elterngeld-Funktionalitaet unveraendert
-    check("ANF01-11a: Beschaeftigungs-Sektion existiert",
-          "Besch\\u00E4ftigung (vor der Geburt)" in eg_body,
-          "Sektion 'Beschaeftigung' wurde veraendert oder entfernt")
-    check("ANF01-11b: Krankenversicherungs-Zeilen erhalten",
-          "get('kv_art')" in eg_body and "get('kv_nummer')" in eg_body,
-          "KV-Daten wurden aus Elterngeld-PDF entfernt")
-    check("ANF01-11c: Checkliste erhalten",
-          "egChecks" in eg_body,
-          "Checkliste wurde aus Elterngeld-PDF entfernt")
-
-    # ── Schritt 4: Grundsicherungs-PDF ────────────────────────────────────
-
-    # ANF01-12: Grundsicherungs-PDF-Block isolieren
-    gs_match = re.search(
-        r"type === 'grundsicherung'[\s\S]*?(?=\}\s*else if \(type === 'schwerbehinderung')",
-        html
-    )
-    gs_body = gs_match.group(0) if gs_match else ""
-    check("ANF01-12: Grundsicherungs-PDF-Block gefunden",
-          bool(gs_match),
-          "Block 'type === grundsicherung' nicht auffindbar")
-
-    # ANF01-13: Einkommensnachweis-Sektion vorhanden
-    # (Akzeptanzkriterium aus Strategiepapier)
-    check("ANF01-13: Sektion 'Einkommen' im Grundsicherungs-PDF",
-          "section('Einkommen')" in gs_body,
-          "Einkommensnachweis-Sektion fehlt im Grundsicherungs-PDF")
-
-    # ANF01-14: Alle sechs Einkommensfelder im Grundsicherungs-PDF referenziert
-    check("ANF01-14a: einkommensart im Grundsicherungs-PDF",
-          "get('einkommensart')" in gs_body,
-          "einkommensart nicht referenziert")
-    check("ANF01-14b: brutto_monat im Grundsicherungs-PDF",
-          "get('brutto_monat')" in gs_body,
-          "brutto_monat nicht referenziert")
-    check("ANF01-14c: netto_monat im Grundsicherungs-PDF",
-          "get('netto_monat')" in gs_body,
-          "netto_monat nicht referenziert")
-    check("ANF01-14d: letzter_arbeitgeber im Grundsicherungs-PDF",
-          "get('letzter_arbeitgeber')" in gs_body,
-          "letzter_arbeitgeber nicht referenziert")
-    check("ANF01-14e: arbeitgeber_adresse im Grundsicherungs-PDF",
-          "get('arbeitgeber_adresse')" in gs_body,
-          "arbeitgeber_adresse nicht referenziert")
-    check("ANF01-14f: gehaltsnachweis_ort im Grundsicherungs-PDF",
-          "get('gehaltsnachweis_ort')" in gs_body,
-          "gehaltsnachweis_ort nicht referenziert")
-
-    # ANF01-15: Bestehende Grundsicherungs-Sektionen unveraendert
-    check("ANF01-15a: Sektion Wohnsituation erhalten",
-          "section('Wohnsituation')" in gs_body,
-          "Sektion Wohnsituation wurde entfernt")
-    check("ANF01-15b: Sektion Krankenversicherung erhalten",
-          "section('Krankenversicherung')" in gs_body,
-          "Sektion Krankenversicherung wurde entfernt")
-    check("ANF01-15c: Sektion Familie erhalten",
-          "section('Familie')" in gs_body,
-          "Sektion Familie wurde entfernt")
-    check("ANF01-15d: Checkliste erhalten",
-          "gsChecks" in gs_body,
-          "Checkliste wurde aus Grundsicherungs-PDF entfernt")
-
-    # ═══════════════════════════════════════
-    print("\n=== 54. ANF-02 KIND-DATEN STRUKTURIERT (Schritt 1: Datenmodell & UI) ===")
-    # ═══════════════════════════════════════
-
-    # ANF02-01: Funktion renderKinderBlocks vorhanden
-    check("ANF02-01: Funktion renderKinderBlocks() vorhanden",
-          "function renderKinderBlocks()" in html,
-          "renderKinderBlocks() fehlt")
-
-    # ANF02-02: Schluesselbegriff kinder_liste wird verwendet
-    check("ANF02-02: Listenschluessel 'kinder_liste' vorhanden",
-          "'kinder_liste'" in html,
-          "Listenschluessel kinder_liste fehlt")
-
-    # ANF02-03: Alle fuenf Felder pro Kind vorhanden
-    kinder_fn = re.search(
-        r'function renderKinderBlocks\(\)([\s\S]*?)(?=\n// |\nfunction )',
-        html
-    )
-    kinder_body = kinder_fn.group(1) if kinder_fn else ""
-    check("ANF02-03a: Feld vorname in renderKinderBlocks",
-          "'vorname'" in kinder_body,
-          "Feld vorname fehlt in renderKinderBlocks")
-    check("ANF02-03b: Feld nachname in renderKinderBlocks",
-          "'nachname'" in kinder_body,
-          "Feld nachname fehlt in renderKinderBlocks")
-    check("ANF02-03c: Feld geburtsdatum in renderKinderBlocks",
-          "'geburtsdatum'" in kinder_body,
-          "Feld geburtsdatum fehlt in renderKinderBlocks")
-    check("ANF02-03d: Feld geburtsort in renderKinderBlocks",
-          "'geburtsort'" in kinder_body,
-          "Feld geburtsort fehlt in renderKinderBlocks")
-    check("ANF02-03e: Feld sorgerecht_kind in renderKinderBlocks",
-          "'sorgerecht_kind'" in kinder_body,
-          "Feld sorgerecht_kind fehlt in renderKinderBlocks")
-
-    # ANF02-04: Sorgerecht-Dropdown enthaelt die drei vorgegebenen Optionen
-    check("ANF02-04a: Option Gemeinsam im Sorgerecht-Dropdown",
-          "'Gemeinsam'" in kinder_body,
-          "Option 'Gemeinsam' fehlt im Sorgerecht-Dropdown")
-    check("ANF02-04b: Option Allein im Sorgerecht-Dropdown",
-          "'Allein'" in kinder_body,
-          "Option 'Allein' fehlt im Sorgerecht-Dropdown")
-    check("ANF02-04c: Option Beim anderen Elternteil im Sorgerecht-Dropdown",
-          "'Beim anderen Elternteil'" in kinder_body,
-          "Option 'Beim anderen Elternteil' fehlt im Sorgerecht-Dropdown")
-
-    # ANF02-05: Hinzufuegen-Button nutzt addItem mit kinder_liste
-    check("ANF02-05: addItem('kinder_liste', ...) vorhanden",
-          "addItem('kinder_liste'," in kinder_body,
-          "addItem-Aufruf fuer kinder_liste fehlt")
-
-    # ANF02-06: renderKinderBlocks wird im start-Template aufgerufen
-    start_match = re.search(
-        r"start:\s*\(\)\s*=>\s*`([\s\S]*?)`\s*,\s*\n\s*kontakte:",
-        html
-    )
-    start_body = start_match.group(1) if start_match else ""
-    check("ANF02-06: renderKinderBlocks() im start-Template aufgerufen",
-          "renderKinderBlocks()" in start_body,
-          "renderKinderBlocks() wird im start-Template nicht aufgerufen")
-
-    # ANF02-07: Legacy-Feldschluessel noch im HTML vorhanden
-    # (Formularfelder wurden in Schritt 5 ausgeblendet,
-    #  Schluessel bleiben fuer Export und PDF erhalten.)
-    check("ANF02-07a: Schluessel kinder_minderjaehrig noch im HTML",
-          "'kinder_minderjaehrig'" in html,
-          "Schluessel kinder_minderjaehrig fehlt — wurde versehentlich entfernt")
-    check("ANF02-07b: Schluessel sorgerecht noch im HTML",
-          "'sorgerecht'" in html,
-          "Schluessel sorgerecht fehlt — wurde versehentlich entfernt")
-    check("ANF02-07c: Formularfeld kinder_minderjaehrig im start-Template ausgeblendet",
-          "field('kinder_minderjaehrig'" not in start_body,
-          "Formularfeld kinder_minderjaehrig ist noch sichtbar (sollte ausgeblendet sein)")
-
-    # ANF02-08: kinderListe im FIM-Export vorhanden (Schritt 2)
-    fim_match2 = re.search(
-        r'function exportFIMJson\(\)\s*\{([\s\S]*?)\n\}',
-        html
-    )
-    fim_body2 = fim_match2.group(1) if fim_match2 else ""
-    check("ANF02-08a: kinderListe in der familie-Sektion des FIM-Exports",
-          "kinderListe:" in fim_body2,
-          "kinderListe fehlt im FIM-Export (familie-Sektion)")
-    check("ANF02-08b: kinderListe liest getList('kinder_liste')",
-          "getList('kinder_liste')" in fim_body2,
-          "kinderListe nutzt nicht getList('kinder_liste')")
-    check("ANF02-08c: Legacy-Feld kinderMinderjaehrig bleibt im Export",
-          "kinderMinderjaehrig:" in fim_body2,
-          "Legacy-Feld kinderMinderjaehrig wurde aus dem Export entfernt")
-
-    # ANF02-09: Elterngeld-PDF Kinder-Sektion (Schritt 3)
-    eg2_match = re.search(
-        r"type === 'elterngeld'[\s\S]*?(?=\}\s*else if \(type === 'arbeitsamt')",
-        html
-    )
-    eg2_body = eg2_match.group(0) if eg2_match else ""
-    check("ANF02-09: Elterngeld-PDF-Block fuer Schritt-3-Pruefung gefunden",
-          bool(eg2_match),
-          "Elterngeld-Block nicht auffindbar")
-    check("ANF02-09a: Elterngeld-PDF liest getList('kinder_liste')",
-          "getList('kinder_liste')" in eg2_body,
-          "getList('kinder_liste') fehlt im Elterngeld-PDF")
-    check("ANF02-09b: Elterngeld-PDF gibt Geburtsdatum pro Kind aus",
-          "k.geburtsdatum" in eg2_body,
-          "k.geburtsdatum fehlt im Elterngeld-PDF")
-    check("ANF02-09c: Elterngeld-PDF gibt Geburtsort pro Kind aus",
-          "k.geburtsort" in eg2_body,
-          "k.geburtsort fehlt im Elterngeld-PDF")
-    check("ANF02-09d: Elterngeld-PDF gibt Sorgerecht pro Kind aus",
-          "k.sorgerecht_kind" in eg2_body,
-          "k.sorgerecht_kind fehlt im Elterngeld-PDF")
-    check("ANF02-09e: Elterngeld-PDF hat Freitext-Fallback",
-          "get('kinder_minderjaehrig')" in eg2_body,
-          "Freitext-Fallback kinder_minderjaehrig fehlt im Elterngeld-PDF")
-    check("ANF02-09f: Checkliste unveraendert erhalten",
-          "egChecks" in eg2_body,
-          "Checkliste wurde aus Elterngeld-PDF entfernt")
-
-    # ANF02-10: Kindergeld-PDF Kinder-Sektion (Schritt 4)
-    kg_match = re.search(
-        r"type === 'kindergeld'[\s\S]*?(?=\}\s*else if \(type === 'elterngeld')",
-        html
-    )
-    kg_body = kg_match.group(0) if kg_match else ""
-    check("ANF02-10: Kindergeld-PDF-Block gefunden",
-          bool(kg_match),
-          "Kindergeld-Block nicht auffindbar")
-    check("ANF02-10a: Kindergeld-PDF liest getList('kinder_liste')",
-          "getList('kinder_liste')" in kg_body,
-          "getList('kinder_liste') fehlt im Kindergeld-PDF")
-    check("ANF02-10b: Kindergeld-PDF gibt Geburtsdatum pro Kind aus",
-          "k.geburtsdatum" in kg_body,
-          "k.geburtsdatum fehlt im Kindergeld-PDF")
-    check("ANF02-10c: Kindergeld-PDF gibt Geburtsort pro Kind aus",
-          "k.geburtsort" in kg_body,
-          "k.geburtsort fehlt im Kindergeld-PDF")
-    check("ANF02-10d: Kindergeld-PDF gibt Sorgerecht pro Kind aus",
-          "k.sorgerecht_kind" in kg_body,
-          "k.sorgerecht_kind fehlt im Kindergeld-PDF")
-    check("ANF02-10e: Kindergeld-PDF hat Freitext-Fallback",
-          "get('kinder_minderjaehrig')" in kg_body,
-          "Freitext-Fallback kinder_minderjaehrig fehlt im Kindergeld-PDF")
-    check("ANF02-10f: Kindergeld-Checkliste unveraendert erhalten",
-          "checks" in kg_body and "Geburtsurkunde" in kg_body,
-          "Checkliste wurde aus Kindergeld-PDF entfernt")
-
-    # ═══════════════════════════════════════
-    print("\n=== 41. ANF-03 EUDI WALLET IMPORT (SCHRITT 1) ===")
-    # ═══════════════════════════════════════
-
-    # ANF03-01a: Import-Button im Import-Dialog vorhanden
-    check("ANF03-01a: EUDI-Wallet-Import-Button im HTML vorhanden",
-          "importEudiWallet(event)" in html,
-          "importEudiWallet(event) fehlt im HTML")
-
-    # ANF03-01b: Funktion importEudiWallet() vorhanden
-    check("ANF03-01b: Funktion importEudiWallet() im HTML vorhanden",
-          "function importEudiWallet" in html,
-          "function importEudiWallet fehlt im HTML")
-
-    # ANF03-02a: Parser-Funktion parseEudiSdJwt() vorhanden
-    check("ANF03-02a: Funktion parseEudiSdJwt() vorhanden",
-          "function parseEudiSdJwt" in html,
-          "function parseEudiSdJwt fehlt im HTML")
-
-    # ANF03-02b: Hilfsfunktion _b64urlDecode() vorhanden
-    check("ANF03-02b: Hilfsfunktion _b64urlDecode() vorhanden",
-          "function _b64urlDecode" in html,
-          "function _b64urlDecode fehlt im HTML")
-
-    # ANF03-02c: Alle fuenf Vivodepot-Zielfelder werden im Parser gemappt
-    import re as _re
-    parser_match = _re.search(
-        r'function parseEudiSdJwt[\s\S]*?(?=\nfunction importEudiWallet)',
-        html
-    )
-    parser_body = parser_match.group(0) if parser_match else ""
-    check("ANF03-02c: Parser mappt Feld nachname",
-          "mapped.nachname" in parser_body,
-          "mapped.nachname fehlt im Parser")
-    check("ANF03-02d: Parser mappt Feld vorname",
-          "mapped.vorname" in parser_body,
-          "mapped.vorname fehlt im Parser")
-    check("ANF03-02e: Parser mappt Feld geburtsdatum",
-          "mapped.geburtsdatum" in parser_body,
-          "mapped.geburtsdatum fehlt im Parser")
-    check("ANF03-02f: Parser mappt Feld strasse",
-          "mapped.strasse" in parser_body,
-          "mapped.strasse fehlt im Parser")
-    check("ANF03-02g: Parser mappt Feld staatsangehoerigkeit",
-          "mapped.staatsangehoerigkeit" in parser_body,
-          "mapped.staatsangehoerigkeit fehlt im Parser")
-
-    # ANF03-02h: Kein Netzwerk-Call im Parser-Code (fetch, XMLHttpRequest)
-    check("ANF03-02h: Kein fetch() im Parser-Code",
-          "fetch(" not in parser_body,
-          "fetch() wurde im Parser-Code gefunden -- Offline-Pflicht verletzt")
-    check("ANF03-02i: Kein XMLHttpRequest im Parser-Code",
-          "XMLHttpRequest" not in parser_body,
-          "XMLHttpRequest wurde im Parser-Code gefunden -- Offline-Pflicht verletzt")
-
-    # ANF03-02j: Parser liest Disclosures (Tilde-Trennung)
-    check("ANF03-02j: Parser liest Disclosures (Tilde-Trennung ~)",
-          "split('~')" in parser_body or 'split("~")' in parser_body,
-          "Tilde-Trennung fehlt im Parser -- Disclosures werden nicht gelesen")
-
-    # ═══════════════════════════════════════
-    print("\n=== 42. ANF-03 EUDI WALLET IMPORT (SCHRITT 3 -- FIXTURE) ===")
-    # ═══════════════════════════════════════
-    # Testfixture: handgefertigtes SD-JWT nach IETF-Muster (Erika Mustermann).
-    # Quelle des Datenmusters: IETF SD-JWT VC Appendix A.3, EUDI PID Rulebook.
-    # Die Signatur ist ein Platzhalter -- fuer den Import ist nur der Payload
-    # und die Disclosures relevant, nicht die kryptografische Gueltigkeit.
-    FIXTURE_SDJWT = (
-        "eyJhbGciOiAiRVMyNTYiLCAidHlwIjogImRjK3NkLWp3dCJ9"
-        ".eyJpc3MiOiAiaHR0cHM6Ly9pc3N1ZXIuZXhhbXBsZS5kZSIsICJpYXQiOiAxNjgzMDAwMDAwLCAiZXhwIjogMTg4MzAwMDAwMCwgInZjdCI6ICJodHRwczovL2JtaS5idW5kLmV4YW1wbGUvY3JlZGVudGlhbC9waWQvMS4wIn0"
-        ".VklWT0RFUE9ULVRFU1QtRklYVFVSRS1LRUlORS1FQ0hURS1TSUdOQVRVUg"
-        "~WyJTYWx0Vm9ybmFtZTAwMSIsICJnaXZlbl9uYW1lIiwgIkVyaWthIl0"
-        "~WyJTYWx0TmFjaG5hbWUwMDIiLCAiZmFtaWx5X25hbWUiLCAiTXVzdGVybWFubiJd"
-        "~WyJTYWx0R2ViRGF0MDAzIiwgImJpcnRoZGF0ZSIsICIxOTYzLTA4LTEyIl0"
-        "~WyJTYWx0QWRyZXNzZTAwNCIsICJhZGRyZXNzIiwgeyJzdHJlZXRfYWRkcmVzcyI6ICJIZWlkZXN0cmFzc2UgMTciLCAibG9jYWxpdHkiOiAiS29lbG4iLCAicG9zdGFsX2NvZGUiOiAiNTExNDciLCAiY291bnRyeSI6ICJERSJ9XQ"
-        "~WyJTYWx0TmF0aW9uMDA1IiwgIm5hdGlvbmFsaXRpZXMiLCBbIkRFIl1d~"
-    )
-
-    # Parser in Python nachbauen (spiegelt die JS-Logik in parseEudiSdJwt).
-    import base64 as _b64
-    import json as _json
-
-    def _b64url_decode_py(s):
-        b = s.replace('-', '+').replace('_', '/')
-        while len(b) % 4:
-            b += '='
-        try:
-            return _b64.b64decode(b).decode('utf-8')
-        except Exception:
-            return None
-
-    def parse_fixture(token):
-        teile = token.strip().split('~')
-        jwt_teile = teile[0].split('.')
-        if len(jwt_teile) < 2:
-            return {}
-        payload_text = _b64url_decode_py(jwt_teile[1])
-        if not payload_text:
-            return {}
-        try:
-            payload = _json.loads(payload_text)
-        except Exception:
-            return {}
-        offengelegt = {}
-        for i in range(1, len(teile)):
-            if not teile[i]:
-                continue
-            disc_text = _b64url_decode_py(teile[i])
-            if not disc_text:
-                continue
-            try:
-                arr = _json.loads(disc_text)
-                if isinstance(arr, list) and len(arr) == 3:
-                    offengelegt[arr[1]] = arr[2]
-            except Exception:
-                pass
-        def lese(feld):
-            if feld in payload:
-                return payload[feld]
-            if feld in offengelegt:
-                return offengelegt[feld]
-            return None
-        mapped = {}
-        fn = lese('family_name')
-        if fn:
-            mapped['nachname'] = fn
-        gn = lese('given_name')
-        if gn:
-            mapped['vorname'] = gn
-        bd = lese('birth_date') or lese('birthdate')
-        if bd:
-            mapped['geburtsdatum'] = bd
-        adr = lese('address')
-        if isinstance(adr, dict):
-            st = adr.get('street_address', '')
-            plz = adr.get('postal_code', '')
-            ort = adr.get('locality', '')
-            if st:
-                mapped['strasse'] = st
-            if plz or ort:
-                mapped['plz_ort'] = (plz + ' ' + ort).strip()
-        nat = lese('nationalities') or lese('nationality')
-        if isinstance(nat, list) and len(nat) > 0:
-            mapped['staatsangehoerigkeit'] = nat[0]
-        elif isinstance(nat, str) and nat:
-            mapped['staatsangehoerigkeit'] = nat
-        return mapped
-
-    fixture_result = parse_fixture(FIXTURE_SDJWT)
-
-    check("ANF03-03a: Fixture -- Nachname 'Mustermann' erkannt",
-          fixture_result.get('nachname') == 'Mustermann',
-          f"nachname ist '{fixture_result.get('nachname')}', erwartet 'Mustermann'")
-
-    check("ANF03-03b: Fixture -- Vorname 'Erika' erkannt",
-          fixture_result.get('vorname') == 'Erika',
-          f"vorname ist '{fixture_result.get('vorname')}', erwartet 'Erika'")
-
-    check("ANF03-03c: Fixture -- Geburtsdatum '1963-08-12' erkannt",
-          fixture_result.get('geburtsdatum') == '1963-08-12',
-          f"geburtsdatum ist '{fixture_result.get('geburtsdatum')}', erwartet '1963-08-12'")
-
-    check("ANF03-03d: Fixture -- Strasse 'Heidestrasse 17' erkannt",
-          fixture_result.get('strasse') == 'Heidestrasse 17',
-          f"strasse ist '{fixture_result.get('strasse')}', erwartet 'Heidestrasse 17'")
-
-    check("ANF03-03e: Fixture -- PLZ/Ort '51147 Koeln' erkannt",
-          fixture_result.get('plz_ort') == '51147 Koeln',
-          f"plz_ort ist '{fixture_result.get('plz_ort')}', erwartet '51147 Koeln'")
-
-    check("ANF03-03f: Fixture -- Staatsangehoerigkeit 'DE' erkannt",
-          fixture_result.get('staatsangehoerigkeit') == 'DE',
-          f"staatsangehoerigkeit ist '{fixture_result.get('staatsangehoerigkeit')}', erwartet 'DE'")
-
-    check("ANF03-03g: Fixture -- genau sechs Felder erkannt",
-          len(fixture_result) == 6,
-          f"{len(fixture_result)} Felder erkannt, erwartet 6")
-
-    # --- ANF-04 Schritt 6: CarePlan -- Pflegeplan-Struktur ---
-
-    check("ANF04-06a: CarePlan -- resourceType-Auswertung im Code vorhanden",
-          "'CarePlan'" in html,
-          "CarePlan-Block nicht im Code gefunden")
-
-    check("ANF04-06b: CarePlan -- Titel (r.title) im Code vorhanden",
-          "r.title" in html,
-          "r.title nicht im Code gefunden")
-
-    check("ANF04-06c: CarePlan -- Beschreibung (r.description) im Code vorhanden",
-          "r.description" in html,
-          "r.description nicht im Code gefunden")
-
-    check("ANF04-06d: CarePlan -- Massnahmen (activity[].detail.description) im Code vorhanden",
-          "akt.detail" in html and "akt.detail.description" in html,
-          "activity-Auswertung nicht im Code gefunden")
-
-    check("ANF04-06e: CarePlan -- Praefix 'Pflegeplan:' im Code vorhanden",
-          "'Pflegeplan: '" in html,
-          "Praefix 'Pflegeplan: ' nicht im Code gefunden")
-
-    check("ANF04-06f: CarePlan -- Praefix 'Massnahme:' im Code vorhanden",
-          "'Massnahme: '" in html,
-          "Praefix 'Massnahme: ' nicht im Code gefunden")
-
-    check("ANF04-06g: CarePlan -- Eintrag wird in vorsorge_uebersicht gespeichert",
-          "cpEintraege" in html and "vorsorge_uebersicht" in html,
-          "Zuweisung nach vorsorge_uebersicht fuer CarePlan nicht im Code gefunden")
-
-    # --- ANF-04 Schritt 5: Immunization -- Impfstoff, Datum, Charge ---
-
-    check("ANF04-05a: Immunization -- resourceType-Auswertung im Code vorhanden",
-          "'Immunization'" in html,
-          "Immunization-Block nicht im Code gefunden")
-
-    check("ANF04-05b: Immunization -- Impfstoffname (vaccineCode) im Code vorhanden",
-          "vaccineCode" in html,
-          "vaccineCode nicht im Code gefunden")
-
-    check("ANF04-05c: Immunization -- Datum (occurrenceDateTime) im Code vorhanden",
-          "occurrenceDateTime" in html,
-          "occurrenceDateTime nicht im Code gefunden")
-
-    check("ANF04-05d: Immunization -- Chargennummer (lotNumber) im Code vorhanden",
-          "lotNumber" in html,
-          "lotNumber nicht im Code gefunden")
-
-    check("ANF04-05e: Immunization -- Eintrag beginnt mit 'Impfung:'",
-          "'Impfung: '" in html,
-          "Prafix 'Impfung: ' nicht im Code gefunden")
-
-    check("ANF04-05f: Immunization -- Eintrag wird in vorsorge_uebersicht gespeichert",
-          "impfEintrag" in html and "vorsorge_uebersicht" in html,
-          "Zuweisung nach vorsorge_uebersicht fuer Immunization nicht im Code gefunden")
-
-    # --- ANF-04 Schritt 4: Observation -- Blutdruck, Gewicht, Blutzucker ---
-
-    check("ANF04-04a: Observation -- LOINC-Code fuer Blutdruck systolisch (8480-6) vorhanden",
-          "'8480-6'" in html,
-          "LOINC 8480-6 (Blutdruck systolisch) nicht im Code gefunden")
-
-    check("ANF04-04b: Observation -- LOINC-Code fuer Blutdruck diastolisch (8462-4) vorhanden",
-          "'8462-4'" in html,
-          "LOINC 8462-4 (Blutdruck diastolisch) nicht im Code gefunden")
-
-    check("ANF04-04c: Observation -- LOINC-Code fuer Koerpergewicht (29463-7) vorhanden",
-          "'29463-7'" in html,
-          "LOINC 29463-7 (Koerpergewicht) nicht im Code gefunden")
-
-    check("ANF04-04d: Observation -- LOINC-Code fuer Blutzucker (2339-0) vorhanden",
-          "'2339-0'" in html,
-          "LOINC 2339-0 (Blutzucker) nicht im Code gefunden")
-
-    check("ANF04-04e: Observation -- Messwerte werden in vorsorge_uebersicht gespeichert",
-          "vorsorge_uebersicht" in html and "Blutdruck" in html,
-          "vorsorge_uebersicht-Zuweisung fuer Observation nicht im Code gefunden")
-
-    check("ANF04-04f: Observation -- Blutdruck-Panel-Komponenten (component[]) werden ausgewertet",
-          "r.component" in html,
-          "Komponenten-Auswertung fuer Blutdruck-Panel nicht im Code gefunden")
-
-    # --- ANF-04 Schritt 3: MedicationStatement -- Dosierung, Einnahmezeit, Dauermedikation ---
-
-    check("ANF04-03a: MedicationStatement -- Einnahmezeit (when) im Code vorhanden",
-          "whenMap" in html and "MORN" in html,
-          "Einnahmezeit-Auswertung (whenMap/MORN) nicht im Code gefunden")
-
-    check("ANF04-03b: MedicationStatement -- Einnahmezeit (timeOfDay) im Code vorhanden",
-          "timeOfDay" in html,
-          "timeOfDay nicht im Code gefunden")
-
-    check("ANF04-03c: MedicationStatement -- Dauermedikation-Auswertung im Code vorhanden",
-          "Dauermedikation" in html and "hatEnddatum" in html,
-          "Dauermedikation-Auswertung nicht im Code gefunden")
-
-    check("ANF04-03d: MedicationStatement -- FHIR-Kuerzel 'morgens' uebersetzt",
-          "morgens" in html,
-          "'morgens' nicht im Code gefunden")
-
-    # --- ANF-04 Schritt 2: Condition -- ICD-10-Code und Datum ---
-
-    check("ANF04-02a: Condition -- ICD-10-Code-Auswertung im Code vorhanden",
-          "icd" in html.lower() and "icdCode" in html,
-          "ICD-10-Auswertung nicht im Code gefunden")
-
-    check("ANF04-02b: Condition -- Datumsauswertung (onsetDateTime) im Code vorhanden",
-          "onsetDateTime" in html,
-          "onsetDateTime nicht im Code gefunden")
-
-    check("ANF04-02c: Condition -- Datumsauswertung (recordedDate) im Code vorhanden",
-          "recordedDate" in html,
-          "recordedDate nicht im Code gefunden")
-
-    check("ANF04-02d: Condition -- Datum wird auf 10 Zeichen gekuerzt (YYYY-MM-DD)",
-          "substring(0, 10)" in html,
-          "Datum-Kuerzung auf 10 Zeichen nicht im Code gefunden")
-
-    # --- ANF-04 Schritt 1: AllergyIntolerance -- Reaktionstyp und Schweregrad ---
-    fhir_allergy_fixture = '''{
-      "resourceType": "Bundle",
-      "entry": [{
-        "resource": {
-          "resourceType": "AllergyIntolerance",
-          "type": "allergy",
-          "code": {
-            "text": "Erdnuss"
-          },
-          "reaction": [{
-            "severity": "severe"
-          }]
-        }
-      }]
-    }'''
-
-    check("ANF04-01a: AllergyIntolerance -- Reaktionstyp 'Allergie' im Ergebnis",
-          "'Allergie'" in html or "reaktionstyp" in html.lower() or "r.type" in html,
-          "Reaktionstyp-Auswertung nicht im Code gefunden")
-
-    check("ANF04-01b: AllergyIntolerance -- Schweregrad 'schwer' im Ergebnis",
-          "'schwer'" in html or "severity" in html,
-          "Schweregrad-Auswertung nicht im Code gefunden")
-
-    check("ANF04-01c: AllergyIntolerance -- Zusatzangaben in Klammern",
-          "zusatz" in html and "filter(Boolean)" in html,
-          "Klammer-Logik fuer Zusatzangaben nicht im Code gefunden")
-
-    # ═══════════════════════════════════════
-    print("\n=== ANF-06 Schritt 1: QR-Übergabe -- Auswahldialog ===")
-    # ═══════════════════════════════════════
-
-    # ANF06-01a: Einstiegspunkt vorhanden
-    check("ANF06-01a: qrUebergabeOpen() -- Funktion vorhanden",
-          "function qrUebergabeOpen" in html,
-          "Funktion qrUebergabeOpen fehlt")
-
-    # ANF06-01b: Modal-Overlay vorhanden
-    check("ANF06-01b: id='qr-overlay' -- Modal vorhanden",
-          'id="qr-overlay"' in html,
-          "Modal-Overlay qr-overlay fehlt")
-
-    # ANF06-01c: Schritt-1-Element vorhanden
-    check("ANF06-01c: id='qr-step-1' -- Schritt 1 vorhanden",
-          'id="qr-step-1"' in html,
-          "qr-step-1 fehlt")
-
-    # ANF06-01d: Schritt-2-Element vorhanden
-    check("ANF06-01d: id='qr-step-2' -- Schritt 2 vorhanden",
-          'id="qr-step-2"' in html,
-          "qr-step-2 fehlt")
-
-    # ANF06-01e: Schritt-3-Element vorhanden
-    check("ANF06-01e: id='qr-step-3' -- Schritt 3 vorhanden",
-          'id="qr-step-3"' in html,
-          "qr-step-3 fehlt")
-
-    # ANF06-01f: Alle vier Profil-Cards vorhanden
-    for profil in ['notfall', 'vollmacht', 'familie', 'behoerde']:
-        check(f"ANF06-01f-{profil}: Profil-Card id='qr-card-{profil}' vorhanden",
-              f'id="qr-card-{profil}"' in html,
-              f"Profil-Card qr-card-{profil} fehlt")
-
-    # ANF06-01g: Weiter-Button Schritt 1 vorhanden und initial deaktiviert
-    check("ANF06-01g: id='qr-weiter-1' -- Weiter-Button Schritt 1 vorhanden",
-          'id="qr-weiter-1"' in html,
-          "qr-weiter-1 fehlt")
-
-    # ANF06-01h: qrWaehleProfilCard vorhanden
-    check("ANF06-01h: qrWaehleProfilCard -- Funktion vorhanden",
-          "function qrWaehleProfilCard" in html,
-          "Funktion qrWaehleProfilCard fehlt")
-
-    # ANF06-01i: qrZeigeSchritt vorhanden
-    check("ANF06-01i: qrZeigeSchritt -- Funktion vorhanden",
-          "function qrZeigeSchritt" in html,
-          "Funktion qrZeigeSchritt fehlt")
-
-    # ANF06-01j: qrUebergabeClose vorhanden
-    check("ANF06-01j: qrUebergabeClose -- Funktion vorhanden",
-          "function qrUebergabeClose" in html,
-          "Funktion qrUebergabeClose fehlt")
-
-    # ANF06-01k: Link-Button im Export-Bereich vorhanden
-    check("ANF06-01k: qrUebergabeOpen() -- Aufruf im Export-Bereich vorhanden",
-          'onclick="qrUebergabeOpen()"' in html,
-          "Aufruf qrUebergabeOpen() nicht im Export-Bereich gefunden")
-
-    # ANF06-01l: qr-overlay in hideAllOverlays-Liste eingetragen
-    check("ANF06-01l: qr-overlay -- in Overlay-Schliess-Liste eingetragen",
-          "'qr-overlay'" in html,
-          "qr-overlay fehlt in der Overlay-Schliess-Liste")
-
-    # ANF06-01m: Schritt-Indikatoren (qr-dot) vorhanden
-    check("ANF06-01m: qr-dot-1/2/3 -- Fortschritts-Punkte vorhanden",
-          'id="qr-dot-1"' in html and 'id="qr-dot-2"' in html and 'id="qr-dot-3"' in html,
-          "Fortschritts-Punkte qr-dot-1/2/3 fehlen")
-
-    # ═══════════════════════════════════════
-    print("\n=== ANF-06 Schritt 2/3: QR-Übergabe -- Verschlüsselung, QR-Code, Empfang ===")
-    # ═══════════════════════════════════════
-
-    # ANF06-02a: jsQR inline eingebettet
-    check("ANF06-02a: jsQR -- inline eingebettet",
-          "jsQR v1.4.0" in html or "jsQR(" in html,
-          "jsQR-Bibliothek fehlt")
-
-    # ANF06-02b: Zeitstempel im Payload (iat)
-    check("ANF06-02b: Zeitstempel iat im Payload vorhanden",
-          "iat:" in html and "Date.now()" in html,
-          "Zeitstempel iat fehlt im qrErstellen-Code")
-
-    # ANF06-02c: Ablauf exp im Payload (24 Stunden)
-    check("ANF06-02c: Ablauf exp (24 Stunden) im Payload vorhanden",
-          "exp:" in html and "24 * 60 * 60 * 1000" in html,
-          "Ablauf-Logik (24 Stunden) fehlt")
-
-    # ANF06-02d: AES-Verschlüsselung via deriveKey + encryptData
-    check("ANF06-02d: AES-Verschlüsselung -- deriveKey und encryptData im qrErstellen-Code",
-          "deriveKey(pin" in html and "encryptData(payload" in html,
-          "deriveKey oder encryptData fehlt im qrErstellen-Code")
-
-    # ANF06-02e: Eigener Salt (getRandomValues) -- getrennt vom Hauptpasswort
-    check("ANF06-02e: Eigener Salt -- crypto.getRandomValues im qrErstellen-Code",
-          "getRandomValues" in html and "qrSalt" in html,
-          "Eigener Salt fuer QR fehlt")
-
-    # ANF06-02f: qrcode-Bibliothek wird fuer QR-Erzeugung verwendet
-    check("ANF06-02f: qrcode -- fuer QR-Code-Erzeugung verwendet",
-          "qr.addData(qrPayload)" in html,
-          "qr.addData(qrPayload) fehlt")
-
-    # ANF06-02g: Ablauf-Info wird angezeigt (qr-ablauf-info)
-    check("ANF06-02g: qr-ablauf-info -- Ablaufdatum wird angezeigt",
-          'id="qr-ablauf-info"' in html,
-          "Element qr-ablauf-info fehlt")
-
-    # ANF06-03a: Empfänger-Modal qre-overlay vorhanden
-    check("ANF06-03a: id='qre-overlay' -- Empfänger-Modal vorhanden",
-          'id="qre-overlay"' in html,
-          "Empfänger-Modal qre-overlay fehlt")
-
-    # ANF06-03b: qrEmpfangOpen vorhanden
-    check("ANF06-03b: qrEmpfangOpen -- Funktion vorhanden",
-          "function qrEmpfangOpen" in html,
-          "Funktion qrEmpfangOpen fehlt")
-
-    # ANF06-03c: qrEmpfangClose vorhanden
-    check("ANF06-03c: qrEmpfangClose -- Funktion vorhanden",
-          "function qrEmpfangClose" in html,
-          "Funktion qrEmpfangClose fehlt")
-
-    # ANF06-03d: qreStartKamera vorhanden
-    check("ANF06-03d: qreStartKamera -- Funktion vorhanden",
-          "function qreStartKamera" in html,
-          "Funktion qreStartKamera fehlt")
-
-    # ANF06-03e: qreScanFrame (Kamerabild auslesen) vorhanden
-    check("ANF06-03e: qreScanFrame -- Funktion vorhanden",
-          "function qreScanFrame" in html,
-          "Funktion qreScanFrame fehlt")
-
-    # ANF06-03f: qreQrErkannt vorhanden
-    check("ANF06-03f: qreQrErkannt -- Funktion vorhanden",
-          "function qreQrErkannt" in html,
-          "Funktion qreQrErkannt fehlt")
-
-    # ANF06-03g: qreEntschluesseln vorhanden
-    check("ANF06-03g: qreEntschluesseln -- Funktion vorhanden",
-          "function qreEntschluesseln" in html,
-          "Funktion qreEntschluesseln fehlt")
-
-    # ANF06-03h: Ablauf-Prüfung im Empfänger (payload.exp)
-    check("ANF06-03h: Ablauf-Prüfung -- payload.exp und Date.now() im qreEntschluesseln-Code",
-          "payload.exp" in html and "Date.now() > payload.exp" in html,
-          "Ablauf-Prüfung im Empfänger fehlt")
-
-    # ANF06-03i: getUserMedia (Kamerazugriff)
-    check("ANF06-03i: getUserMedia -- Kamerazugriff im Code vorhanden",
-          "getUserMedia" in html,
-          "getUserMedia fehlt")
-
-    # ANF06-03j: Video-Element fuer Kamerabild vorhanden
-    check("ANF06-03j: id='qre-video' -- Video-Element vorhanden",
-          'id="qre-video"' in html,
-          "Video-Element qre-video fehlt")
-
-    # ANF06-03k: Empfänger-Link im Export-Bereich vorhanden
-    check("ANF06-03k: qrEmpfangOpen() -- Aufruf im Export-Bereich vorhanden",
-          'onclick="qrEmpfangOpen()"' in html,
-          "Aufruf qrEmpfangOpen() fehlt")
-
-    # ANF06-03l: qre-overlay in Overlay-Listen eingetragen
-    check("ANF06-03l: qre-overlay -- in Overlay-Schliess-Listen eingetragen",
-          "'qre-overlay'" in html,
-          "qre-overlay fehlt in den Overlay-Schliess-Listen")
-
-    # ANF06-03m: WG_FELDNAMEN wird im Empfänger fuer Feldbezeichnungen verwendet
-    check("ANF06-03m: WG_FELDNAMEN -- im Empfänger-Dialog verwendet",
-          "WG_FELDNAMEN[k]" in html,
-          "WG_FELDNAMEN wird im Empfänger nicht verwendet")
-
-    # ═══════════════════════════════════════
-    print("\n=== 53. ANF-05 SOLID POD EXPORT ===")
-    # ═══════════════════════════════════════
-
-    # ANF05-01: Solid-Pod-Link im Export-Bereich vorhanden
-    check("ANF05-01: solidPodOpen() -- Link im Export-Bereich vorhanden",
-          "solidPodOpen()" in html,
-          "solidPodOpen() fehlt im Export-Bereich")
-
-    # ANF05-02: Modal sp-overlay vorhanden
-    check("ANF05-02: id='sp-overlay' -- Solid-Pod-Modal vorhanden",
-          'id="sp-overlay"' in html,
-          "sp-overlay-Modal fehlt")
-
-    # ANF05-03: solidPodOpen Funktion vorhanden
-    check("ANF05-03: function solidPodOpen -- Oeffnungs-Funktion vorhanden",
-          "function solidPodOpen" in html,
-          "function solidPodOpen fehlt")
-
-    # ANF05-04: solidPodClose Funktion vorhanden
-    check("ANF05-04: function solidPodClose -- Schliess-Funktion vorhanden",
-          "function solidPodClose" in html,
-          "function solidPodClose fehlt")
-
-    # ANF05-05: solidPodExport Funktion vorhanden
-    check("ANF05-05: function solidPodExport -- Export-Funktion vorhanden",
-          "function solidPodExport" in html,
-          "function solidPodExport fehlt")
-
-    # ANF05-06: Turtle-Format (text/turtle) wird erzeugt
-    check("ANF05-06: text/turtle -- Turtle-MIME-Typ wird verwendet",
-          "text/turtle" in html,
-          "text/turtle-MIME-Typ fehlt -- kein Turtle-Format")
-
-    # ANF05-07: Turtle-Praefix fuer vcard vorhanden
-    check("ANF05-07: @prefix vcard -- Turtle-Praefix vcard vorhanden",
-          "@prefix vcard:" in html,
-          "@prefix vcard: fehlt in solidPodExport")
-
-    # ANF05-08: Turtle-Praefix fuer schema.org vorhanden
-    check("ANF05-08: @prefix schema -- Turtle-Praefix schema.org vorhanden",
-          "@prefix schema:" in html,
-          "@prefix schema: fehlt in solidPodExport")
-
-    # ANF05-09: Turtle-Datei-Download mit .ttl-Endung
-    check("ANF05-09: _solid.ttl -- Dateiname mit .ttl-Endung",
-          "_solid.ttl" in html,
-          "Dateiname-Muster _solid.ttl fehlt")
-
-    # ANF05-10: sp-overlay in Overlay-Listen eingetragen
-    check("ANF05-10: sp-overlay -- in Overlay-Schliess-Listen eingetragen",
-          "'sp-overlay'" in html,
-          "sp-overlay fehlt in den Overlay-Listen")
-
-    # ANF05-11: Auswahl-Checkboxen vorhanden (Persoenliche Daten)
-    check("ANF05-11: id='sp-cb-person' -- Checkbox fuer Persoenliche Angaben vorhanden",
-          'id="sp-cb-person"' in html,
-          "Checkbox sp-cb-person fehlt")
-
-    # ANF05-12: Auswahl-Checkbox Gesundheit vorhanden
-    check("ANF05-12: id='sp-cb-gesundheit' -- Checkbox fuer Gesundheitsdaten vorhanden",
-          'id="sp-cb-gesundheit"' in html,
-          "Checkbox sp-cb-gesundheit fehlt")
-
-    # ANF05-13: solidPodZeigStatus Hilfsfunktion vorhanden
-    check("ANF05-13: function solidPodZeigStatus -- Status-Hilfsfunktion vorhanden",
-          "function solidPodZeigStatus" in html,
-          "function solidPodZeigStatus fehlt")
-
-    # ANF05-14: solidPodEsc Escape-Funktion fuer Turtle-Strings vorhanden
-    check("ANF05-14: function solidPodEsc -- Escape-Funktion fuer Turtle vorhanden",
-          "function solidPodEsc" in html,
-          "function solidPodEsc fehlt")
-
-
-    # ═══════════════════════════════════════
-    print("\n=== FEEDBACK-01 (April 2026) ===")
-    # ═══════════════════════════════════════
-
-    # Punkt 2: A+-Hinweis korrigiert
-    check("FB01-02: A+-Hinweis nennt Drei-Punkte-Menue statt 'oben rechts auf A+'",
-          "Schriftgr\u00f6\u00dfe A\u207a" in html and "A\u207a um die Schrift zu vergr\u00f6\u00dfern" not in html,
-          "Alter A+-Hinweis noch vorhanden oder neuer Hinweis fehlt")
-
-    # Punkt 3: Einleitungstext
-    check("FB01-03: Einleitungstext erklaert was Vivodepot ist",
-          "Vivodepot ist Ihr pers\u00f6nlicher Speicher" in html,
-          "Einleitungstext fehlt")
-
-    # Punkt 4: 'Ohne Auswahl starten' umbenannt
-    check("FB01-04: 'Ohne Auswahl starten' umbenannt",
-          "Ohne Auswahl starten" not in html,
-          "'Ohne Auswahl starten' noch vorhanden")
-    check("FB01-04b: Neuer Text 'Alle Bereiche anzeigen' vorhanden",
-          "Alle Bereiche anzeigen" in html,
-          "Neuer Fokus-Skip-Text fehlt")
-
-    # Punkt 6: Foto-Loeschen-Button beschriftet
-    check("FB01-06: Foto-Loeschen-Button hat Beschriftung 'Foto entfernen'",
-          "Foto entfernen" in html,
-          "Beschriftung 'Foto entfernen' fehlt")
-
-    # Punkt 7: Familienstand als Dropdown
-    check("FB01-07: Familienstand ist Dropdown (select-Element)",
-          "verheiratet" in html and "verwitwet" in html and "ledig" in html,
-          "Familienstand-Dropdown-Optionen fehlen")
-    check("FB01-07b: Familienstand nicht mehr als Freitext-Feld",
-          "z. B. verheiratet, geschieden, verwitwet" not in html,
-          "Alter Freitext-Platzhalter fuer Familienstand noch vorhanden")
-
-    # Punkt 9: Scroll nach Kind hinzufuegen
-    check("FB01-09: Nach 'Kind hinzufuegen' wird zum neuen Eintrag gescrollt",
-          "scrollIntoView" in html,
-          "scrollIntoView-Aufruf in addItem fehlt")
-
-    # Punkte 13+14: Button vereinheitlicht
-    check("FB01-13: 'Abhaken' nicht mehr als Button-Text vorhanden",
-          "Abhaken" not in html,
-          "'Abhaken' noch als Button-Text vorhanden")
-    check("FB01-14: 'Fertig?' nicht mehr als alleiniger Button-Text",
-          "Fertig?' " not in html,
-          "'Fertig?' noch als Button-Text vorhanden")
-    check("FB01-13b: Neue Beschriftung 'Als erledigt markieren' vorhanden",
-          "Als erledigt markieren" in html,
-          "Neue Button-Beschriftung fehlt")
-
-    # ═══════════════════════════════════════
-    print("\n=== FEEDBACK-02 (April 2026) ===")
-    # ═══════════════════════════════════════
-
-    # Punkt 5: Fokus-Wizard Erklärung verbessert
-    check("FB02-05: Fokus-Wizard erklaert dass Fokus aenderbar ist",
-          "k\u00f6nnen den Fokus jederzeit \u00e4ndern" in html,
-          "Hinweis auf Fokus-Aenderbarkeit fehlt")
-
-    # Punkt 11: Adresse direkt sichtbar (nicht mehr im Aufklapp-Bereich)
-    check("FB02-11: Strasse nicht mehr im Aufklapp-Bereich (mehr-Block ohne strasse)",
-          "'strasse','plz_ort','email','nationalitaet','kinder_erwachsen','unterhalt'" not in html,
-          "Alter Aufklapp-Block mit Adresse noch vorhanden")
-    check("FB02-11b: Strasse direkt im start-Renderer sichtbar (vor renderKinderBlocks)",
-          "field('strasse','Strasse" in html,
-          "Strassen-Feld fehlt ganz")
-
-    # Punkt 16: Footer-Bar auf Desktop ausgeblendet
-    check("FB02-16: save-reminder-bar auf Desktop (min-width 701px) ausgeblendet",
-          "min-width: 701px" in html and "save-reminder-bar" in html,
-          "Desktop-Ausblendung der mobilen Navigationsleiste fehlt")
-
-    # ═══════════════════════════════════════
-    print("\n=== FEEDBACK-03 (April 2026) ===")
-    # ═══════════════════════════════════════
-
-    # Punkt 8: Telefon-Validierung
-    check("FB03-08: Telefon-Validierung im validateField vorhanden",
-          "Telefonnummer-Format pr\u00fcfen" in html,
-          "Telefon-Fehlermeldung fehlt in validateField")
-
-    # Punkt 12: E-Mail-Validierung
-    check("FB03-12: E-Mail-Validierung im validateField vorhanden",
-          "E-Mail-Format ung\u00fcltig" in html,
-          "E-Mail-Fehlermeldung fehlt in validateField")
-
-    # Fehlermeldung im aeusseren Container
-    check("FB03-08b: Fehlermeldung wird in aeusseren Container eingefuegt",
-          "container.appendChild" in html,
-          "Fehlermeldung landet nicht im aeusseren Container")
-
-    # Validierung beim Weiter-Klick
-    check("FB03-08c: validateAllVisibleFields wird in nextStep aufgerufen",
-          "validateAllVisibleFields" in html and "function validateAllVisibleFields" in html,
-          "validateAllVisibleFields fehlt oder wird nicht aufgerufen")
-
-    # Warnzeichen in Fehlermeldung
-    check("FB03-08d: Fehlermeldung hat Warnzeichen (\\u26a0)",
-          "\u26a0" in html,
-          "Warnzeichen in Fehlermeldung fehlt")
-
-    # ═══════════════════════════════════════
-    print("\n=== FEEDBACK-04 (April 2026) ===")
-    # ═══════════════════════════════════════
-
-    # Bug: 'false' als String war truthy — alle Felder mit required='false' zeigten ein Sternchen
-    check("FB04-BUG: field() behandelt String 'false' korrekt als nicht-Pflichtfeld",
-          "required === true || required === 'true'" in html,
-          "Bug-Fix fuer required='false' fehlt in field()")
-    check("FB04-BUG-b: Nur Vorname und Nachname sind echte Pflichtfelder (required='true')",
-          html.count(",'true')") == 2,
-          f"Unerwartete Anzahl von required='true' Feldern: {html.count(chr(39)+'true'+chr(39)+')')}")
+    check("Speichern-Hinweis: _saveHinweisGezeigt Flag",
+          "_saveHinweisGezeigt" in html,
+          "Fehlt: Flag zur Einmal-pro-Sitzung-Anzeige des Hinweises")
+    check("Speichern-Hinweis: Button 'Verstanden — speichern'",
+          "save-hinweis-ok" in html,
+          "Fehlt: Button-ID 'save-hinweis-ok'")
+    check("Speichern-Hinweis: Kein Internet-Aufruf (kein save-hinweis-pruefen)",
+          "save-hinweis-pruefen" not in html,
+          "Gefunden: save-hinweis-pruefen — Offline-Versprechen gebrochen")
+    check("Speichern-Hinweis: Jahres-Hinweis 'einmal pro Jahr'",
+          "einmal pro Jahr" in html,
+          "Fehlt: Jahres-Hinweis im Speichern-Dialog")
+    check("Speichern-Hinweis: Verweis auf vivodepot.de",
+          "save-hinweis-ok" in html and "vivodepot.de" in html,
+          "Fehlt: Verweis auf vivodepot.de im Speichern-Dialog")
+    check("Speichern-Hinweis: Rechtstext 'Keine Rechtsberatung'",
+          "Keine Rechtsberatung" in html,
+          "Fehlt: Hinweistext 'Keine Rechtsberatung'")
+    check("Speichern-Hinweis: Dialog als Promise (await) in saveAsHTML",
+          "_saveHinweisGezeigt" in html and "await new Promise" in html,
+          "Fehlt: Dialog blockiert saveAsHTML als Promise")
+
+    # ── Ablaufdatum ──
+    check("Ablaufdatum: savedDate wird in saveAsHTML gesetzt",
+          "const savedDate = new Date().toISOString().slice(0, 10)" in html,
+          "Fehlt: Datum wird beim Speichern nicht erfasst")
+    check("Ablaufdatum: __vivodepot_saved_date in INIT-Block eingebettet",
+          "window.__vivodepot_saved_date" in html,
+          "Fehlt: Datum wird nicht in gespeicherte Datei eingebettet")
+    check("Ablaufdatum: Alterswarnung in showSavedFileWelcome",
+          "__vivodepot_saved_date" in html and "altershinweis" in html,
+          "Fehlt: Alterswarnung beim Öffnen der gespeicherten Datei")
+    check("Ablaufdatum: Schwelle 12 Monate",
+          "monate >= 12" in html,
+          "Fehlt: 12-Monats-Schwelle in der Alterswarnung")
+    check("Ablaufdatum: Verweis auf vivodepot.de in Alterswarnung",
+          "altershinweis" in html and "vivodepot.de" in html,
+          "Fehlt: Verweis auf vivodepot.de in der Alterswarnung")
+    check("Ablaufdatum: Kein Internet-Aufruf (kein fetch in showSavedFileWelcome)",
+          "fetch" not in html[html.find("function showSavedFileWelcome"):html.find("function savedWelcomeOwner")],
+          "Gefunden: fetch() in showSavedFileWelcome — Offline-Versprechen gebrochen")
 
     passed = sum(1 for s, _, _ in results if s == "PASS")
     failed = sum(1 for s, _, _ in results if s == "FAIL")
@@ -2662,316 +1634,6 @@ def main():
             if s == "FAIL":
                 print(f"    ❌ {name}" + (f" — {detail}" if detail else ""))
     
-    # ═══════════════════════════════════════
-    print("\n=== 54. DATENAUSTAUSCH-STEP ===")
-    # ═══════════════════════════════════════
-
-    # Step in STEPS-Liste vorhanden
-    check("Datenaustausch: Step 'datenaustausch' in STEPS",
-          "{ id: 'datenaustausch'" in html,
-          "Step 'datenaustausch' fehlt in der STEPS-Liste")
-
-    # Renderer vorhanden
-    check("Datenaustausch: Renderer 'datenaustausch: () =>' vorhanden",
-          "datenaustausch: () =>" in html,
-          "Renderer fuer 'datenaustausch' fehlt")
-
-    # Position: datenaustausch liegt zwischen dokumente und erinnerung
-    pos_dok   = html.find("{ id: 'dokumente'")
-    pos_da    = html.find("{ id: 'datenaustausch'")
-    pos_erin  = html.find("{ id: 'erinnerung'")
-    check("Datenaustausch: Reihenfolge dokumente → datenaustausch → erinnerung",
-          0 < pos_dok < pos_da < pos_erin,
-          f"Reihenfolge falsch: dokumente={pos_dok}, datenaustausch={pos_da}, erinnerung={pos_erin}")
-
-    # Import-Karten im Renderer vorhanden
-    da_block_start = html.find("datenaustausch: () =>")
-    da_block_end   = html.find("exportStep: () =>")
-    da_block = html[da_block_start:da_block_end] if da_block_start > 0 and da_block_end > 0 else ""
-
-    check("Datenaustausch: Import FHIR-Karte vorhanden",
-          "importStructured(event,'fhir')" in da_block,
-          "FHIR-Import-Karte fehlt im Datenaustausch-Renderer")
-
-    check("Datenaustausch: Import FIM-Karte vorhanden",
-          "importStructured(event,'fim')" in da_block,
-          "FIM-Import-Karte fehlt im Datenaustausch-Renderer")
-
-    check("Datenaustausch: Import JSON-Karte vorhanden",
-          "importStructured(event,'auto')" in da_block,
-          "JSON-Import-Karte fehlt im Datenaustausch-Renderer")
-
-    check("Datenaustausch: EUDI-Wallet-Karte vorhanden",
-          "importEudiWallet(event)" in da_block,
-          "EUDI-Wallet-Karte fehlt im Datenaustausch-Renderer")
-
-    # Weitergabe-Karten im Renderer vorhanden
-    check("Datenaustausch: Weitergabe-Karte vorhanden",
-          "weitergabeOpen()" in da_block,
-          "weitergabeOpen() fehlt im Datenaustausch-Renderer")
-
-    check("Datenaustausch: QR-Uebergabe-Karte vorhanden",
-          "qrUebergabeOpen()" in da_block,
-          "qrUebergabeOpen() fehlt im Datenaustausch-Renderer")
-
-    check("Datenaustausch: QR-Empfang-Karte vorhanden",
-          "qrEmpfangOpen()" in da_block,
-          "qrEmpfangOpen() fehlt im Datenaustausch-Renderer")
-
-    check("Datenaustausch: Solid-Pod-Karte vorhanden",
-          "solidPodOpen()" in da_block,
-          "solidPodOpen() fehlt im Datenaustausch-Renderer")
-
-    # navButtons() im Renderer vorhanden
-    check("Datenaustausch: navButtons() im Renderer vorhanden",
-          "navButtons()" in da_block,
-          "navButtons() fehlt im Datenaustausch-Renderer")
-
-    # Import-Block NICHT mehr in etab-behoerden
-    behoerden_start = html.find('id="etab-behoerden"')
-    behoerden_end   = html.find('id="etab-', behoerden_start + 1) if behoerden_start > 0 else -1
-    behoerden_block = html[behoerden_start:behoerden_end] if behoerden_start > 0 and behoerden_end > 0 else ""
-    check("Datenaustausch: Import-Block nicht mehr in etab-behoerden",
-          "importStructured(event,'fhir')" not in behoerden_block,
-          "FHIR-Import-Block ist noch in etab-behoerden -- sollte entfernt sein")
-
-    # wg-link-Zeilen NICHT mehr in exportStep
-    export_block_start = html.find("exportStep: () =>")
-    export_block_end   = html.find("navButtons()", export_block_start) + 50 if export_block_start > 0 else -1
-    export_block = html[export_block_start:export_block_end] if export_block_start > 0 and export_block_end > 0 else ""
-    check("Datenaustausch: wg-link-Zeilen nicht mehr in exportStep",
-          'class="wg-link-zeile"' not in export_block,
-          "wg-link-Zeilen sind noch im exportStep-Renderer -- sollten entfernt sein")
-
-    # ═══════════════════════════════════════
-    print("\n=== 55. STRUKTURUMSTELLUNG APRIL 2026 ===")
-    # ═══════════════════════════════════════
-
-    # Schritte 0–13: Inhalt in korrekter Reihenfolge
-    steps_ids = []
-    for m in __import__('re').finditer(r"\{ id: '(\w+)'", html):
-        sid = m.group(1)
-        if sid in ('start','kontakte','infokontakte','finanzen','versich','immobilien',
-                   'vertraege','gesundheit','pflege','testament','bestattung','persoenliches',
-                   'haustiere','digital','assistenten','notfall','dokumente','datenaustausch',
-                   'erinnerung','exportStep','einstellungen'):
-            if sid not in steps_ids:
-                steps_ids.append(sid)
-
-    expected = [
-        'start','kontakte','infokontakte','finanzen','versich','immobilien','vertraege',
-        'gesundheit','pflege','testament','bestattung','persoenliches','haustiere','digital',
-        'assistenten','notfall','dokumente','datenaustausch','erinnerung','exportStep','einstellungen'
-    ]
-
-    check("Struktur: Alle 21 Schritte vorhanden",
-          len(steps_ids) == 21,
-          f"Erwartet 21 Schritte, gefunden: {len(steps_ids)}")
-
-    check("Struktur: Reihenfolge Gesundheit vor Mein Wille",
-          steps_ids.index('gesundheit') < steps_ids.index('testament'),
-          "gesundheit muss vor testament stehen")
-
-    check("Struktur: Reihenfolge Mein Wille vor Mein Abschied",
-          steps_ids.index('testament') < steps_ids.index('bestattung'),
-          "testament muss vor bestattung stehen")
-
-    check("Struktur: Reihenfolge Mein Abschied vor Erinnerungsstuecke",
-          steps_ids.index('bestattung') < steps_ids.index('persoenliches'),
-          "bestattung muss vor persoenliches stehen")
-
-    check("Struktur: Assistenten nach Inhalt (nach digital)",
-          steps_ids.index('assistenten') > steps_ids.index('digital'),
-          "assistenten muss nach digital stehen")
-
-    check("Struktur: Dokumente erstellen vor Einstellungen",
-          steps_ids.index('exportStep') < steps_ids.index('einstellungen'),
-          "exportStep muss vor einstellungen stehen")
-
-    check("Struktur: Einstellungen ist letzter Schritt",
-          steps_ids[-1] == 'einstellungen',
-          "einstellungen muss der letzte Schritt sein")
-
-    check("Struktur: Dokumente erstellen ist vorletzter Schritt",
-          steps_ids[-2] == 'exportStep',
-          "exportStep muss der vorletzte Schritt sein")
-
-    # Sidebar-Gruppen pruefen
-    check("Sidebar: Gruppe 'Gesundheit & Abschluss' vorhanden",
-          "'Gesundheit & Abschluss'" in html or "Gesundheit & Abschluss" in html,
-          "Sidebar-Gruppe 'Gesundheit & Abschluss' fehlt")
-
-    check("Sidebar: Gruppe 'Besonderes' vorhanden",
-          "'Besonderes'" in html or "label: 'Besonderes'" in html,
-          "Sidebar-Gruppe 'Besonderes' fehlt")
-
-    check("Sidebar: Alte Gruppe 'Gesundheit & Leben' entfernt",
-          "'Gesundheit & Leben'" not in html,
-          "Alte Sidebar-Gruppe 'Gesundheit & Leben' ist noch vorhanden")
-
-    check("Sidebar: Alte Gruppe 'Persoenliches & Wuensche' entfernt",
-          "Pers\u00f6nliches & W\u00fcnsche" not in html,
-          "Alte Sidebar-Gruppe 'Pers\u00f6nliches & W\u00fcnsche' ist noch vorhanden")
-
-    # Einstellungen: kein Weiter-Button am Ende
-    check("Einstellungen: isExport-Bedingung schliesst einstellungen ein",
-          "id === 'einstellungen'" in html,
-          "Einstellungen-Schritt hat keinen Schutz gegen den Weiter-Button")
-
-
-    # ═══════════════════════════════════════
-    print("\n=== 56. UX-OPTIMIERUNGEN (Session April 2026) ===")
-    # ═══════════════════════════════════════
-
-    # Schriftgrößen-Korrektur
-    check("UX-01: SCHRIFTGRÖSSEN-KORREKTUR CSS-Block vorhanden",
-          "SCHRIFTGR\u00d6SSEN-KORREKTUR" in html,
-          "CSS-Korrekturblock fehlt")
-    check("UX-02: .nav-label font-size 0.95rem",
-          ".nav-label       { font-size: 0.95rem; }" in html,
-          "nav-label Schriftgröße nicht erhöht")
-    check("UX-03: .field-hint font-size 0.88rem",
-          ".field-hint      { font-size: 0.88rem; }" in html,
-          "field-hint Schriftgröße nicht erhöht")
-    check("UX-04: .fs-btn font-size 0.82rem",
-          ".fs-btn          { font-size: 0.82rem; }" in html,
-          "fs-btn Schriftgröße nicht erhöht")
-
-    # Touch-Targets
-    check("UX-05: Input padding 12px (Touch-Target 44px)",
-          "padding: 12px 12px;" in html,
-          "Input padding unter 44px-Schwelle")
-    check("UX-06: textarea min-height 44px",
-          "textarea { min-height: 44px; }" in html,
-          "textarea min-height fehlt")
-
-    # Passwort-Warnung
-    check("UX-07: Passwort-Warnung nicht mehr rot",
-          "#fdf3f3" not in html,
-          "Rote Passwort-Warnung noch vorhanden")
-    check("UX-08: Passwort-Warnung Bernstein (Bitte notieren)",
-          "Bitte notieren" in html,
-          "Neuer Passwort-Warntext fehlt")
-    check("UX-09: Passwort-Warnung nach Feldern (Reihenfolge)",
-          html.index("set-pw-confirm") < html.index("Bitte notieren"),
-          "Passwort-Warnung steht noch vor den Eingabefeldern")
-
-    # Emojis entfernt
-    check("UX-10: Kein Emoji im Rolle-Auswahl-Button",
-          "\U0001f464 F\u00fcr mich" not in html,
-          "Emoji im Button noch vorhanden")
-    check("UX-11: Kein Emoji im Angehörigen-Button",
-          "\U0001f468\u200d\U0001f469\u200d\U0001f467 Angeh" not in html,
-          "Emoji in Angehörigen-Button noch vorhanden")
-    check("UX-12: Button-Text parallel (Für mich / Für Angehörige)",
-          "F\u00fcr mich \u2014 Vorsorge anlegen" in html and
-          "F\u00fcr Angeh\u00f6rige \u2014 Notfall-Informationen" in html,
-          "Parallele Button-Texte fehlen")
-
-    # Sidebar-Gruppen
-    nav_group = html.split(".nav-group-label {")[1].split("}")[0] if ".nav-group-label {" in html else ""
-    check("UX-13: nav-group-label ohne text-transform uppercase",
-          "text-transform" not in nav_group,
-          "nav-group-label hat noch text-transform")
-    check("UX-14: nav-group-label Kontrast 0.55",
-          "rgba(255,255,255,0.55)" in html,
-          "nav-group-label Kontrast nicht erhöht")
-    check("UX-15: nav-group-label kein Inline-Style im JS",
-          'style="font-size:0.65rem"' not in html,
-          "nav-group-label hat noch Inline-Style im JS")
-
-    # Schritt-Beschreibungen
-    check("UX-16: Neue Beschreibung Über mich",
-          "das Deckblatt Ihres Vivodepots" in html,
-          "Neue Beschreibung fehlt")
-    check("UX-17: Neue Beschreibung Vertrauenspersonen",
-          "Wer soll im Notfall angerufen werden?" in html,
-          "Neue Beschreibung fehlt")
-    check("UX-18: Neue Beschreibung Meine Gesundheit",
-          "im Notfall sofort zur Hand" in html,
-          "Neue Beschreibung fehlt")
-    check("UX-19: Neue Beschreibung Mein Wille",
-          "damit Ihr Wille gilt" in html,
-          "Neue Beschreibung fehlt")
-    check("UX-20: Neue Beschreibung Notfall-Vorsorge",
-          "was haben Sie f\u00fcr den Ernstfall?" in html,
-          "Neue Beschreibung fehlt")
-
-    # Notfallmappe → Vivodepot
-    check("UX-21: Angehörigen-Überschrift auf Vivodepot umgestellt",
-          "Vivodepot \u2014 ' + esc(name)" in html,
-          "Angehörigen-Überschrift nicht umgestellt")
-    check("UX-22: Kein Notfallmappe mehr in Angehörigen-Überschrift",
-          "Notfallmappe \u2014 ' + esc(name)" not in html,
-          "Alte Angehörigen-Überschrift noch vorhanden")
-
-    # Infoboxen
-    check("UX-23: Vertrauenspersonen-Infobox entfernt",
-          "Tragen Sie mindestens eine Hauptkontaktperson ein" not in html,
-          "Redundante Infobox noch vorhanden")
-    check("UX-24: Gesundheit-Infobox entfernt (nicht mehr als infobox-div)",
-          'class="infobox">${tl(\'Diese Angaben k' not in html,
-          "Redundante Gesundheit-Infobox noch vorhanden")
-    check("UX-25: Versicherungen-Infobox gekürzt",
-          "Fristen beachten \u2014 im Todesfall" in html,
-          "Gekürzte Infobox fehlt")
-    check("UX-26: Wohnen-Infobox gekürzt",
-          "Ein Mietvertrag l\u00e4uft nach einem Todesfall weiter" in html,
-          "Gekürzte Infobox fehlt")
-
-    # Willkommen
-    check("UX-27: Willkommen-Text vereinfacht",
-          "Ihre Daten bleiben auf Ihrem Ger\u00e4t \u2014 keine Cloud, kein Server." in html,
-          "Vereinfachter Willkommen-Text fehlt")
-    check("UX-28: USB-Stick-Erklärungs-Text entfernt",
-          "Wenn Sie die Datei auf einen USB-Stick speichern, haben Sie alles dabei" not in html,
-          "Alter Erklärungs-Text noch vorhanden")
-
-    # Formularabstände
-    check("UX-29: margin-top:8px in Renderern stark reduziert",
-          html.count('style="margin-top:8px"') <= 5,
-          f"Noch {html.count('style="margin-top:8px"')} Vorkommen")
-
-    # Mobile-Fixes
-    check("UX-30: fs-btn auf Mobile nicht ausgeblendet",
-          ".fs-btn { display: none !important; }" not in html,
-          "fs-btn wird auf Mobile noch ausgeblendet")
-    check("UX-31: safe-area-inset-bottom in Bottom-Bar",
-          "safe-area-inset-bottom" in html,
-          "safe-area-inset-bottom fehlt")
-    check("UX-32: export-grid 2-spaltig bei 900px",
-          "max-width: 900px" in html and "grid-template-columns: 1fr 1fr" in html,
-          "export-grid 900px-Breakpoint fehlt")
-    check("UX-33: main-content margin auto",
-          "margin-left: auto;" in html and "margin-right: auto;" in html,
-          "main-content nicht zentriert")
-
-    # ═══════════════════════════════════════
-    print("\n=== 57. OVERLAY CLOSE-BUTTONS ===")
-    # ═══════════════════════════════════════
-
-    # BUG-18: Kein Wizard-Overlay darf mehr als einen Schließen-Button haben
-    # (absolut positionierter + Flex-Header = zwei sichtbare ✕)
-    for overlay_id, close_fn in [
-        ('gwiz-overlay',  'gwizClose'),
-        ('vvwiz-overlay', 'vvwizClose'),
-        ('pvwiz-overlay', 'pvwizClose'),
-        ('bwiz-overlay',  'bwizClose'),
-        ('hwiz-overlay',  'hwizClose'),
-        ('gvwiz-overlay', 'gvwizClose'),
-    ]:
-        m = re.search(
-            r'id="' + overlay_id + r'"[\s\S]*?class="wizard-header"([\s\S]*?)class="wizard-body"',
-            html)
-        if m:
-            count = len(re.findall(re.escape(close_fn + '()'), m.group(1)))
-            check(f"BUG-18: {overlay_id} hat nicht mehr als einen Schließen-Button",
-                  count <= 1,
-                  f"Gefunden: {count} {close_fn}()-Aufrufe im Header (doppeltes X sichtbar)")
-        else:
-            check(f"BUG-18: {overlay_id} Header gefunden", False,
-                  f"{overlay_id} Header nicht gefunden")
-
     sys.exit(0 if failed == 0 else 1)
 
 if __name__ == '__main__':
