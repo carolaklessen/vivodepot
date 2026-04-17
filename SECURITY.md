@@ -1,6 +1,6 @@
 # VIVODEPOT — Sicherheitsrichtlinie
 
-*Version 1.0.0-beta.9 · April 2026*
+*Version 1.0.0-beta.10 · April 2026*
 
 ---
 
@@ -8,8 +8,9 @@
 
 | Version | Support |
 |---|---|
-| 1.0.0-beta.9 | Aktiv |
-| 1.0.0-beta.8 | Unterstützt — Update empfohlen |
+| 1.0.0-beta.10 | Aktiv |
+| 1.0.0-beta.9 | Unterstützt — Update empfohlen |
+| 1.0.0-beta.8 | Unterstützt |
 | 1.0.0-beta.7 | Unterstützt |
 | 1.0.0-beta.6 | Sicherheitsrelevanter Fehler (BUG-SALT) — Update empfohlen |
 | < 1.0.0-beta.6 | Nicht unterstützt |

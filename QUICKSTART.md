@@ -1,6 +1,6 @@
 # VIVODEPOT — Schnellstart
 
-*Version 1.0.0-beta.9 · April 2026*
+*Version 1.0.0-beta.10 · April 2026*
 
 ---
 
@@ -62,7 +62,7 @@ Wichtig: Notieren Sie das Passwort und teilen Sie es Ihren Vertrauenspersonen mi
 
 ## Datei auf anderem Gerät öffnen
 
-Seit Version 1.0.0-beta.9 ist die gespeicherte Datei auf jedem Gerät entschlüsselbar — auch auf einem frischen Browser ohne Vorgeschichte. Das Passwort genügt.
+Seit Version 1.0.0-beta.7 ist die gespeicherte Datei auf jedem Gerät entschlüsselbar — auch auf einem frischen Browser ohne Vorgeschichte. Das Passwort genügt.
 
 ---
 

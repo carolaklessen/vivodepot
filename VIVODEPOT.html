@@ -10520,7 +10520,7 @@ function ensureDocx(callback) {
 </script>
 <script>
 // Normalise docx global — jsdelivr exposes it as window.docx
-const VIVODEPOT_VERSION = '1.0.0-beta.9';
+const VIVODEPOT_VERSION = '1.0.0-beta.10';
 function getLogoData() { var img = document.querySelector('.topbar-logo img'); return img ? img.src : ''; }
 if (typeof docx === 'undefined' && typeof window.docx === 'undefined') {
   // docx inline eingebettet — sollte nicht vorkommen
@@ -10554,6 +10554,8 @@ if (typeof docx === 'undefined' && typeof window.docx === 'undefined') {
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { font-size: 17px; }
+/* WCAG 2.2 - 2.4.11 Focus Not Obscured: Topbar (60px Desktop, 52px Mobile) darf fokussierte Elemente nicht verdecken */
+html { scroll-padding-top: 70px; }
 html.fs-medium { font-size: 19px; }
 html.fs-large { font-size: 22px; }
 

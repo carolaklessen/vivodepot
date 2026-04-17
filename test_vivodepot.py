@@ -1617,6 +1617,114 @@ def main():
           "fetch" not in html[html.find("function showSavedFileWelcome"):html.find("function savedWelcomeOwner")],
           "Gefunden: fetch() in showSavedFileWelcome — Offline-Versprechen gebrochen")
 
+    # ═══════════════════════════════════════
+    print("\n=== 53. WCAG 2.2 BARRIEREFREIHEIT ===")
+    # ═══════════════════════════════════════
+    # Prüfung der sechs neuen WCAG-2.2-Kriterien (gegenüber 2.1), die für
+    # Vivodepot relevant sind. Siehe SOVEREIGNTY.md Sektion 2.7 für Übersicht.
+    # Drei Kriterien werden hier automatisiert geprüft:
+    #   2.4.11 Focus Not Obscured (AA)
+    #   3.2.6  Consistent Help (A)
+    #   3.3.8  Accessible Authentication (AA)
+    # Die übrigen drei (2.5.7, 2.5.8, 3.3.7) waren bereits in WCAG 2.1 erfüllt.
+
+    # ── 2.4.11 Focus Not Obscured ──
+    # Die Topbar ist 60px hoch (Desktop) / 52px (Mobile) und sticky. Ohne
+    # scroll-padding-top würden per Tab fokussierte Elemente beim Scrollen
+    # hinter der Topbar verschwinden.
+    scroll_padding_match = re.search(
+        r'html\s*\{[^}]*scroll-padding-top\s*:\s*(\d+)px',
+        html
+    )
+    check("WCAG22-2.4.11: html-Selector hat scroll-padding-top",
+          scroll_padding_match is not None,
+          "Fehlt: html { scroll-padding-top: ... } verhindert Focus-Verdeckung durch sticky Topbar")
+    if scroll_padding_match:
+        scroll_padding_wert = int(scroll_padding_match.group(1))
+        check(f"WCAG22-2.4.11: scroll-padding-top >= 60px (aktuell {scroll_padding_wert}px)",
+              scroll_padding_wert >= 60,
+              "Muss mindestens Topbar-Höhe (60px Desktop) abdecken")
+
+    # ── 3.2.6 Consistent Help ──
+    # Falls Hilfe-Mechanismen (FAQ, Hilfe-Button, Support-Kontakt) im UI
+    # existieren, müssen sie auf jedem Schritt an gleicher Position stehen.
+    # Bereiche, die als "global konsistent" gelten: Topbar, Mehr-Menü,
+    # Profil-Dropdown — alle sticky und auf jedem Schritt sichtbar.
+    wcag_hilfe_button_muster = re.compile(
+        r"<(?:button|a)\b[^>]*>\s*"
+        r"(?:Hilfe|FAQ|Support|Help|Hilfe-Center|Kontakt aufnehmen)"
+        r"\s*</(?:button|a)>",
+        re.IGNORECASE
+    )
+    wcag_hilfe_handler_muster = re.compile(
+        r"onclick\s*=\s*[\"']\s*(?:openHilfe|showHelp|openFAQ|openHelp)\b",
+        re.IGNORECASE
+    )
+    wcag_globale_bereiche = re.compile(
+        r'class\s*=\s*"[^"]*(?:topbar|more-dropdown|profile-dropdown)[^"]*"',
+        re.IGNORECASE
+    )
+
+    wcag_hilfe_treffer = (
+        list(wcag_hilfe_button_muster.finditer(html))
+        + list(wcag_hilfe_handler_muster.finditer(html))
+    )
+    if not wcag_hilfe_treffer:
+        check("WCAG22-3.2.6: Keine Hilfe-Funktion im UI (Kriterium automatisch erfüllt)",
+              True, "")
+    else:
+        wcag_nicht_global = []
+        for m in wcag_hilfe_treffer:
+            fenster = html[max(0, m.start() - 800):m.start()]
+            if not wcag_globale_bereiche.search(fenster):
+                wcag_nicht_global.append(m.group(0))
+        check(f"WCAG22-3.2.6: Alle {len(wcag_hilfe_treffer)} Hilfe-Element(e) global platziert",
+              len(wcag_nicht_global) == 0,
+              f"{len(wcag_nicht_global)} außerhalb Topbar/Mehr-Menü — Konsistenz manuell prüfen")
+
+    # ── 3.3.8 Accessible Authentication ──
+    # Vivodepot darf weder CAPTCHA noch SMS-Code noch andere kognitive
+    # Funktionstests verwenden. Passwort-Eingabe zur Entschlüsselung gilt
+    # als nutzerkontrolliertes Geheimnis und ist kein externer Test.
+    wcag_captcha_muster = re.compile(
+        r"(?:<input[^>]*captcha|class\s*=\s*[\"'][^\"']*captcha|"
+        r"id\s*=\s*[\"'][^\"']*captcha|grecaptcha|hcaptcha|"
+        r"cf-turnstile|recaptcha)",
+        re.IGNORECASE
+    )
+    wcag_sms_muster = re.compile(
+        r"(?:<input[^>]*(?:sms-code|otp-code|verification-code)|"
+        r"placeholder\s*=\s*[\"'][^\"']*(?:SMS-Code|Verifizierungscode|OTP)|"
+        r"name\s*=\s*[\"'](?:otp|sms_code|verification_code)[\"'])",
+        re.IGNORECASE
+    )
+    check("WCAG22-3.3.8: Kein CAPTCHA im Code",
+          not wcag_captcha_muster.search(html),
+          "CAPTCHA-Mechanismus gefunden — verstößt gegen 3.3.8")
+    check("WCAG22-3.3.8: Kein SMS-Code-/OTP-Eingabefeld",
+          not wcag_sms_muster.search(html),
+          "SMS-Code- oder OTP-Feld gefunden — verstößt gegen 3.3.8")
+
+    # Doku-Prüfung: SOVEREIGNTY.md muss die 3.3.8-Begründung enthalten.
+    # Wird im gleichen Verzeichnis wie die HTML gesucht.
+    wcag_sov_pfad = os.path.join(os.path.dirname(filepath) or '.', 'SOVEREIGNTY.md')
+    if os.path.exists(wcag_sov_pfad):
+        try:
+            wcag_sov = open(wcag_sov_pfad, encoding='utf-8').read()
+            wcag_pflicht = ['3.3.8', 'kein CAPTCHA', 'nutzerkontrolliertes Geheimnis']
+            wcag_fehlend = [b for b in wcag_pflicht if b not in wcag_sov]
+            check("WCAG22-3.3.8: Begründung in SOVEREIGNTY.md vollständig",
+                  not wcag_fehlend,
+                  "Fehlende Pflichtbegriffe: " + ", ".join(repr(f) for f in wcag_fehlend))
+        except Exception as wcag_e:
+            check("WCAG22-3.3.8: SOVEREIGNTY.md lesbar",
+                  False,
+                  f"Fehler beim Lesen: {wcag_e}")
+    else:
+        check("WCAG22-3.3.8: SOVEREIGNTY.md vorhanden (neben HTML)",
+              False,
+              f"Nicht gefunden: {wcag_sov_pfad} — Begründung kann nicht geprüft werden")
+
     passed = sum(1 for s, _, _ in results if s == "PASS")
     failed = sum(1 for s, _, _ in results if s == "FAIL")
     total = len(results)

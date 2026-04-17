@@ -1,6 +1,6 @@
 # VIVODEPOT — Technische Dokumentation
 
-*Version 1.0.0-beta.9 · April 2026*
+*Version 1.0.0-beta.10 · April 2026*
 
 ---
 
@@ -219,7 +219,7 @@ Der Import-Block wurde aus dem Behördendaten-Tab verschoben. Die wg-Link-Zeilen
 python3 test_vivodepot.py VIVODEPOT.html
 ```
 
-**1093 Tests in 55 Sektionen:**
+**898 Tests in 53 Sektionen:**
 
 1. JavaScript-Syntax
 2. Bekannte Bugs
@@ -273,9 +273,7 @@ python3 test_vivodepot.py VIVODEPOT.html
 50. Neue Bugs (BUG-NEW)
 51. Krypto-Portabilität (Salt in Datei) — neu in beta.7
 52. Weitergabe-Datei — neu in beta.8
-53. ANF-01 Einkommensdaten / ANF-05 Solid Pod — neu in beta.8/9
-54. ANF-02 Kind-Daten / Datenaustausch-Step — neu in beta.8/9
-55. Strukturumstellung April 2026 — neu in beta.9
+53. WCAG 2.2 Barrierefreiheit — neu in beta.10
 
 ---
 

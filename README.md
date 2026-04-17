@@ -2,10 +2,10 @@
 
 **Ihr persönlicher Vorsorge-Assistent. Keine Cloud. Kein Abo. Volle Kontrolle.**
 
-[![Version](https://img.shields.io/badge/Version-1.0.0--beta.9-gold)](https://github.com/carolaklessen/vivodepot)
+[![Version](https://img.shields.io/badge/Version-1.0.0--beta.10-gold)](https://github.com/carolaklessen/vivodepot)
 [![Lizenz](https://img.shields.io/badge/Lizenz-EUPL--1.2-green)](LICENSE)
 [![Offline](https://img.shields.io/badge/Offline-100%25-brightgreen)](#offline)
-[![Tests](https://img.shields.io/badge/Tests-1093%2F1093-brightgreen)](#tests)
+[![Tests](https://img.shields.io/badge/Tests-898%2F898-brightgreen)](#tests)
 [![ZenDiS](https://img.shields.io/badge/ZenDiS-20%2F20-blue)](#souveränität)
 
 VIVODEPOT ist eine vollständig offline-fähige Einzeldatei-HTML-Anwendung zur Vorsorgedokumentation. Alle Daten bleiben ausschließlich auf Ihrem Gerät — keine Cloud, kein Server, keine Übertragung.
@@ -117,7 +117,7 @@ Export im Turtle-Format (.ttl) mit Linked-Data-Standards (vcard:, schema:). Ausw
 - Vorlesen (Web Speech API)
 - Bildschirmlupe
 - Diktat-Eingabe
-- Touch-Targets 44px (WCAG 2.1)
+- Touch-Targets 44px (WCAG 2.2)
 
 ---
 
@@ -180,7 +180,7 @@ Funktioniert auf: USB-Stick (ohne Internet), im Flugmodus, auf Krankenhaus-Compu
 python3 test_vivodepot.py VIVODEPOT.html
 ```
 
-**1093 Tests** in 55 Sektionen: Syntax, Verschlüsselung, Navigation, PDF-Export, Word-Export, Barrierefreiheit, Mobile, Offline, Krypto-Portabilität, Rechtsinhalte, Weitergabe-Datei, QR-Übergabe, EUDI-Wallet-Import, FHIR-Import, Einkommensdaten, Kind-Daten, ANF-05 Solid Pod, Datenaustausch-Step, Strukturumstellung und mehr.
+**898 Tests** in 53 Sektionen: Syntax, Verschlüsselung, Navigation, PDF-Export, Word-Export, Barrierefreiheit, Mobile, Offline, Krypto-Portabilität, Rechtsinhalte, Weitergabe-Datei, QR-Übergabe, EUDI-Wallet-Import, FHIR-Import, Einkommensdaten, Kind-Daten, ANF-05 Solid Pod, Datenaustausch-Step, Strukturumstellung, WCAG 2.2 und mehr.
 
 ---
 

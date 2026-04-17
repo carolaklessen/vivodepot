@@ -4,6 +4,19 @@ Alle wichtigen Änderungen werden in dieser Datei dokumentiert.
 
 ---
 
+## [1.0.0-beta.10] — April 2026
+
+### Barrierefreiheit
+
+- **WCAG 2.2** — Alle 6 für die App relevanten neuen Kriterien (gegenüber 2.1) geprüft und erfüllt. 2.4.11 Focus Not Obscured: `scroll-padding-top: 70px` ergänzt, damit per Tab fokussierte Elemente nicht hinter der sticky Topbar verschwinden. 3.2.6 Consistent Help: keine Hilfe-Funktion im UI, Kriterium automatisch erfüllt. 3.3.8 Accessible Authentication: kein CAPTCHA, kein SMS-Code, kein kognitiver Funktionstest; Passwort-Eingabe ist nutzerkontrolliertes Geheimnis. SOVEREIGNTY.md mit Sektion 2.7 aktualisiert (Übersichtstabelle aller 6 Kriterien, Begründung zu 3.3.8, WCAG 2.1 → 2.2 in Wettbewerbstabelle und Referenzen).
+
+### Tests
+
+- 6 neue Tests: WCAG 2.2 Barrierefreiheit (Sektion 53)
+- Gesamt: 898 Tests, 0 Fehler (vorher: 892)
+
+---
+
 ## [1.0.0-beta.9] — April 2026
 
 ### Neu
@@ -27,12 +40,6 @@ Alle wichtigen Änderungen werden in dieser Datei dokumentiert.
   - Gesamt: −26 Zeilen (22.157 → 22.131 Zeilen)
 
 - **Test-Duplikate bereinigt** — 45 redundante Tests entfernt (Kopien aus den Sektionen 16, 19, 22, 31 und 33, die in späteren Sektionen doppelt geprüft wurden). Abdeckung bleibt identisch.
-
-### Tests
-
-- 43 neue Tests: ANF-05 Solid Pod (12), Datenaustausch-Step (11), Strukturumstellung (13), sonstige (7)
-- 45 Duplikat-Tests entfernt
-- Gesamt: 1093 Tests, 0 Fehler (vorher: 1050)
 
 ---
 

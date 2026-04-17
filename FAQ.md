@@ -1,6 +1,6 @@
 # VIVODEPOT — Häufige Fragen
 
-*Version 1.0.0-beta.9 · April 2026*
+*Version 1.0.0-beta.10 · April 2026*
 
 ---
 
@@ -54,7 +54,7 @@ Ca. 1,3 MB. Das entspricht etwa dem Speicherplatz einer Foto-Vorschau.
 Ja — einfach die HTML-Datei auf den USB-Stick kopieren und in Chrome oder Firefox öffnen.
 
 **Kann ich die Datei auf einem anderen Gerät öffnen?**
-Ja — seit Version 1.0.0-beta.9 vollständig. Der kryptographische Schlüssel wird jetzt in der Datei selbst gespeichert. Passwort eingeben genügt — egal auf welchem Gerät oder Browser.
+Ja — seit Version 1.0.0-beta.7 vollständig. Der kryptographische Schlüssel wird jetzt in der Datei selbst gespeichert. Passwort eingeben genügt — egal auf welchem Gerät oder Browser.
 
 In früheren Versionen (bis beta.6) war dies ein bekanntes Problem: Der Salt fehlte auf anderen Geräten, was zur Fehlermeldung führte, obwohl das Passwort korrekt war.
 

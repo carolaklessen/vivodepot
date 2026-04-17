@@ -143,6 +143,25 @@ Deutschland, Frankreich, Italien und die Niederlande haben 2025 das European Dig
 
 ---
 
+### 2.7 WCAG 2.2 — Barrierefreiheit (Stand April 2026)
+
+Vivodepot wurde gegen die sechs für die App relevanten neuen Kriterien von WCAG 2.2 (gegenüber 2.1) geprüft. Alle Kriterien sind erfüllt.
+
+| Kriterium | Level | Status |
+|---|---|---|
+| 2.4.11 Focus Not Obscured | AA | ✅ erfüllt — `scroll-padding-top: 70px` verhindert, dass per Tab fokussierte Elemente hinter der Topbar verschwinden |
+| 2.5.7 Dragging Movements | AA | ✅ erfüllt — keine Drag-and-Drop-Interaktionen erforderlich |
+| 2.5.8 Target Size Minimum | AA | ✅ erfüllt — Touch-Targets sind 44 × 44 px (übertrifft das AA-Minimum von 24 × 24 px) |
+| 3.2.6 Consistent Help | A | ✅ erfüllt — Vivodepot bietet keine Hilfefunktion (FAQ, Hilfe-Button, Support-Kontakt) im UI an. Konsistenz ist damit nicht erforderlich |
+| 3.3.7 Redundant Entry | A | ✅ erfüllt — alle Eingaben werden persistent gespeichert; doppelte Eingabe wird nie verlangt |
+| 3.3.8 Accessible Authentication | AA | ✅ erfüllt — siehe Begründung unten |
+
+**Begründung zu 3.3.8 (Accessible Authentication):**
+
+Vivodepot verwendet kein CAPTCHA, keinen SMS-Code und keinen kognitiven Funktionstest. Die Passwort-Eingabe zur Entschlüsselung ist ein nutzerkontrolliertes Geheimnis — kein externer Test. 3.3.8 ist damit erfüllt.
+
+---
+
 ## Teil 3 — Welche weiteren Prüfungen wären sinnvoll?
 
 Die folgende Liste zeigt Institutionen und Rahmenwerke, gegen die eine Vivodepot-Prüfung strategisch wertvoll wäre:
@@ -151,7 +170,7 @@ Die folgende Liste zeigt Institutionen und Rahmenwerke, gegen die eine Vivodepot
 |---|---|---|
 | **ZenDiS Souveränitätscheck** (nach Mai 2026) | Offizieller Check für öffentliche Verwaltung; direktes Einstiegspotenzial in Behörden | Hoch |
 | **BSI Cyber-Sicherheitscheck** / BSI-Grundschutz-Zertifizierung | Voraussetzung für viele Beschaffungsprozesse der öffentlichen Hand | Hoch |
-| **WCAG 2.2** (W3C, Nachfolger von 2.1) | Barrierefreiheit ist im BFSG (Barrierefreiheitsstärkungsgesetz, gilt ab Juni 2025) gesetzlich verpflichtend für bestimmte Produkte | Hoch |
+| **WCAG 2.2 — externe Validierung** | Selbsteinschätzung gegen WCAG 2.2 erfolgt (siehe Teil 2.7); akkreditierte externe Prüfung (z. B. BITV-Test) wäre für BFSG-Konformität (Barrierefreiheitsstärkungsgesetz, gilt seit Juni 2025) sinnvoll | Mittel |
 | **FITKO / FIM-Stammdatenschema** | Verwaltungsinteroperabilität; relevant für Behörden-Einsatz und digitale Behördengänge | Mittel |
 | **openCode (ZenDiS-Plattform)** | Registrierung als Open-Source-Lösung für den öffentlichen Sektor; Sichtbarkeit bei Beschaffern | Mittel |
 | **Gaia-X / AISBL** | Europäischer Datenraum-Rahmen; relevant wenn Cloud-Hosting ergänzt wird | Niedrig |
@@ -174,7 +193,7 @@ Die folgende Liste zeigt Institutionen und Rahmenwerke, gegen die eine Vivodepot
 | ZenDiS-konform (20 Kriterien) | ✅ 20/20 | ❌ | ❌ | ❌ | n/a |
 | FHIR-Export | ✅ | ❌ | ⚠️ | ⚠️ | ❌ |
 | Interoperabilität | ✅ 13 Formate | ⚠️ PDF | ⚠️ PDF | ⚠️ Proprietär | ❌ |
-| Barrierefreiheit (WCAG 2.1) | ✅ | ⚠️ | ⚠️ | ⚠️ | ❌ |
+| Barrierefreiheit (WCAG 2.2) | ✅ | ⚠️ | ⚠️ | ⚠️ | ❌ |
 | Kosten | Kostenlos | Abo | Abo | Abo | Material |
 
 ---
@@ -200,7 +219,7 @@ Diese Selbstbewertung orientiert sich an:
 - **DSGVO** (EU) 2016/679
 - **EU AI Act** Art. 50 — KI-Transparenzpflichten
 - **EUPL-1.2** Kompatibilitätsprüfung (joinup.ec.europa.eu)
-- **WCAG 2.1** (W3C Accessibility Guidelines)
+- **WCAG 2.2** (W3C Accessibility Guidelines)
 - **FIM-Stammdatenschema** der FITKO
 - **OSBA** — Open Source Business Alliance, Bundesverband digitale Souveränität e.V.
 - **EU Cloud Sovereignty Framework** Version 1.2.1 (Oktober 2025)
