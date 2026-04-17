@@ -12631,8 +12631,7 @@ function enterApp() {
     setTimeout(function(){ if (!window._angehoerigenModus) showGoalWizard(); }, 300);
   }
 
-  // Update-Check und E-Mail-Opt-in (verzögert, damit der Seitenaufbau fertig ist)
-  setTimeout(checkForUpdates, 5000);
+  // E-Mail-Opt-in (verzögert, damit der Seitenaufbau fertig ist)
   maybeShowEmailOptin();
 }
 
