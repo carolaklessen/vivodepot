@@ -1,0 +1,154 @@
+publiccodeYmlVersion: "0.3"
+
+name: VIVODEPOT
+applicationSuite: ~
+url: "https://github.com/carolaklessen/vivodepot"
+landingURL: "https://vivodepot.de"
+isBasedOn: ~
+softwareVersion: "1.0.0-beta.9"
+releaseDate: "2026-04-01"
+logo: ~
+monochromeLogo: ~
+
+inputTypes:
+  - text/html
+
+outputTypes:
+  - application/pdf
+  - application/vnd.openxmlformats-officedocument.wordprocessingml.document
+  - text/vcard
+
+platforms:
+  - web
+
+categories:
+  - healthcare
+  - digital-citizenship
+  - content-management
+
+usedBy: ~
+
+roadmap: ~
+
+developmentStatus: beta
+
+softwareType: standalone/web
+
+intendedAudience:
+  scope:
+    - healthcare
+    - society
+  countries:
+    - de
+    - at
+    - ch
+
+description:
+  de:
+    localisedName: VIVODEPOT
+    genericName: Offline-Vorsorgedokumentation
+    shortDescription: >
+      Persönliche Notfall- und Vorsorgedokumentation — vollständig offline,
+      keine Cloud, kein Server, kein Abo. Einmalig EUR 49.
+    longDescription: >
+      VIVODEPOT ist eine vollständig offline-fähige Einzeldatei-HTML-Anwendung
+      zur strukturierten Vorsorgedokumentation für Privatpersonen, Senioren
+      und pflegende Angehörige.
+
+      Alle wichtigen Informationen — Kontakte, Finanzen, Gesundheit, Vollmachten,
+      Testament, Bestattungswünsche, digitales Erbe — werden in 20 geführten
+      Schritten erfasst und mit einem Klick als PDF, Word-Dokument, Arztbogen
+      oder Notfallblatt exportiert.
+
+      Technische Besonderheiten:
+      - Einzeldatei-HTML (~1,7 MB) — kein Build-System, kein Framework, kein CDN
+      - Alle Bibliotheken inline eingebettet — vollständig offline, auch auf USB-Stick
+      - AES-256-GCM-Verschlüsselung via Web Crypto API (browser-nativ)
+      - FHIR R4-kompatibler Gesundheitsdaten-Export
+      - 13 Exportformate (PDF, Word, vCard, QR-Aufkleber u.a.)
+      - Barrierefrei: Vorlesen, Diktat, Schriftgröße, Kontrast, Lupe (WCAG 2.1)
+      - 842 automatisierte Tests (842/842 bestanden)
+      - ZenDiS-Souveränitätsprüfung: 20/20 Kriterien erfüllt
+      - DSGVO: Privacy by Design — keine Daten verlassen das Gerät
+      - EU AI Act Art. 50: KI-Unterstützung bei der Entwicklung offengelegt
+
+      Zielgruppen: Privatpersonen ab 50 Jahren, pflegende Angehörige,
+      Senioren, Selbstständige. Vertrieb über Vertrauenspartner:
+      Notare, Apotheken, Sparkassen, Hausärzte.
+
+    features:
+      - Vollständig offline — kein Internet erforderlich
+      - Kein Account, keine Registrierung, keine Cloud
+      - AES-256-GCM-Verschlüsselung (optional, passwortbasiert)
+      - 20 geführte Eingabeschritte mit Wizard-Unterstützung
+      - 13 Exportformate inkl. FHIR R4, PDF, Word, vCard
+      - Barrierefreiheit nach WCAG 2.1 (Vorlesen, Diktat, Lupe, Kontrast)
+      - FHIR R4-kompatibler Gesundheitsdaten-Export (ePA-Standard)
+      - BBK-Katastrophenschutz-Modul (Bundesamt für Bevölkerungsschutz)
+      - White-Label-fähig für institutionelle Partner
+      - Open Source unter EUPL-1.2
+
+    screenshots: ~
+    videos: ~
+    awards: ~
+
+  en:
+    localisedName: VIVODEPOT
+    genericName: Offline Emergency & Estate Documentation
+    shortDescription: >
+      Personal emergency and estate planning documentation — fully offline,
+      no cloud, no server, no subscription. One-time EUR 49.
+    longDescription: >
+      VIVODEPOT is a fully offline single-file HTML application for structured
+      personal emergency and estate documentation. All data stays exclusively
+      on the user's device — no cloud, no server, no data transmission.
+
+      Designed for seniors, family caregivers, and individuals who want to
+      prepare all vital information (contacts, finances, health, legal documents,
+      final wishes) for their loved ones and authorized representatives.
+
+    features:
+      - 100% offline — no internet connection required
+      - No account, no registration, no cloud
+      - AES-256-GCM encryption (optional)
+      - 20 guided input steps
+      - 13 export formats including FHIR R4, PDF, Word, vCard
+      - WCAG 2.1 accessibility (text-to-speech, dictation, zoom, contrast)
+      - Open Source under EUPL-1.2
+
+legal:
+  license: EUPL-1.2
+  mainCopyrightOwner: "Vivodepot UG (haftungsbeschränkt)"
+  repoOwner: "Carola Klessen"
+  authorsFile: ~
+
+maintenance:
+  type: internal
+  contacts:
+    - name: Carola Klessen
+      email: feedback@vivodepot.de
+      affiliation: "Vivodepot UG (haftungsbeschränkt)"
+
+localisation:
+  localisationReady: false
+  availableLanguages:
+    - de
+
+dependsOn:
+  open:
+    - name: jsPDF
+      version: "2.5.1"
+      versionMax: ~
+      optional: false
+    - name: docx.js
+      version: "8.5.0"
+      versionMax: ~
+      optional: false
+    - name: qrcode.js
+      version: "1.4.4"
+      versionMax: ~
+      optional: false
+    - name: jsQR
+      version: "1.4.0"
+      versionMax: ~
+      optional: false
