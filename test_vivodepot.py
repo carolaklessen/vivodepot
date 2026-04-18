@@ -1875,6 +1875,163 @@ def main():
     check("DokUebersicht Word: Abschnitt 13 nur im Gesamt-Word-Export",
           html.count('13. Dokumenten-\u00dcbersicht') == 1)
 
+    # ═══════════════════════════════════════
+    print("\n=== 60. ANF-07a — BASIS-ANAMNESE ===")
+    # ═══════════════════════════════════════
+
+    check("ANF-07a: mehr()-Block vorhanden",
+          "'anf07a_klinisch'" in html)
+    check("ANF-07a: Block-Label korrekt",
+          "Facharzttermine" in html and "Körpermaße" in html)
+    check("ANF-07a: Feld koerpergroesse vorhanden",
+          "'koerpergroesse'" in html)
+    check("ANF-07a: Feld koerpergewicht vorhanden",
+          "'koerpergewicht'" in html)
+    check("ANF-07a: Impfung Tetanus-Datum vorhanden",
+          "'impfung_tetanus_datum'" in html)
+    check("ANF-07a: Impfung Grippe-Datum vorhanden",
+          "'impfung_grippe_datum'" in html)
+    check("ANF-07a: Impfung Pneumokokken als Select vorhanden",
+          "'impfung_pneumokokken'" in html and "set('impfung_pneumokokken'" in html)
+    check("ANF-07a: Impfung COVID-Datum vorhanden",
+          "'impfung_covid_datum'" in html)
+    check("ANF-07a: Impfbuch-Ablageort vorhanden",
+          "'impfbuch_ort'" in html)
+    check("ANF-07a: Laborwert INR vorhanden",
+          "'labor_inr_wert'" in html and "'labor_inr_datum'" in html)
+    check("ANF-07a: Laborwert Kreatinin vorhanden",
+          "'labor_kreatinin'" in html and "'labor_kreatinin_datum'" in html)
+    check("ANF-07a: Laborwert HbA1c vorhanden",
+          "'labor_hba1c'" in html and "'labor_hba1c_datum'" in html)
+    check("ANF-07a: LOINC-Codes in Hinweistexten",
+          "LOINC 6301-6" in html and "LOINC 2160-0" in html and "LOINC 4548-4" in html)
+    check("ANF-07a: Selbstauskunft-Vermerk bei Laborwerten",
+          "Selbstauskunft Patient" in html)
+    check("ANF-07a: Feld lebt_allein als Select vorhanden",
+          "'lebt_allein'" in html and "set('lebt_allein'" in html)
+    check("ANF-07a: Feld hauptpflegeperson vorhanden",
+          "'hauptpflegeperson'" in html)
+    check("ANF-07a: Feld beruf_aktuell vorhanden",
+          "'beruf_aktuell'" in html)
+
+    # ═══════════════════════════════════════
+    print("\n=== 61. ANF-07b — FACHSPEZIFISCHE SICHERHEITSFELDER ===")
+    # ═══════════════════════════════════════
+
+    check("ANF-07b: mehr()-Block vorhanden",
+          "'anf07b_fach'" in html)
+    check("ANF-07b: Block-Label korrekt",
+          "Fachspezifische Sicherheitsfelder" in html)
+    check("ANF-07b: Radiologie — MRT-Kontraindikation Select",
+          "set('radio_mrt_kontraindikation'" in html)
+    check("ANF-07b: Radiologie — Klaustrophobie Select",
+          "set('radio_klaustrophobie'" in html)
+    check("ANF-07b: Radiologie — Kontrastmittel Select",
+          "set('radio_km_unvertraeglichkeit'" in html)
+    check("ANF-07b: Radiologie — Schwangerschaft Select",
+          "set('radio_schwangerschaft_moeglich'" in html)
+    check("ANF-07b: Anästhesie — letzte Narkose Datum",
+          "'anaesthesie_letzte_narkose'" in html)
+    check("ANF-07b: Anästhesie — Intubation Select",
+          "set('anaesthesie_intubation_schwierig'" in html)
+    check("ANF-07b: Anästhesie — Pseudocholinesterase Select",
+          "set('anaesthesie_pseudocholinesterase'" in html)
+    check("ANF-07b: Anästhesie — Komplikationen Textarea",
+          "'anaesthesie_komplikationen'" in html)
+    check("ANF-07b: Kardiologie — Herzrhythmus Feld",
+          "'kardio_herzrhythmus'" in html)
+    check("ANF-07b: Kardiologie — Schrittmacher-Modell Feld",
+          "'kardio_schrittmacher_modell'" in html)
+    check("ANF-07b: Neurologie — Epilepsie Select",
+          "set('neuro_epilepsie'" in html)
+    check("ANF-07b: Neurologie — letzter Anfall Datum",
+          "'neuro_letzter_anfall'" in html)
+    check("ANF-07b: Neurologie — Antikonvulsiva Feld",
+          "'neuro_antikonvulsiva'" in html)
+    check("ANF-07b: Geriatrie — Pflegegrad Select (1-5)",
+          "set('geriat_pflegegrad'" in html and "'1','2','3','4','5'" in html)
+    check("ANF-07b: Geriatrie — Sturzrisiko Select",
+          "set('geriat_sturzrisiko'" in html)
+    check("ANF-07b: Geriatrie — MMSE-Score Feld",
+          "'geriat_mmse'" in html)
+    check("ANF-07b: Gynäkologie — Mammographie Datum",
+          "'gyn_letzte_mammographie'" in html)
+    check("ANF-07b: Gynäkologie — PAP-Abstrich Datum",
+          "'gyn_letzter_pap'" in html)
+    check("ANF-07b: Gynäkologie — Menopause Select",
+          "set('gyn_menopause'" in html)
+    check("ANF-07b: Reihenfolge — anf07b nach anf07a",
+          html.index("'anf07b_fach'") > html.index("'anf07a_klinisch'"))
+    check("ANF-07b: Reihenfolge — anf07b vor gesundheit_mehr",
+          html.index("'anf07b_fach'") < html.index("'gesundheit_mehr'"))
+
+    # ═══════════════════════════════════════
+    print("\n=== 62. ANF-07c — ARZTBOGEN-EXPORTE UND WIZARD ===")
+    # ═══════════════════════════════════════
+
+    check("ANF-07c: generateArztbogenRadiologie() definiert",
+          "function generateArztbogenRadiologie()" in html)
+    check("ANF-07c: generateArztbogenPraeop() definiert",
+          "function generateArztbogenPraeop()" in html)
+    check("ANF-07c: generateArztbogenGeriatrie() definiert",
+          "function generateArztbogenGeriatrie()" in html)
+    check("ANF-07c: Radiologie-PDF — MRT-Checkliste vorhanden",
+          "SICHERHEITS-CHECKLISTE MRT" in html)
+    check("ANF-07c: Radiologie-PDF — Rot-Markierung bei Ja-Werten",
+          "180,30,30" in html)
+    check("ANF-07c: Radiologie-PDF — Dateiname korrekt",
+          "Arztbogen_Radiologie_" in html)
+    check("ANF-07c: Praeop-PDF — BMI-Berechnung vorhanden",
+          "BMI (berechnet)" in html)
+    check("ANF-07c: Praeop-PDF — Anästhesie-Sektion vorhanden",
+          "ANÄSTHESIE-ANAMNESE" in html)
+    check("ANF-07c: Praeop-PDF — Dateiname korrekt",
+          "Praeopera_Bogen_" in html)
+    check("ANF-07c: Geriatrie-PDF — Assessment-Sektion vorhanden",
+          "GERIATRISCHES ASSESSMENT" in html)
+    check("ANF-07c: Geriatrie-PDF — Dateiname korrekt",
+          "Geriatrie_Bogen_" in html)
+    check("ANF-07c: Alle PDFs — Selbstauskunft-Fusszeile",
+          html.count("Selbstauskunft Patient (Vivodepot)") >= 3)
+    check("ANF-07c: Export-Karte Radiologie im UI",
+          "generateArztbogenRadiologie()" in html and "Arztbogen Radiologie" in html)
+    check("ANF-07c: Export-Karte Praeop im UI",
+          "generateArztbogenPraeop()" in html and "Präoperativer Bogen" in html)
+    check("ANF-07c: Export-Karte Geriatrie im UI",
+          "generateArztbogenGeriatrie()" in html and "Geriatrie-Bogen" in html)
+    check("ANF-07c: Keine doppelten Export-Karten (Radiologie)",
+          html.count("generateArztbogenRadiologie()") == 2)
+    check("ANF-07c: Keine doppelten Export-Karten (Praeop)",
+          html.count("generateArztbogenPraeop()") == 2)
+    check("ANF-07c: Keine doppelten Export-Karten (Geriatrie)",
+          html.count("generateArztbogenGeriatrie()") == 2)
+    check("ANF-07c: Wizard awizOpen() definiert",
+          "function awizOpen()" in html)
+    check("ANF-07c: Wizard awizClose() definiert",
+          "function awizClose()" in html)
+    check("ANF-07c: Wizard awizRender() definiert",
+          "function awizRender()" in html)
+    check("ANF-07c: Wizard awizCollect() definiert",
+          "function awizCollect()" in html)
+    check("ANF-07c: Wizard awizNext() definiert",
+          "function awizNext()" in html)
+    check("ANF-07c: Wizard awizPrev() definiert",
+          "function awizPrev()" in html)
+    check("ANF-07c: Wizard-Overlay awiz-overlay vorhanden",
+          'id="awiz-overlay"' in html)
+    check("ANF-07c: Wizard-Overlay in ALL_OVERLAY_IDS registriert",
+          "'awiz-overlay'" in html and "ALL_OVERLAY_IDS" in html)
+    check("ANF-07c: Anamnese-Assistent-Button im Gesundheit-Schritt",
+          "awizOpen()" in html and "Anamnese-Assistent starten" in html)
+    check("ANF-07c: Wizard hat 7 Schritte",
+          "von 7" in html and "awiz-step-info" in html)
+    check("ANF-07c: Wizard deckt Laborwerte ab",
+          "awizStep === 3" in html and "labor_inr_wert" in html)
+    check("ANF-07c: Wizard deckt Radiologie/Anästhesie ab",
+          "awizStep === 5" in html and "radio_mrt_kontraindikation" in html)
+    check("ANF-07c: Wizard deckt Geriatrie/Gynäkologie ab",
+          "awizStep === 6" in html and "geriat_pflegegrad" in html)
+
     passed = sum(1 for s, _, _ in results if s == "PASS")
     failed = sum(1 for s, _, _ in results if s == "FAIL")
     total = len(results)

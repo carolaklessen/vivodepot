@@ -12572,7 +12572,7 @@ function getNotfallData() {
 
 // ── Welcome flow ──────────────────────────────────────
 // Alle verwalteten Overlay-IDs — einmalig pflegen, von showOverlay() und hideAllOverlays() gemeinsam genutzt
-const ALL_OVERLAY_IDS = ['welcome-overlay','return-overlay','angehoerigenauswahl-overlay','set-password-overlay','crypto-overlay','gwiz-overlay','vvwiz-overlay','pvwiz-overlay','bwiz-overlay','hwiz-overlay','gvwiz-overlay','goal-wizard','wg-overlay','qr-overlay','qre-overlay','sp-overlay'];
+const ALL_OVERLAY_IDS = ['welcome-overlay','return-overlay','angehoerigenauswahl-overlay','set-password-overlay','crypto-overlay','gwiz-overlay','vvwiz-overlay','pvwiz-overlay','bwiz-overlay','hwiz-overlay','gvwiz-overlay','goal-wizard','wg-overlay','qr-overlay','qre-overlay','sp-overlay','awiz-overlay'];
 
 function showOverlay(id) {
   ALL_OVERLAY_IDS.forEach(oid => { const el = document.getElementById(oid); if (el) el.style.display = 'none'; });
@@ -14872,6 +14872,9 @@ const STEP_RENDERERS = {
     <div style="margin-bottom:1.2rem">
       <button class="btn-nav gold-btn" onclick="gwizOpen()" style="font-size:0.88rem">Notfall-Gesundheitskarte erstellen</button>
       <span style="font-size:0.78rem;color:var(--ink3);margin-left:8px">Druckbare Scheckkarte für die Geldbörse</span>
+      <br style="margin-bottom:8px">
+      <button class="btn-nav" onclick="awizOpen()" style="font-size:0.88rem;margin-top:8px;background:var(--teal,#2a7d8c);color:#fff;border:none">Anamnese-Assistent starten</button>
+      <span style="font-size:0.78rem;color:var(--ink3);margin-left:8px">Klinische Daten Schritt für Schritt ergänzen</span>
     </div>
     <div class="field-section-title">${tl('Ärzte & Medikamente')}</div>
     <div class="field-row" style="margin-top:12px">
@@ -14896,6 +14899,183 @@ const STEP_RENDERERS = {
 
     <div class="field-section-title">${tl('Medikamente')}</div>
     ${renderMedikamentBlocks()}
+
+    ${mehr('anf07a_klinisch','Für Facharzttermine & Überweisungen (Körpermaße, Impfstatus, Laborwerte …)',
+      ['koerpergroesse','koerpergewicht','impfung_tetanus_datum','impfung_grippe_datum',
+       'impfung_pneumokokken','impfung_covid_datum','impfbuch_ort',
+       'labor_inr_wert','labor_inr_datum','labor_kreatinin','labor_kreatinin_datum',
+       'labor_hba1c','labor_hba1c_datum',
+       'lebt_allein','hauptpflegeperson','beruf_aktuell'],`
+      <div style="margin-top:6px;font-size:0.74rem;color:var(--ink3)">Diese Angaben werden automatisch in Arztbogen-Exporte übernommen (Radiologie, Anästhesie u. a.).</div>
+      <div style="margin-top:10px"><strong style="font-size:0.78rem;color:var(--ink2)">Körpermaße</strong></div>
+      <div class="field-row" style="margin-top:6px">
+        ${field('koerpergroesse','Körpergröße (cm)','z. B. 172','false','number','Wird für den BMI-Export verwendet.')}
+        ${field('koerpergewicht','Körpergewicht (kg)','z. B. 74','false','number','Wird für den BMI-Export verwendet.')}
+      </div>
+      <div style="margin-top:10px"><strong style="font-size:0.78rem;color:var(--ink2)">Impfstatus</strong></div>
+      <div class="field-row" style="margin-top:6px">
+        ${field('impfung_tetanus_datum','Tetanus — letzter Impftermin','','false','date')}
+        ${field('impfung_grippe_datum','Grippeimpfung — letzter Termin','','false','date')}
+      </div>
+      <div class="field-row" style="margin-top:12px">
+        <div>
+          <label class="field-label" for="impfung_pneumokokken">Pneumokokken-Impfung</label>
+          <select id="impfung_pneumokokken" oninput="set('impfung_pneumokokken',this.value)" style="width:100%">
+            <option value="">— unbekannt —</option>
+            ${['Ja','Nein'].map(o=>`<option value="${o}" ${get('impfung_pneumokokken')===o?'selected':''}>${o}</option>`).join('')}
+          </select>
+        </div>
+        ${field('impfung_covid_datum','COVID-19 — letzter Impftermin','','false','date')}
+      </div>
+      <div style="margin-top:12px">${field('impfbuch_ort','Impfbuch — Ablageort','z. B. Schublade Schreibtisch')}</div>
+      <div style="margin-top:10px"><strong style="font-size:0.78rem;color:var(--ink2)">Laborwerte (Selbstauskunft)</strong></div>
+      <div style="margin-top:4px;font-size:0.73rem;color:var(--ink3)">Quelle: Selbstauskunft Patient — aus letztem Laborbericht übertragen.</div>
+      <div class="field-row" style="margin-top:8px">
+        ${field('labor_inr_wert','INR-Wert (Blutgerinnung)','z. B. 2,4','false','number','Relevant bei Antikoagulation. LOINC 6301-6.')}
+        ${field('labor_inr_datum','INR — Datum der Messung','','false','date')}
+      </div>
+      <div class="field-row" style="margin-top:12px">
+        ${field('labor_kreatinin','Kreatinin (mg/dl)','z. B. 0,95','false','number','Nierenfunktion. LOINC 2160-0.')}
+        ${field('labor_kreatinin_datum','Kreatinin — Datum der Messung','','false','date')}
+      </div>
+      <div class="field-row" style="margin-top:12px">
+        ${field('labor_hba1c','HbA1c (%)','z. B. 6,8','false','number','Langzeitblutzucker bei Diabetes. LOINC 4548-4.')}
+        ${field('labor_hba1c_datum','HbA1c — Datum der Messung','','false','date')}
+      </div>
+      <div style="margin-top:10px"><strong style="font-size:0.78rem;color:var(--ink2)">Sozialanamnese</strong></div>
+      <div class="field-row" style="margin-top:6px">
+        <div>
+          <label class="field-label" for="lebt_allein">Lebt allein?</label>
+          <select id="lebt_allein" oninput="set('lebt_allein',this.value)" style="width:100%">
+            <option value="">— bitte wählen —</option>
+            ${['Ja','Nein'].map(o=>`<option value="${o}" ${get('lebt_allein')===o?'selected':''}>${o}</option>`).join('')}
+          </select>
+        </div>
+        ${field('hauptpflegeperson','Hauptpflegeperson (Name & Telefon)','z. B. Tochter Monika Müller, 0175 123456','false','text','Wer kümmert sich im Notfall? Für Arztberichte und Entlassungsplanung.')}
+      </div>
+      <div style="margin-top:12px">${field('beruf_aktuell','Aktueller Beruf','z. B. Lehrerin, Rentner','false','text','Berufliche Exposition kann klinisch relevant sein.')}</div>
+    `)}
+
+    ${mehr('anf07b_fach','Fachspezifische Sicherheitsfelder (Radiologie, Anästhesie, Geriatrie …)',
+      ['radio_mrt_kontraindikation','radio_klaustrophobie','radio_km_unvertraeglichkeit','radio_schwangerschaft_moeglich',
+       'anaesthesie_letzte_narkose','anaesthesie_komplikationen','anaesthesie_intubation_schwierig','anaesthesie_pseudocholinesterase',
+       'kardio_herzrhythmus','kardio_schrittmacher_modell',
+       'neuro_epilepsie','neuro_letzter_anfall','neuro_antikonvulsiva',
+       'geriat_pflegegrad','geriat_sturzrisiko','geriat_mmse',
+       'gyn_letzte_mammographie','gyn_letzter_pap','gyn_menopause'],`
+      <div style="margin-top:6px;font-size:0.74rem;color:var(--ink3)">Diese Felder werden in die fachspezifischen Arztbogen-Exporte übernommen. Nur ausfüllen, was bekannt und relevant ist.</div>
+
+      <div style="margin-top:12px"><strong style="font-size:0.78rem;color:var(--ink2)">Radiologie / MRT</strong></div>
+      <div class="field-row" style="margin-top:6px">
+        <div>
+          <label class="field-label" for="radio_mrt_kontraindikation">Metall im Körper / MRT-Kontraindikation</label>
+          <select id="radio_mrt_kontraindikation" oninput="set('radio_mrt_kontraindikation',this.value)" style="width:100%">
+            <option value="">— bitte wählen —</option>
+            ${['Ja','Nein','Nicht bekannt'].map(o=>`<option value="${o}" ${get('radio_mrt_kontraindikation')===o?'selected':''}>${o}</option>`).join('')}
+          </select>
+        </div>
+        <div>
+          <label class="field-label" for="radio_klaustrophobie">Klaustrophobie</label>
+          <select id="radio_klaustrophobie" oninput="set('radio_klaustrophobie',this.value)" style="width:100%">
+            <option value="">— bitte wählen —</option>
+            ${['Ja','Nein'].map(o=>`<option value="${o}" ${get('radio_klaustrophobie')===o?'selected':''}>${o}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      <div class="field-row" style="margin-top:12px">
+        <div>
+          <label class="field-label" for="radio_km_unvertraeglichkeit">Kontrastmittel-Unverträglichkeit</label>
+          <select id="radio_km_unvertraeglichkeit" oninput="set('radio_km_unvertraeglichkeit',this.value)" style="width:100%">
+            <option value="">— bitte wählen —</option>
+            ${['Ja','Nein','Nicht bekannt'].map(o=>`<option value="${o}" ${get('radio_km_unvertraeglichkeit')===o?'selected':''}>${o}</option>`).join('')}
+          </select>
+        </div>
+        <div>
+          <label class="field-label" for="radio_schwangerschaft_moeglich">Schwangerschaft möglich</label>
+          <select id="radio_schwangerschaft_moeglich" oninput="set('radio_schwangerschaft_moeglich',this.value)" style="width:100%">
+            <option value="">— bitte wählen —</option>
+            ${['Ja','Nein','Nicht zutreffend'].map(o=>`<option value="${o}" ${get('radio_schwangerschaft_moeglich')===o?'selected':''}>${o}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+
+      <div style="margin-top:14px"><strong style="font-size:0.78rem;color:var(--ink2)">Anästhesie / Narkose</strong></div>
+      <div class="field-row" style="margin-top:6px">
+        ${field('anaesthesie_letzte_narkose','Letzte Narkose — Datum (ungefähr)','','false','date')}
+        <div>
+          <label class="field-label" for="anaesthesie_intubation_schwierig">Schwierige Intubation bekannt</label>
+          <select id="anaesthesie_intubation_schwierig" oninput="set('anaesthesie_intubation_schwierig',this.value)" style="width:100%">
+            <option value="">— bitte wählen —</option>
+            ${['Ja','Nein','Nicht bekannt'].map(o=>`<option value="${o}" ${get('anaesthesie_intubation_schwierig')===o?'selected':''}>${o}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      <div class="field-row" style="margin-top:12px">
+        <div>
+          <label class="field-label" for="anaesthesie_pseudocholinesterase">Pseudocholinesterase-Mangel</label>
+          <select id="anaesthesie_pseudocholinesterase" oninput="set('anaesthesie_pseudocholinesterase',this.value)" style="width:100%">
+            <option value="">— bitte wählen —</option>
+            ${['Ja','Nein','Nicht bekannt'].map(o=>`<option value="${o}" ${get('anaesthesie_pseudocholinesterase')===o?'selected':''}>${o}</option>`).join('')}
+          </select>
+        </div>
+        <div><!-- Platzhalter --></div>
+      </div>
+      <div style="margin-top:12px">${textarea('anaesthesie_komplikationen','Narkose-Komplikationen','z. B. postoperative Übelkeit 2019; verlängertes Aufwachen','2','Bekannte Reaktionen auf frühere Narkosen — wichtig für Anästhesie-Voranmeldung.')}</div>
+
+      <div style="margin-top:14px"><strong style="font-size:0.78rem;color:var(--ink2)">Kardiologie</strong></div>
+      <div class="field-row" style="margin-top:6px">
+        ${field('kardio_herzrhythmus','Herzrhythmusstörungen','z. B. Vorhofflimmern, AV-Block I°','false','text','Bekannte Rhythmusstörungen — für EKG-Auswertung und Narkoserisiko.')}
+        ${field('kardio_schrittmacher_modell','Schrittmacher-Modell & Hersteller','z. B. Medtronic Azure XT SR, 2021','false','text','Ergänzung zum Feld Implantate. Modell für MRT-Tauglichkeitsprüfung erforderlich.')}
+      </div>
+
+      <div style="margin-top:14px"><strong style="font-size:0.78rem;color:var(--ink2)">Neurologie</strong></div>
+      <div class="field-row" style="margin-top:6px">
+        <div>
+          <label class="field-label" for="neuro_epilepsie">Epilepsie bekannt</label>
+          <select id="neuro_epilepsie" oninput="set('neuro_epilepsie',this.value)" style="width:100%">
+            <option value="">— bitte wählen —</option>
+            ${['Ja','Nein'].map(o=>`<option value="${o}" ${get('neuro_epilepsie')===o?'selected':''}>${o}</option>`).join('')}
+          </select>
+        </div>
+        ${field('neuro_letzter_anfall','Letzter Anfall — Datum','','false','date')}
+      </div>
+      <div style="margin-top:12px">${field('neuro_antikonvulsiva','Antikonvulsiva (Medikamente)','z. B. Levetiracetam 1.000 mg 2×tägl.','false','text','Antiepileptische Dauermedikation — ergänzt den Medikamentenblock.')}</div>
+
+      <div style="margin-top:14px"><strong style="font-size:0.78rem;color:var(--ink2)">Geriatrie / Pflegebedarf</strong></div>
+      <div class="field-row" style="margin-top:6px">
+        <div>
+          <label class="field-label" for="geriat_pflegegrad">Pflegegrad</label>
+          <select id="geriat_pflegegrad" oninput="set('geriat_pflegegrad',this.value)" style="width:100%">
+            <option value="">— keiner / nicht beantragt —</option>
+            ${['1','2','3','4','5'].map(o=>`<option value="${o}" ${get('geriat_pflegegrad')===o?'selected':''}>Pflegegrad ${o}</option>`).join('')}
+          </select>
+        </div>
+        <div>
+          <label class="field-label" for="geriat_sturzrisiko">Erhöhtes Sturzrisiko</label>
+          <select id="geriat_sturzrisiko" oninput="set('geriat_sturzrisiko',this.value)" style="width:100%">
+            <option value="">— bitte wählen —</option>
+            ${['Ja','Nein'].map(o=>`<option value="${o}" ${get('geriat_sturzrisiko')===o?'selected':''}>${o}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      <div style="margin-top:12px">${field('geriat_mmse','MMSE-Score (0–30)','z. B. 27','false','number','Mini-Mental-Status-Test — wird vom Arzt ermittelt. Nur eintragen wenn bekannt.')}</div>
+
+      <div style="margin-top:14px"><strong style="font-size:0.78rem;color:var(--ink2)">Gynäkologie</strong></div>
+      <div class="field-row" style="margin-top:6px">
+        ${field('gyn_letzte_mammographie','Letzte Mammographie — Datum','','false','date')}
+        ${field('gyn_letzter_pap','Letzter Zervixabstrich (PAP) — Datum','','false','date')}
+      </div>
+      <div class="field-row" style="margin-top:12px">
+        <div>
+          <label class="field-label" for="gyn_menopause">Menopause</label>
+          <select id="gyn_menopause" oninput="set('gyn_menopause',this.value)" style="width:100%">
+            <option value="">— bitte wählen —</option>
+            ${['Ja','Nein','Nicht zutreffend','Nicht bekannt'].map(o=>`<option value="${o}" ${get('gyn_menopause')===o?'selected':''}>${o}</option>`).join('')}
+          </select>
+        </div>
+        <div><!-- Platzhalter --></div>
+      </div>
+    `)}
 
     ${mehr('gesundheit_mehr','Weitere Ärzte, Vorgeschichte, Befunde, Vorsorge, Zahnarzt …',
       ['facharzt_2','facharzt_3','kv_versicherter','kv_zusatz','voroperationen','familienanamnese',
@@ -15923,6 +16103,24 @@ const STEP_RENDERERS = {
         <div class="ec-title">Arztbesuch-Bogen</div>
         <div class="ec-sub">Alle Stammdaten für die Praxis — einmal drucken, immer mitbringen</div>
         <div class="ec-btn">PDF erstellen</div>
+      </div>
+      <div class="export-card" onclick="generateArztbogenRadiologie()" style="border-left: 4px solid #1a6fa8">
+        <div class="ec-icon">🔬</div>
+        <div class="ec-title">Arztbogen Radiologie</div>
+        <div class="ec-sub">MRT-Checkliste, Kontrastmittel, Implantate, Laborwerte</div>
+        <div class="ec-btn" style="background:#1a6fa8">PDF erstellen</div>
+      </div>
+      <div class="export-card" onclick="generateArztbogenPraeop()" style="border-left: 4px solid #7b3fa0">
+        <div class="ec-icon">💉</div>
+        <div class="ec-title">Präoperativer Bogen</div>
+        <div class="ec-sub">Narkose-Anamnese, BMI, Laborwerte für Anästhesie-Voranmeldung</div>
+        <div class="ec-btn" style="background:#7b3fa0">PDF erstellen</div>
+      </div>
+      <div class="export-card" onclick="generateArztbogenGeriatrie()" style="border-left: 4px solid #b05e00">
+        <div class="ec-icon">🧓</div>
+        <div class="ec-title">Geriatrie-Bogen</div>
+        <div class="ec-sub">Pflegegrad, Sturzrisiko, MMSE, Soziales Umfeld</div>
+        <div class="ec-btn" style="background:#b05e00">PDF erstellen</div>
       </div>
       <div class="export-card" onclick="generateScenarioPDF('grabbag')" style="border-left: 4px solid #d35400">
         <div class="ec-icon">🎒</div>
@@ -18911,6 +19109,224 @@ function generateArztbogen() {
 }
 
 // ═══════════════════════════════════════════════
+// D4b: ARZTBOGEN RADIOLOGIE (ANF-07c)
+// ═══════════════════════════════════════════════
+function generateArztbogenRadiologie() {
+  toast('Arztbogen Radiologie wird erstellt…');
+  setTimeout(function() {
+    try {
+      var jsPDF = window.jspdf.jsPDF;
+      var doc = new jsPDF({ orientation:'p', unit:'mm', format:'a4' });
+      var W = 210, margin = 16, cw = W - 2*margin, y = 0;
+      var NAVY = [61,90,42], GOLD = [201,168,76], INK = [40,44,38], INK2 = [100,112,88];
+      var name = [get('vorname'), get('nachname')].filter(Boolean).join(' ') || '—';
+
+      // Header
+      doc.setFillColor(...NAVY); doc.rect(0, 0, W, 20, 'F');
+      doc.setFillColor(...GOLD); doc.rect(0, 20, W, 1, 'F');
+      doc.setFont('helvetica','bold'); doc.setFontSize(14); doc.setTextColor(255,255,255);
+      doc.text('Arztbogen Radiologie', margin, 13);
+      doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(...GOLD);
+      doc.text(name + '  ·  Stand: ' + new Date().toLocaleDateString('de-DE'), W - margin, 13, {align:'right'});
+      y = 26;
+
+      function sec(t) { y += 3; doc.setFillColor(...NAVY); doc.rect(margin, y, cw, 7, 'F'); doc.setFillColor(...GOLD); doc.rect(margin, y, 2.5, 7, 'F'); doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(255,255,255); doc.text(t, margin + 5, y + 5); y += 10; }
+      function row(l, v) { if (!v) return; if (y > 276) { doc.addPage(); y = 14; } doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(...INK2); doc.text(l, margin, y + 3); doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(...INK); var lines = doc.splitTextToSize(String(v), cw - 48); doc.text(lines[0], margin + 48, y + 3); y += 5; if (lines.length > 1) { lines.slice(1).forEach(function(ln) { doc.text(ln, margin + 48, y + 3); y += 4.5; }); } }
+      function rowBool(l, v, warn) { if (!v) return; var col = (warn && v === 'Ja') ? [180,30,30] : [...INK]; if (y > 276) { doc.addPage(); y = 14; } doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(...INK2); doc.text(l, margin, y + 3); doc.setFont('helvetica','bold'); doc.setFontSize(8.5); doc.setTextColor(...col); doc.text(v, margin + 48, y + 3); y += 5; }
+
+      sec('PATIENTENDATEN');
+      row('Name', name);
+      row('Geburtsdatum', get('geburtsdatum') ? new Date(get('geburtsdatum')).toLocaleDateString('de-DE') : '');
+      row('Blutgruppe', get('blutgruppe'));
+      row('Allergien', get('allergien'));
+
+      sec('SICHERHEITS-CHECKLISTE MRT / RADIOLOGIE');
+      rowBool('Metall im Körper / MRT-KI', get('radio_mrt_kontraindikation'), true);
+      rowBool('Klaustrophobie', get('radio_klaustrophobie'), true);
+      rowBool('Kontrastmittel-Unverträglichkeit', get('radio_km_unvertraeglichkeit'), true);
+      rowBool('Schwangerschaft möglich', get('radio_schwangerschaft_moeglich'), true);
+      row('Implantate / Schrittmacher', get('implantate'));
+      row('Schrittmacher-Modell', get('kardio_schrittmacher_modell'));
+
+      sec('RELEVANTE LABORWERTE (Selbstauskunft)');
+      var inr = get('labor_inr_wert'), inrD = get('labor_inr_datum') ? new Date(get('labor_inr_datum')).toLocaleDateString('de-DE') : '';
+      var krea = get('labor_kreatinin'), kreaD = get('labor_kreatinin_datum') ? new Date(get('labor_kreatinin_datum')).toLocaleDateString('de-DE') : '';
+      row('INR', inr ? inr + (inrD ? '  (Datum: ' + inrD + ')' : '') : '');
+      row('Kreatinin (mg/dl)', krea ? krea + (kreaD ? '  (Datum: ' + kreaD + ')' : '') : '');
+
+      sec('CHRONISCHE ERKRANKUNGEN');
+      row('Erkrankungen', get('krankheiten'));
+      row('Herzrhythmusstörungen', get('kardio_herzrhythmus'));
+
+      sec('AKTUELLE MEDIKAMENTE');
+      var meds = getList('medikamente');
+      if (meds.length) { meds.forEach(function(m) { row(m.name || '—', m.dosis || ''); }); }
+      else { doc.setFont('helvetica','italic'); doc.setFontSize(8); doc.setTextColor(...INK2); doc.text('Keine Medikamente eingetragen', margin, y + 3); y += 6; }
+
+      doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(180,180,180);
+      doc.text('Quelle: Selbstauskunft Patient (Vivodepot) · Alle Angaben ohne Gewähr · Daten nicht verifiziert', margin, 290);
+      doc.save('Arztbogen_Radiologie_' + (get('nachname') || 'Dokument') + '.pdf');
+      toast('Arztbogen Radiologie erstellt ');
+    } catch(e) { toast('Fehler: ' + e.message); }
+  }, 80);
+}
+
+// ═══════════════════════════════════════════════
+// D4c: ARZTBOGEN PRÄOPERATIV (ANF-07c)
+// ═══════════════════════════════════════════════
+function generateArztbogenPraeop() {
+  toast('Präoperativer Bogen wird erstellt…');
+  setTimeout(function() {
+    try {
+      var jsPDF = window.jspdf.jsPDF;
+      var doc = new jsPDF({ orientation:'p', unit:'mm', format:'a4' });
+      var W = 210, margin = 16, cw = W - 2*margin, y = 0;
+      var NAVY = [61,90,42], GOLD = [201,168,76], INK = [40,44,38], INK2 = [100,112,88];
+      var name = [get('vorname'), get('nachname')].filter(Boolean).join(' ') || '—';
+
+      doc.setFillColor(...NAVY); doc.rect(0, 0, W, 20, 'F');
+      doc.setFillColor(...GOLD); doc.rect(0, 20, W, 1, 'F');
+      doc.setFont('helvetica','bold'); doc.setFontSize(14); doc.setTextColor(255,255,255);
+      doc.text('Präoperativer Anästhesie-Bogen', margin, 13);
+      doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(...GOLD);
+      doc.text(name + '  ·  Stand: ' + new Date().toLocaleDateString('de-DE'), W - margin, 13, {align:'right'});
+      y = 26;
+
+      function sec(t) { y += 3; doc.setFillColor(...NAVY); doc.rect(margin, y, cw, 7, 'F'); doc.setFillColor(...GOLD); doc.rect(margin, y, 2.5, 7, 'F'); doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(255,255,255); doc.text(t, margin + 5, y + 5); y += 10; }
+      function row(l, v) { if (!v) return; if (y > 276) { doc.addPage(); y = 14; } doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(...INK2); doc.text(l, margin, y + 3); doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(...INK); var lines = doc.splitTextToSize(String(v), cw - 52); doc.text(lines[0], margin + 52, y + 3); y += 5; if (lines.length > 1) { lines.slice(1).forEach(function(ln) { doc.text(ln, margin + 52, y + 3); y += 4.5; }); } }
+      function rowBool(l, v, warn) { if (!v) return; var col = (warn && v === 'Ja') ? [180,30,30] : [...INK]; if (y > 276) { doc.addPage(); y = 14; } doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(...INK2); doc.text(l, margin, y + 3); doc.setFont('helvetica','bold'); doc.setFontSize(8.5); doc.setTextColor(...col); doc.text(v, margin + 52, y + 3); y += 5; }
+
+      sec('PATIENTENDATEN');
+      row('Name', name);
+      row('Geburtsdatum', get('geburtsdatum') ? new Date(get('geburtsdatum')).toLocaleDateString('de-DE') : '');
+      var kg = get('koerpergewicht'), cm = get('koerpergroesse');
+      row('Gewicht / Größe', [kg ? kg + ' kg' : '', cm ? cm + ' cm' : ''].filter(Boolean).join('  /  '));
+      if (kg && cm) { var bmi = (parseFloat(kg) / Math.pow(parseFloat(cm)/100, 2)).toFixed(1); row('BMI (berechnet)', bmi); }
+      row('Blutgruppe', get('blutgruppe'));
+      row('Allergien', get('allergien'));
+
+      sec('ANÄSTHESIE-ANAMNESE');
+      row('Letzte Narkose', get('anaesthesie_letzte_narkose') ? new Date(get('anaesthesie_letzte_narkose')).toLocaleDateString('de-DE') : '');
+      rowBool('Schwierige Intubation bekannt', get('anaesthesie_intubation_schwierig'), true);
+      rowBool('Pseudocholinesterase-Mangel', get('anaesthesie_pseudocholinesterase'), true);
+      row('Komplikationen frühere Narkosen', get('anaesthesie_komplikationen'));
+      row('MRT-Kontraindikation', get('radio_mrt_kontraindikation'));
+      row('Implantate / Schrittmacher', get('implantate'));
+      row('Schrittmacher-Modell', get('kardio_schrittmacher_modell'));
+
+      sec('CHRONISCHE ERKRANKUNGEN');
+      row('Erkrankungen', get('krankheiten'));
+      row('Herzrhythmusstörungen', get('kardio_herzrhythmus'));
+      rowBool('Epilepsie', get('neuro_epilepsie'), true);
+      row('Antikonvulsiva', get('neuro_antikonvulsiva'));
+
+      sec('AKTUELLE MEDIKAMENTE');
+      var meds = getList('medikamente');
+      if (meds.length) { meds.forEach(function(m) { row(m.name || '—', [m.dosis, m.arzt ? 'verordnet: ' + m.arzt : ''].filter(Boolean).join(' · ')); }); }
+      else { doc.setFont('helvetica','italic'); doc.setFontSize(8); doc.setTextColor(...INK2); doc.text('Keine Medikamente eingetragen', margin, y + 3); y += 6; }
+
+      sec('RELEVANTE LABORWERTE (Selbstauskunft)');
+      var inr = get('labor_inr_wert'), inrD = get('labor_inr_datum') ? new Date(get('labor_inr_datum')).toLocaleDateString('de-DE') : '';
+      var krea = get('labor_kreatinin'), kreaD = get('labor_kreatinin_datum') ? new Date(get('labor_kreatinin_datum')).toLocaleDateString('de-DE') : '';
+      var hba1c = get('labor_hba1c'), hba1cD = get('labor_hba1c_datum') ? new Date(get('labor_hba1c_datum')).toLocaleDateString('de-DE') : '';
+      row('INR', inr ? inr + (inrD ? '  (Datum: ' + inrD + ')' : '') : '');
+      row('Kreatinin (mg/dl)', krea ? krea + (kreaD ? '  (Datum: ' + kreaD + ')' : '') : '');
+      row('HbA1c (%)', hba1c ? hba1c + (hba1cD ? '  (Datum: ' + hba1cD + ')' : '') : '');
+
+      sec('OPERATIONSVORGESCHICHTE');
+      var opTxt = get('voroperationen');
+      if (opTxt) { var opLines = doc.splitTextToSize(opTxt, cw - 4); opLines.forEach(function(ln) { if (y > 276) { doc.addPage(); y = 14; } doc.text(ln, margin + 2, y + 3); y += 4.5; }); }
+      else { doc.setFont('helvetica','italic'); doc.setFontSize(8); doc.setTextColor(...INK2); doc.text('Keine Angaben', margin, y + 3); y += 6; }
+
+      sec('NOTFALLKONTAKT');
+      var k1 = getList('kontakte')[0];
+      if (k1) { row([k1.vorname, k1.nachname].filter(Boolean).join(' '), [k1.tel, k1.rolle ? '(' + k1.rolle + ')' : ''].filter(Boolean).join(' ')); }
+
+      doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(180,180,180);
+      doc.text('Quelle: Selbstauskunft Patient (Vivodepot) · Alle Angaben ohne Gewähr · Daten nicht verifiziert', margin, 290);
+      doc.save('Praeopera_Bogen_' + (get('nachname') || 'Dokument') + '.pdf');
+      toast('Präoperativer Bogen erstellt ');
+    } catch(e) { toast('Fehler: ' + e.message); }
+  }, 80);
+}
+
+// ═══════════════════════════════════════════════
+// D4d: ARZTBOGEN GERIATRIE (ANF-07c)
+// ═══════════════════════════════════════════════
+function generateArztbogenGeriatrie() {
+  toast('Geriatrie-Bogen wird erstellt…');
+  setTimeout(function() {
+    try {
+      var jsPDF = window.jspdf.jsPDF;
+      var doc = new jsPDF({ orientation:'p', unit:'mm', format:'a4' });
+      var W = 210, margin = 16, cw = W - 2*margin, y = 0;
+      var NAVY = [61,90,42], GOLD = [201,168,76], INK = [40,44,38], INK2 = [100,112,88];
+      var name = [get('vorname'), get('nachname')].filter(Boolean).join(' ') || '—';
+
+      doc.setFillColor(...NAVY); doc.rect(0, 0, W, 20, 'F');
+      doc.setFillColor(...GOLD); doc.rect(0, 20, W, 1, 'F');
+      doc.setFont('helvetica','bold'); doc.setFontSize(14); doc.setTextColor(255,255,255);
+      doc.text('Geriatrie-Bogen', margin, 13);
+      doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(...GOLD);
+      doc.text(name + '  ·  Stand: ' + new Date().toLocaleDateString('de-DE'), W - margin, 13, {align:'right'});
+      y = 26;
+
+      function sec(t) { y += 3; doc.setFillColor(...NAVY); doc.rect(margin, y, cw, 7, 'F'); doc.setFillColor(...GOLD); doc.rect(margin, y, 2.5, 7, 'F'); doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(255,255,255); doc.text(t, margin + 5, y + 5); y += 10; }
+      function row(l, v) { if (!v) return; if (y > 276) { doc.addPage(); y = 14; } doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(...INK2); doc.text(l, margin, y + 3); doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(...INK); var lines = doc.splitTextToSize(String(v), cw - 50); doc.text(lines[0], margin + 50, y + 3); y += 5; if (lines.length > 1) { lines.slice(1).forEach(function(ln) { doc.text(ln, margin + 50, y + 3); y += 4.5; }); } }
+      function rowBool(l, v, warn) { if (!v) return; var col = (warn && v === 'Ja') ? [180,30,30] : [...INK]; if (y > 276) { doc.addPage(); y = 14; } doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(...INK2); doc.text(l, margin, y + 3); doc.setFont('helvetica','bold'); doc.setFontSize(8.5); doc.setTextColor(...col); doc.text(v, margin + 50, y + 3); y += 5; }
+
+      sec('PATIENTENDATEN');
+      row('Name', name);
+      row('Geburtsdatum', get('geburtsdatum') ? new Date(get('geburtsdatum')).toLocaleDateString('de-DE') : '');
+      var kg = get('koerpergewicht'), cm = get('koerpergroesse');
+      row('Gewicht / Größe', [kg ? kg + ' kg' : '', cm ? cm + ' cm' : ''].filter(Boolean).join('  /  '));
+      if (kg && cm) { var bmi = (parseFloat(kg) / Math.pow(parseFloat(cm)/100, 2)).toFixed(1); row('BMI (berechnet)', bmi); }
+      row('Blutgruppe', get('blutgruppe'));
+      row('Allergien', get('allergien'));
+
+      sec('GERIATRISCHES ASSESSMENT');
+      row('Pflegegrad', get('geriat_pflegegrad') ? 'Pflegegrad ' + get('geriat_pflegegrad') : '');
+      rowBool('Erhöhtes Sturzrisiko', get('geriat_sturzrisiko'), true);
+      row('MMSE-Score', get('geriat_mmse') ? get('geriat_mmse') + ' / 30' : '');
+      rowBool('Lebt allein', get('lebt_allein'), false);
+      row('Hauptpflegeperson', get('hauptpflegeperson'));
+      row('Aktueller Beruf', get('beruf_aktuell'));
+      row('Hilfsmittel', get('hilfsmittel'));
+
+      sec('CHRONISCHE ERKRANKUNGEN');
+      row('Erkrankungen', get('krankheiten'));
+      row('Herzrhythmusstörungen', get('kardio_herzrhythmus'));
+      rowBool('Epilepsie', get('neuro_epilepsie'), true);
+      row('Familienanamnese', get('familienanamnese'));
+
+      sec('AKTUELLE MEDIKAMENTE');
+      var meds = getList('medikamente');
+      if (meds.length) { meds.forEach(function(m) { row(m.name || '—', [m.dosis, m.arzt ? 'verordnet: ' + m.arzt : ''].filter(Boolean).join(' · ')); }); }
+      else { doc.setFont('helvetica','italic'); doc.setFontSize(8); doc.setTextColor(...INK2); doc.text('Keine Medikamente eingetragen', margin, y + 3); y += 6; }
+
+      sec('RELEVANTE LABORWERTE (Selbstauskunft)');
+      var krea = get('labor_kreatinin'), kreaD = get('labor_kreatinin_datum') ? new Date(get('labor_kreatinin_datum')).toLocaleDateString('de-DE') : '';
+      var hba1c = get('labor_hba1c'), hba1cD = get('labor_hba1c_datum') ? new Date(get('labor_hba1c_datum')).toLocaleDateString('de-DE') : '';
+      row('Kreatinin (mg/dl)', krea ? krea + (kreaD ? '  (Datum: ' + kreaD + ')' : '') : '');
+      row('HbA1c (%)', hba1c ? hba1c + (hba1cD ? '  (Datum: ' + hba1cD + ')' : '') : '');
+
+      sec('SOZIALES UMFELD');
+      row('Wohnsituation', get('lebt_allein') === 'Ja' ? 'Lebt allein' : get('lebt_allein') === 'Nein' ? 'Lebt nicht allein' : '');
+      row('Pflegeperson', get('hauptpflegeperson'));
+      var k1 = getList('kontakte')[0];
+      if (k1) { row('Notfallkontakt', [k1.vorname, k1.nachname].filter(Boolean).join(' ') + (k1.tel ? ', ' + k1.tel : '') + (k1.rolle ? ' (' + k1.rolle + ')' : '')); }
+      row('Vollmacht', get('vollmacht_vorhanden'));
+      row('Patientenverfügung', get('patientenverf_vorhanden'));
+
+      doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(180,180,180);
+      doc.text('Quelle: Selbstauskunft Patient (Vivodepot) · Alle Angaben ohne Gewähr · Daten nicht verifiziert', margin, 290);
+      doc.save('Geriatrie_Bogen_' + (get('nachname') || 'Dokument') + '.pdf');
+      toast('Geriatrie-Bogen erstellt ');
+    } catch(e) { toast('Fehler: ' + e.message); }
+  }, 80);
+}
+
+// ═══════════════════════════════════════════════
 // D5: FHIR R4 JSON EXPORT
 // ═══════════════════════════════════════════════
 function generateFHIR() {
@@ -19000,6 +19416,135 @@ function generateFHIR() {
   a.download = 'FHIR_R4_'+(get('nachname')||'Patient')+'_'+new Date().toISOString().slice(0,10)+'.json';
   a.click();
   toast('FHIR R4 JSON exportiert ');
+}
+
+// ═══════════════════════════════════════════════
+// ANAMNESE-ASSISTENT-WIZARD (7 Schritte, ANF-07)
+// ═══════════════════════════════════════════════
+var awizStep = 0;
+
+function awizOpen() {
+  awizStep = 0;
+  document.getElementById('awiz-overlay').style.display = 'flex';
+  awizRender();
+}
+
+function awizClose() {
+  document.getElementById('awiz-overlay').style.display = 'none';
+}
+
+function awizRender() {
+  var total = 7;
+  document.getElementById('awiz-step-info').textContent = 'Schritt ' + (awizStep+1) + ' von ' + total;
+  document.getElementById('awiz-bar').style.width = Math.round((awizStep+1)/total*100) + '%';
+  document.getElementById('awiz-back').style.visibility = awizStep === 0 ? 'hidden' : 'visible';
+  document.getElementById('awiz-next').textContent = awizStep === total-1 ? '✓ Fertig' : 'Weiter →';
+  var body = document.getElementById('awiz-body');
+
+  function sel(key, opts) {
+    return '<select id="aw-' + key + '" style="width:100%;margin-top:4px;margin-bottom:12px">' +
+      '<option value="">— bitte wählen —</option>' +
+      opts.map(function(o){ return '<option value="' + o + '"' + (get(key)===o?' selected':'') + '>' + o + '</option>'; }).join('') +
+      '</select>';
+  }
+  function inp(key, type, placeholder) {
+    return '<input id="aw-' + key + '" type="' + (type||'text') + '" value="' + esc(get(key)||'') + '" placeholder="' + (placeholder||'') + '" style="width:100%;margin-top:4px;margin-bottom:12px">';
+  }
+  function lbl(text) { return '<label style="font-weight:600;font-size:0.85rem;color:var(--ink2)">' + text + '</label>'; }
+  function hint(text) { return '<p style="font-size:0.75rem;color:var(--ink3);margin:-8px 0 10px">' + text + '</p>'; }
+
+  if (awizStep === 0) {
+    body.innerHTML = '<h3>Anamnese-Assistent</h3>' +
+      '<p>Dieser Assistent führt Sie in 6 kurzen Schritten durch die klinischen Anamnesedaten — für Arztbesuche, Überweisungen und fachspezifische Bögen.</p>' +
+      '<p style="background:var(--forest-lt);padding:10px;border-radius:8px;font-size:0.82rem">Bereits eingetragene Werte werden automatisch angezeigt. Am Ende werden alle Angaben gespeichert.</p>' +
+      '<ul style="font-size:0.82rem;margin-top:1rem;line-height:2">' +
+        '<li>Schritt 2 — Körpermaße</li>' +
+        '<li>Schritt 3 — Impfstatus</li>' +
+        '<li>Schritt 4 — Laborwerte</li>' +
+        '<li>Schritt 5 — Sozialanamnese</li>' +
+        '<li>Schritt 6 — Radiologie & Anästhesie</li>' +
+        '<li>Schritt 7 — Neurologie, Geriatrie & Gynäkologie</li>' +
+      '</ul>';
+
+  } else if (awizStep === 1) {
+    body.innerHTML = '<h3>Körpermaße</h3>' +
+      lbl('Körpergröße (cm)') + inp('koerpergroesse','number','z. B. 172') +
+      lbl('Körpergewicht (kg)') + inp('koerpergewicht','number','z. B. 74') +
+      '<p style="font-size:0.78rem;color:var(--ink3)">Der BMI wird automatisch in den PDF-Exporten berechnet.</p>';
+
+  } else if (awizStep === 2) {
+    body.innerHTML = '<h3>Impfstatus</h3>' +
+      lbl('Tetanus — letzter Impftermin') + inp('impfung_tetanus_datum','date') +
+      lbl('Grippe — letzter Impftermin') + inp('impfung_grippe_datum','date') +
+      lbl('Pneumokokken-Impfung') + sel('impfung_pneumokokken',['Ja','Nein']) +
+      lbl('COVID-19 — letzter Impftermin') + inp('impfung_covid_datum','date') +
+      lbl('Impfbuch — Ablageort') + inp('impfbuch_ort','text','z. B. Schublade Schreibtisch');
+
+  } else if (awizStep === 3) {
+    body.innerHTML = '<h3>Laborwerte</h3>' +
+      hint('Aus dem letzten Laborbericht — nur eintragen, was bekannt ist.') +
+      lbl('INR-Wert (Blutgerinnung, LOINC 6301-6)') + inp('labor_inr_wert','number','z. B. 2,4') +
+      lbl('INR — Datum der Messung') + inp('labor_inr_datum','date') +
+      lbl('Kreatinin (mg/dl, LOINC 2160-0)') + inp('labor_kreatinin','number','z. B. 0,95') +
+      lbl('Kreatinin — Datum der Messung') + inp('labor_kreatinin_datum','date') +
+      lbl('HbA1c (%, LOINC 4548-4)') + inp('labor_hba1c','number','z. B. 6,8') +
+      lbl('HbA1c — Datum der Messung') + inp('labor_hba1c_datum','date');
+
+  } else if (awizStep === 4) {
+    body.innerHTML = '<h3>Sozialanamnese</h3>' +
+      lbl('Lebt allein?') + sel('lebt_allein',['Ja','Nein']) +
+      lbl('Hauptpflegeperson (Name & Telefon)') + inp('hauptpflegeperson','text','z. B. Tochter Monika Müller, 0175 123456') +
+      lbl('Aktueller Beruf') + inp('beruf_aktuell','text','z. B. Lehrerin, Rentner');
+
+  } else if (awizStep === 5) {
+    body.innerHTML = '<h3>Radiologie & Anästhesie</h3>' +
+      lbl('Metall im Körper / MRT-Kontraindikation') + sel('radio_mrt_kontraindikation',['Ja','Nein','Nicht bekannt']) +
+      lbl('Klaustrophobie') + sel('radio_klaustrophobie',['Ja','Nein']) +
+      lbl('Kontrastmittel-Unverträglichkeit') + sel('radio_km_unvertraeglichkeit',['Ja','Nein','Nicht bekannt']) +
+      lbl('Schwangerschaft möglich') + sel('radio_schwangerschaft_moeglich',['Ja','Nein','Nicht zutreffend']) +
+      lbl('Letzte Narkose — Datum') + inp('anaesthesie_letzte_narkose','date') +
+      lbl('Schwierige Intubation bekannt') + sel('anaesthesie_intubation_schwierig',['Ja','Nein','Nicht bekannt']) +
+      lbl('Pseudocholinesterase-Mangel') + sel('anaesthesie_pseudocholinesterase',['Ja','Nein','Nicht bekannt']) +
+      lbl('Narkose-Komplikationen') + '<textarea id="aw-anaesthesie_komplikationen" placeholder="z. B. postoperative Übelkeit 2019" style="width:100%;margin-top:4px;margin-bottom:12px;min-height:60px">' + esc(get('anaesthesie_komplikationen')||'') + '</textarea>';
+
+  } else if (awizStep === 6) {
+    body.innerHTML = '<h3>Neurologie, Geriatrie & Gynäkologie</h3>' +
+      lbl('Epilepsie bekannt') + sel('neuro_epilepsie',['Ja','Nein']) +
+      lbl('Letzter Anfall — Datum') + inp('neuro_letzter_anfall','date') +
+      lbl('Antikonvulsiva') + inp('neuro_antikonvulsiva','text','z. B. Levetiracetam 1.000 mg') +
+      lbl('Pflegegrad') +
+        '<select id="aw-geriat_pflegegrad" style="width:100%;margin-top:4px;margin-bottom:12px">' +
+          '<option value="">— keiner / nicht beantragt —</option>' +
+          ['1','2','3','4','5'].map(function(o){ return '<option value="'+o+'"'+(get('geriat_pflegegrad')===o?' selected':'')+'>Pflegegrad '+o+'</option>'; }).join('') +
+        '</select>' +
+      lbl('Erhöhtes Sturzrisiko') + sel('geriat_sturzrisiko',['Ja','Nein']) +
+      lbl('MMSE-Score (0–30)') + inp('geriat_mmse','number','z. B. 27') +
+      lbl('Letzte Mammographie — Datum') + inp('gyn_letzte_mammographie','date') +
+      lbl('Letzter PAP-Abstrich — Datum') + inp('gyn_letzter_pap','date') +
+      lbl('Menopause') + sel('gyn_menopause',['Ja','Nein','Nicht zutreffend','Nicht bekannt']);
+  }
+}
+
+function awizCollect() {
+  var keys = [];
+  if (awizStep === 1) keys = ['koerpergroesse','koerpergewicht'];
+  else if (awizStep === 2) keys = ['impfung_tetanus_datum','impfung_grippe_datum','impfung_pneumokokken','impfung_covid_datum','impfbuch_ort'];
+  else if (awizStep === 3) keys = ['labor_inr_wert','labor_inr_datum','labor_kreatinin','labor_kreatinin_datum','labor_hba1c','labor_hba1c_datum'];
+  else if (awizStep === 4) keys = ['lebt_allein','hauptpflegeperson','beruf_aktuell'];
+  else if (awizStep === 5) keys = ['radio_mrt_kontraindikation','radio_klaustrophobie','radio_km_unvertraeglichkeit','radio_schwangerschaft_moeglich','anaesthesie_letzte_narkose','anaesthesie_intubation_schwierig','anaesthesie_pseudocholinesterase','anaesthesie_komplikationen'];
+  else if (awizStep === 6) keys = ['neuro_epilepsie','neuro_letzter_anfall','neuro_antikonvulsiva','geriat_pflegegrad','geriat_sturzrisiko','geriat_mmse','gyn_letzte_mammographie','gyn_letzter_pap','gyn_menopause'];
+  keys.forEach(function(k) {
+    var el = document.getElementById('aw-' + k);
+    if (el && el.value !== '') set(k, el.value);
+  });
+}
+
+function awizPrev() { awizCollect(); if (awizStep > 0) { awizStep--; awizRender(); } }
+
+function awizNext() {
+  awizCollect();
+  if (awizStep < 6) { awizStep++; awizRender(); }
+  else { awizClose(); toast('Anamnese gespeichert ✓'); if (typeof renderStep === 'function') renderStep(state.step); }
 }
 
 // ═══════════════════════════════════════════════
@@ -20861,6 +21406,22 @@ showOverlay('welcome-overlay');
   }
 })();
 </script>
+
+<!-- ═══ ANAMNESE-ASSISTENT-WIZARD ═══ -->
+<div class="wizard-overlay" id="awiz-overlay" role="dialog" aria-modal="true" style="display:none" onclick="if(event.target===this)awizClose()">
+  <div class="wizard-modal">
+    <div class="wizard-header" style="position:relative">
+      <div style="display:flex;justify-content:space-between;align-items:center"><h2 style="margin:0">Anamnese-Assistent</h2><button onclick="awizClose()" style="background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--ink3);padding:4px 8px;min-height:44px" title="Schließen">✕</button></div>
+      <div class="wizard-step-info" id="awiz-step-info">Schritt 1 von 7</div>
+      <div class="wizard-progress"><div class="wizard-progress-bar" id="awiz-bar" style="width:14%"></div></div>
+    </div>
+    <div class="wizard-body" id="awiz-body"></div>
+    <div class="wizard-footer">
+      <button class="wizard-btn-back" id="awiz-back" onclick="awizPrev()">← Zurück</button>
+      <button class="wizard-btn-next" id="awiz-next" onclick="awizNext()">Weiter →</button>
+    </div>
+  </div>
+</div>
 
 <!-- ═══ GESUNDHEITSKARTE-WIZARD ═══ -->
 <div class="wizard-overlay" id="gwiz-overlay" role="dialog" aria-modal="true" aria-labelledby="gwiz-title" style="display:none" onclick="if(event.target===this)gwizClose()">
