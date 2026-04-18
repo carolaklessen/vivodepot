@@ -1818,6 +1818,36 @@ def main():
     check("Altersvorsorge: renderRentenBlocks ausserhalb mehr()",
           html.index("renderRentenBlocks()") < html.index("finanzen_mehr"))
 
+    # ═══════════════════════════════════════
+    print("\n=== 58. DOKUMENTEN-ÜBERSICHT IM EXPORT ===")
+    # ═══════════════════════════════════════
+
+    # Seite erscheint nur im PDF-Export, nicht als Navigationspunkt.
+    check("DokUebersicht: Seite in _generatePDFInner vorhanden",
+          "Dokumenten-Übersicht" in html or "Dokumenten-\u00dcbersicht" in html)
+    check("DokUebersicht: Abschnittstitel mit Nummer",
+          "'14. Dokumenten-Übersicht" in html or
+          "'14. Dokumenten-\u00dcbersicht" in html)
+    check("DokUebersicht: Kategorie Rechtliches vorhanden",
+          "'Rechtliches'" in html and "'testament_ort'" in html)
+    check("DokUebersicht: Kategorie Immobilien vorhanden",
+          "'Immobilien'" in html and "'obj1_kaufvertrag'" in html)
+    check("DokUebersicht: Kategorie Gesundheit vorhanden",
+          "'Gesundheit'" in html and "'krankenkassenkarte_ort'" in html)
+    check("DokUebersicht: Kategorie Digital vorhanden",
+          "'pw_masterkey_ort'" in html and "'bundid_ort'" in html)
+    check("DokUebersicht: Kategorie Notfall vorhanden",
+          "'ks_erstehilfe_ort'" in html and "'angehoerigen_passwort_ort'" in html)
+    check("DokUebersicht: Kategorie Bestattung vorhanden",
+          "'bestattung_vorsorge_nachweis'" in html)
+    check("DokUebersicht: Filterlogik — nur Felder mit Wert anzeigen",
+          "filter(f => get(f.key) && String(get(f.key)).trim())" in html)
+    check("DokUebersicht: Keine Anzeige bei leeren Feldern (Kategorien filtern)",
+          ".filter(kat => kat.felder.length > 0)" in html)
+    check("DokUebersicht: Kein eigener Navigationspunkt (kein step-Button dafuer)",
+          "step-btn' data-step='dokumente" not in html and
+          "step='dokumenten" not in html)
+
     passed = sum(1 for s, _, _ in results if s == "PASS")
     failed = sum(1 for s, _, _ in results if s == "FAIL")
     total = len(results)

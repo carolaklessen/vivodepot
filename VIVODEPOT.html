@@ -17612,6 +17612,124 @@ function _generatePDFInner() {
       sp(4);
       note('Empfehlung: Vorsorgevollmacht und Patientenverfügung jährlich neu unterschreiben. Testament nach größeren Lebensveränderungen (Heirat, Geburt, Erbschaft) aktualisieren.');
 
+      // ── Dokumenten-Übersicht ──────────────────────────────────────────────
+      // Nur im Export sichtbar. Zeigt alle Ablageorte, bei denen ein Wert
+      // eingetragen wurde — automatisch zusammengestellt aus den Formulardaten.
+      const dokKategorien = [
+        {
+          titel: 'Rechtliches',
+          felder: [
+            { label: 'Testament',                key: 'testament_ort' },
+            { label: 'Vorsorgevollmacht',        key: 'vollmacht_ort' },
+            { label: 'Patientenverfügung',       key: 'patientenverf_ort' },
+            { label: 'Gesundheitsvollmacht',     key: 'gesundheitsvollmacht_ort' },
+            { label: 'Sorgerecht',               key: 'sorgerecht_ort' },
+            { label: 'Generalvollmacht',         key: 'gv_ort' },
+            { label: 'Heiratsurkunde',           key: 'dok_heirat' },
+            { label: 'Ehevertrag',               key: 'dok_ehevertrag' },
+            { label: 'Mietvertrag',              key: 'mietvertrag_ort' },
+          ]
+        },
+        {
+          titel: 'Immobilien',
+          felder: [
+            { label: 'Kaufvertrag Immobilie',    key: 'obj1_kaufvertrag' },
+            { label: 'Kredit / Hypothek',        key: 'obj1_kredit_ort' },
+            { label: 'Grundbuch',                key: 'obj1_grundbuch' },
+          ]
+        },
+        {
+          titel: 'Identität & Ausweise',
+          felder: [
+            { label: 'Ausweis / Reisepass',      key: 'ausweis_ort' },
+            { label: 'Geburtsurkunde',           key: 'geburtsurkunde_ort' },
+          ]
+        },
+        {
+          titel: 'Gesundheit',
+          felder: [
+            { label: 'Krankenkassenkarte',       key: 'krankenkassenkarte_ort' },
+            { label: 'Notfallkarte',             key: 'notfallkarte_ort' },
+            { label: 'Bonusheft',                key: 'bonusheft_ort' },
+            { label: 'Schwerbehindertenausweis', key: 'schwerbehindertenausweis_ort' },
+            { label: 'GdB-Bescheid',             key: 'gdb_bescheid_ort' },
+          ]
+        },
+        {
+          titel: 'Pflege',
+          felder: [
+            { label: 'Private Pflegeversicherung', key: 'pflegeversicherung_privat_ort' },
+            { label: 'Pflegevertrag',            key: 'pflegevertrag_ort' },
+          ]
+        },
+        {
+          titel: 'Bildung & Beruf',
+          felder: [
+            { label: 'Schulzeugnis',             key: 'zeugnis_schule_ort' },
+            { label: 'Ausbildungszeugnis',       key: 'zeugnis_ausbildung_ort' },
+            { label: 'Studiumszeugnis',          key: 'zeugnis_studium_ort' },
+            { label: 'Arbeitszeugnis',           key: 'zeugnis_arbeit_ort' },
+            { label: 'Gehaltsnachweis',          key: 'gehaltsnachweis_ort' },
+          ]
+        },
+        {
+          titel: 'Digital & Zugänge',
+          felder: [
+            { label: 'Passwort-Master-Key',      key: 'pw_masterkey_ort' },
+            { label: 'Passwort-Backup',          key: 'pw_backup_ort' },
+            { label: 'Tresor',                   key: 'tresor_ort' },
+            { label: 'Tresor-Code',              key: 'tresor_code_ort' },
+            { label: 'Schließfach',              key: 'schliessf_ort' },
+            { label: 'Smartphone-PIN',           key: 'smartphone_pin_ort' },
+            { label: 'BundID',                   key: 'bundid_ort' },
+            { label: 'Computer-Passwort',        key: 'computer_pw_ort' },
+            { label: 'Wohnungsschlüssel',        key: 'wohnungsschluessel_ort' },
+            { label: 'Alarm-Code',               key: 'alarm_code_ort' },
+            { label: 'Krypto-Seed',              key: 'krypto_seed_ort' },
+          ]
+        },
+        {
+          titel: 'Notfall',
+          felder: [
+            { label: 'Erste-Hilfe-Kasten',       key: 'ks_erstehilfe_ort' },
+            { label: 'Notfall-Rucksack',         key: 'ks_rucksack_ort' },
+            { label: 'Notfall-Wasser',           key: 'ks_wasser_ort' },
+            { label: 'Notfall-Lebensmittel',     key: 'ks_lebensmittel_ort' },
+            { label: 'Angehörigen-Passwort',     key: 'angehoerigen_passwort_ort' },
+          ]
+        },
+        {
+          titel: 'Bestattung',
+          felder: [
+            { label: 'Bestattungsvorsorge-Nachweis', key: 'bestattung_vorsorge_nachweis' },
+            { label: 'Bestattungsort',           key: 'bestattung_ort' },
+          ]
+        },
+      ];
+
+      // Nur Kategorien anzeigen, die mindestens einen eingetragenen Wert haben
+      const dokKatMitWerten = dokKategorien.map(kat => ({
+        ...kat,
+        felder: kat.felder.filter(f => get(f.key) && String(get(f.key)).trim())
+      })).filter(kat => kat.felder.length > 0);
+
+      if (dokKatMitWerten.length > 0) {
+        newPage();
+        section('14. Dokumenten-Übersicht — Ablageorte');
+        y += 2;
+        doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(...INK2);
+        doc.text('Diese Seite fasst alle eingetragenen Ablageorte zusammen. Nur Felder mit Eintrag werden angezeigt.', margin, y);
+        y += 7;
+
+        dokKatMitWerten.forEach(kat => {
+          sub(kat.titel);
+          kat.felder.forEach(f => {
+            labelVal(f.label, get(f.key));
+          });
+        });
+      }
+      // ── Ende Dokumenten-Übersicht ─────────────────────────────────────────
+
       // Footer on all pages
       const pageCount = doc.internal.getNumberOfPages();
       for (let i = 1; i <= pageCount; i++) {
