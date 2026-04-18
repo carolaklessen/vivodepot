@@ -1848,6 +1848,33 @@ def main():
           "step-btn' data-step='dokumente" not in html and
           "step='dokumenten" not in html)
 
+    # ─────────────────────────────────────────────────────────────────
+    # 59. DOKUMENTEN-ÜBERSICHT IM WORD-EXPORT
+    # ─────────────────────────────────────────────────────────────────
+    print("\n  59. DOKUMENTEN-ÜBERSICHT IM WORD-EXPORT")
+    check("DokUebersicht Word: Abschnitt 13 vorhanden",
+          '"13. Dokumenten-\u00dcbersicht \u2014 Ablageorte"' in html)
+    check("DokUebersicht Word: Beschreibungszeile vorhanden",
+          "wo Ihre wichtigen Dokumente zu finden sind" in html)
+    check("DokUebersicht Word: Kategorie Rechtliches (Word)",
+          html.count("'Rechtliches'") >= 2)
+    check("DokUebersicht Word: Kategorie Immobilien (Word)",
+          html.count("'Immobilien'") >= 2)
+    check("DokUebersicht Word: Kategorie Gesundheit (Word)",
+          html.count("'Gesundheit'") >= 2)
+    check("DokUebersicht Word: Kategorie Digital (Word)",
+          "Digital & Zug\u00e4nge" in html)
+    check("DokUebersicht Word: Filterlogik im Word-Export",
+          html.count("filter(f => get(f.key) && String(get(f.key)).trim())") >= 2)
+    check("DokUebersicht Word: Leer-Kategorien werden uebersprungen (Word)",
+          "k => k.felder.length > 0" in html)
+    check("DokUebersicht Word: Seitenumbruch vor Abschnitt 13",
+          'pb(),' in html and '13. Dokumenten' in html)
+    check("DokUebersicht Word: maybeTbl fuer Kategorie-Tabellen",
+          "maybeTbl(k.felder.map(f => row(f.label, get(f.key))))" in html)
+    check("DokUebersicht Word: Abschnitt 13 nur im Gesamt-Word-Export",
+          html.count('13. Dokumenten-\u00dcbersicht') == 1)
+
     passed = sum(1 for s, _, _ in results if s == "PASS")
     failed = sum(1 for s, _, _ in results if s == "FAIL")
     total = len(results)

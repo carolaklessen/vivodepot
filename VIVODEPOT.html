@@ -16658,6 +16658,89 @@ function _generateDocxInner() {
         sp(), sp(),
         new Paragraph({ alignment: AlignmentType.CENTER, border: { top: { style: BorderStyle.SINGLE, size: 4, color: "d4c8b0", space: 8 } }, spacing: { before: 300, after: 0 },
           children: [new TextRun({ text: "Dieses Dokument wurde sorgfältig erstellt. Bitte mindestens jährlich aktualisieren.", size: 18, font: "Calibri", color: "999999", italics: true })] }),
+        // Dokumenten-Übersicht — nur wenn mindestens ein Feld belegt ist
+        ...(() => {
+          const kategorien = [
+            { titel: 'Rechtliches', felder: [
+              { label: 'Testament',                key: 'testament_ort' },
+              { label: 'Vorsorgevollmacht',        key: 'vollmacht_ort' },
+              { label: 'Patientenverfügung',       key: 'patientenverf_ort' },
+              { label: 'Gesundheitsvollmacht',     key: 'gesundheitsvollmacht_ort' },
+              { label: 'Sorgerechtsverfügung',     key: 'sorgerecht_ort' },
+              { label: 'Generalvollmacht',         key: 'gv_ort' },
+              { label: 'Heiratsurkunde',           key: 'dok_heirat' },
+              { label: 'Ehevertrag',               key: 'dok_ehevertrag' },
+              { label: 'Mietvertrag',              key: 'mietvertrag_ort' },
+            ]},
+            { titel: 'Immobilien', felder: [
+              { label: 'Kaufvertrag Objekt 1',     key: 'obj1_kaufvertrag' },
+              { label: 'Kreditunterlagen Objekt 1',key: 'obj1_kredit_ort' },
+              { label: 'Grundbuchauszug Objekt 1', key: 'obj1_grundbuch' },
+            ]},
+            { titel: 'Identität & Ausweise', felder: [
+              { label: 'Ausweis / Reisepass',      key: 'ausweis_ort' },
+              { label: 'Geburtsurkunde',           key: 'geburtsurkunde_ort' },
+            ]},
+            { titel: 'Gesundheit', felder: [
+              { label: 'Krankenkassenkarte',       key: 'krankenkassenkarte_ort' },
+              { label: 'Notfallkarte',             key: 'notfallkarte_ort' },
+              { label: 'Zahnarzt-Bonusheft',       key: 'bonusheft_ort' },
+              { label: 'Schwerbehindertenausweis', key: 'schwerbehindertenausweis_ort' },
+              { label: 'GdB-Bescheid',             key: 'gdb_bescheid_ort' },
+            ]},
+            { titel: 'Pflege', felder: [
+              { label: 'Private Pflegeversicherung',key: 'pflegeversicherung_privat_ort' },
+              { label: 'Pflegevertrag',            key: 'pflegevertrag_ort' },
+            ]},
+            { titel: 'Bildung & Beruf', felder: [
+              { label: 'Schulzeugnis',             key: 'zeugnis_schule_ort' },
+              { label: 'Ausbildungszeugnis',       key: 'zeugnis_ausbildung_ort' },
+              { label: 'Studiumszeugnis',          key: 'zeugnis_studium_ort' },
+              { label: 'Arbeitszeugnis',           key: 'zeugnis_arbeit_ort' },
+              { label: 'Gehaltsnachweis',          key: 'gehaltsnachweis_ort' },
+            ]},
+            { titel: 'Digital & Zugänge', felder: [
+              { label: 'Passwort-Master-Key',      key: 'pw_masterkey_ort' },
+              { label: 'Passwort-Backup',          key: 'pw_backup_ort' },
+              { label: 'Tresor',                   key: 'tresor_ort' },
+              { label: 'Tresor-Code',              key: 'tresor_code_ort' },
+              { label: 'Schliessfach',             key: 'schliessf_ort' },
+              { label: 'Smartphone-PIN',           key: 'smartphone_pin_ort' },
+              { label: 'BundID / Benutzerkonto',   key: 'bundid_ort' },
+              { label: 'Computer-Passwort',        key: 'computer_pw_ort' },
+              { label: 'Wohnungsschlüssel',        key: 'wohnungsschluessel_ort' },
+              { label: 'Alarm-Code',               key: 'alarm_code_ort' },
+              { label: 'Krypto-Seed-Phrase',       key: 'krypto_seed_ort' },
+            ]},
+            { titel: 'Notfall', felder: [
+              { label: 'Erste-Hilfe-Kasten',       key: 'ks_erstehilfe_ort' },
+              { label: 'Notfallrucksack',          key: 'ks_rucksack_ort' },
+              { label: 'Wasservorrat',             key: 'ks_wasser_ort' },
+              { label: 'Lebensmittelvorrat',       key: 'ks_lebensmittel_ort' },
+              { label: 'Passwort für Angehörige',  key: 'angehoerigen_passwort_ort' },
+            ]},
+            { titel: 'Bestattung', felder: [
+              { label: 'Bestattungsvorsorge-Nachweis', key: 'bestattung_vorsorge_nachweis' },
+              { label: 'Bestattungsort',           key: 'bestattung_ort' },
+            ]},
+          ];
+          const gefuellt = kategorien.map(k => ({
+            ...k,
+            felder: k.felder.filter(f => get(f.key) && String(get(f.key)).trim()),
+          })).filter(k => k.felder.length > 0);
+          if (!gefuellt.length) return [];
+          return [
+            pb(),
+            h1("13. Dokumenten-Übersicht — Ablageorte"),
+            p("Diese Übersicht zeigt, wo Ihre wichtigen Dokumente zu finden sind."),
+            sp(),
+            ...gefuellt.flatMap(k => [
+              h2(k.titel),
+              ...maybeTbl(k.felder.map(f => row(f.label, get(f.key)))),
+              sp(),
+            ]),
+          ];
+        })(),
       ];
 
       const doc = new Document({
