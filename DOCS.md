@@ -15,18 +15,25 @@ VIVODEPOT.html
 │   ├── jsPDF 2.5.1 (364 KB) — PDF-Erstellung
 │   ├── docx.js 8.5.0 (368 KB) — Word-Erstellung
 │   ├── QRCode-Generator 1.4.4 (20 KB) — QR-Codes
-│   └── jsQR 1.4.0 (256 KB) — QR-Code-Scan (Empfang)
+│   └── jsQR 1.4.0 (256 KB) — QR-Code-Scan (Empfang und Leseansicht)
 ├── JavaScript (Hauptlogik)
 │   ├── Datenspeicherung (localStorage + AES-256-GCM)
 │   ├── STEP_RENDERERS (21 Schritte)
 │   ├── Export-Funktionen (16 Formate)
 │   ├── Import-Funktionen (FHIR, FIM, JSON, EUDI, QR)
 │   ├── Weitergabe-Datei-System (wg-*)
-│   ├── QR-Übergabe-System (qr-* / qre-*)
+│   ├── QR-Übergabe-System (qr-* / qre-*) — URL-Format seit beta.10
 │   ├── Solid Pod Export (sp-*)
 │   ├── Wizard-System
 │   └── Barrierefreiheits-Funktionen
 └── HTML (UI-Struktur)
+
+vivodepot-lesen.html (neu in beta.10)
+├── Eigenständige Empfänger-Seite
+├── jsQR 1.4.0 (inline)
+├── Hash-Fragment-Erkennung
+├── Multi-Part Chunk-Sammler
+└── AES-256-GCM Entschlüsselung (identisch zu VIVODEPOT)
 ```
 
 ---
@@ -42,7 +49,7 @@ localStorage.setItem('vivodepot_v1_enc', JSON.stringify(verschluesselt));
 ### Verschlüsselung (optional)
 
 - Algorithmus: AES-256-GCM
-- Schlüsselableitung: PBKDF2-HMAC-SHA256 (100.000 Iterationen)
+- Schlüsselableitung: PBKDF2-HMAC-SHA256 (**200.000 Iterationen**)
 - Salt: 16 Byte, kryptographisch zufällig (Web Crypto API)
 - IV: 12 Byte, kryptographisch zufällig
 - Implementierung: Web Crypto API (browser-nativ, keine externe Bibliothek)
@@ -86,7 +93,7 @@ Vor beta.7 wurde der Salt ausschließlich in `localStorage` (Schlüssel `STORE_M
 | 14 | assistenten | Assistenten |
 | 15 | notfall | Notfall & Katastrophenschutz |
 | 16 | dokumente | Dokumente erstellen |
-| 17 | datenaustausch | Datenaustausch (neu in beta.9) |
+| 17 | datenaustausch | Datenaustausch (seit beta.9) |
 | 18 | erinnerung | Erinnerungen |
 | 19 | exportStep | Export (intern) |
 | 20 | einstellungen | Einstellungen |
@@ -105,7 +112,7 @@ Die Weitergabe-Funktion erstellt eine eigenständige HTML-Datei mit einem gefilt
 Nutzerdaten (gefiltert nach Profil)
   + eigener Salt (getRandomValues())
   + separates Passwort
-  → PBKDF2 → AES-256-GCM
+  → PBKDF2 (200.000 Iterationen) → AES-256-GCM
   → eigenständige HTML-Datei
 ```
 
@@ -125,11 +132,11 @@ Das Hauptpasswort kann die Weitergabe-Datei nicht entschlüsseln.
 
 ---
 
-## QR-Übergabe (seit beta.8)
+## QR-Übergabe (seit beta.8, URL-Format seit beta.10)
 
 ### Übersicht
 
-Verschlüsselte Datenübergabe per QR-Code. Erzeuger-Seite (qr-*) und Empfänger-Seite (qre-*) sind vollständig getrennt — keine gemeinsamen Zustandsvariablen.
+Verschlüsselte Datenübergabe per QR-Code. Ab beta.10 verlinken QR-Codes direkt auf die Leseansicht (`vivodepot-lesen.html`). Erzeuger-Seite (`qr-*`) und Empfänger-Seite (`qre-*`) sind vollständig getrennt — keine gemeinsamen Zustandsvariablen.
 
 ### Sicherheitsarchitektur
 
@@ -138,18 +145,94 @@ Nutzerdaten (gefiltert nach Profil)
   + eigener Salt (getRandomValues())
   + PIN
   + Zeitstempel iat + Ablauf exp (24 Stunden)
-  → PBKDF2 → AES-256-GCM → QR-Code
+  → PBKDF2 (200.000 Iterationen) → AES-256-GCM
+  → Base64url-Payload
+  → URL: vivodepot-lesen.html#PAYLOAD   (≤ 1800 Zeichen: 1 QR)
+     oder: vivodepot-lesen.html#{p,t,id,d} (> 1800 Zeichen: bis zu 6 QR)
 ```
+
+### URL-Format (seit beta.10)
+
+Das Hash-Fragment der URL enthält den verschlüsselten Payload als Base64url-String. Das Fragment wird nicht an den Server gesendet — vollständig datenschutzkonform.
+
+```javascript
+const QR_LESEN_URL = 'https://carolaklessen.github.io/vivodepot/vivodepot-lesen.html';
+// Einzel-QR:
+QR_LESEN_URL + '#' + base64url(JSON.stringify({s, c}))
+// Chunk-QR:
+QR_LESEN_URL + '#' + base64url(JSON.stringify({p, t, id, d}))
+```
+
+### Mehr-Teile-Logik (seit beta.10)
+
+| Konstante | Wert | Bedeutung |
+|---|---|---|
+| `SINGLE_MAX` | 1800 Zeichen | Schwellwert für Einzel-QR |
+| `CHUNK_SIZE` | 1200 Zeichen | Größe eines Chunks |
+| Max. Chunks | 6 | Bei Überschreitung: Fehlermeldung |
+
+Chunk-Metadaten: `{p: Teilnummer, t: Gesamt, id: "zufällig6", d: "chunkData"}`
 
 ### Zentrale Funktionen
 
 | Funktion | Aufgabe |
 |---|---|
-| `qrErstellen()` | Verschlüsselt Payload, erzeugt QR-Code |
+| `qrErstellen()` | Verschlüsselt Payload, erzeugt 1–6 QR-Codes |
+| `qrZeigeCode(idx)` | Rendert QR-Code Nr. idx im Karussell |
+| `qrMultiPrev()` / `qrMultiNext()` | Karussell-Navigation |
 | `qrEmpfangOpen()` | Öffnet Empfänger-Modal |
 | `qreStartKamera()` | Startet getUserMedia + jsQR-Scan |
 | `qreScanFrame()` | Liest Kamerabild alle 200 ms |
+| `qreQrErkannt()` | Erkennt URL-Format und Legacy-JSON-Format |
 | `qreEntschluesseln()` | Entschlüsselt und prüft Ablauf (payload.exp) |
+
+---
+
+## Leseansicht — vivodepot-lesen.html (seit beta.10)
+
+### Übersicht
+
+Eigenständige Empfänger-Seite. Kein Account, keine Installation, kein Netzwerkzugriff, kein Speichern. Logo als Base64 eingebettet. Versionsnummer korrespondiert mit VIVODEPOT.html.
+
+URL: `carolaklessen.github.io/vivodepot/vivodepot-lesen.html`
+
+### Eingabewege
+
+1. **QR-Code scannen** — Kamera via `getUserMedia`, jsQR-Scan alle 200 ms
+2. **Weitergabe-Datei öffnen** — Klick oder Drag & Drop, Extraktion via Regex
+
+### Hash-Erkennung beim Laden
+
+```javascript
+window.addEventListener('load', function() {
+  const hash = window.location.hash.slice(1);
+  if (hash && hash.length > 20) ladeVonHash(hash);
+});
+```
+
+Wenn ein gültiger VIVODEPOT-Payload im Hash-Fragment steckt, springt die Seite direkt zur PIN-Eingabe.
+
+### Multi-Part Chunk-Sammler
+
+```javascript
+let _chunks = {}; // { id: { total, parts: {1: data, 2: data, ...} } }
+```
+
+Nach jedem erkannten Chunk: Fortschrittsanzeige + automatischer Kameraneustart (1,2 Sekunden). Wenn alle Teile vorliegen: Zusammensetzen → Entschlüsseln → Anzeigen.
+
+### Zentrale Funktionen
+
+| Funktion | Aufgabe |
+|---|---|
+| `ladeVonHash(hash)` | Parst Hash-Fragment beim Seitenload |
+| `startKamera()` | Öffnet Kamera via getUserMedia |
+| `scanFrame()` | jsQR-Scan alle 200 ms |
+| `verarbeiteQRText(text)` | Erkennt Einzel-QR, Chunk oder Legacy-JSON |
+| `verarbeiteChunk(chunk)` | Sammelt Chunks, reassembliert wenn vollständig |
+| `ladeDatei(file)` | Liest Weitergabe-HTML, extrahiert Kryptodaten |
+| `entschluesseln()` | PBKDF2 + AES-GCM-Entschlüsselung |
+| `zeigeDaten(daten, ...)` | Rendert entschlüsselte Felder |
+| `zuruecksetzen()` | Setzt Zustand inkl. _chunks zurück |
 
 ---
 
@@ -157,7 +240,7 @@ Nutzerdaten (gefiltert nach Profil)
 
 ### Übersicht
 
-Export persönlicher Daten im Turtle-Format (.ttl) für den Upload in einen Solid Pod. Vollständig offline, EUPL-konform.
+Export persönlicher Daten im Turtle-Format (.ttl) für den Upload in einen Solid Pod. Vollständig offline, EUPL-konform. Gruppe „Eigener Datenspeicher" im Datenaustausch-Step (seit beta.10 von „Daten weitergeben" getrennt).
 
 ### Format
 
@@ -185,6 +268,9 @@ Export persönlicher Daten im Turtle-Format (.ttl) für den Upload in einen Soli
 | `generatePDF()` | PDF | jsPDF |
 | `generateDocx()` | DOCX | docx.js |
 | `generateArztbogen()` | PDF | jsPDF |
+| `generateArztbogenRadiologie()` | PDF | jsPDF |
+| `generateArztbogenPraeop()` | PDF | jsPDF |
+| `generateArztbogenGeriatrie()` | PDF | jsPDF |
 | `generateScenarioPDF()` | PDF | jsPDF |
 | `generateKatastrophenschutzPDF()` | PDF | jsPDF |
 | `generateHeimaufnahme()` | PDF | jsPDF |
@@ -197,19 +283,20 @@ Export persönlicher Daten im Turtle-Format (.ttl) für den Upload in einen Soli
 | `exportJSON()` | JSON | vanilla |
 | `generateFHIR()` | JSON | vanilla |
 | `wgErstellen()` | HTML (verschlüsselt) | Web Crypto API |
+| `qrErstellen()` | QR-Code URL | Web Crypto API + QRCode |
 | `solidPodExport()` | TTL (Turtle) | vanilla |
 
 ---
 
 ## Datenaustausch-Step (seit beta.9)
 
-Der neue Schritt `datenaustausch` bündelt alle Import- und Export-Wege:
+Der Schritt `datenaustausch` bündelt alle Import- und Export-Wege:
 
-Import-Karten: FHIR R4, FIM-JSON, JSON (automatisch), EUDI-Wallet (SD-JWT).
+**Import-Karten:** FHIR R4, FIM-JSON, JSON (automatisch), EUDI-Wallet (SD-JWT).
 
-Export-/Übergabe-Karten: Weitergabe-Datei (wgErstellen), QR-Übergabe (qrErstellen), QR-Empfang (qrEmpfangOpen), Solid Pod (solidPodOpen).
+**Export-/Übergabe-Karten:** Weitergabe-Datei (`wgErstellen`), QR-Übergabe (`qrErstellen`), QR-Empfang (`qrEmpfangOpen`).
 
-Der Import-Block wurde aus dem Behördendaten-Tab verschoben. Die wg-Link-Zeilen wurden aus dem Export-Tab verschoben.
+**Eigener Datenspeicher (seit beta.10):** Solid Pod (`solidPodOpen`) — eigene Gruppe, abgegrenzt von Weitergabe-Funktionen.
 
 ---
 
@@ -219,61 +306,21 @@ Der Import-Block wurde aus dem Behördendaten-Tab verschoben. Die wg-Link-Zeilen
 python3 test_vivodepot.py VIVODEPOT.html
 ```
 
-**898 Tests in 53 Sektionen:**
+**1051 Tests in 65 Sektionen** (1050 bestehen, 1 schlägt nur außerhalb des Repos fehl):
 
-1. JavaScript-Syntax
-2. Bekannte Bugs
-3. Steps und Navigation
-4. Kernfunktionen (set/get/esc/tl)
-5. Verschlüsselung
-6. Import/Export
-7. Wizards
-8. Robustheit
-9. Profile und Multi-Profil
-10. Branding und Logo
-11. User Journeys
-12. Kern/Mehr-System
-13. Persona-Felder
-14. Update-System
-15. Mobile und Responsive
-16. Fokus-System
-17. Keyboard und Navigation
-18. FAB und Draggable
-19. vCard Export
-20. ARIA und Barrierefreiheit
-21. Notfallvorsorge und BBK
-22. PWA Details
-23. Verschlüsselung Details
-24. Datenspeicher und Profil
-25. Schritt-Inhalte
-26. Recht und externe Links
-27. Mobile und Responsive
-28. Fokus-System
-29. Barrierefreiheit (erweitert)
-30. vCard und Kontakte
-31. Notfall und Katastrophenschutz
-32. Browser-Verhalten und Robustheit
-33. Export-Qualität
-34. Datenspeicherung
-35. Internationalisierung
-36. PWA und Installation
-37. Legal und Compliance
-38. Wizards (erweitert)
-39. Import-System
-40. UX-Details
-41. Inhaltliche Vollständigkeit
-42. Update-System (erweitert)
-43. Exporte — Qualität
-44. Vollmachten und Dokumente
-45. Robustheit und Fehlerbehandlung
-46. Update-System Integration
-47. Eingabe-Hilfe und Validierung
-48. Vollständigkeits-Regression (Chat-Abgleich)
-49. Viewport und Layout-Regression
-50. Neue Bugs (BUG-NEW)
-51. Krypto-Portabilität (Salt in Datei) — neu in beta.7
-52. Weitergabe-Datei — neu in beta.8
-53. WCAG 2.2 Barrierefreiheit — neu in beta.10
+1–50. Syntax, bekannte Bugs, Steps, Kernfunktionen, Verschlüsselung, Import/Export, Wizards, Robustheit, Profile, Branding, UX, Notfall, Barrierefreiheit, Mobile, Keyboard, FAB, vCard, ARIA, PWA, Datenspeicher, Recht, Legal, Viewport, Regression
+51. Krypto-Portabilität — Salt in Datei (beta.7)
+52. Weitergabe-Datei (beta.8)
+53. WCAG 2.2 Barrierefreiheit (6 neue Kriterien gegenüber 2.1)
+54. Immobilien — Kaufvertrag und Kreditvertrag
+55. Testament — Ehevertrag
+56. Kinder — Betreuungsmodell und Geburtsurkunde
+57. Finanzen — Altersvorsorge
+58. Dokumenten-Übersicht im Export
+59–62. ANF-07a–c — Basis-Anamnese, Fachspezifische Sicherheitsfelder, Arztbogen-Exporte und Wizard
+63. **beta.10 — QR-URL-Format** (7 Tests): `QR_LESEN_URL`, GitHub-Pages-URL, Base64url-Generator, Hash-Fragment, Rückwärtskompatibilität
+64. **beta.10 — Mehr-Teile-QR** (14 Tests): `SINGLE_MAX`, `CHUNK_SIZE`, Chunk-Schleife, >6-Fehlerfall, Metadaten-Format, Zustandsvariablen, Karussell-UI-Elemente
+65. **beta.10 — ANF-UX-01–07** (8 Tests): Lock-Button-Emoji, Umlaute, Weitergabe-Infobox, Solid-Pod-Gruppe, EUDI-Import, FIM-ec-icon
 
 ---
 
@@ -282,17 +329,18 @@ python3 test_vivodepot.py VIVODEPOT.html
 ### Schlüssel-Lifecycle (Hauptdatei)
 
 ```
-Passwort + Salt → PBKDF2 → sessionKey (im RAM, nie persistent)
+Passwort + Salt → PBKDF2 (200.000 It.) → sessionKey (im RAM, nie persistent)
 sessionKey + IV  → AES-GCM-Encrypt → ct (in localStorage)
 Salt             → localStorage (STORE_META) + HTML-Datei (seit beta.7)
 ```
 
-### Schlüssel-Lifecycle (Weitergabe-Datei / QR-Übergabe)
+### Schlüssel-Lifecycle (Weitergabe-Datei / QR-Übergabe / Leseansicht)
 
 ```
 Separates Passwort / PIN + eigener Salt (getRandomValues())
-  → PBKDF2 → wgKey / qrKey (im RAM, nie persistent)
-  → AES-GCM-Encrypt → in generierter HTML-Datei / QR-Code eingebettet
+  → PBKDF2 (200.000 It.) → wgKey / qrKey (im RAM, nie persistent)
+  → AES-GCM-Encrypt
+  → in generierter HTML-Datei / QR-URL-Fragment eingebettet
 ```
 
 ### Fehlversuche
@@ -337,3 +385,4 @@ startDiktat()       // SpeechRecognition API
 - **DuckDuckGo Browser:** Unterstützt keine lokalen HTML-Dateien (file://-Protokoll).
 - **localStorage-Limit:** Ca. 5 MB pro Domain. Bei vielen hochgeladenen Dateien kann dieses Limit erreicht werden.
 - **Safari iOS:** `showSaveFilePicker` nicht unterstützt — Fallback auf `a.click()` mit iOS-spezifischer Anleitung.
+- **QR-Kapazität:** Bei sehr großen Profilen (> 6 Chunks) ist die Weitergabe-Datei der geeignete Kanal.

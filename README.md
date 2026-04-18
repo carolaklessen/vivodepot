@@ -5,7 +5,7 @@
 [![Version](https://img.shields.io/badge/Version-1.0.0--beta.10-gold)](https://github.com/carolaklessen/vivodepot)
 [![Lizenz](https://img.shields.io/badge/Lizenz-EUPL--1.2-green)](LICENSE)
 [![Offline](https://img.shields.io/badge/Offline-100%25-brightgreen)](#offline)
-[![Tests](https://img.shields.io/badge/Tests-898%2F898-brightgreen)](#tests)
+[![Tests](https://img.shields.io/badge/Tests-1050%2F1051-brightgreen)](#tests)
 [![ZenDiS](https://img.shields.io/badge/ZenDiS-20%2F20-blue)](#souveränität)
 
 VIVODEPOT ist eine vollständig offline-fähige Einzeldatei-HTML-Anwendung zur Vorsorgedokumentation. Alle Daten bleiben ausschließlich auf Ihrem Gerät — keine Cloud, kein Server, keine Übertragung.
@@ -34,7 +34,7 @@ VIVODEPOT hilft Menschen dabei, alle wichtigen Informationen für den Notfall an
 - Notfall & Katastrophenschutz (BBK-Empfehlungen)
 - Persönliche Erinnerungen und Botschaften
 
-Am Ende erstellt VIVODEPOT mit einem Klick druckfertige Dokumente: PDF, Word, Notfallblatt, Arztbogen und mehr. Mit der Weitergabe-Funktion können gezielt ausgewählte Daten verschlüsselt an Dritte weitergegeben werden. Mit der QR-Übergabe können Daten direkt per Kamerascan übergeben werden. Mit dem Solid Pod Export können Daten in einen persönlichen Datentresor exportiert werden.
+Am Ende erstellt VIVODEPOT druckfertige Dokumente: PDF, Word, Notfallblatt, Arztbogen und mehr. Die QR-Übergabe überträgt Daten ohne USB an Institutionen. Die Leseansicht öffnet QR-Codes und Weitergabe-Dateien ohne VIVODEPOT-Installation.
 
 ---
 
@@ -66,58 +66,44 @@ Am Ende erstellt VIVODEPOT mit einem Klick druckfertige Dokumente: PDF, Word, No
 | Dokumente (intern) | Export-Step |
 | Einstellungen | Passwort, Barrierefreiheit, Profile |
 
-### Exporte (16 Formate)
+### Exporte
 
 - Word-Dokument (vollständige Notfallmappe)
-- PDF (druckfertig mit Branding)
-- Notfall-Checkliste
-- Katastrophenschutz-Blatt (Notrufnummern, Evakuierungsplan)
-- Arztbogen (Krankenhaus-Schnellinfo)
-- Szenario: Krankenhaus
-- Szenario: Todesfall
-- Szenario: Notfall-Tasche
-- Vorsorgevollmacht (Word)
-- Patientenverfügung (Word)
-- Gesundheitsvollmacht (Word)
-- QR-Aufkleber
-- vCard-Export
+- PDF (druckfertig)
+- Notfall-Checkliste, Katastrophenschutz-Blatt
+- Arztbogen (Standard, Radiologie, Präoperativ, Geriatrie)
+- Szenario-PDFs (Krankenhaus, Todesfall, Notfall-Tasche)
+- Vorsorgevollmacht, Patientenverfügung, Gesundheitsvollmacht (Word)
+- QR-Aufkleber, vCard-Export
 - Weitergabe-Datei (HTML, verschlüsselt)
-- QR-Übergabe (AES-verschlüsselt, Kamerascan)
-- Solid Pod Export (Turtle-Format, .ttl)
+- QR-Übergabe (AES-verschlüsselt, URL-basiert, Mehr-Teile-fähig)
+- Solid Pod Export (Turtle, .ttl)
 
 ### Weitergabe-Datei (seit beta.8)
 
-Eine zweite, eigenständige HTML-Datei — verschlüsselt mit einem separaten Passwort, geöffnet im Browser, ohne Installation.
+Eigenständige, verschlüsselte HTML-Datei mit gefiltertem Datensatz. Vier Profile: Notfall, Vollmacht, Familie, Behörde.
 
-| Profil | Empfängerin |
-|---|---|
-| Notfall | Krankenhaus, Rettungsdienst, Hausarzt |
-| Vollmacht | Notar, Klinik-Sozialdienst |
-| Familie | Angehörige, Erben |
-| Behörde | Ämter, Kassen, Rentenversicherung |
+### QR-Übergabe (seit beta.8, URL-Format seit beta.10)
 
-### QR-Übergabe (seit beta.8)
+QR-Codes verlinken direkt auf die Leseansicht. Verschlüsselt per AES-256-GCM, PIN-geschützt, 24 Stunden gültig. Bei größeren Datenmengen automatische Aufteilung auf bis zu 6 QR-Codes. Löst das USB-Verbotsproblem in Institutionen.
 
-Daten direkt per QR-Code übergeben — AES-256-GCM-verschlüsselt, PIN-geschützt, 24 Stunden gültig. Empfang per Kamerascan, vollständig offline.
+### Leseansicht (seit beta.10)
+
+[`vivodepot-lesen.html`](vivodepot-lesen.html) — eigenständige Empfänger-Seite für QR-Codes und Weitergabe-Dateien. Kein Account, keine Installation, kein Speichern, kein Netzwerkzugriff.
+
+**URL:** [carolaklessen.github.io/vivodepot/vivodepot-lesen.html](https://carolaklessen.github.io/vivodepot/vivodepot-lesen.html)
 
 ### Solid Pod Export (seit beta.9)
 
-Export im Turtle-Format (.ttl) mit Linked-Data-Standards (vcard:, schema:). Auswahl der Datenkategorien im Dialog. EUPL-konform.
+Export im Turtle-Format (.ttl) mit Linked-Data-Standards. Eigene Gruppe „Eigener Datenspeicher". Anbieterbeispiel: solidcommunity.net.
 
-### Import (seit beta.8)
+### Import
 
-- EUDI-Wallet-Import (SD-JWT) — 8 Felder automatisch gemappt
-- FHIR R4 Import — AllergyIntolerance, Condition, MedicationStatement, Observation, Immunization, CarePlan
+EUDI-Wallet (SD-JWT), FHIR R4, FIM-JSON, allgemeines JSON.
 
 ### Barrierefreiheit
 
-- Schriftgröße A+ (3 Stufen)
-- Hoher Kontrast
-- Nachtmodus
-- Vorlesen (Web Speech API)
-- Bildschirmlupe
-- Diktat-Eingabe
-- Touch-Targets 44px (WCAG 2.2)
+Schriftgröße A+ (3 Stufen), Hoher Kontrast, Nachtmodus, Vorlesen, Bildschirmlupe, Diktat, Touch-Targets 44px (WCAG 2.2).
 
 ---
 
@@ -126,50 +112,34 @@ Export im Turtle-Format (.ttl) mit Linked-Data-Standards (vcard:, schema:). Ausw
 | Merkmal | Details |
 |---|---|
 | Verschlüsselung | AES-256-GCM |
-| Schlüsselableitung | PBKDF2-HMAC-SHA256 (100.000 Iterationen) |
+| Schlüsselableitung | PBKDF2-HMAC-SHA256 (200.000 Iterationen) |
 | Salt | Zufällig, in gespeicherter Datei eingebettet (seit beta.7) |
-| Weitergabe-Datei | Eigener Salt, eigenes Passwort — unabhängig vom Hauptpasswort |
-| QR-Übergabe | Eigener Salt, PIN, Ablauf 24 Stunden |
-| Datenspeicherung | Ausschließlich `localStorage` des Browsers |
+| Weitergabe-Datei | Eigener Salt, eigenes Passwort |
+| QR-Übergabe | Hash-Fragment — Payload erreicht Server nie; PIN; 24h Ablauf |
+| Leseansicht | Kein Speichern, kein Server, keine Cookies |
 | Netzwerkanfragen | Keine — vollständig offline |
-| Cloud | Nicht vorhanden |
 | Telemetrie | Nicht vorhanden |
-| Cookies | Nicht vorhanden |
-| Externe Skripte | Nicht vorhanden (alle Bibliotheken inline eingebettet) |
+| Externe Skripte | Nicht vorhanden (alle Bibliotheken inline) |
 
 ---
 
 ## Digitale Souveränität
 
-VIVODEPOT wurde gegen das ZenDiS-Diskussionspapier „Kriterien zur Bewertung von Digitaler Souveränität" (März 2026) geprüft:
+**Ergebnis: 20 von 20 ZenDiS-Kriterien erfüllt.**
 
-**Ergebnis: 20 von 20 Kriterien erfüllt.**
-
-Weitere Rahmenwerke: BSI IT-Grundschutz++, EU Cyber Resilience Act, DSGVO (Privacy by Design), EU AI Act Art. 50, OSBA, EUPL-1.2.
+BSI IT-Grundschutz++, EU Cyber Resilience Act, DSGVO (Privacy by Design), EU AI Act Art. 50, EUPL-1.2.
 
 Vollständige Bewertung: [SOVEREIGNTY.md](SOVEREIGNTY.md)
 
 ---
 
-## Offline-Fähigkeit
-
-VIVODEPOT ist eine vollständig selbsttragende Einzeldatei. Alle Bibliotheken (jsPDF, docx.js, QR-Code-Generator, jsQR) sind direkt eingebettet. Keine einzige externe Anfrage beim Öffnen oder Nutzen der App.
-
-Funktioniert auf: USB-Stick (ohne Internet), im Flugmodus, auf Krankenhaus-Computern, auf jedem Gerät mit Chrome, Firefox, Edge oder Safari.
-
----
-
 ## Technologie
 
-- Einzeldatei HTML (ca. 1,3 MB)
+- Einzeldatei HTML (ca. 1,3 MB) + vivodepot-lesen.html
 - Kein Build-System, kein Framework, kein CDN
 - Vanilla JavaScript (ES5/ES6)
 - AES-256-GCM via Web Crypto API
-- jsPDF 2.5.1 (inline)
-- docx.js 8.5.0 (inline)
-- QRCode-Generator 1.4.4 (inline)
-- jsQR 1.4.0 (inline, für QR-Übergabe-Empfang)
-- Systemschriften (keine Google Fonts)
+- jsPDF 2.5.1, docx.js 8.5.0, QRCode-Generator 1.4.4, jsQR 1.4.0 (alle inline)
 - EUPL-1.2 Lizenz
 
 ---
@@ -180,15 +150,15 @@ Funktioniert auf: USB-Stick (ohne Internet), im Flugmodus, auf Krankenhaus-Compu
 python3 test_vivodepot.py VIVODEPOT.html
 ```
 
-**898 Tests** in 53 Sektionen: Syntax, Verschlüsselung, Navigation, PDF-Export, Word-Export, Barrierefreiheit, Mobile, Offline, Krypto-Portabilität, Rechtsinhalte, Weitergabe-Datei, QR-Übergabe, EUDI-Wallet-Import, FHIR-Import, Einkommensdaten, Kind-Daten, ANF-05 Solid Pod, Datenaustausch-Step, Strukturumstellung, WCAG 2.2 und mehr.
+**1051 Tests in 65 Sektionen — 1050 bestehen.**
+
+Abgedeckt: Syntax, Verschlüsselung, Navigation, PDF/Word-Export, Barrierefreiheit, Mobile, Offline, Krypto-Portabilität, Weitergabe-Datei, QR-Übergabe (URL-Format + Mehr-Teile), Leseansicht-Logik, EUDI/FHIR-Import, Solid Pod, ANF-UX-01–07 und mehr.
 
 ---
 
 ## Mitmachen
 
-Bitte lesen Sie [CONTRIBUTING.md](CONTRIBUTING.md) und [SECURITY.md](SECURITY.md).
-
-Feedback und Fehlerberichte: [feedback@vivodepot.de](mailto:feedback@vivodepot.de)
+[CONTRIBUTING.md](CONTRIBUTING.md) · [SECURITY.md](SECURITY.md) · [feedback@vivodepot.de](mailto:feedback@vivodepot.de)
 
 ---
 

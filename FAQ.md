@@ -7,10 +7,10 @@
 ## Allgemein
 
 **Was ist VIVODEPOT?**
-Eine Einzeldatei-HTML-App, mit der Sie alle wichtigen Informationen für den Notfall dokumentieren: Kontakte, Finanzen, Gesundheit, Vollmachten, Bestattungswünsche und mehr. Die App läuft vollständig offline — keine Cloud, kein Abo, keine Registrierung.
+Eine Einzeldatei-HTML-App zur Vorsorgedokumentation — Kontakte, Finanzen, Gesundheit, Vollmachten, Bestattungswünsche und mehr. Vollständig offline. Keine Cloud, kein Abo, keine Registrierung.
 
 **Kostet VIVODEPOT etwas?**
-Die Basisversion ist kostenlos und enthält alle wesentlichen Funktionen. Zukünftige Premium-Funktionen sind in Planung.
+Die Basisversion ist kostenlos. Zukünftige Premium-Funktionen sind in Planung.
 
 **Wer steckt dahinter?**
 Vivodepot UG (haftungsbeschränkt), Berlin. Kontakt: [feedback@vivodepot.de](mailto:feedback@vivodepot.de)
@@ -26,16 +26,16 @@ Ausschließlich in Ihrem Browser (`localStorage`) und in der gespeicherten HTML-
 Nein. Die Daten verlassen Ihr Gerät nicht. Auch wir als Entwickler haben keinen Zugriff.
 
 **Sind meine Daten verschlüsselt?**
-Ja — wenn Sie einen Passwortschutz einrichten. Die Verschlüsselung erfolgt mit AES-256-GCM, einem der sichersten verfügbaren Standards.
+Ja — wenn Sie Passwortschutz einrichten. AES-256-GCM mit 200.000 PBKDF2-Iterationen.
 
 **Was passiert, wenn ich meinen Browser-Cache leere?**
-Die Daten in `localStorage` gehen verloren. Empfehlung: Regelmäßig über „Speichern" eine persönliche HTML-Datei erstellen und sichern.
+Die `localStorage`-Daten gehen verloren. Empfehlung: Regelmäßig über „Speichern" eine HTML-Datei erstellen und sichern.
 
 **Kann ich die Daten exportieren?**
-Ja — als passwortgeschützte HTML-Datei (über „Speichern"), als JSON-Datei (über das Menü) oder als fertige Dokumente (PDF, Word).
+Ja — als HTML-Datei (Speichern), als Weitergabe-Datei für Dritte, als QR-Code, als PDF oder Word.
 
 **Kann ich die Daten importieren?**
-Ja — über das Menü → „Daten importieren". Unterstützt werden HTML-Dateien (eigene gespeicherte VIVODEPOT-Dateien) und JSON-Dateien.
+Ja — FHIR R4, FIM-JSON, EUDI-Wallet (SD-JWT) und allgemeines JSON.
 
 ---
 
@@ -45,55 +45,57 @@ Ja — über das Menü → „Daten importieren". Unterstützt werden HTML-Datei
 Chrome, Firefox, Edge (ab Version 90), Safari (ab Version 14). DuckDuckGo Browser auf iOS unterstützt keine lokalen HTML-Dateien.
 
 **Funktioniert VIVODEPOT ohne Internet?**
-Vollständig. Alle Bibliotheken (PDF, Word, QR-Code) sind direkt in der HTML-Datei eingebettet — keine einzige externe Anfrage.
+Vollständig. Alle Bibliotheken sind direkt eingebettet — keine externe Anfrage.
 
 **Wie groß ist die Datei?**
-Ca. 1,3 MB. Das entspricht etwa dem Speicherplatz einer Foto-Vorschau.
+Ca. 1,3 MB (VIVODEPOT.html). Die Leseansicht (vivodepot-lesen.html) ist deutlich kleiner.
 
 **Kann ich VIVODEPOT auf einem USB-Stick nutzen?**
-Ja — einfach die HTML-Datei auf den USB-Stick kopieren und in Chrome oder Firefox öffnen.
+Ja — HTML-Datei kopieren und in Chrome oder Firefox öffnen.
 
 **Kann ich die Datei auf einem anderen Gerät öffnen?**
-Ja — seit Version 1.0.0-beta.7 vollständig. Der kryptographische Schlüssel wird jetzt in der Datei selbst gespeichert. Passwort eingeben genügt — egal auf welchem Gerät oder Browser.
+Ja — vollständig seit beta.7. Der Salt ist in der Datei eingebettet. Passwort eingeben genügt.
 
-In früheren Versionen (bis beta.6) war dies ein bekanntes Problem: Der Salt fehlte auf anderen Geräten, was zur Fehlermeldung führte, obwohl das Passwort korrekt war.
-
-**iPhone: Die Datei öffnet sich in PocketBook statt im Browser.**
-PocketBook hat sich als Standard-App für HTML-Dateien registriert. Lösung: Datei in der Dateien-App lang drücken → Teilen → Safari wählen.
-
-**Die PDF-Erstellung schlägt fehl.**
-Die PDF-Bibliothek ist vollständig eingebettet und benötigt kein Internet. Falls ein Fehler auftritt, bitte Seite neu laden und erneut versuchen. Bei anhaltenden Problemen: [feedback@vivodepot.de](mailto:feedback@vivodepot.de)
+**iPhone: Die Datei öffnet sich in PocketBook.**
+Datei in der Dateien-App lang drücken → Teilen → Safari wählen.
 
 ---
 
-## Inhalt & Exporte
+## Weitergabe & QR-Übergabe
 
-**Welche Dokumente kann ich erstellen?**
-PDF (Notfallmappe), Word (bearbeitbar), Notfall-Blatt (Katastrophenschutz), Arztbogen, Szenario-PDFs (Krankenhaus, Todesfall, Notfall-Tasche), Vorsorgevollmacht (Word), Patientenverfügung (Word), Gesundheitsvollmacht (Word), QR-Aufkleber, vCard-Export.
+**Was ist die Weitergabe-Datei?**
+Eine eigenständige, verschlüsselte HTML-Datei mit gefiltertem Datensatz — z.B. nur medizinische Daten für den Hausarzt. Separates Passwort, per E-Mail oder USB weitergeben.
 
-**Sind die Dokumente rechtsgültig?**
-VIVODEPOT erstellt Entwürfe und Vorlagen. Für rechtliche Gültigkeit (besonders Vorsorgevollmacht, Patientenverfügung, Testament) ist in der Regel eine notarielle Beglaubigung oder eigenhändige Unterschrift erforderlich. VIVODEPOT ist keine Rechtsberatung.
+**Was ist die QR-Übergabe?**
+Ein QR-Code, der auf die Leseansicht verlinkt und einen verschlüsselten Datensatz enthält. Empfänger scannt mit Smartphone → Browser öffnet Leseansicht → PIN eingeben → Daten sehen. Kein USB, keine App.
 
-**Kann ich mehrere Profile anlegen?**
-Ja — über Einstellungen → Profile. Praktisch für Paare oder wenn Sie Informationen für mehrere Personen verwalten.
+**Was ist die Leseansicht?**
+Die Seite `carolaklessen.github.io/vivodepot/vivodepot-lesen.html` — öffnet QR-Codes und Weitergabe-Dateien. Kein Account, kein Speichern, kein Netzwerkzugriff. Versionsnummer korrespondiert mit VIVODEPOT.html.
 
-**Was ist die Angehörigen-Ansicht?**
-Eine vereinfachte Ansicht, die beim Öffnen der gespeicherten Datei angeboten wird. Angehörige sehen nur die relevanten Informationen — keine persönlichen Details, die sie nicht brauchen.
+**Was wenn der QR-Code zu groß ist?**
+VIVODEPOT teilt den Payload automatisch auf bis zu 6 QR-Codes auf. Karussell zeigt jeden Code nacheinander. Die Leseansicht sammelt alle Teile und fragt einmal den PIN.
+
+**Braucht der Empfänger auch VIVODEPOT?**
+Nein — die Leseansicht ist frei verfügbar und braucht keine Installation.
+
+**Ist der QR-Code sicher?**
+Ja. AES-256-GCM-verschlüsselt, PIN-geschützt, 24 Stunden gültig. Der Hash-Teil der URL erreicht den Server nie.
+
+**Darf eine Praxis-Mitarbeiterin den QR-Code mit dem Privathandy scannen?**
+Technisch möglich — datenschutzrechtlich liegt die Verantwortung bei der Institution. Empfehlung: Praxis- oder Dienstgerät nutzen.
 
 ---
 
 ## Notfall & Katastrophenschutz
 
 **Was zeigt die Notfall-Kategorie?**
-Sechs klickbare Statuskarten für Wasser, Lebensmittel, Medikamente, Dokumente, Licht & Kommunikation sowie Bargeld. Außerdem Felder für Evakuierungsplan, lokale Kontakte und Notrufnummern. Orientiert sich an den Empfehlungen des Bundesamts für Bevölkerungsschutz (BBK).
+Sechs Statuskarten (Wasser, Lebensmittel, Medikamente, Dokumente, Licht & Kommunikation, Bargeld), Evakuierungsplan, lokale Kontakte, Notrufnummern. Nach BBK-Empfehlungen.
 
-**Was enthält das Notfall-Blatt als PDF?**
-Notrufnummern (112, 110, Seelsorge), Vorratsstatus, Evakuierungsplan, Sammelplatz, medizinische Hinweise, Vertrauenspersonen. Ideal zum Ausdrucken und Aufhängen.
+**Was enthält das Notfall-Blatt?**
+Notrufnummern, Vorratsstatus, Evakuierungsplan, Sammelplatz, medizinische Hinweise. Zum Ausdrucken.
 
 ---
 
 ## Kontakt & Feedback
 
-Fragen, Fehlerberichte, Verbesserungsvorschläge: [feedback@vivodepot.de](mailto:feedback@vivodepot.de)
-
-GitHub: [github.com/carolaklessen/vivodepot](https://github.com/carolaklessen/vivodepot)
+[feedback@vivodepot.de](mailto:feedback@vivodepot.de) · [github.com/carolaklessen/vivodepot](https://github.com/carolaklessen/vivodepot)

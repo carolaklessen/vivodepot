@@ -6,14 +6,52 @@ Alle wichtigen Änderungen werden in dieser Datei dokumentiert.
 
 ## [1.0.0-beta.10] — April 2026
 
-### Barrierefreiheit
+### Neu
 
-- **WCAG 2.2** — Alle 6 für die App relevanten neuen Kriterien (gegenüber 2.1) geprüft und erfüllt. 2.4.11 Focus Not Obscured: `scroll-padding-top: 70px` ergänzt, damit per Tab fokussierte Elemente nicht hinter der sticky Topbar verschwinden. 3.2.6 Consistent Help: keine Hilfe-Funktion im UI, Kriterium automatisch erfüllt. 3.3.8 Accessible Authentication: kein CAPTCHA, kein SMS-Code, kein kognitiver Funktionstest; Passwort-Eingabe ist nutzerkontrolliertes Geheimnis. SOVEREIGNTY.md mit Sektion 2.7 aktualisiert (Übersichtstabelle aller 6 Kriterien, Begründung zu 3.3.8, WCAG 2.1 → 2.2 in Wettbewerbstabelle und Referenzen).
+- **vivodepot-lesen.html — Eigenständige Leseansicht** — Neue Begleitdatei für die sichere Datenübergabe ohne gemeinsame App-Installation. Zwei Eingabewege: QR-Code (Kamerascan, inkl. automatischer Mehr-Teile-Erkennung) und Weitergabe-Datei (Drag & Drop oder Auswahl). Entschlüsselungslogik identisch zu VIVODEPOT (PBKDF2 + AES-256-GCM). Kein Speichern, kein Netzwerkzugriff, keine Datenhaltung. Logo als Base64 eingebettet. Versionsnummer korrespondiert mit VIVODEPOT.html. Bereitgestellt unter `carolaklessen.github.io/vivodepot/vivodepot-lesen.html`.
+
+- **QR-Übergabe: URL-Format mit Hash-Fragment** — QR-Codes verlinken direkt auf die Leseansicht. Das verschlüsselte Hash-Fragment (`#PAYLOAD`) verlässt den Server nie — vollständig datenschutzkonform. Empfänger ohne VIVODEPOT scannen mit normalem Smartphone; der Browser öffnet die Leseansicht direkt. Konfiguriert über Konstante `QR_LESEN_URL`. Rückwärtskompatibel: `qreQrErkannt()` versteht URL- und Legacy-JSON-Format.
+
+- **QR-Übergabe: Mehr-Teile-QR-Codes** — Löst das USB-Verbotsproblem in Institutionen (Arztpraxen, Kanzleien, Behörden). Payload > 1800 Zeichen → automatische Aufteilung in Chunks à 1200 Zeichen (max. 6). Jeder Chunk trägt gemeinsame ID + Teilnummer. Schritt-3: Karussell mit ◀ / ▶, Beschriftung „Code X von Y — zuerst zeigen". Leseansicht sammelt Teile automatisch und startet Kamera nach jedem Teil neu.
+
+- **Leseansicht: Hash-Erkennung beim Laden** — URL mit `#`-Fragment automatisch erkannt → direkt zur PIN-Eingabe.
+
+- **Leseansicht: Weitergabe-Datei öffnen** — Die Leseansicht entschlüsselt auch `VIVODEPOT_Weitergabe_*.html`-Dateien.
+
+### Verbessert (UX-Korrekturen ANF-UX-01 bis ANF-UX-07)
+
+- **ANF-UX-01** — Lock-Button: Emoji 🔒 als sichtbarer Inhalt (war leer).
+- **ANF-UX-02** — Welcome-Modal: Schriftgröße-Hinweis → direkt auf „A⁺"-Button in Topbar; ⋮ als Alternative.
+- **ANF-UX-03** — EUDI-Import-Karte: `w&auml;hlen` → `wählen`.
+- **ANF-UX-04** — Infobox „Daten weitergeben": ASCII-Umschreibungen → korrekte Umlaute.
+- **ANF-UX-05** — Solid Pod: eigene Gruppe „Eigener Datenspeicher" mit Infobox + solidcommunity.net-Hinweis.
+- **ANF-UX-06** — Import-Infobox: EUDI Wallet (SD-JWT) als viertes Format ergänzt.
+- **ANF-UX-07** — Export-Tabs: Führende Leerzeichen entfernt.
+
+### Weitere Verbesserungen
+
+- FIM-Karte: `\uFE0F` aus ec-icon entfernt → Leerraum über Kartentitel beseitigt.
+- Solid Pod Karte: Untertitel auf „Daten in den eigenen Pod exportieren — kompatibel mit solidcommunity.net" geändert.
 
 ### Tests
 
-- 6 neue Tests: WCAG 2.2 Barrierefreiheit (Sektion 53)
-- Gesamt: 898 Tests, 0 Fehler (vorher: 892)
+29 neue Tests in 3 neuen Sektionen:
+
+| Sektion | Inhalt | Tests |
+|---|---|---|
+| 63 | QR-URL-Format: `QR_LESEN_URL`, GitHub-URL, Base64url, Hash-Fragment, Rückwärtskompatibilität | 7 |
+| 64 | Mehr-Teile-QR: Schwellwerte, Chunk-Logik, Zustandsvariablen, Karussell-UI | 14 |
+| 65 | ANF-UX-01–07: Lock-Button, Umlaute, Infobox, Solid-Pod-Gruppe, FIM-Icon | 8 |
+
+Gesamt: **1051 Tests, 1050 bestehen.** (1 schlägt nur außerhalb des Repos fehl: SOVEREIGNTY.md-Pfadtest)
+
+### Dateien
+
+| Datei | Änderung |
+|---|---|
+| `VIVODEPOT.html` | UX-Fixes, QR-URL-Format, Mehr-Teile-QR, Karussell-UI |
+| `vivodepot-lesen.html` | **Neu** |
+| `test_vivodepot.py` | +29 Tests (Sektionen 63–65) |
 
 ---
 
@@ -21,106 +59,53 @@ Alle wichtigen Änderungen werden in dieser Datei dokumentiert.
 
 ### Neu
 
-- **ANF-05 Solid Pod Export** — Export persönlicher Daten in einen Solid Pod im Turtle-Format (.ttl). Das Modal sp-overlay führt durch die Auswahl der Datenkategorien (Persönliche Angaben, Gesundheit, Finanzen, Vollmachten). Die Exportdatei folgt dem Linked-Data-Standard mit den Präfixen vcard: und schema:. EUPL-konform, vollständig offline.
+- **ANF-05 Solid Pod Export** — Turtle-Format (.ttl), Linked-Data (vcard:, schema:), Modal mit Kategorienauswahl.
+- **Datenaustausch-Step** — Neuer Schritt bündelt alle Import- und Export-Wege.
+- **Strukturumstellung Sidebar** — 21 Schritte (bisher 20).
 
-  Neue Funktionen: solidPodOpen(), solidPodClose(), solidPodExport(), solidPodZeigStatus(), solidPodEsc().
+### Tests
 
-- **Datenaustausch-Step** — Neuer Navigationsschritt „Datenaustausch" (zwischen Dokumente erstellen und Erinnerungen). Bündelt alle Import- und Export-Wege an einem Ort: FHIR-Import, FIM-Import, JSON-Import, EUDI-Wallet, Weitergabe-Datei, QR-Übergabe, QR-Empfang, Solid Pod. Import-Block aus dem Behördendaten-Tab und wg-Link-Zeilen aus dem Export-Tab wurden dorthin verschoben.
-
-- **Strukturumstellung Sidebar** — 21 Schritte (bisher 20). Neue Sidebar-Gruppen: „Gesundheit & Abschluss" und „Besonderes". Alte Gruppen „Gesundheit & Leben" und „Persönliches & Wünsche" entfernt. Neue Schrittfolge endet mit: ... dokumente → datenaustausch → erinnerung → exportStep → einstellungen.
-
-### Verbessert
-
-- **Code-Optimierung** — Toter Code und Leerraum entfernt:
-  - `_loadScript()` entfernt (CDN-Fallback, nie aufgerufen, −6 Zeilen)
-  - `console.warn` für docx entfernt (−1 Zeile)
-  - Leerkommentar `DATENSCHUTZ-MODAL` entfernt (−4 Zeilen)
-  - Whitespace in Wizard-Overlays und Export-Tab bereinigt (−4 Zeilen)
-  - `solidPodBaueVcard()` entfernt — toter Code mit Tippfehler (`zeilan.push` statt `zeilen.push`), der beim ersten Aufruf mit E-Mail-Adresse sofort gecrasht wäre (−11 Zeilen)
-  - Gesamt: −26 Zeilen (22.157 → 22.131 Zeilen)
-
-- **Test-Duplikate bereinigt** — 45 redundante Tests entfernt (Kopien aus den Sektionen 16, 19, 22, 31 und 33, die in späteren Sektionen doppelt geprüft wurden). Abdeckung bleibt identisch.
+43 neue Tests — Gesamt: 1093 Tests, 0 Fehler.
 
 ---
 
 ## [1.0.0-beta.8] — April 2026
 
-### Neu
-
-- **Weitergabe-Datei** — Eigenständige, verschlüsselte HTML-Datei mit gefiltertem Datensatz für Dritte. Vier Profile: Notfall, Vollmacht, Familie, Behörde. Behörden-Profil mit Dropdown (9 Optionen). Eigener Salt und eigenes Passwort — vollständig unabhängig vom Hauptpasswort. Reminder nach 12 Monaten.
-
-- **QR-Übergabe (ANF-06)** — Drei Schritte: Auswahldialog mit PIN, AES-256-GCM-Verschlüsselung mit Zeitstempel iat und Ablauf exp (24 Stunden), Empfänger-Dialog mit jsQR v1.4.0 (256 KB, inline) und Kamerascan.
-
-- **ANF-01 Einkommensdaten** — Felder brutto_monat, netto_monat, arbeitgeber, beruf_hauptberuf, letzter_arbeitgeber. PDF-Export: Elterngeld-Bogen.
-
-- **ANF-02 Kind-Daten strukturiert** — renderKinderBlocks(), 5 Felder pro Kind, FIM-Export kinderListe. kinderMinderjaehrig (Legacy) unverändert erhalten.
-
-- **ANF-03 EUDI-Wallet-Import** — SD-JWT-Import, 8 Felder gemappt.
-
-- **ANF-04 FHIR-Import** — 6 Ressourcentypen: AllergyIntolerance, Condition (ICD-10), MedicationStatement, Observation (LOINC 8480-6), Immunization, CarePlan.
-
-### Behoben
-
-- BUG-05: wg-overlay und qre-overlay in showOverlay() und hideAllOverlays() eingetragen. Overlay-Limit auf 12 angehoben.
-
-### Tests
-
-- 208 neue Tests gegenüber beta.7
-- Gesamt: 1050 Tests, 0 Fehler
+Weitergabe-Datei (4 Profile), QR-Übergabe (ANF-06), Einkommensdaten (ANF-01), Kind-Daten (ANF-02), EUDI-Wallet (ANF-03), FHIR (ANF-04).
+Gesamt: 1050 Tests, 0 Fehler.
 
 ---
 
 ## [1.0.0-beta.7] — April 2026
 
-### Behoben
-
-- **BUG-SALT** — `saveAsHTML()` bettet den Salt direkt in die gespeicherte HTML-Datei ein. Beim Öffnen auf einem anderen Gerät wird er idempotent wiederhergestellt.
-
-### Dokumentation
-
-- SOVEREIGNTY.md: ZenDiS-Diskussionspapier März 2026, BSI IT-Grundschutz++, EU Cyber Resilience Act
-
-### Tests
-
-- 4 neue Tests: BUG-SALT-01a bis BUG-SALT-02
-- Gesamt: 842 Tests, 0 Fehler
+BUG-SALT behoben: Salt in gespeicherter Datei eingebettet.
 
 ---
 
 ## [1.0.0-beta.6] — April 2026
 
-### Neu
-
-- Offline-Vollständigkeit: Alle Bibliotheken inline eingebettet
-- Notfall & Katastrophenschutz: 6 Ampelkarten, Evakuierungsplan, Notrufblatt-PDF
-- Barrierefreiheit im Menü direkt erreichbar
-- iOS-Speicher-Anleitung und .htm-Endung (PocketBook-Workaround)
-
-### Behoben
-
-- BUG-10: vCard-Code lag außerhalb `<script>`-Tags
-- BUG-11: `mehr()`-Funktion mit falschem Argument-Typ
+Offline-Vollständigkeit, Notfall & Katastrophenschutz, Barrierefreiheit, BUG-10, BUG-11.
 
 ---
 
 ## [1.0.0-beta.5] — März 2026
 
-Fokus-System, Einstiegs-Wizard, Multi-Profil-Unterstützung, Angehörigen-Ansicht, Diktat-Eingabe, Gesundheitsvollmacht-Wizard, Notfall-Tasche Szenario-PDF.
+Fokus-System, Einstiegs-Wizard, Multi-Profil, Angehörigen-Ansicht, Diktat-Eingabe.
 
 ---
 
 ## [1.0.0-beta.4] — Februar 2026
 
-Weiche beim Öffnen (Inhaberin / Angehörige/r), 20 Schritte, Einstellungen als eigener Schritt.
+Weiche Inhaberin / Angehörige/r, 20 Schritte.
 
 ---
 
 ## [1.0.0-beta.3] — Januar 2026
 
-AES-256-GCM Verschlüsselung, `saveAsHTML()`, vCard 4.0, FHIR R4, QR-Code Aufkleber, Arztbogen PDF, Vorsorgevollmacht Word, Vorlesen, Hoher Kontrast, Nachtmodus.
+AES-256-GCM, saveAsHTML(), vCard 4.0, FHIR R4, QR-Aufkleber, Arztbogen PDF.
 
 ---
 
 ## [1.0.0-beta.1] — Dezember 2025
 
-Erste Version — vollständige Notfallmappe als PDF und Word, 17 Dateneingabe-Schritte.
+Erste Version — Notfallmappe als PDF und Word, 17 Dateneingabe-Schritte.

@@ -2032,6 +2032,105 @@ def main():
     check("ANF-07c: Wizard deckt Geriatrie/Gynäkologie ab",
           "awizStep === 6" in html and "geriat_pflegegrad" in html)
 
+    # ═══════════════════════════════════════
+    print("\n=== 63. BETA.10 — QR-ÜBERGABE URL-FORMAT ===")
+    # ═══════════════════════════════════════
+
+    # QR_LESEN_URL-Konstante vorhanden und korrekt gesetzt
+    check("beta.10: QR_LESEN_URL-Konstante definiert",
+          "const QR_LESEN_URL" in html)
+    check("beta.10: QR_LESEN_URL zeigt auf vivodepot-lesen.html",
+          "vivodepot-lesen.html" in html)
+    check("beta.10: QR_LESEN_URL ist GitHub-Pages-URL",
+          "carolaklessen.github.io/vivodepot/vivodepot-lesen.html" in html)
+
+    # URL-Format im QR-Generator
+    check("beta.10: QR-Generator erzeugt Base64url-Payload",
+          "payloadB64 = btoa(payloadJson).replace" in html)
+    check("beta.10: QR-Generator baut URL mit Hash-Fragment",
+          "QR_LESEN_URL + '#' + payloadB64" in html)
+
+    # Rückwärtskompatibilität im Empfang
+    check("beta.10: qreQrErkannt versteht URL-Format mit #",
+          "rohText.indexOf('#')" in html or "rohText.includes('#')" in html)
+    check("beta.10: qreQrErkannt versteht Legacy-JSON-Format",
+          "JSON.parse(rohText)" in html and "qreQrErkannt" in html)
+
+    # ═══════════════════════════════════════
+    print("\n=== 64. BETA.10 — MEHR-TEILE-QR-CODES ===")
+    # ═══════════════════════════════════════
+
+    # Schwellwerte und Chunk-Logik
+    check("beta.10: SINGLE_MAX-Schwellwert definiert",
+          "SINGLE_MAX" in html and "1800" in html)
+    check("beta.10: CHUNK_SIZE definiert",
+          "CHUNK_SIZE" in html and "1200" in html)
+    check("beta.10: Chunk-Schleife erzeugt mehrere URLs",
+          "chunks.push(payloadB64.slice" in html)
+    check("beta.10: Mehr als 6 Chunks führt zu Fehlermeldung",
+          "chunks.length > 6" in html)
+    check("beta.10: Chunk-Metadaten enthalten p, t, id, d",
+          "p: idx + 1" in html and "t: chunks.length" in html and "id: qrId" in html)
+
+    # Zustandsvariablen für Karussell
+    check("beta.10: _qrUrls-Zustandsvariable vorhanden",
+          "_qrUrls" in html)
+    check("beta.10: _qrAktiv-Zustandsvariable vorhanden",
+          "_qrAktiv" in html)
+    check("beta.10: qrZeigeCode-Funktion vorhanden",
+          "function qrZeigeCode" in html)
+    check("beta.10: qrMultiPrev-Funktion vorhanden",
+          "function qrMultiPrev" in html)
+    check("beta.10: qrMultiNext-Funktion vorhanden",
+          "function qrMultiNext" in html)
+
+    # Karussell-UI-Elemente
+    check("beta.10: Karussell-Navigation qr-multi-nav vorhanden",
+          'id="qr-multi-nav"' in html)
+    check("beta.10: Karussell-Zurück-Button qr-multi-prev vorhanden",
+          'id="qr-multi-prev"' in html)
+    check("beta.10: Karussell-Weiter-Button qr-multi-next vorhanden",
+          'id="qr-multi-next"' in html)
+    check("beta.10: Karussell-Label qr-multi-label vorhanden",
+          'id="qr-multi-label"' in html)
+
+    # ═══════════════════════════════════════
+    print("\n=== 65. BETA.10 — ANF-UX-01 BIS ANF-UX-07 ===")
+    # ═══════════════════════════════════════
+
+    # UX-01: Lock-Button hat Emoji-Inhalt
+    check("ANF-UX-01: Lock-Button enthält 🔒",
+          ">🔒</button>" in html)
+
+    # UX-03: EUDI-Karte kein HTML-Entity
+    check("ANF-UX-03: w&auml;hlen nicht mehr in EUDI-Karte",
+          "w&auml;hlen" not in html)
+    check("ANF-UX-03: wählen korrekt in EUDI-Karte",
+          "wählen" in html)
+
+    # UX-04: Infobox Weitergabe — keine ASCII-Umschreibungen
+    # Prüft die spezifische Weitergabe-Infobox, nicht die generierte Datei-Template
+    wg_infobox = re.search(r'class="infobox"[^>]*>.*?Daten weitergeben.*?</div>', html, re.DOTALL)
+    check("ANF-UX-04: 'verschluesselte' nicht in Weitergabe-Infobox",
+          wg_infobox is None or "verschluesselte" not in wg_infobox.group(0))
+
+    # UX-05: Solid Pod in eigener Gruppe
+    check("ANF-UX-05: Gruppe 'Eigener Datenspeicher' vorhanden",
+          "Eigener Datenspeicher" in html)
+
+    # UX-06: EUDI in Import-Infobox
+    check("ANF-UX-06: EUDI Wallet in Import-Infobox erwähnt",
+          "EUDI" in html and "SD-JWT" in html)
+
+    # FIM-Karte: ec-icon ist leer (kein uFE0F-Leerraum mehr)
+    # Prüft dass ein leerer ec-icon-Container direkt vor dem FIM-Titel existiert
+    check("beta.10: FIM ec-icon ist leer (kein uFE0F-Leerraum)",
+          bool(re.search(r'<div class="ec-icon"></div>\s*<div class="ec-title">[^<]*FIM', html)))
+
+    # Solid Pod Karte: neuer Untertitel
+    check("beta.10: Solid Pod Karte — solidcommunity.net erwähnt",
+          "solidcommunity.net" in html)
+
     passed = sum(1 for s, _, _ in results if s == "PASS")
     failed = sum(1 for s, _, _ in results if s == "FAIL")
     total = len(results)

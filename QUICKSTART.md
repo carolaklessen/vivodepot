@@ -8,67 +8,75 @@
 
 ### Schritt 1: Datei herunterladen
 
-Laden Sie [`VIVODEPOT.html`](VIVODEPOT.html) herunter (ca. 1,3 MB).
+[`VIVODEPOT.html`](VIVODEPOT.html) herunterladen (ca. 1,3 MB).
 
-Oder öffnen Sie direkt: [carolaklessen.github.io/vivodepot/](https://carolaklessen.github.io/vivodepot/)
+Oder direkt öffnen: [carolaklessen.github.io/vivodepot/](https://carolaklessen.github.io/vivodepot/)
 
 ### Schritt 2: Im Browser öffnen
 
-**Desktop (Mac/Windows):** Doppelklick auf die Datei — öffnet in Ihrem Standardbrowser.
+**Desktop:** Doppelklick auf die Datei — öffnet im Standardbrowser.
 
-**iPhone/iPad:** Datei in der Dateien-App lang drücken → Teilen → Safari wählen.
-Wichtig: Nur Safari führt die App korrekt aus — nicht PocketBook oder andere Apps.
+**iPhone/iPad:** Datei in der Dateien-App lang drücken → Teilen → Safari wählen. Wichtig: Nur Safari — nicht PocketBook.
 
 **Android:** Datei im Dateimanager antippen → im Browser öffnen.
 
 ### Schritt 3: Loslegen
 
-Beim ersten Öffnen erscheint der Willkommens-Bildschirm. Wählen Sie Ihr Ziel und beginnen Sie mit dem Ausfüllen.
+Beim ersten Öffnen erscheint der Willkommens-Bildschirm. Ziel wählen und mit dem Ausfüllen beginnen.
 
 ---
 
 ## Daten speichern
 
-**Automatisch:** Ihre Eingaben werden automatisch im Browser gespeichert — auch wenn Sie das Fenster schließen.
+**Automatisch:** Eingaben werden automatisch gespeichert.
 
-**Als Datei sichern (empfohlen):** Klicken Sie auf „Speichern". Sie erhalten eine persönliche HTML-Datei mit allen Ihren Daten — ideal für USB-Stick oder iCloud.
-
-Tipp: Eine Kopie dieser Datei in der eigenen Cloud (iCloud, Google Drive) ist sicher — sie ist verschlüsselt und ohne Ihr Passwort nicht lesbar.
+**Als Datei sichern (empfohlen):** Klick auf „Speichern" → persönliche HTML-Datei mit allen Daten, ideal für USB-Stick oder iCloud. Die Datei ist verschlüsselt und ohne Ihr Passwort nicht lesbar.
 
 ---
 
 ## Dokumente erstellen
 
-Gehen Sie zum Schritt „Dokumente erstellen" (letzter Punkt in der Seitenleiste). Dort finden Sie alle Exportoptionen:
+Schritt „Dokumente erstellen" in der Seitenleiste:
 
 - PDF — druckfertige Notfallmappe
 - Word — bearbeitbares Dokument
 - Notfall-Blatt — Kurzübersicht mit Notrufnummern
-- Arztbogen — für Krankenhaus und Arztbesuche
+- Arztbogen — Standard, Radiologie, Präoperativ, Geriatrie
+- Szenario-PDFs — Krankenhaus-Einweisung, Todesfall, Notfall-Tasche
+
+---
+
+## Daten weitergeben
+
+Schritt „Datenaustausch":
+
+**Weitergabe-Datei** — Verschlüsselte HTML-Datei für einen bestimmten Empfänger. Per E-Mail oder USB.
+
+**QR-Übergabe** — QR-Code erzeugen, der direkt auf die Leseansicht verlinkt. Empfänger scannt → PIN eingeben → Daten sehen. Kein USB, keine App. Bei größeren Datenmengen: automatisch mehrere Codes.
+
+**Leseansicht** — frei verfügbar unter [carolaklessen.github.io/vivodepot/vivodepot-lesen.html](https://carolaklessen.github.io/vivodepot/vivodepot-lesen.html)
+
+**Eigener Datenspeicher** — Solid Pod Export im Turtle-Format (.ttl), kompatibel mit solidcommunity.net.
 
 ---
 
 ## Passwortschutz
 
-Empfohlen, wenn Sie die Datei weitergeben oder in der Cloud ablegen:
-
 Menü → Passwortschutz → Passwort festlegen.
 
-Die Datei wird mit AES-256-GCM verschlüsselt. Ohne das Passwort sind die Daten nicht lesbar — auch nicht für uns.
-
-Wichtig: Notieren Sie das Passwort und teilen Sie es Ihren Vertrauenspersonen mit. Es gibt keinen Reset.
+AES-256-GCM Verschlüsselung. Ohne Passwort keine Lesbarkeit — auch nicht für uns. Passwort notieren und Vertrauenspersonen mitteilen. Es gibt keinen Reset.
 
 ---
 
 ## Datei auf anderem Gerät öffnen
 
-Seit Version 1.0.0-beta.7 ist die gespeicherte Datei auf jedem Gerät entschlüsselbar — auch auf einem frischen Browser ohne Vorgeschichte. Das Passwort genügt.
+Funktioniert vollständig auf jedem Gerät — der Salt ist in der Datei eingebettet (seit beta.7). Passwort eingeben genügt.
 
 ---
 
 ## Für Angehörige
 
-Wenn Angehörige die Datei öffnen, erscheint eine Weiche: „Inhaberin" oder „Angehörige/r". In der Angehörigen-Ansicht sind nur die relevanten Informationen sichtbar — übersichtlich und ohne persönliche Details.
+Beim Öffnen der gespeicherten Datei: Weiche „Inhaberin" oder „Angehörige/r". In der Angehörigen-Ansicht nur relevante Informationen sichtbar.
 
 ---
 
@@ -81,16 +89,10 @@ Wenn Angehörige die Datei öffnen, erscheint eine Weiche: „Inhaberin" oder �
 | Safari | ab Version 14 |
 | DuckDuckGo | Eingeschränkt (lokale Dateien nicht unterstützt) |
 
-Kein Internet nötig — alle Funktionen arbeiten vollständig offline.
+Vollständig offline — kein Internet erforderlich.
 
 ---
 
 ## Häufige Fragen
 
-Siehe [FAQ.md](FAQ.md).
-
----
-
-## Kontakt
-
-[feedback@vivodepot.de](mailto:feedback@vivodepot.de) · [vivodepot.de](https://vivodepot.de)
+[FAQ.md](FAQ.md) · [feedback@vivodepot.de](mailto:feedback@vivodepot.de) · [vivodepot.de](https://vivodepot.de)

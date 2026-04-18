@@ -11376,7 +11376,7 @@ textarea { min-height: 44px; }
       <div class="profile-dropdown" id="profile-dropdown"></div>
     </div>
     <button class="btn-sm gold" onclick="saveAsHTML()" title="Speichert eine Datei auf Ihrem Gerät — auf USB-Stick verschieben für den Offline-Notfall. Funktioniert ohne Internet, Cloud oder App.">Speichern</button>
-    <button class="btn-sm" onclick="lockApp()" style="background:var(--surface);color:var(--ink2);border:1px solid var(--border);margin-left:4px" title="App sperren"></button>
+    <button class="btn-sm" onclick="lockApp()" style="background:var(--surface);color:var(--ink2);border:1px solid var(--border);margin-left:4px" title="App sperren">🔒</button>
     <div class="more-menu">
       <button class="more-btn" onclick="toggleMoreMenu()" title="Weitere Optionen">⋮</button>
       <div class="more-dropdown" id="more-dropdown">
@@ -11419,7 +11419,7 @@ textarea { min-height: 44px; }
       <button class="btn-nav primary" onclick="welcomeStart()" style="padding:12px 36px;font-size:1rem;background:var(--forest)">Loslegen →</button>
     </div>
     <p style="text-align:center;font-size:0.75rem;color:var(--ink3);margin-top:0.8rem">Passwortschutz können Sie jederzeit unter Einstellungen aktivieren.</p>
-    <div style="text-align:center;margin-top:0.6rem;padding:0.6rem;background:var(--beige);border-radius:8px;font-size:0.8rem;color:var(--ink2)">Schrift zu klein? Klicken Sie oben rechts auf <strong>⋮</strong> und wählen Sie <strong>Schriftgröße A⁺</strong>.
+    <div style="text-align:center;margin-top:0.6rem;padding:0.6rem;background:var(--beige);border-radius:8px;font-size:0.8rem;color:var(--ink2)">Schrift zu klein? Tippen Sie oben in der Leiste auf <strong>A⁺</strong>. Auf kleinen Bildschirmen finden Sie die Funktion auch im Menü <strong>⋮</strong>.
     </div>
   </div>
 </div>
@@ -15953,7 +15953,7 @@ const STEP_RENDERERS = {
     </div>
 
     <div class="field-section-title">Daten importieren</div>
-    <div class="infobox">${tl('Importieren Sie Daten aus Gesundheitsakten, Verwaltungsportalen oder fr\u00FCheren Vivodepot-Exporten. Unterst\u00FCtzte Formate: FHIR R4 (ePA), FIM-JSON, allgemeines JSON. Ihre Daten werden nur lokal verarbeitet -- kein Server beteiligt.')}</div>
+    <div class="infobox">${tl('Importieren Sie Daten aus Gesundheitsakten, Verwaltungsportalen oder fr\u00FCheren Vivodepot-Exporten. Unterst\u00FCtzte Formate: FHIR R4 (ePA), FIM-JSON, allgemeines JSON, EUDI Wallet (SD-JWT). Ihre Daten werden nur lokal verarbeitet -- kein Server beteiligt.')}</div>
     <div class="export-grid">
       <div class="export-card" style="border-left:4px solid var(--teal)">
         <div class="ec-icon"></div>
@@ -15964,7 +15964,7 @@ const STEP_RENDERERS = {
         </label>
       </div>
       <div class="export-card" style="border-left:4px solid var(--teal)">
-        <div class="ec-icon">\uFE0F</div>
+        <div class="ec-icon"></div>
         <div class="ec-title">Beh\u00F6rdendaten (FIM-JSON)</div>
         <div class="ec-sub">Verwaltungsportal-Export oder fr\u00FCherer Vivodepot-Export</div>
         <label class="ec-btn" style="background:var(--teal);cursor:pointer;display:block;text-align:center">Datei w\u00E4hlen
@@ -15983,14 +15983,14 @@ const STEP_RENDERERS = {
         <div class="ec-icon"></div>
         <div class="ec-title">EUDI Wallet importieren</div>
         <div class="ec-sub">Digitaler EU-Ausweis (SD-JWT) -- Name, Geburtsdatum, Adresse, Staatsangehoerigkeit</div>
-        <label class="ec-btn" style="background:var(--forest);cursor:pointer;display:block;text-align:center">Datei w&auml;hlen (.jwt)
+        <label class="ec-btn" style="background:var(--forest);cursor:pointer;display:block;text-align:center">Datei wählen (.jwt)
           <input type="file" accept=".jwt,.json,.txt" style="display:none;width:0;height:0" onchange="importEudiWallet(event)">
         </label>
       </div>
     </div>
 
     <div class="field-section-title" style="margin-top:1.5rem">Daten weitergeben</div>
-    <div class="infobox">Diese Funktionen erzeugen verschluesselte Dateien oder Codes, die Sie gezielt weitergeben koennen. Keine Daten verlassen Ihr Geraet ohne Ihre Aktion.</div>
+    <div class="infobox">Diese Funktionen erzeugen verschlüsselte Dateien oder Codes, die Sie gezielt weitergeben können. Keine Daten verlassen Ihr Gerät ohne Ihre Aktion.</div>
     <div class="export-grid">
       <div class="export-card" onclick="weitergabeOpen()">
         <div class="ec-icon"></div>
@@ -16010,10 +16010,15 @@ const STEP_RENDERERS = {
         <div class="ec-sub">Verschluesselten QR-Code scannen und entschluesseln</div>
         <div class="ec-btn">Starten</div>
       </div>
+    </div>
+
+    <div class="field-section-title" style="margin-top:1.5rem">Eigener Datenspeicher</div>
+    <div class="infobox">Ein Solid Pod ist ein persönlicher Datenspeicher im Internet, den nur Sie kontrollieren — wie eine eigene Cloud ohne fremdes Unternehmen dahinter. Anbieter wie solidcommunity.net bieten kostenlose Pods an. Diese Funktion ist kein Werkzeug zur Weitergabe an andere: Sie exportieren Ihre Daten als Datei und laden diese selbst in Ihren Pod hoch.</div>
+    <div class="export-grid">
       <div class="export-card" onclick="solidPodOpen()">
         <div class="ec-icon"></div>
         <div class="ec-title">Solid Pod</div>
-        <div class="ec-sub">Turtle-Datei fuer den eigenen persoenlichen Datenspeicher erzeugen</div>
+        <div class="ec-sub">Daten in den eigenen Pod exportieren — kompatibel mit solidcommunity.net und anderen Anbietern</div>
         <div class="ec-btn">Erstellen</div>
       </div>
     </div>
@@ -16028,10 +16033,10 @@ const STEP_RENDERERS = {
     </div>
 
     <div class="export-tabs" id="export-tabs">
-      <button class="etab active" onclick="switchExportTab('drucken',this)"> Mein Vivodepot</button>
-      <button class="etab" onclick="switchExportTab('recht',this)"> Vollmachten</button>
-      <button class="etab" onclick="switchExportTab('notfall',this)"> Notfall & Arzt</button>
-      <button class="etab" onclick="switchExportTab('behoerden',this)"> Ämter & Einrichtungen</button>
+      <button class="etab active" onclick="switchExportTab('drucken',this)">Mein Vivodepot</button>
+      <button class="etab" onclick="switchExportTab('recht',this)">Vollmachten</button>
+      <button class="etab" onclick="switchExportTab('notfall',this)">Notfall & Arzt</button>
+      <button class="etab" onclick="switchExportTab('behoerden',this)">Ämter & Einrichtungen</button>
     </div>
 
     <div class="infobox" id="export-hint" style="margin-bottom:1rem">${tl('Die Dokumente werden direkt in Ihrem Browser erstellt — keine Daten verlassen Ihr Gerät.')}</div>
@@ -21958,6 +21963,10 @@ let _wgSchritt = 1;
 // ANF-06: QR-ÜBERGABE
 // ═══════════════════════════════════════════════
 
+// URL der Lese-HTML (GitHub Pages / vivodepot.de)
+// QR-Codes verlinken direkt auf diese Seite — das #-Fragment erreicht den Server nie.
+const QR_LESEN_URL = 'https://carolaklessen.github.io/vivodepot/vivodepot-lesen.html';
+
 // Zustandsvariablen
 let _qrProfil = null;
 let _qrSchritt = 1;
@@ -22077,18 +22086,25 @@ function qreScanFrame() {
 function qreQrErkannt(rohText) {
   qreStopKamera();
   var parsed;
-  try {
-    parsed = JSON.parse(rohText);
-  } catch (e) {
-    document.getElementById('qre-scan-status').textContent = 'Kein gültiger Vivodepot-QR-Code erkannt. Bitte erneut versuchen.';
-    document.getElementById('qre-kamera-btn').style.display = 'block';
-    document.getElementById('qre-kamera-btn').disabled = false;
-    document.getElementById('qre-kamera-btn').textContent = 'Kamera starten';
-    return;
+
+  // Neues Format: URL mit Base64url-Hash (vivodepot.de/lesen#PAYLOAD)
+  if (rohText.indexOf('#') !== -1) {
+    try {
+      var hash = rohText.split('#')[1];
+      var b64 = hash.replace(/-/g, '+').replace(/_/g, '/');
+      // Padding wiederherstellen
+      while (b64.length % 4) b64 += '=';
+      parsed = JSON.parse(atob(b64));
+    } catch (e) { parsed = null; }
   }
 
-  if (!parsed.s || !parsed.c || !parsed.c.iv || !parsed.c.ct) {
-    document.getElementById('qre-scan-status').textContent = 'QR-Code hat kein gültiges Vivodepot-Format.';
+  // Altes Format: direktes JSON (Rückwärtskompatibilität)
+  if (!parsed) {
+    try { parsed = JSON.parse(rohText); } catch (e) { parsed = null; }
+  }
+
+  if (!parsed || !parsed.s || !parsed.c || !parsed.c.iv || !parsed.c.ct) {
+    document.getElementById('qre-scan-status').textContent = 'Kein gültiger Vivodepot-QR-Code erkannt. Bitte erneut versuchen.';
     document.getElementById('qre-kamera-btn').style.display = 'block';
     document.getElementById('qre-kamera-btn').disabled = false;
     document.getElementById('qre-kamera-btn').textContent = 'Kamera starten';
@@ -22246,35 +22262,51 @@ async function qrErstellen() {
     var ablauf = jetzt + 24 * 60 * 60 * 1000;
     var payload = { d: gefilterteData, iat: jetzt, exp: ablauf, p: _qrProfil };
 
-    // Eigenen Salt erzeugen
+    // Verschlüsseln
     var qrSalt = crypto.getRandomValues(new Uint8Array(16));
     var qrKey = await deriveKey(pin, qrSalt);
     var verschluesselt = await encryptData(payload, qrKey);
     var saltB64 = btoa(String.fromCharCode.apply(null, qrSalt));
 
-    // QR-Payload: kompaktes JSON aus verschlüsseltem Objekt und Salt
-    var qrPayload = JSON.stringify({ s: saltB64, c: verschluesselt });
+    // Payload als Base64url kodieren
+    var payloadJson = JSON.stringify({ s: saltB64, c: verschluesselt });
+    var payloadB64 = btoa(payloadJson).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
-    // QR-Code erzeugen
+    // Aufteilen wenn nötig
+    var SINGLE_MAX = 1800;
+    var CHUNK_SIZE = 1200;
+    var qrUrls = [];
+
+    if (payloadB64.length <= SINGLE_MAX) {
+      // Ein einzelner QR-Code
+      qrUrls = [QR_LESEN_URL + '#' + payloadB64];
+    } else {
+      // Mehrere QR-Codes — Payload in Chunks aufteilen
+      var qrId = Math.random().toString(36).slice(2, 8);
+      var chunks = [];
+      for (var i = 0; i < payloadB64.length; i += CHUNK_SIZE) {
+        chunks.push(payloadB64.slice(i, i + CHUNK_SIZE));
+      }
+      if (chunks.length > 6) {
+        document.getElementById('qr-bild-container').innerHTML =
+          '<div style="font-size:0.82rem;color:#c0392b">Die Datenmenge ist zu groß für QR-Codes. Bitte die Weitergabe-Datei nutzen.</div>';
+        qrZeigeSchritt(3);
+        return;
+      }
+      chunks.forEach(function(chunk, idx) {
+        var meta = JSON.stringify({ p: idx + 1, t: chunks.length, id: qrId, d: chunk });
+        var metaB64 = btoa(meta).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+        qrUrls.push(QR_LESEN_URL + '#' + metaB64);
+      });
+    }
+
+    // Schritt 3 anzeigen
     qrZeigeSchritt(3);
-    var container = document.getElementById('qr-bild-container');
-    if (typeof qrcode === 'undefined') {
-      container.innerHTML = '<div style="font-size:0.82rem;color:#c0392b">Die QR-Code-Bibliothek ist nicht geladen. Bitte Seite neu laden.</div>';
-      return;
-    }
-    try {
-      var qr = qrcode(0, 'L');
-      qr.addData(qrPayload);
-      qr.make();
-      var img = qr.createDataURL(5, 0);
-      container.innerHTML =
-        '<img src="' + img + '" alt="QR-Code" style="width:200px;height:200px;border:4px solid var(--forest);border-radius:8px">';
-    } catch (qe) {
-      container.innerHTML =
-        '<div style="font-size:0.82rem;color:#c0392b">Der QR-Code konnte nicht erstellt werden — die Datenmenge ist zu gross. Bitte ein Profil mit weniger Feldern wählen.</div>';
-    }
+    _qrUrls = qrUrls;
+    _qrAktiv = 0;
+    qrZeigeCode(0);
 
-    // Ablauf-Info anzeigen
+    // Ablauf-Info
     var ablaufDatum = new Date(ablauf);
     var opts = { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' };
     document.getElementById('qr-ablauf-info').textContent =
@@ -22288,6 +22320,49 @@ async function qrErstellen() {
     btn.disabled = false;
     btn.textContent = 'QR-Code erstellen';
   }
+}
+
+// ── Multi-QR Karussell ──────────────────────────────────
+var _qrUrls = [];
+var _qrAktiv = 0;
+
+function qrZeigeCode(idx) {
+  var container = document.getElementById('qr-bild-container');
+  var nav = document.getElementById('qr-multi-nav');
+  var label = document.getElementById('qr-multi-label');
+  var total = _qrUrls.length;
+
+  if (typeof qrcode === 'undefined') {
+    container.innerHTML = '<div style="font-size:0.82rem;color:#c0392b">QR-Bibliothek nicht geladen. Bitte Seite neu laden.</div>';
+    return;
+  }
+
+  try {
+    var qr = qrcode(0, 'L');
+    qr.addData(_qrUrls[idx]);
+    qr.make();
+    var img = qr.createDataURL(4, 0);
+    container.innerHTML = '<img src="' + img + '" alt="QR-Code ' + (idx+1) + ' von ' + total + '" style="width:200px;height:200px;border:4px solid var(--forest);border-radius:8px">';
+  } catch (qe) {
+    container.innerHTML = '<div style="font-size:0.82rem;color:#c0392b">QR-Code konnte nicht erstellt werden. Bitte Weitergabe-Datei nutzen.</div>';
+    return;
+  }
+
+  if (total > 1) {
+    nav.style.display = 'flex';
+    label.textContent = 'Code ' + (idx + 1) + ' von ' + total + (idx === 0 ? ' — zuerst zeigen' : idx === total - 1 ? ' — letzter Code' : '');
+    document.getElementById('qr-multi-prev').disabled = (idx === 0);
+    document.getElementById('qr-multi-next').disabled = (idx === total - 1);
+  } else {
+    nav.style.display = 'none';
+  }
+}
+
+function qrMultiPrev() {
+  if (_qrAktiv > 0) { _qrAktiv--; qrZeigeCode(_qrAktiv); }
+}
+function qrMultiNext() {
+  if (_qrAktiv < _qrUrls.length - 1) { _qrAktiv++; qrZeigeCode(_qrAktiv); }
 }
 
 function weitergabeOpen() {
@@ -22690,9 +22765,14 @@ function wgReminderPruefen() {
     <!-- Schritt 3: QR-Code anzeigen -->
     <div class="qr-step" id="qr-step-3">
       <div style="font-size:0.88rem;font-weight:600;color:var(--ink2);margin-bottom:0.8rem">Schritt 3 von 3 — QR-Code übergeben</div>
-      <div class="qr-info">Zeigen Sie diesen QR-Code dem Empfänger. Er ist <strong>24 Stunden gültig</strong>. Teilen Sie den PIN mündlich mit.</div>
+      <div class="qr-info">Zeigen Sie diesen QR-Code dem Empfänger. Er ist <strong>24 Stunden gültig</strong>. Teilen Sie den PIN mündlich mit — nicht zusammen mit dem QR-Code.</div>
       <div style="text-align:center;margin:1rem 0" id="qr-bild-container">
         <div style="font-size:0.82rem;color:var(--ink3)">QR-Code wird erstellt …</div>
+      </div>
+      <div id="qr-multi-nav" style="display:none;align-items:center;justify-content:center;gap:12px;margin-bottom:0.5rem">
+        <button class="qr-btn secondary" id="qr-multi-prev" onclick="qrMultiPrev()" style="padding:6px 14px;min-width:40px">◀</button>
+        <span id="qr-multi-label" style="font-size:0.82rem;font-weight:600;color:var(--forest);text-align:center;min-width:180px"></span>
+        <button class="qr-btn secondary" id="qr-multi-next" onclick="qrMultiNext()" style="padding:6px 14px;min-width:40px">▶</button>
       </div>
       <div style="font-size:0.78rem;color:var(--ink3);text-align:center;margin-bottom:0.5rem" id="qr-ablauf-info"></div>
       <div class="qr-btn-row">
