@@ -177,7 +177,48 @@ def main():
     
     check("iOS: Kein bare 'export:' Key", 
           re.search(r"['\"]export['\"]?\s*:", html) is None or 'exportStep' in html)
-    
+
+    # BUG-18: coreSection darf '·' nicht als nav-num rendern — Nummern müssen sichtbar sein
+    # Symptom: Alle Core-Items zeigen Punkt statt Schrittnummer; Punkt 20 (exportStep) "verschwunden"
+    core_render = re.search(
+        r"nav-num.*?\$\{done \? '' : (.*?)\}",
+        html)
+    if core_render:
+        num_expr = core_render.group(1).strip().strip("'\"")
+        check("BUG-18: coreSection nav-num zeigt Schrittnummer (i+1), nicht '·'",
+              num_expr != '\xb7' and num_expr != '·' and '·' not in num_expr,
+              "nav-num rendert '·' statt i+1 — Schrittnummern im Core unsichtbar")
+    else:
+        check("BUG-18: coreSection nav-num Pattern gefunden", False,
+              "Kein nav-num-Pattern gefunden")
+
+    # BUG-21: exportStep muss step-header mit h1 haben — sonst bleibt Überschrift leer
+    check("BUG-21: exportStep hat step-header mit h1",
+          'exportStep: () => `\n    <div class="step-header">' in html,
+          "exportStep fehlt <div class='step-header'><h1> — renderStep() findet kein .step-header h1")
+
+    # BUG-20: Gruppenheader in erweiterter Sidebar müssen bei erstem Item der Gruppe erscheinen
+    # Ursache: groups.find(g => g.at === i) traf nie zu, weil die Anker-Steps (0,7,14)
+    # immer in CORE_IDS sind und nie in extraSection landen.
+    render_fn = re.search(r'extraSection\.forEach.*?html \+= `</div>`', html, re.DOTALL)
+    if render_fn:
+        fn_body = render_fn.group(0)
+        check("BUG-20: Gruppenheader nutzen Bereichsprüfung (>= statt ===)",
+              'g.at <= i' in fn_body or 'i >= g.at' in fn_body,
+              "groups.find(g => g.at === i) — Header erscheint nie wenn Anker-Step in CORE_IDS")
+    else:
+        check("BUG-20: extraSection-Render gefunden", False)
+
+    # BUG-19: 'erinnerung' (Prüftermine, Punkt 19) muss in CORE_IDS sein
+    # Symptom: Prüftermine verschwindet aus eingeklappter Sidebar sobald Step nicht aktiv/erledigt
+    core_ids_match = re.search(r"new Set\(\[([^\]]+)\]\)", html)
+    if core_ids_match:
+        check("BUG-19: 'erinnerung' in CORE_IDS (immer in Sidebar sichtbar)",
+              "'erinnerung'" in core_ids_match.group(0),
+              "erinnerung fehlt in CORE_IDS — Prüftermine (Punkt 19) nur per Weiter-Klick erreichbar")
+    else:
+        check("BUG-19: CORE_IDS-Definition gefunden", False)
+
     # ═══════════════════════════════════════
     print("\n=== 3. STEPS & RENDERER ===")
     # ═══════════════════════════════════════
@@ -1724,6 +1765,58 @@ def main():
         check("WCAG22-3.3.8: SOVEREIGNTY.md vorhanden (neben HTML)",
               False,
               f"Nicht gefunden: {wcag_sov_pfad} — Begründung kann nicht geprüft werden")
+
+    # ═══════════════════════════════════════
+    print("\n=== 54. IMMOBILIEN — KAUFVERTRAG UND KREDITVERTRAG ===")
+    # ═══════════════════════════════════════
+
+    check("Immobilien: Kaufvertrag-Ablageort-Feld vorhanden", "'obj1_kaufvertrag'" in html)
+    check("Immobilien: Kaufvertrag-Label korrekt", "Kaufvertrag \u2014 Ablageort" in html)
+    check("Immobilien: Kreditvertrag-Ablageort-Feld vorhanden", "'obj1_kredit_ort'" in html)
+    check("Immobilien: Kreditvertrag-Label korrekt", "Kreditvertrag/e \u2014 Ablageort" in html)
+    check("Immobilien: Kaufvertrag-Tooltip vorhanden", "notariell beurkundet" in html)
+    check("Immobilien: Kreditvertrag-Tooltip vorhanden", "Bank informiert" in html)
+
+    # ═══════════════════════════════════════
+    print("\n=== 55. TESTAMENT — EHEVERTRAG ===")
+    # ═══════════════════════════════════════
+
+    check("Ehevertrag: Ablageort-Feld vorhanden", "'dok_ehevertrag'" in html)
+    check("Ehevertrag: Label korrekt", "Ehevertrag \u2014 Ablageort" in html)
+    check("Ehevertrag: Tooltip vorhanden", "notariell beurkundet" in html and "Ehevertrag" in html)
+    check("Ehevertrag: in mehr()-Schlüsselliste", "'dok_ehevertrag'" in html)
+    check("Ehevertrag: im PDF-Export", "get('dok_ehevertrag')" in html)
+    check("Ehevertrag: im Word-Export", html.count("get('dok_ehevertrag')") >= 2)
+
+    # ═══════════════════════════════════════
+    print("\n=== 56. KINDER — BETREUUNGSMODELL UND GEBURTSURKUNDE ===")
+    # ═══════════════════════════════════════
+
+    check("Kinder: Betreuungsmodell-Feld vorhanden", "'betreuungsmodell'" in html)
+    check("Kinder: Betreuungsmodell-Label korrekt", "Betreuungsmodell bei Trennung" in html)
+    check("Kinder: Option Residenzmodell vorhanden", "Residenzmodell" in html)
+    check("Kinder: Option Wechselmodell vorhanden", "Wechselmodell" in html)
+    check("Kinder: Option Nestmodell vorhanden", "Nestmodell" in html)
+    check("Kinder: Erklaerungshinweis Betreuungsmodelle", "Betreuungsmodelle bei Trennung" in html)
+    check("Kinder: Geburtsurkunde-Ablageort-Feld vorhanden", "'geburtsurkunde_ort'" in html)
+    check("Kinder: Geburtsurkunde-Label korrekt", "Geburtsurkunde \u2014 Ablageort" in html)
+    check("Kinder: addItem enthaelt betreuungsmodell", "betreuungsmodell:'Nicht zutreffend'" in html)
+    check("Kinder: addItem enthaelt geburtsurkunde_ort", "geburtsurkunde_ort:''" in html)
+
+    # ═══════════════════════════════════════
+    print("\n=== 57. FINANZEN — ALTERSVORSORGE HERAUSGESTELLT ===")
+    # ═══════════════════════════════════════
+
+    check("Altersvorsorge: Abschnitt direkt im Finanzen-Step sichtbar",
+          "'pk_name'" in html and "'saeule3_institut'" in html)
+    check("Altersvorsorge: Abschnittstitel vorhanden",
+          "Altersvorsorge &amp; Renten" in html or "Altersvorsorge & Renten" in html)
+    check("Altersvorsorge: pk_name nicht mehr in mehr()-Schluessel",
+          "['pk_name','saeule3_institut','steuerberater'" not in html)
+    check("Altersvorsorge: finanzen_mehr-Label ohne Altersvorsorge",
+          "Depots, Altersvorsorge" not in html)
+    check("Altersvorsorge: renderRentenBlocks ausserhalb mehr()",
+          html.index("renderRentenBlocks()") < html.index("finanzen_mehr"))
 
     passed = sum(1 for s, _, _ in results if s == "PASS")
     failed = sum(1 for s, _, _ in results if s == "FAIL")

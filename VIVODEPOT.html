@@ -13375,8 +13375,8 @@ function renderSidebar() {
   const goalRelevant = window._goalRelevant || null;
   const goalMode = window._goalMode || false;
   const CORE_IDS = goalMode && goalRelevant
-    ? new Set(['start','assistenten','exportStep', ...Object.keys(goalRelevant)])
-    : new Set(['start','kontakte','gesundheit','testament','assistenten','exportStep']);
+    ? new Set(['start','assistenten','erinnerung','exportStep', ...Object.keys(goalRelevant)])
+    : new Set(['start','kontakte','gesundheit','testament','assistenten','erinnerung','exportStep']);
   const expanded = window._sidebarExpanded || false;
   const hiddenCount = STEPS.filter((s,i) =>
     !CORE_IDS.has(s.id) && i !== currentStep && !isStepDone(i)
@@ -13410,7 +13410,7 @@ function renderSidebar() {
     const starMark = goalMode && relevant && !done ? ' ' : '';
     const numStyle = done ? 'background:var(--teal)' : (goalMode && relevant && !done ? 'background:var(--gold);color:var(--ink)' : '');
     html += `<div class="nav-step ${active?'active':''} ${done?'complete':''}" onclick="goToStep(${i})" style="${dimStyle}">
-      <div class="nav-num" style="${numStyle}">${done ? '' : '·'}</div>
+      <div class="nav-num" style="${numStyle}">${done ? '' : i+1}</div>
       <div class="nav-label">${tl(s.label)}${done?' <span style="opacity:0.6;font-size:0.68rem"></span>':''}${starMark}</div>
     </div>`;
   });
@@ -13431,11 +13431,15 @@ function renderSidebar() {
         { at: 14, label: 'Werkzeuge' },
       ];
       html += `<div style="border-top:1px solid var(--border);margin-top:6px;padding-top:4px">`;
+      let lastGroupIdx = -1;
       extraSection.forEach(({s,i}) => {
         const done = isStepDone(i);
         const active = i === currentStep;
-        const grp = groups.find(g => g.at === i);
-        if (grp) html += `<div class="nav-group-label">${tl(grp.label)}</div>`;
+        const grpIdx = groups.reduce((best, g, gi) => i >= g.at ? gi : best, -1);
+        if (grpIdx !== lastGroupIdx) {
+          lastGroupIdx = grpIdx;
+          if (grpIdx >= 0) html += `<div class="nav-group-label">${tl(groups[grpIdx].label)}</div>`;
+        }
         const relevant = !goalMode || !window._goalRelevant || window._goalRelevant[s.id];
         const dimStyle = goalMode && !relevant && !active ? 'opacity:0.4;' : '';
         html += `<div class="nav-step ${active?'active':''} ${done?'complete':''}" onclick="goToStep(${i})" style="${dimStyle}">
@@ -14132,6 +14136,7 @@ function renderInfokontaktBlocks() {
 // ── ANF-02: Strukturierte Kind-Liste ──
 function renderKinderBlocks() {
   const SORGERECHT_OPT = ['Gemeinsam','Allein','Beim anderen Elternteil'];
+  const BETREUUNG_OPT  = ['Nicht zutreffend','Residenzmodell','Wechselmodell','Nestmodell','Sonstiges'];
   const list = getList('kinder_liste');
   const html = list.map((k, i) => `
     <div class="repeat-block">
@@ -14152,17 +14157,28 @@ function renderKinderBlocks() {
           <input type="text" value="${esc(k.geburtsort||'')}" placeholder="z. B. München" oninput="updateItem('kinder_liste',${i},'geburtsort',this.value)">
         </div>
       </div>
-      <div style="margin-top:12px"><label class="sub-label">Sorgerecht</label>
-        <select oninput="updateItem('kinder_liste',${i},'sorgerecht_kind',this.value)">
-          ${SORGERECHT_OPT.map(o => `<option ${k.sorgerecht_kind===o?'selected':''}>${o}</option>`).join('')}
-        </select>
+      <div class="field-row" style="margin-top:12px">
+        <div><label class="sub-label">Sorgerecht</label>
+          <select oninput="updateItem('kinder_liste',${i},'sorgerecht_kind',this.value)">
+            ${SORGERECHT_OPT.map(o => `<option ${k.sorgerecht_kind===o?'selected':''}>${o}</option>`).join('')}
+          </select>
+        </div>
+        <div><label class="sub-label">Betreuungsmodell bei Trennung</label>
+          <select oninput="updateItem('kinder_liste',${i},'betreuungsmodell',this.value)">
+            ${BETREUUNG_OPT.map(o => `<option ${k.betreuungsmodell===o?'selected':''}>${o}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      <div style="margin-top:12px"><label class="sub-label">Geburtsurkunde — Ablageort</label>
+        <input type="text" value="${esc(k.geburtsurkunde_ort||'')}" placeholder="z. B. Ordner Kinder, Tresor" oninput="updateItem('kinder_liste',${i},'geburtsurkunde_ort',this.value)">
       </div>
     </div>`).join('');
   return `<div class="field-section-title" style="margin-top:1.2rem">Minderjährige Kinder — strukturiert</div>`
     + `<div style="font-size:0.82rem;color:var(--ink2);margin-bottom:0.5rem">Fügen Sie jedes Kind einzeln ein. Die Daten werden in Elterngeld- und Kindergeld-Anträgen verwendet.<br>Bei Patchworkfamilien: für jedes Kind separat vermerken. Alleinerziehend ohne Kontakt: Sorgerechtsverfügung beim Nachlassgericht hinterlegen.</div>`
     + html
+    + `<div style="font-size:0.79rem;color:var(--ink2);background:var(--navy-lt);border-radius:6px;padding:0.6rem 0.8rem;margin-top:6px;line-height:1.7"><strong>Betreuungsmodelle bei Trennung:</strong> <em>Residenzmodell</em> — Kind lebt hauptsächlich bei einem Elternteil, das andere hat Umgangsrecht. <em>Wechselmodell</em> — Kind lebt abwechselnd bei beiden Elternteilen (z. B. wochenweise). <em>Nestmodell</em> — Kind bleibt in der Wohnung, die Eltern wechseln sich ab.</div>`
     + `<div style="margin-top:4px">`
-    + `<button class="btn-add" onclick="addItem('kinder_liste',{vorname:'',nachname:'',geburtsdatum:'',geburtsort:'',sorgerecht_kind:'Gemeinsam'})">+ Kind hinzufügen</button>`
+    + `<button class="btn-add" onclick="addItem('kinder_liste',{vorname:'',nachname:'',geburtsdatum:'',geburtsort:'',sorgerecht_kind:'Gemeinsam',betreuungsmodell:'Nicht zutreffend',geburtsurkunde_ort:''})">+ Kind hinzufügen</button>`
     + `</div>`;
 }
 
@@ -14618,21 +14634,22 @@ const STEP_RENDERERS = {
       ${field('kk2','Kreditkarte 2','z. B. Mastercard ...')}
     </div>
 
-    ${mehr('finanzen_mehr','Depots, Altersvorsorge, Renten, Steuern, Schulden, Wertgegenstände …',
-      ['pk_name','saeule3_institut','steuerberater','schulden','wertgegenstaende','finanzberater'],`
+    <div class="field-section-title" style="margin-top:1rem">${tl('Altersvorsorge & Renten')}</div>
+    <div class="field-row">
+      ${field('pk_name','Betriebliche Altersvorsorge (bAV)','','false','text','Vom Arbeitgeber organisiert — Direktversicherung, Pensionskasse, Pensionsfonds.')}
+      ${field('pk_nr','Versichertennummer bAV','')}
+    </div>
+    <div class="field-row" style="margin-top:12px">
+      ${field('saeule3_institut','Private Altersvorsorge — Institut','z. B. Riester, Rürup, private Rentenversicherung')}
+      ${field('saeule3_nr','Policen- / Vertragsnummer','')}
+    </div>
+    ${hint('Witwen-/Witwerrente gilt nur für Verheiratete — unverheiratete Partner*innen müssen als Begünstigte eingetragen sein.')}
+    ${renderRentenBlocks()}
+
+    ${mehr('finanzen_mehr','Depots, Steuern, Schulden, Wertgegenstände …',
+      ['steuerberater','schulden','wertgegenstaende','finanzberater'],`
       <div class="field-section-title" style="margin-top:10px">${tl('Wertpapiere & Depots')}</div>
       ${renderDepotBlocks()}
-      <div class="field-section-title">${tl('Altersvorsorge & Renten')}</div>
-      <div class="field-row">
-        ${field('pk_name','Betriebliche Altersvorsorge (bAV)','','false','text','Vom Arbeitgeber organisiert — Direktversicherung, Pensionskasse, Pensionsfonds.')}
-        ${field('pk_nr','Versichertennummer bAV','')}
-      </div>
-      <div class="field-row" style="margin-top:12px">
-        ${field('saeule3_institut','Private Altersvorsorge — Institut','z. B. Riester, Rürup, private Rentenversicherung')}
-        ${field('saeule3_nr','Policen- / Vertragsnummer','')}
-      </div>
-      ${hint('Witwen-/Witwerrente gilt nur für Verheiratete — unverheiratete Partner*innen müssen als Begünstigte eingetragen sein.')}
-      ${renderRentenBlocks()}
       <div class="field-section-title">${tl('Steuerberater & Steuern')}</div>
       <div class="field-row">
         ${field('steuerberater','Steuerberater','','false','text','Wichtig für die letzte Steuererklärung und die Erbschaftssteuer.')}
@@ -14702,6 +14719,10 @@ const STEP_RENDERERS = {
       <div class="field-row" style="margin-top:12px">
         ${field('obj1_grundbuch','Grundbuchauszug — Ablageort','','false','text','Original liegt meist beim Notar oder im Tresor.')}
         ${field('obj1_rate','Monatliche Kreditrate','')}
+      </div>
+      <div class="field-row" style="margin-top:12px">
+        ${field('obj1_kaufvertrag','Kaufvertrag — Ablageort','z. B. Notariat Muster, Ordner Immobilien','false','text','Der Kaufvertrag ist notariell beurkundet und belegt das Eigentum. Angehörige und Behörden benötigen ihn im Erbfall.')}
+        ${field('obj1_kredit_ort','Kreditvertrag/e — Ablageort','z. B. Ordner Bank, Bankschließfach','false','text','Alle Kreditverträge zur Immobilienfinanzierung. Im Todesfall muss die Bank informiert und die Verträge müssen vorgelegt werden.')}
       </div>
       <div class="field-section-title">${tl('Fahrzeuge')}</div>
       <div class="field-row">
@@ -14774,7 +14795,7 @@ const STEP_RENDERERS = {
 
     ${mehr('testament_mehr','Testamentsvollstrecker, Notar, Vollmacht-Details, weitere Dokumente, Vorlagen …',
       ['testament_typ','testamentsvollstrecker','notar','vollmacht_umfang','vollmacht_ort',
-       'patientenverf_arzt','dok_heirat','dok_scheidungsvereinbarung','sorgerecht_ort',
+       'patientenverf_arzt','dok_heirat','dok_ehevertrag','dok_scheidungsvereinbarung','sorgerecht_ort',
        'vollmacht_fuer_andere_1'],`
       <div class="field-section-title" style="margin-top:10px">${tl('Testament — Details')}</div>
       <div class="field-row" style="margin-top:12px">
@@ -14800,10 +14821,13 @@ const STEP_RENDERERS = {
       <div class="field-section-title">${tl('Weitere Dokumente — Ablageorte')}</div>
       <div class="field-row" style="margin-top:12px">
         ${field('dok_heirat','Heirats- / Scheidungsurkunde — Ablageort','')}
-        ${field('dok_scheidungsvereinbarung','Scheidungsfolgenvereinbarung — Ablageort','z. B. Ordner Scheidung, beim Notar','false','text','Regelt Unterhalt, Wohnrecht, Sorgerecht und Vermögensaufteilung.')}
+        ${field('dok_ehevertrag','Ehevertrag — Ablageort','z. B. Notariat Muster, Tresor zuhause','false','text','Ein Ehevertrag regelt z. B. Gütertrennung oder Unterhaltsvereinbarungen. Er ist notariell beurkundet — das Original liegt meist beim Notar.')}
       </div>
       <div class="field-row" style="margin-top:12px">
+        ${field('dok_scheidungsvereinbarung','Scheidungsfolgenvereinbarung — Ablageort','z. B. Ordner Scheidung, beim Notar','false','text','Regelt Unterhalt, Wohnrecht, Sorgerecht und Vermögensaufteilung.')}
         ${field('sorgerecht_ort','Sorgerechtsverfügung — Ablageort','','false','text','Das Jugendamt fragt danach, wenn beide Eltern ausfallen.')}
+      </div>
+      <div class="field-row" style="margin-top:12px">
         ${field('dok_abschluss','Zeugnisse / Abschlüsse — Ablageort','')}
       </div>
       <div class="field-row" style="margin-top:12px">
@@ -15817,6 +15841,8 @@ const STEP_RENDERERS = {
     ${navButtons()}`,
 
   exportStep: () => `
+    <div class="step-header">
+      <h1>Dokumente erstellen</h1>
       <p>Wählen Sie eine Kategorie und erstellen Sie genau die Dokumente, die Sie brauchen.</p>
       ${stepDots()}
     </div>
@@ -16479,7 +16505,7 @@ function _generateDocxInner() {
         sp(), h2("Patientenverfügung"),
         ...maybeTbl([row("Vorhanden",get('patientenverf_vorhanden')),row("Ablageort",get('patientenverf_ort')),row("Ärztlich begleitet",get('patientenverf_arzt')),row("Organspende",get('organspende')),row("Behandlungswünsche",get('patientenverf_wunsch'))]),
         sp(), h2("Wichtige Original-Dokumente"),
-        ...[['Pass / Ausweis',get('dok_pass')],['Geburtsurkunde',get('dok_geburt')],['Heirat / Scheidung',get('dok_heirat')],['Zeugnisse / Abschlüsse',get('dok_abschluss')],['Immobilien-Dokumente',get('dok_immobilien')],['Sonstiges',get('dok_sonstiges')]].filter(([,v])=>v).length ? [tbl([['Pass / Ausweis',get('dok_pass')],['Geburtsurkunde',get('dok_geburt')],['Heirat / Scheidung',get('dok_heirat')],['Zeugnisse / Abschlüsse',get('dok_abschluss')],['Immobilien-Dokumente',get('dok_immobilien')],['Sonstiges',get('dok_sonstiges')]].filter(([,v])=>v).map(([l,v])=>row(l,v)))] : [p("Keine Ablageorte angegeben.")],
+        ...[['Pass / Ausweis',get('dok_pass')],['Geburtsurkunde',get('dok_geburt')],['Heirat / Scheidung',get('dok_heirat')],['Ehevertrag',get('dok_ehevertrag')],['Zeugnisse / Abschlüsse',get('dok_abschluss')],['Immobilien-Dokumente',get('dok_immobilien')],['Sonstiges',get('dok_sonstiges')]].filter(([,v])=>v).length ? [tbl([['Pass / Ausweis',get('dok_pass')],['Geburtsurkunde',get('dok_geburt')],['Heirat / Scheidung',get('dok_heirat')],['Ehevertrag',get('dok_ehevertrag')],['Zeugnisse / Abschlüsse',get('dok_abschluss')],['Immobilien-Dokumente',get('dok_immobilien')],['Sonstiges',get('dok_sonstiges')]].filter(([,v])=>v).map(([l,v])=>row(l,v)))] : [p("Keine Ablageorte angegeben.")],
         pb(),
         // Verträge & Abos
         h1("6. Verträge & Abonnements"),
@@ -17405,7 +17431,7 @@ function _generatePDFInner() {
       sub('Patientenverfügung'); labelVal('Vorhanden', get('patientenverf_vorhanden')); labelVal('Ablageort', get('patientenverf_ort'));
       labelVal('Organspende', get('organspende')); labelVal('Behandlungswünsche', get('patientenverf_wunsch'));
       sub('Wichtige Dokumente — Ablageorte');
-      [['Pass / Ausweis',get('dok_pass')],['Geburtsurkunde',get('dok_geburt')],['Heirat / Scheidung',get('dok_heirat')],['Zeugnisse',get('dok_abschluss')],['Immobilien-Dok.',get('dok_immobilien')],['Sonstiges',get('dok_sonstiges')]].filter(([,v])=>v).forEach(([l,v])=>labelVal(l,v));
+      [['Pass / Ausweis',get('dok_pass')],['Geburtsurkunde',get('dok_geburt')],['Heirat / Scheidung',get('dok_heirat')],['Ehevertrag',get('dok_ehevertrag')],['Zeugnisse',get('dok_abschluss')],['Immobilien-Dok.',get('dok_immobilien')],['Sonstiges',get('dok_sonstiges')]].filter(([,v])=>v).forEach(([l,v])=>labelVal(l,v));
 
       newPage();
       section('6. Verträge & Abonnements');
