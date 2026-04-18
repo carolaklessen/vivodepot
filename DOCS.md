@@ -1,6 +1,6 @@
 # VIVODEPOT — Technische Dokumentation
 
-*Version 1.0.0-beta.10 · April 2026*
+*Version 1.0.0-beta.11 · April 2026*
 
 ---
 
@@ -18,7 +18,7 @@ VIVODEPOT.html
 │   └── jsQR 1.4.0 (256 KB) — QR-Code-Scan (Empfang und Leseansicht)
 ├── JavaScript (Hauptlogik)
 │   ├── Datenspeicherung (localStorage + AES-256-GCM)
-│   ├── STEP_RENDERERS (21 Schritte)
+│   ├── STEP_RENDERERS (22 Schritte)
 │   ├── Export-Funktionen (16 Formate)
 │   ├── Import-Funktionen (FHIR, FIM, JSON, EUDI, QR)
 │   ├── Weitergabe-Datei-System (wg-*)
@@ -72,7 +72,7 @@ Vor beta.7 wurde der Salt ausschließlich in `localStorage` (Schlüssel `STORE_M
 
 ## Step-System
 
-21 Schritte (seit beta.9, zuvor 20):
+22 Schritte (seit beta.11, zuvor 21):
 
 | Index | ID | Label |
 |---|---|---|
@@ -84,19 +84,20 @@ Vor beta.7 wurde der Salt ausschließlich in `localStorage` (Schlüssel `STORE_M
 | 5 | immobilien | Immobilien |
 | 6 | vertraege | Verträge & Abos |
 | 7 | gesundheit | Gesundheit |
-| 8 | pflege | Pflege |
-| 9 | testament | Mein Wille |
-| 10 | bestattung | Mein Abschied |
-| 11 | persoenliches | Erinnerungsstücke |
-| 12 | haustiere | Haustiere |
-| 13 | digital | Digitales Erbe |
-| 14 | assistenten | Assistenten |
-| 15 | notfall | Notfall & Katastrophenschutz |
-| 16 | dokumente | Dokumente erstellen |
-| 17 | datenaustausch | Datenaustausch (seit beta.9) |
-| 18 | erinnerung | Erinnerungen |
-| 19 | exportStep | Export (intern) |
-| 20 | einstellungen | Einstellungen |
+| 8 | prom | Wohlbefinden & Seele (seit beta.11) |
+| 9 | pflege | Pflege |
+| 10 | testament | Mein Wille |
+| 11 | bestattung | Mein Abschied |
+| 12 | persoenliches | Erinnerungsstücke |
+| 13 | haustiere | Haustiere |
+| 14 | digital | Digitales Erbe |
+| 15 | assistenten | Assistenten |
+| 16 | notfall | Notfall & Katastrophenschutz |
+| 17 | dokumente | Dokumente erstellen |
+| 18 | datenaustausch | Datenaustausch (seit beta.9) |
+| 19 | erinnerung | Erinnerungen |
+| 20 | exportStep | Export (intern) |
+| 21 | einstellungen | Einstellungen |
 
 ---
 
@@ -306,7 +307,7 @@ Der Schritt `datenaustausch` bündelt alle Import- und Export-Wege:
 python3 test_vivodepot.py VIVODEPOT.html
 ```
 
-**1051 Tests in 65 Sektionen** (1050 bestehen, 1 schlägt nur außerhalb des Repos fehl):
+**1086 Tests in 67 Sektionen** (1085 bestehen, 1 schlägt nur außerhalb des Repos fehl):
 
 1–50. Syntax, bekannte Bugs, Steps, Kernfunktionen, Verschlüsselung, Import/Export, Wizards, Robustheit, Profile, Branding, UX, Notfall, Barrierefreiheit, Mobile, Keyboard, FAB, vCard, ARIA, PWA, Datenspeicher, Recht, Legal, Viewport, Regression
 51. Krypto-Portabilität — Salt in Datei (beta.7)
@@ -321,6 +322,8 @@ python3 test_vivodepot.py VIVODEPOT.html
 63. **beta.10 — QR-URL-Format** (7 Tests): `QR_LESEN_URL`, GitHub-Pages-URL, Base64url-Generator, Hash-Fragment, Rückwärtskompatibilität
 64. **beta.10 — Mehr-Teile-QR** (14 Tests): `SINGLE_MAX`, `CHUNK_SIZE`, Chunk-Schleife, >6-Fehlerfall, Metadaten-Format, Zustandsvariablen, Karussell-UI-Elemente
 65. **beta.10 — ANF-UX-01–07** (8 Tests): Lock-Button-Emoji, Umlaute, Weitergabe-Infobox, Solid-Pod-Gruppe, EUDI-Import, FIM-ec-icon
+66. **beta.11 — PROM** (24 Tests): STEPS-Eintrag, Zeitmessung, Fokus-Ziel, Fragebogen-Arrays, Hilfsfunktionen, Score-Logik, Renderer, Quellenangaben, Datenschutzhinweis
+67. **beta.11 — QR-PROM** (11 Tests): PROM-Felder im notfall-Profil, lesbare Feldnamen in WG_FELDNAMEN
 
 ---
 

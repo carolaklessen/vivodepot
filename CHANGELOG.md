@@ -4,6 +4,47 @@ Alle wichtigen Änderungen werden in dieser Datei dokumentiert.
 
 ---
 
+## [1.0.0-beta.11] — April 2026
+
+### Neu
+
+- **Schritt „Wohlbefinden & Seele" (PROM)** — Neuer Schritt nach „Meine Gesundheit" mit drei gemeinfreien, validierten Selbstauskunft-Fragebögen: PHQ-9 (Stimmung, 9 Fragen, Score 0–27), GAD-7 (Angst, 7 Fragen, Score 0–21) und WHO-5 (Wohlbefinden, 5 Fragen, Score 0–25 / 0–100 %). Antworten werden als Chip-Buttons ausgewählt; Score und Schweregrad erscheinen automatisch nach der letzten Antwort. Alle Ergebnisse werden im Autosave gespeichert. Datenschutzhinweis, Quellenangaben und Haftungsausschluss direkt im Schritt sichtbar. Fokus-Ziel „Für den Arztbesuch" enthält den neuen Schritt.
+
+- **QR-Export: PROM-Scores im Notfall-Profil** — Das QR-Übergabe-Profil „Notfall" enthält jetzt automatisch PHQ-9-Score und -Datum, GAD-7-Score und -Datum sowie WHO-5-Score, Prozentwert und Datum. Keine manuelle Auswahl nötig. Lesbare Bezeichnungen für alle sieben neuen Felder in `WG_FELDNAMEN` ergänzt.
+
+### Tests
+
+35 neue Tests in 2 neuen Sektionen:
+
+| Sektion | Inhalt | Tests |
+|---|---|---|
+| 66 | PROM: STEPS-Eintrag, Zeitmessung, Fokus-Ziel, Arrays, Hilfsfunktionen, Score-Logik, Renderer, Quellenangaben | 24 |
+| 67 | QR-PROM: PROM-Felder im notfall-Profil, lesbare Feldnamen | 11 |
+
+Gesamt: **1086 Tests, 1085 bestehen.** (1 schlägt nur außerhalb des Repos fehl: SOVEREIGNTY.md-Pfadtest)
+
+### Neue Hilfsfunktionen
+
+| Funktion | Aufgabe |
+|---|---|
+| `promRadioRow(prefix, qnum, text)` | Rendert eine Frage mit Chip-Buttons |
+| `promCalcScore(prefix, count)` | Berechnet Score aus gespeicherten Antworten |
+| `promScoreBox(prefix, count)` | Rendert Ergebnis-Box mit Schweregrad |
+| `promRenderBlock(prefix, fragen)` | Rendert den vollständigen Fragebogenblock |
+
+### Neue globale Konstanten
+
+`PHQ9_FRAGEN`, `GAD7_FRAGEN`, `WHO5_FRAGEN` — Arrays mit den Fragetexten der drei Instrumente (Public Domain).
+
+### Dateien
+
+| Datei | Änderung |
+|---|---|
+| `VIVODEPOT.html` | Neuer Schritt prom, 4 Hilfsfunktionen, QR-Profilerweiterung |
+| `test_vivodepot.py` | +35 Tests (Sektionen 66–67) |
+
+---
+
 ## [1.0.0-beta.10] — April 2026
 
 ### Neu

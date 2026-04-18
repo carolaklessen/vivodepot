@@ -12762,7 +12762,7 @@ function applyGoalWizard() {
   if (selectedGoal === 'all') {
     allSteps.forEach(function(s) { relevant[s] = true; });
   } else if (selectedGoal === 'health') {
-    ['start','gesundheit','exportStep'].forEach(function(s) { relevant[s] = true; });
+    ['start','gesundheit','prom','exportStep'].forEach(function(s) { relevant[s] = true; });
   } else if (selectedGoal === 'emergency') {
     ['start','kontakte','gesundheit','notfall','exportStep'].forEach(function(s) { relevant[s] = true; });
   } else if (selectedGoal === 'legal') {
@@ -13338,6 +13338,7 @@ const STEPS = [
   { id: 'immobilien',    label: 'Wohnen & Eigentum' },
   { id: 'vertraege',     label: 'Verträge & Abos' },
   { id: 'gesundheit',    label: 'Meine Gesundheit' },
+  { id: 'prom',          label: 'Wohlbefinden & Seele' },
   { id: 'pflege',        label: 'Pflege & Lebenslauf' },
   { id: 'testament',     label: 'Mein Wille' },
   { id: 'bestattung',    label: 'Mein Abschied' },
@@ -13618,6 +13619,125 @@ function radio(key, label, options, hintText='') {
     </div>
   </div>`;
 }
+// ═══════════════════════════════════════════════
+// PROM — Psychometrische Selbstauskunft
+// PHQ-9 / GAD-7 / WHO-5 (Public Domain)
+// ═══════════════════════════════════════════════
+var PHQ9_FRAGEN = [
+  'Wenig Interesse oder Freude an Ihren Tätigkeiten',
+  'Gefühl der Niedergeschlagenheit, Schwermut oder Hoffnungslosigkeit',
+  'Schwierigkeiten, ein- oder durchzuschlafen, oder zu viel Schlafen',
+  'Gefühl der Müdigkeit oder des Energiemangels',
+  'Verminderter Appetit oder übermäßiges Essen',
+  'Schlechte Meinung von sich selbst; Gefühl, ein Versager zu sein oder andere enttäuscht zu haben',
+  'Schwierigkeiten, sich auf Dinge zu konzentrieren, z. B. beim Lesen oder Fernsehen',
+  'Verlangsamte Bewegung oder Sprache — oder im Gegenteil: Unruhe, Umherbewegen',
+  'Gedanken, dass Sie lieber tot wären, oder Gedanken, sich selbst Schaden zuzufügen'
+];
+var GAD7_FRAGEN = [
+  'Gefühl der Nervosität, Angst oder Anspannung',
+  'Nicht in der Lage sein, Sorgen zu stoppen oder zu kontrollieren',
+  'Übermäßige Sorgen über verschiedene Angelegenheiten',
+  'Schwierigkeiten zu entspannen',
+  'So rastlos sein, dass es schwer fällt, ruhig zu sitzen',
+  'Leicht reizbar oder gereizt sein',
+  'Angst haben, dass etwas Schreckliches passieren könnte'
+];
+var WHO5_FRAGEN = [
+  'Ich war froh und guter Laune',
+  'Ich habe mich ruhig und entspannt gefühlt',
+  'Ich habe mich aktiv und lebhaft gefühlt',
+  'Ich bin ausgeruht aufgewacht und habe mich frisch gefühlt',
+  'Mein Alltag war voller Dinge, die mich interessieren'
+];
+
+function promRadioRow(prefix, qnum, text) {
+  var key = prefix + '_q' + qnum;
+  var val = get(key) || '';
+  var isWho = (prefix === 'who5');
+  var opts = isWho
+    ? [['0','Zu keinem Zeitpunkt'],['1','Ab und zu'],['2','Weniger als die Hälfte der Zeit'],['3','Mehr als die Hälfte der Zeit'],['4','Meistens'],['5','Die ganze Zeit']]
+    : [['0','Überhaupt nicht'],['1','An einzelnen Tagen'],['2','Mehr als die Hälfte der Tage'],['3','Beinahe jeden Tag']];
+  var html = '<div style="margin-bottom:0.75rem;padding:0.6rem 0.7rem;background:var(--beige);border-radius:8px">';
+  html += '<div style="font-size:0.84rem;color:var(--ink);margin-bottom:0.45rem;line-height:1.4"><strong>' + qnum + '.</strong> ' + text + '</div>';
+  html += '<div style="display:flex;flex-wrap:wrap;gap:5px">';
+  opts.forEach(function(o) {
+    var sel = (val === o[0]);
+    html += '<label style="display:flex;align-items:center;font-size:0.76rem;cursor:pointer;padding:4px 10px;border-radius:16px;border:1.5px solid ' +
+      (sel ? 'var(--forest)' : 'var(--border)') + ';background:' +
+      (sel ? 'var(--forest)' : 'var(--bg,#fff)') + ';color:' +
+      (sel ? '#fff' : 'var(--ink2)') + '">' +
+      '<input type="radio" name="' + key + '" value="' + o[0] + '" ' + (sel ? 'checked' : '') +
+      ' onchange="set(\'' + key + '\',this.value);renderStep()" style="position:absolute;opacity:0;pointer-events:none">' +
+      o[1] + '</label>';
+  });
+  html += '</div></div>';
+  return html;
+}
+
+function promCalcScore(prefix, count) {
+  var total = 0;
+  var answered = 0;
+  for (var i = 1; i <= count; i++) {
+    var v = get(prefix + '_q' + i);
+    if (v !== '' && v !== null && v !== undefined) {
+      total += parseInt(v, 10);
+      answered++;
+    }
+  }
+  return { score: total, answered: answered, complete: (answered === count) };
+}
+
+function promScoreBox(prefix, count) {
+  var r = promCalcScore(prefix, count);
+  if (!r.complete) {
+    return '<div style="font-size:0.78rem;color:var(--ink3);padding:0.4rem 0;text-align:center">' +
+      r.answered + ' von ' + count + ' Fragen beantwortet — Ergebnis erscheint nach der letzten Antwort.</div>';
+  }
+  set(prefix + '_score', String(r.score));
+  if (!get(prefix + '_datum')) { set(prefix + '_datum', new Date().toISOString().slice(0, 10)); }
+  var label, color, note = '';
+  if (prefix === 'phq9') {
+    if (r.score <= 4)       { label = 'Minimal (0–4)';            color = 'var(--forest)'; }
+    else if (r.score <= 9)  { label = 'Leicht (5–9)';             color = '#b8860b';  note = 'Empfehlung: Verlaufsbeobachtung.'; }
+    else if (r.score <= 14) { label = 'Mittelgradig (10–14)';     color = '#d46b08';  note = 'Empfehlung: Sprechen Sie mit Ihrer Ärztin oder Ihrem Arzt.'; }
+    else if (r.score <= 19) { label = 'Mittelgradig schwer (15–19)'; color = '#c0392b'; note = 'Empfehlung: Ärztliche Vorstellung empfohlen.'; }
+    else                    { label = 'Schwer (20–27)';            color = '#7b0000';  note = 'Empfehlung: Ärztliche Vorstellung dringend empfohlen.'; }
+    return '<div style="margin:0.5rem 0 0.3rem;padding:0.75rem;border-radius:8px;border-left:4px solid ' + color + ';background:#fff">' +
+      '<div style="font-size:0.84rem;color:var(--ink)">PHQ-9-Ergebnis: <strong style="color:' + color + '">' + r.score + '\u202f/\u202f27 — ' + label + '</strong></div>' +
+      (note ? '<div style="font-size:0.76rem;color:var(--ink3);margin-top:3px">' + note + '</div>' : '') +
+      '<div style="font-size:0.72rem;color:var(--ink3);margin-top:3px">Dieses Ergebnis ersetzt keine ärztliche Diagnose.</div>' +
+    '</div>';
+  }
+  if (prefix === 'gad7') {
+    if (r.score <= 4)       { label = 'Minimal (0–4)';        color = 'var(--forest)'; }
+    else if (r.score <= 9)  { label = 'Leicht (5–9)';         color = '#b8860b';  note = 'Empfehlung: Verlaufsbeobachtung.'; }
+    else if (r.score <= 14) { label = 'Mittelgradig (10–14)'; color = '#d46b08';  note = 'Empfehlung: Sprechen Sie mit Ihrer Ärztin oder Ihrem Arzt.'; }
+    else                    { label = 'Schwer (15–21)';        color = '#c0392b';  note = 'Empfehlung: Ärztliche Vorstellung empfohlen.'; }
+    return '<div style="margin:0.5rem 0 0.3rem;padding:0.75rem;border-radius:8px;border-left:4px solid ' + color + ';background:#fff">' +
+      '<div style="font-size:0.84rem;color:var(--ink)">GAD-7-Ergebnis: <strong style="color:' + color + '">' + r.score + '\u202f/\u202f21 — ' + label + '</strong></div>' +
+      (note ? '<div style="font-size:0.76rem;color:var(--ink3);margin-top:3px">' + note + '</div>' : '') +
+      '<div style="font-size:0.72rem;color:var(--ink3);margin-top:3px">Dieses Ergebnis ersetzt keine ärztliche Diagnose.</div>' +
+    '</div>';
+  }
+  // WHO-5
+  var pct = Math.round(r.score * 4);
+  set('who5_prozent', String(pct));
+  if (pct >= 68)      { label = 'Gut ('     + pct + '\u202f%)';     color = 'var(--forest)'; }
+  else if (pct >= 50) { label = 'Mittel ('  + pct + '\u202f%)';     color = '#b8860b'; }
+  else                { label = 'Niedrig (' + pct + '\u202f%)';     color = '#c0392b';
+    note = 'Hinweis: Ein Wert unter 50\u202f% empfiehlt ein Gespräch mit Ihrer Ärztin oder Ihrem Arzt.'; }
+  return '<div style="margin:0.5rem 0 0.3rem;padding:0.75rem;border-radius:8px;border-left:4px solid ' + color + ';background:#fff">' +
+    '<div style="font-size:0.84rem;color:var(--ink)">WHO-5-Ergebnis: <strong style="color:' + color + '">' + r.score + '\u202f/\u202f25 (' + pct + '\u202f%) — ' + label + '</strong></div>' +
+    (note ? '<div style="font-size:0.76rem;color:var(--ink3);margin-top:3px">' + note + '</div>' : '') +
+    '<div style="font-size:0.72rem;color:var(--ink3);margin-top:3px">Dieses Ergebnis ersetzt keine ärztliche Diagnose.</div>' +
+  '</div>';
+}
+
+function promRenderBlock(prefix, fragen) {
+  return fragen.map(function(q, i) { return promRadioRow(prefix, i + 1, q); }).join('');
+}
+
 function esc(s) { return String(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
 
 function validateField(el) {
@@ -14486,7 +14606,7 @@ function stepDots() {
   ];
   var msg = msgs[0][1];
   for (var m = 0; m < msgs.length; m++) { if (pct >= msgs[m][0]) msg = msgs[m][1]; }
-  var times = {start:3,kontakte:3,infokontakte:2,finanzen:5,versich:3,immobilien:2,vertraege:3,testament:4,gesundheit:5,pflege:5,haustiere:2,digital:4,persoenliches:3,bestattung:4,assistenten:1,notfall:2,dokumente:2,erinnerung:1,exportStep:1};
+  var times = {start:3,kontakte:3,infokontakte:2,finanzen:5,versich:3,immobilien:2,vertraege:3,testament:4,gesundheit:5,prom:4,pflege:5,haustiere:2,digital:4,persoenliches:3,bestattung:4,assistenten:1,notfall:2,dokumente:2,erinnerung:1,exportStep:1};
   var sid = STEPS[currentStep] ? STEPS[currentStep].id : '';
   var mins = times[sid] || 0;
   return `<div style="margin:0.6rem 0">
@@ -15121,6 +15241,40 @@ const STEP_RENDERERS = {
       </div>
       <div style="margin-top:12px">${field('befund_sonstiges','Weitere Befunde','z. B. Lungenfunktion, Neurologiebericht')}</div>
     `)}
+    ${navButtons()}`,
+
+  prom: () => `
+    <div class="step-header">
+      <h1>Wohlbefinden & Seele</h1>
+      <p>Drei kurze Fragebögen zur psychischen Gesundheit — freiwillig, vertraulich, nur auf Ihrem Gerät.</p>
+      ${stepDots()}
+    </div>
+    <div class="infobox" style="margin-bottom:1rem">Alle Angaben sind freiwillig. Die Auswertung bleibt ausschließlich auf Ihrem Gerät. Niemand sieht diese Daten — außer Sie geben sie ausdrücklich weiter.</div>
+
+    <div class="field-section-title">PHQ-9 — Stimmung (letzte 2 Wochen)</div>
+    <div style="font-size:0.78rem;color:var(--ink3);margin-bottom:0.5rem">9 Fragen · Kroenke & Spitzer · Public Domain</div>
+    <div style="font-size:0.82rem;color:var(--ink2);margin-bottom:0.75rem;line-height:1.4">Wie oft wurden Sie in den letzten zwei Wochen durch folgende Probleme beeinträchtigt?</div>
+    ${promRenderBlock('phq9', PHQ9_FRAGEN)}
+    ${promScoreBox('phq9', 9)}
+
+    <div class="field-section-title" style="margin-top:1.5rem">GAD-7 — Angst (letzte 2 Wochen)</div>
+    <div style="font-size:0.78rem;color:var(--ink3);margin-bottom:0.5rem">7 Fragen · Spitzer et al. · Public Domain</div>
+    <div style="font-size:0.82rem;color:var(--ink2);margin-bottom:0.75rem;line-height:1.4">Wie oft wurden Sie in den letzten zwei Wochen durch folgende Probleme beeinträchtigt?</div>
+    ${promRenderBlock('gad7', GAD7_FRAGEN)}
+    ${promScoreBox('gad7', 7)}
+
+    <div class="field-section-title" style="margin-top:1.5rem">WHO-5 — Wohlbefinden (letzte 2 Wochen)</div>
+    <div style="font-size:0.78rem;color:var(--ink3);margin-bottom:0.5rem">5 Fragen · Weltgesundheitsorganisation · Public Domain</div>
+    <div style="font-size:0.82rem;color:var(--ink2);margin-bottom:0.75rem;line-height:1.4">Wie häufig haben die folgenden Aussagen in den letzten zwei Wochen auf Sie zugetroffen?</div>
+    ${promRenderBlock('who5', WHO5_FRAGEN)}
+    ${promScoreBox('who5', 5)}
+
+    <div style="margin-top:1rem;font-size:0.74rem;color:var(--ink3);line-height:1.5;padding:0.6rem;background:var(--beige);border-radius:6px">
+      PHQ-9 und GAD-7 wurden entwickelt von Kroenke, Spitzer und Williams (Public Domain).
+      WHO-5 wurde entwickelt von der Weltgesundheitsorganisation (Public Domain).
+      Keiner dieser Fragebögen ersetzt eine ärztliche Diagnose.
+      Bei anhaltenden Beschwerden wenden Sie sich bitte an Ihre Ärztin oder Ihren Arzt.
+    </div>
     ${navButtons()}`,
 
   haustiere: () => `
@@ -21852,7 +22006,10 @@ const WG_PROFILE_FELDER = {
   notfall: [
     'vorname','nachname','geburtsdatum','blutgruppe',
     'allergien','medikamente','krankheiten','hausarzt',
-    'notfallkontakte','patientenverf_vorhanden','patientenverf_ort'
+    'notfallkontakte','patientenverf_vorhanden','patientenverf_ort',
+    'phq9_score','phq9_datum',
+    'gad7_score','gad7_datum',
+    'who5_score','who5_prozent','who5_datum'
   ],
   vollmacht: [
     'vorname','nachname','geburtsdatum','adresse','plz','ort',
@@ -21896,7 +22053,14 @@ const WG_FELDNAMEN = {
   ausweis_nr: 'Ausweis- / Reisepass-Nr.',
   steuer_id: 'Steuer-Identifikationsnummer',
   iban: 'IBAN', kv_name: 'Krankenkasse',
-  kv_nr: 'Krankenversicherungs-Nr.', rv_nr: 'Rentenversicherungs-Nr.'
+  kv_nr: 'Krankenversicherungs-Nr.', rv_nr: 'Rentenversicherungs-Nr.',
+  phq9_score: 'PHQ-9-Score (Stimmung)',
+  phq9_datum: 'PHQ-9 — Datum der Ausfüllung',
+  gad7_score: 'GAD-7-Score (Angst)',
+  gad7_datum: 'GAD-7 — Datum der Ausfüllung',
+  who5_score: 'WHO-5-Score (Wohlbefinden)',
+  who5_prozent: 'WHO-5 in Prozent',
+  who5_datum: 'WHO-5 — Datum der Ausfüllung'
 };
 
 // Profiltexte

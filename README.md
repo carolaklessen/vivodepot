@@ -2,10 +2,10 @@
 
 **Ihr persönlicher Vorsorge-Assistent. Keine Cloud. Kein Abo. Volle Kontrolle.**
 
-[![Version](https://img.shields.io/badge/Version-1.0.0--beta.10-gold)](https://github.com/carolaklessen/vivodepot)
+[![Version](https://img.shields.io/badge/Version-1.0.0--beta.11-gold)](https://github.com/carolaklessen/vivodepot)
 [![Lizenz](https://img.shields.io/badge/Lizenz-EUPL--1.2-green)](LICENSE)
 [![Offline](https://img.shields.io/badge/Offline-100%25-brightgreen)](#offline)
-[![Tests](https://img.shields.io/badge/Tests-1050%2F1051-brightgreen)](#tests)
+[![Tests](https://img.shields.io/badge/Tests-1085%2F1086-brightgreen)](#tests)
 [![ZenDiS](https://img.shields.io/badge/ZenDiS-20%2F20-blue)](#souveränität)
 
 VIVODEPOT ist eine vollständig offline-fähige Einzeldatei-HTML-Anwendung zur Vorsorgedokumentation. Alle Daten bleiben ausschließlich auf Ihrem Gerät — keine Cloud, kein Server, keine Übertragung.
@@ -40,7 +40,7 @@ Am Ende erstellt VIVODEPOT druckfertige Dokumente: PDF, Word, Notfallblatt, Arzt
 
 ## Funktionen
 
-### Dateneingabe (21 Schritte)
+### Dateneingabe (22 Schritte)
 
 | Schritt | Inhalt |
 |---|---|
@@ -52,6 +52,7 @@ Am Ende erstellt VIVODEPOT druckfertige Dokumente: PDF, Word, Notfallblatt, Arzt
 | Immobilien | Eigentum, Schlüssel |
 | Verträge & Abos | Kündigungsfristen |
 | Gesundheit | Blutgruppe, Allergien, Medikamente |
+| Wohlbefinden & Seele | PHQ-9, GAD-7, WHO-5 (seit beta.11) |
 | Pflege | Pflegegrad, Biografie-Modul |
 | Mein Wille | Testament & Vollmachten, BGB-Referenzen (2023) |
 | Mein Abschied | Bestattungswünsche, Trauerfeier |
@@ -150,7 +151,7 @@ Vollständige Bewertung: [SOVEREIGNTY.md](SOVEREIGNTY.md)
 python3 test_vivodepot.py VIVODEPOT.html
 ```
 
-**1051 Tests in 65 Sektionen — 1050 bestehen.**
+**1086 Tests in 67 Sektionen — 1085 bestehen.**
 
 Abgedeckt: Syntax, Verschlüsselung, Navigation, PDF/Word-Export, Barrierefreiheit, Mobile, Offline, Krypto-Portabilität, Weitergabe-Datei, QR-Übergabe (URL-Format + Mehr-Teile), Leseansicht-Logik, EUDI/FHIR-Import, Solid Pod, ANF-UX-01–07 und mehr.
 

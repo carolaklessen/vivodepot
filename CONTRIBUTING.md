@@ -1,6 +1,6 @@
 # VIVODEPOT — Mitmachen
 
-*Version 1.0.0-beta.10 · April 2026*
+*Version 1.0.0-beta.11 · April 2026*
 
 Vielen Dank für Ihr Interesse an VIVODEPOT. Jede Rückmeldung hilft.
 
@@ -10,7 +10,7 @@ Vielen Dank für Ihr Interesse an VIVODEPOT. Jede Rückmeldung hilft.
 
 ### Fehler melden
 
-1. Prüfen Sie, ob der Fehler in der aktuellen Version (1.0.0-beta.10) noch vorhanden ist
+1. Prüfen Sie, ob der Fehler in der aktuellen Version (1.0.0-beta.11) noch vorhanden ist
 2. Öffnen Sie ein [GitHub Issue](https://github.com/carolaklessen/vivodepot/issues)
 3. Beschreiben Sie: Was haben Sie getan? Was ist passiert? Was hätten Sie erwartet?
 4. Nennen Sie Browser, Betriebssystem und Gerätetyp
@@ -32,7 +32,7 @@ Da VIVODEPOT aus zwei selbsttragenden HTML-Dateien besteht, sind Code-Beiträge 
 **Bitte beachten:**
 - Keine externen Abhängigkeiten einführen (alles muss inline bleiben)
 - Barrierefreiheit nicht verschlechtern (Touch-Targets 44px, ARIA-Labels)
-- Bestehende Tests müssen weiterhin bestehen (1050/1051)
+- Bestehende Tests müssen weiterhin bestehen (1085/1086)
 - Neue Funktionen sollten durch Tests abgedeckt werden
 - Korrekte Orthographie und Kommasetzung in allen Texten, Labels und Fehlermeldungen
 
@@ -54,7 +54,7 @@ Ergebnis muss `0 FAIL` sein (beim Lauf aus dem Repo-Root), bevor eine Änderung 
 |---|---|
 | `VIVODEPOT.html` | Hauptanwendung — Einzeldatei, ca. 1,3 MB |
 | `vivodepot-lesen.html` | Eigenständige Leseansicht für QR-Codes und Weitergabe-Dateien |
-| `test_vivodepot.py` | Automatisierte Tests (Python, 1051 Checks in 65 Sektionen) |
+| `test_vivodepot.py` | Automatisierte Tests (Python, 1086 Checks in 67 Sektionen) |
 | `CHANGELOG.md` | Versionshistorie |
 | `DOCS.md` | Technische Dokumentation |
 | `FAQ.md` | Häufige Fragen |

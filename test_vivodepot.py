@@ -2131,6 +2131,109 @@ def main():
     check("beta.10: Solid Pod Karte — solidcommunity.net erwähnt",
           "solidcommunity.net" in html)
 
+    # ═══════════════════════════════════════
+    print("\n=== 66. PROM — PHQ-9 / GAD-7 / WHO-5 ===")
+    # ═══════════════════════════════════════
+
+    # Schritt im STEPS-Array vorhanden
+    check("PROM: Schritt 'prom' im STEPS-Array vorhanden",
+          "{ id: 'prom'" in html or "{ id: \"prom\"" in html)
+    check("PROM: Label 'Wohlbefinden & Seele' vorhanden",
+          "Wohlbefinden & Seele" in html)
+
+    # Zeitmessung
+    check("PROM: prom:4 in times-Objekt vorhanden",
+          "prom:4" in html)
+
+    # Fokus-Ziel health enthält prom
+    health_goal = re.search(r"selectedGoal === 'health'.*?\}", html, re.DOTALL)
+    check("PROM: prom im health-Ziel vorhanden",
+          health_goal is not None and "'prom'" in health_goal.group(0))
+
+    # Fragendaten
+    check("PROM: PHQ9_FRAGEN-Array vorhanden",
+          "PHQ9_FRAGEN" in html)
+    check("PROM: GAD7_FRAGEN-Array vorhanden",
+          "GAD7_FRAGEN" in html)
+    check("PROM: WHO5_FRAGEN-Array vorhanden",
+          "WHO5_FRAGEN" in html)
+    check("PROM: PHQ-9 hat 9 Fragen im Array",
+          "PHQ9_FRAGEN = [" in html and html.count("var PHQ9_FRAGEN") >= 1)
+    check("PROM: GAD-7 hat 7 Fragen im Array",
+          "GAD7_FRAGEN = [" in html and "Nervosität" in html)
+    check("PROM: WHO-5 hat 5 Fragen im Array",
+          "WHO5_FRAGEN = [" in html and "guter Laune" in html)
+
+    # Hilfsfunktionen
+    check("PROM: Funktion promRadioRow vorhanden",
+          "function promRadioRow" in html)
+    check("PROM: Funktion promCalcScore vorhanden",
+          "function promCalcScore" in html)
+    check("PROM: Funktion promScoreBox vorhanden",
+          "function promScoreBox" in html)
+    check("PROM: Funktion promRenderBlock vorhanden",
+          "function promRenderBlock" in html)
+
+    # Score-Logik
+    check("PROM: Score wird per set() mit prefix gespeichert",
+          "prefix + '_score'" in html)
+    check("PROM: who5_prozent wird gespeichert",
+          "who5_prozent" in html)
+    check("PROM: Datum wird per set() mit prefix gespeichert",
+          "prefix + '_datum'" in html)
+
+    # Renderer-Inhalt
+    check("PROM: Renderer-Aufruf promRenderBlock('phq9'...) vorhanden",
+          "promRenderBlock('phq9'" in html)
+    check("PROM: Renderer-Aufruf promRenderBlock('gad7'...) vorhanden",
+          "promRenderBlock('gad7'" in html)
+    check("PROM: Renderer-Aufruf promRenderBlock('who5'...) vorhanden",
+          "promRenderBlock('who5'" in html)
+
+    # Quellennennung (Public Domain)
+    check("PROM: Quellennennung Kroenke vorhanden",
+          "Kroenke" in html)
+    check("PROM: Quellennennung Weltgesundheitsorganisation vorhanden",
+          "Weltgesundheitsorganisation" in html)
+    check("PROM: Hinweis 'ersetzt keine ärztliche Diagnose' vorhanden",
+          "ersetzt keine ärztliche Diagnose" in html)
+
+    # Datenschutzhinweis im Renderer
+    check("PROM: Datenschutzhinweis im Renderer vorhanden",
+          "ausschließlich auf Ihrem Gerät" in html)
+
+    # ═══════════════════════════════════════
+    print("\n=== 67. PROM im QR-Export (Aufgabe 3) ===")
+    # ═══════════════════════════════════════
+
+    # PROM-Scores im notfall-Profil
+    notfall_block = re.search(
+        r"notfall:\s*\[([^\]]+)\]", html, re.DOTALL)
+    check("QR-PROM: phq9_score im notfall-Profil",
+          notfall_block is not None and "'phq9_score'" in notfall_block.group(1))
+    check("QR-PROM: phq9_datum im notfall-Profil",
+          notfall_block is not None and "'phq9_datum'" in notfall_block.group(1))
+    check("QR-PROM: gad7_score im notfall-Profil",
+          notfall_block is not None and "'gad7_score'" in notfall_block.group(1))
+    check("QR-PROM: gad7_datum im notfall-Profil",
+          notfall_block is not None and "'gad7_datum'" in notfall_block.group(1))
+    check("QR-PROM: who5_score im notfall-Profil",
+          notfall_block is not None and "'who5_score'" in notfall_block.group(1))
+    check("QR-PROM: who5_prozent im notfall-Profil",
+          notfall_block is not None and "'who5_prozent'" in notfall_block.group(1))
+    check("QR-PROM: who5_datum im notfall-Profil",
+          notfall_block is not None and "'who5_datum'" in notfall_block.group(1))
+
+    # Lesbare Feldnamen in WG_FELDNAMEN
+    check("QR-PROM: PHQ-9-Score in WG_FELDNAMEN",
+          "phq9_score: 'PHQ-9-Score" in html)
+    check("QR-PROM: GAD-7-Score in WG_FELDNAMEN",
+          "gad7_score: 'GAD-7-Score" in html)
+    check("QR-PROM: WHO-5-Score in WG_FELDNAMEN",
+          "who5_score: 'WHO-5-Score" in html)
+    check("QR-PROM: Datums-Felder in WG_FELDNAMEN",
+          "phq9_datum:" in html and "gad7_datum:" in html and "who5_datum:" in html)
+
     passed = sum(1 for s, _, _ in results if s == "PASS")
     failed = sum(1 for s, _, _ in results if s == "FAIL")
     total = len(results)

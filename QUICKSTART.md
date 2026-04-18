@@ -1,6 +1,6 @@
 # VIVODEPOT — Schnellstart
 
-*Version 1.0.0-beta.10 · April 2026*
+*Version 1.0.0-beta.11 · April 2026*
 
 ---
 
