@@ -96,9 +96,30 @@ bessere Erfahrung für die Zielgruppe (60+, nicht digital-affin).
 - `autocomplete`-Attribute auf Standardfelder (Name, Telefon, Adresse, Datum)
 - `SOVEREIGNTY.md` erstellt mit WCAG 3.3.8-Begründung
 
+### IPS-Upgrade — FHIR-Export (beta.14)
+
+- **IPS-Dokument-Export** — `generateFHIR()` erzeugt jetzt ein vollständiges
+  IPS-Dokument (`Bundle.type: document`) statt einer FHIR-Collection.
+  Erste Ressource ist eine `Composition` mit LOINC-Sektionen.
+
+- **IPS-Validierung** — Validator-Ergebnis gegen `hl7.fhir.uv.ips 2.0.0`
+  und `hl7.fhir.eu.base 2.0.0-ballot`: **0 Fehler, 0 Warnungen.**
+
+- **17 Validator-Fehler behoben** — echte UUIDs für alle Ressourcen,
+  valide URI in `meta.source`, IPS-Profile in allen Ressourcen (`meta.profile`),
+  `section.text` (Narrativ) in jeder Sektion, drei Pflichtsektionen immer
+  vorhanden (mit `emptyReason` wenn leer), `verificationStatus` in
+  AllergyIntolerance, Blutgruppe als `Observation` statt ungültiger Extension.
+
+- **Syntaxfehler in Bibliotheken behoben** — 13 rohe Control-Characters
+  (jsPDF: `0x01`, ZIP: `0x03`–`0x07`, Farbbibliothek: `0x1B`) durch
+  `\xNN`-Escapes ersetzt. Behebt `Uncaught SyntaxError` in der Browser-Konsole.
+
+- **Dateiname:** `IPS_Nachname_Datum.fhir.json`
+
 ### Tests
 
-10 neue Tests, 4 veraltete Tests aktualisiert:
+10 neue UX-Tests, 4 veraltete Tests aktualisiert, 37 neue IPS/Bibliotheks-Tests:
 
 | Änderung | Grund |
 |---|---|
@@ -114,16 +135,25 @@ bessere Erfahrung für die Zielgruppe (60+, nicht digital-affin).
 | `SESSION: showStepPicker` | Mobile Navigation |
 | `SESSION: Thema-Konsistenz` | Sprach-Audit |
 | `SESSION: keine Emoji in ec-icon` | Icon-Audit |
+| Abschnitt 74: IPS-Upgrade (33 Tests) | IPS-Konformität |
+| Abschnitt 75: Bibliotheken (4 Tests) | Syntaxfehler-Prüfung |
 
-**Gesamt: 1342 Tests, 1342 grün.**
+### Konformitätsnachweise
+
+| Datei | Profil | Ergebnis |
+|---|---|---|
+| `Vivodepot_HL7_Konformitaetsbericht_2026-04-19.docx` | hl7.fhir.eu.base 2.0.0-ballot | 0 Fehler, 0 Warnungen |
+| `Vivodepot_IPS_Konformitaetsbericht_2026-04-20.docx` | hl7.fhir.uv.ips 2.0.0 | 0 Fehler, 0 Warnungen |
 
 ### Dateien
 
 | Datei | Änderung |
 |---|---|
-| `VIVODEPOT.html` | UX-Überarbeitung, Bug-Fixes, neue Masken, Export-Helfer |
-| `test_vivodepot.py` | 10 neue Tests, 4 aktualisiert, minif. Libs übersprungen |
+| `VIVODEPOT.html` | UX-Überarbeitung, IPS-Upgrade, Syntaxfehler-Fix |
+| `test_vivodepot.py` | 10 neue UX-Tests, 37 neue IPS/Bibliotheks-Tests |
 | `SOVEREIGNTY.md` | Neu — WCAG 3.3.8-Begründung |
+| `Vivodepot_HL7_Konformitaetsbericht_2026-04-19.docx` | Neu — HL7 EU Base IG Konformitätsnachweis |
+| `Vivodepot_IPS_Konformitaetsbericht_2026-04-20.docx` | Neu — IPS 2.0.0 Konformitätsnachweis |
 
 ---
 
