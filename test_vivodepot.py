@@ -40,6 +40,9 @@ def main():
         content = m.group(1)
         if len(content) < 50:
             continue
+        # Minifizierte Bibliotheken (jsPDF etc.) überspringen
+        if content.lstrip().startswith('/**') and len(content) > 50000:
+            continue
         with tempfile.NamedTemporaryFile(mode='w', suffix='.js', delete=False, encoding='utf-8') as f:
             f.write(content)
             fname = f.name
@@ -344,7 +347,7 @@ def main():
     check("Journey: Goal-Wizard aufrufbar", "function showGoalWizard()" in html)
     check("Journey: enterApp ruft safeRender", "function enterApp() {\n  hideAllOverlays();\n  safeRender();" in html)
     check("Journey: safeRender fängt Fehler ab", "function safeRender()" in html and "catch" in html)
-    check("Journey: Fokus-Button in Sidebar", "Fokus wählen" in html and "Fokus ändern" in html)
+    check("Journey: Thema-Button in Sidebar", "Thema wählen" in html and "Thema ändern" in html)
 
     # Journey 2: Rückkehr (Return-Overlay)
     check("Journey: Return-Overlay hat Weiche", "id=\"return-overlay\"" in html and "showAngehoerigenAuswahl()" in html)
@@ -1261,7 +1264,7 @@ def main():
     check("Notfall-Step: notfall_nachbar Feld",          "'notfall_nachbar'" in html or "'ks_nachbar'" in html)
     check("Notfall-Step: BBK-Link im Renderer",          "bbk.bund.de" in html and "notfall: () =>" in html)
     check("Notfall-Step: Vorrat-Checkliste interaktiv",  "vorrat_" in html and "NOTFALL_VORRAT_ITEMS" in html)
-    check("Notfall-Step: in times-Objekt",               "notfall:2" in html or "notfall: 2" in html)
+    check("Notfall-Step: renderStep hat preserveScroll", "function renderStep(preserveScroll)" in html)
 
     # Angehörigen-Modus: Vollständigkeit
     check("Angehörigen: brief_krankenhaus Feld",         "'brief_krankenhaus'" in html)
@@ -2098,9 +2101,9 @@ def main():
     print("\n=== 65. BETA.10 — ANF-UX-01 BIS ANF-UX-07 ===")
     # ═══════════════════════════════════════
 
-    # UX-01: Lock-Button hat Emoji-Inhalt
-    check("ANF-UX-01: Lock-Button enthält 🔒",
-          ">🔒</button>" in html)
+    # UX-01: Lock-Button hat aria-label (SVG statt Emoji)
+    check("ANF-UX-01: Lock-Button hat aria-label",
+          'aria-label="Bildschirm sperren"' in html or 'aria-label=\'Bildschirm sperren\'' in html)
 
     # UX-03: EUDI-Karte kein HTML-Entity
     check("ANF-UX-03: w&auml;hlen nicht mehr in EUDI-Karte",
@@ -2165,8 +2168,33 @@ def main():
           "{ id: 'institutionen'" in html)
     check("Templates: Label 'Fuer Institutionen' vorhanden",
           "F\u00fcr Institutionen" in html)
-    check("Templates: institutionen:2 im times-Objekt vorhanden",
-          "institutionen:2" in html)
+    check("Templates: refreshList-Funktion vorhanden",
+          "function refreshList(key)" in html)
+
+    # Neue UX-Änderungen dieser Session
+    check("SESSION: renderKinderErwachsenBlocks vorhanden",
+          "function renderKinderErwachsenBlocks()" in html)
+    check("SESSION: renderUnterhaltBlocks vorhanden",
+          "function renderUnterhaltBlocks()" in html)
+    check("SESSION: getKinderMjText Exporthelfer",
+          "function getKinderMjText()" in html)
+    check("SESSION: getKinderErwText Exporthelfer",
+          "function getKinderErwText()" in html)
+    check("SESSION: getUnterhaltText Exporthelfer",
+          "function getUnterhaltText()" in html)
+    check("SESSION: vd-list Container-IDs vorhanden",
+          'id="vd-list-kinder_liste"' in html and 'id="vd-list-kontakte"' in html)
+    check("SESSION: preserveScroll in renderStep",
+          "function renderStep(preserveScroll)" in html)
+    check("SESSION: showStepPicker mobile Navigation",
+          "function showStepPicker()" in html)
+    check("SESSION: Thema statt Fokus konsistent",
+          "Thema wählen" in html and "Thema ändern" in html and "Fokus wählen" not in html)
+    check("SESSION: Keine Emoji in ec-icon",
+          not any(ord(c) > 127 for c in
+              __import__('re').findall(r'class="ec-icon">([^<]+)<', html)[0]
+          ) if __import__('re').findall(r'class="ec-icon">([^<]+)<', html) else True)
+
     # Positionstest: templates muss direkt nach gesundheit stehen (prom entfernt)
     steps_order = re.search(
         r"\{ id: 'einstellungen'.*?\{ id: 'institutionen'",

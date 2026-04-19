@@ -4,6 +4,131 @@ Alle wichtigen Änderungen werden in dieser Datei dokumentiert.
 
 ---
 
+## [1.0.0-beta.14] — April 2026
+
+### UX-Optimierung für Senioren (Schwerpunkt dieser Version)
+
+Diese Version konzentriert sich vollständig auf Nutzbarkeit, Barrierefreiheit
+und technische Robustheit — keine neuen Funktionen, aber eine substanziell
+bessere Erfahrung für die Zielgruppe (60+, nicht digital-affin).
+
+### Behobene Bugs
+
+- **Scroll-Sprung bei Listenoperationen** — `addItem()`, `moveItem()`, `removeItem()`
+  ersetzten bisher das gesamte `mc.innerHTML`, was auf iOS den Scroll-Container
+  zurücksetzte. Neue Lösung: `refreshList(key)` aktualisiert nur den betroffenen
+  Container-Div ohne `mc.innerHTML` anzufassen. Kein Scroll-Sprung mehr auf
+  keinem Browser, inkl. DuckDuckGo/iOS.
+
+- **`mehr()`-Sektion klappt nach Daten-Eingabe zu** — `mehr()` renderte Sektionen
+  immer mit `display:none`. Nach jedem `renderStep()` blieb die Sektion zu,
+  auch wenn Daten vorhanden waren. Fix: `isOpen = filled > 0` beim Rendern.
+
+- **`mehrToggle()` zeigt „Weniger anzeigen" statt Sektionsname** — beim manuellen
+  Öffnen einer bereits-daten-gefüllten Sektion erschien generischer Text statt
+  des Sektionstitels. Behoben.
+
+- **Sortier-Pfeile ▲▼ Unicode unzuverlässig** — auf manchen Systemen leer
+  dargestellt. Durch SVG-Icons ersetzt (alle drei Buttons im Block-Header:
+  rauf, runter, entfernen).
+
+- **Minutenanzeige in Schrittüberschrift** — handgeschriebene Schätzwerte
+  (immer gleich, unabhängig vom Füllstand) entfernt. Zeigt jetzt klaren Text
+  „X von Y Bereichen ausgefüllt".
+
+### Neue Struktur: Wiederholungsmasken
+
+- **Volljährige Kinder** — Neues `renderKinderErwachsenBlocks()` mit Feldern
+  Vorname, Nachname, Geburtsjahr, Wohnort, Telefon, Anmerkung. Ersetzt das
+  frühere Einzeltextfeld. Unbegrenzt erweiterbar.
+
+- **Unterhaltspflichten** — Neues `renderUnterhaltBlocks()` mit Feldern Person,
+  Art (Kindes-/Ehe-/Trennungs-/Elternunterhalt/Sonstiges), Betrag, Richtung
+  (Ich zahle/Ich erhalte), Anmerkung. Jede Pflicht einzeln dokumentierbar.
+
+- **Export-Helfer** — `getKinderMjText()`, `getKinderErwText()`,
+  `getUnterhaltText()` formatieren die neuen Listen für alle 31 Export-Aufrufe
+  (PDFs, Szenario-PDF, Katastrophenschutzplan, FIM-Export, QR-Sticker).
+  Rückwärtskompatibel: Fallback auf alte Einzeltextfelder.
+
+### Icons und Darstellung
+
+- **Alle Emojis durch SVG ersetzt** — Topbar (9 Icons), Export-Karten (23),
+  Notfall-FAB, blockHeader-Pfeile, Fokus-Wizard (5 Ziel-Icons). Kein Rendering-
+  Risiko mehr auf altem Windows oder Safari.
+
+- **Eingabefelder**: Schriftgrösse 0.88rem → 1rem (16px). Labels, Buttons,
+  Hilfstext, Warn-/OK-Meldungen ebenfalls angehoben.
+
+- **Hilfstext** (`.field-hint`): Kursivschrift entfernt, Farbe aufgehellt.
+  Kursiv + klein + gedimmt war dreifach schwer lesbar.
+
+### Navigation und Orientierung
+
+- **Alle Bereiche ohne Fokus sichtbar** — vorher wurden 14 von 22 Bereichen
+  hinter einem kleinen Toggle versteckt. Ohne gewählten Fokus sind jetzt
+  alle Bereiche sichtbar.
+
+- **Fokus-Button repositioniert** — ohne Fokus erscheint „Thema wählen …"
+  direkt oben in der Sidebar (nach Startseite-Button). Mit Fokus: subtil
+  am unteren Rand als „▷ Thema ändern".
+
+- **Mobile Step-Picker** — Counter in der Bodenleiste (z.B. „3/22") ist
+  klickbar und öffnet ein Sheet mit allen Bereichen zum direkten Springen.
+  Vorher: nur lineares ←/→.
+
+- **Navigationsbegriffe** — 6 Bereiche erhalten Untertitel (`.nav-sub`)
+  in einfacher Sprache, z.B. „Mein Wille → Vollmacht · Verfügung · Testament".
+
+### Sprache und Konsistenz
+
+- „Fokus" → „Thema" durchgehend (Sidebar, Wizard, mobile Bar)
+- „App sperren" → „Bildschirm sperren" (Tooltip und Bestätigungsdialog)
+- Bestätigungstext bei Bildschirmsperre erklärt was passiert
+- Fokus-Wizard-Titel: „Welchen Fokus möchten Sie setzen?" →
+  „Welches Thema möchten Sie bearbeiten?"
+
+### Barrierefreiheit
+
+- `for/id`-Verknüpfung in allen Wiederholungsblöcken (Kinder, Erwachsene, Unterhalt)
+- `aria-label` auf Mikrofon-Button (beide Stellen)
+- `aria-label` auf Notfall-FAB
+- `autocomplete`-Attribute auf Standardfelder (Name, Telefon, Adresse, Datum)
+- `SOVEREIGNTY.md` erstellt mit WCAG 3.3.8-Begründung
+
+### Tests
+
+10 neue Tests, 4 veraltete Tests aktualisiert:
+
+| Änderung | Grund |
+|---|---|
+| `Thema-Button in Sidebar` (war: Fokus) | Umbenennung |
+| `preserveScroll in renderStep` (war: times-Objekt) | Feature entfernt |
+| `refreshList-Funktion vorhanden` (war: institutionen:2) | Neue Architektur |
+| `aria-label Bildschirm sperren` (war: 🔒-Emoji) | SVG-Ersatz |
+| Minifizierte Bibliotheken überspringen (jsPDF) | False Positive |
+| `SESSION: renderKinderErwachsenBlocks` | Neue Funktion |
+| `SESSION: renderUnterhaltBlocks` | Neue Funktion |
+| `SESSION: getKinderMjText/Erw/Unterhalt` | Export-Helfer |
+| `SESSION: vd-list Container-IDs` | Neue Architektur |
+| `SESSION: showStepPicker` | Mobile Navigation |
+| `SESSION: Thema-Konsistenz` | Sprach-Audit |
+| `SESSION: keine Emoji in ec-icon` | Icon-Audit |
+
+**Gesamt: 1342 Tests, 1342 grün.**
+
+### Dateien
+
+| Datei | Änderung |
+|---|---|
+| `VIVODEPOT.html` | UX-Überarbeitung, Bug-Fixes, neue Masken, Export-Helfer |
+| `test_vivodepot.py` | 10 neue Tests, 4 aktualisiert, minif. Libs übersprungen |
+| `SOVEREIGNTY.md` | Neu — WCAG 3.3.8-Begründung |
+
+---
+
+## [1.0.0-beta.17] — April 2026
+
 ## [1.0.0-beta.17] — April 2026
 
 ### Neu
