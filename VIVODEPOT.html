@@ -10520,7 +10520,7 @@ function ensureDocx(callback) {
 </script>
 <script>
 // Normalise docx global — jsdelivr exposes it as window.docx
-const VIVODEPOT_VERSION = '1.0.0-beta.10';
+const VIVODEPOT_VERSION = '1.0.0-beta.13';
 function getLogoData() { var img = document.querySelector('.topbar-logo img'); return img ? img.src : ''; }
 if (typeof docx === 'undefined' && typeof window.docx === 'undefined') {
   // docx inline eingebettet — sollte nicht vorkommen
@@ -12762,7 +12762,7 @@ function applyGoalWizard() {
   if (selectedGoal === 'all') {
     allSteps.forEach(function(s) { relevant[s] = true; });
   } else if (selectedGoal === 'health') {
-    ['start','gesundheit','prom','exportStep'].forEach(function(s) { relevant[s] = true; });
+    ['start','gesundheit','exportStep'].forEach(function(s) { relevant[s] = true; });
   } else if (selectedGoal === 'emergency') {
     ['start','kontakte','gesundheit','notfall','exportStep'].forEach(function(s) { relevant[s] = true; });
   } else if (selectedGoal === 'legal') {
@@ -13330,28 +13330,34 @@ function get(key, def='') { return data[key] !== undefined ? data[key] : def; }
 // DATA MODEL
 // ═══════════════════════════════════════════════
 const STEPS = [
+  // ── Persönlicher Bereich ────────────────────────
+  // Gruppe: Meine Person
   { id: 'start',         label: 'Über mich' },
   { id: 'kontakte',      label: 'Vertrauenspersonen' },
   { id: 'infokontakte',  label: 'Wichtige Kontakte' },
+  { id: 'testament',     label: 'Mein Wille' },
+  // Gruppe: Finanzen & Besitz
   { id: 'finanzen',      label: 'Geld & Konten' },
   { id: 'versich',       label: 'Versicherungen' },
   { id: 'immobilien',    label: 'Wohnen & Eigentum' },
   { id: 'vertraege',     label: 'Verträge & Abos' },
+  // Gruppe: Gesundheit & Leben
   { id: 'gesundheit',    label: 'Meine Gesundheit' },
-  { id: 'prom',          label: 'Wohlbefinden & Seele' },
   { id: 'pflege',        label: 'Pflege & Lebenslauf' },
-  { id: 'testament',     label: 'Mein Wille' },
-  { id: 'bestattung',    label: 'Mein Abschied' },
-  { id: 'persoenliches', label: 'Erinnerungsstücke & Briefe' },
   { id: 'haustiere',     label: 'Meine Tiere' },
   { id: 'digital',       label: 'Online & Zugänge' },
-  { id: 'assistenten',   label: 'Schritt für Schritt' },
+  { id: 'persoenliches', label: 'Erinnerungsstücke & Briefe' },
+  { id: 'bestattung',    label: 'Mein Abschied' },
+  // Gruppe: Werkzeuge
   { id: 'notfall',       label: 'Notfall & Katastrophenschutz' },
+  { id: 'erinnerung',    label: 'Prüftermine' },
   { id: 'dokumente',     label: 'Meine Dateien' },
   { id: 'datenaustausch', label: 'Datenaustausch' },
-  { id: 'erinnerung',   label: 'Prüftermine' },
-  { id: 'exportStep',   label: 'Dokumente erstellen' },
+  { id: 'assistenten',   label: 'Schritt für Schritt' },
+  { id: 'exportStep',    label: 'Dokumente erstellen' },
   { id: 'einstellungen', label: 'Einstellungen' },
+  // ── Institutionen (immer sichtbar, grafisch abgesetzt) ──
+  { id: 'institutionen', label: 'Für Institutionen' },
 ];
 
 let currentStep = 0;
@@ -13378,9 +13384,10 @@ function renderSidebar() {
   const CORE_IDS = goalMode && goalRelevant
     ? new Set(['start','assistenten','erinnerung','exportStep', ...Object.keys(goalRelevant)])
     : new Set(['start','kontakte','gesundheit','testament','assistenten','erinnerung','exportStep']);
+  // 'institutionen' wird immer separat am Ende gerendert — nie in core/extra
   const expanded = window._sidebarExpanded || false;
   const hiddenCount = STEPS.filter((s,i) =>
-    !CORE_IDS.has(s.id) && i !== currentStep && !isStepDone(i)
+    s.id !== 'institutionen' && !CORE_IDS.has(s.id) && i !== currentStep && !isStepDone(i)
   ).length;
 
   // Two passes: first core+done+active, then hidden extras when expanded
@@ -13392,6 +13399,7 @@ function renderSidebar() {
   const extraSection = [];
 
   STEPS.forEach((s,i) => {
+    if (s.id === 'institutionen') return; // wird separat gerendert
     const isCore = CORE_IDS.has(s.id);
     const isActive = i === currentStep;
     const isDone = isStepDone(i);
@@ -13426,9 +13434,8 @@ function renderSidebar() {
       // Render extra steps when expanded
       const groups = [
         { at: 0,  label: 'Meine Person' },
-        { at: 3,  label: 'Absicherung & Finanzen' },
-        { at: 7,  label: 'Gesundheit & Abschluss' },
-        { at: 12, label: 'Besonderes' },
+        { at: 4,  label: 'Finanzen & Besitz' },
+        { at: 8,  label: 'Gesundheit & Leben' },
         { at: 14, label: 'Werkzeuge' },
       ];
       html += `<div style="border-top:1px solid var(--border);margin-top:6px;padding-top:4px">`;
@@ -13453,6 +13460,23 @@ function renderSidebar() {
         <span style="flex:1">Weniger anzeigen</span><span>▲</span>
       </div>`;
     }
+  }
+
+  // ── Institutionen: immer sichtbar, mit Trennlinie abgesetzt ────
+  const instStep = STEPS.find(s => s.id === 'institutionen');
+  if (instStep) {
+    const instIdx = STEPS.findIndex(s => s.id === 'institutionen');
+    const instActive = instIdx === currentStep;
+    const instDone = isStepDone(instIdx);
+    html += `<div style="border-top:1px solid rgba(255,255,255,0.2);margin-top:10px;padding-top:8px">
+      <div style="font-size:0.65rem;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.4);padding:0 12px 4px;margin-bottom:2px">Für Institutionen</div>
+      <div class="nav-step ${instActive?'active':''} ${instDone?'complete':''}" onclick="goToStep(${instIdx})">
+        <div class="nav-num" style="${instDone?'background:var(--teal)':'background:rgba(255,255,255,0.15)'}">
+          ${instDone ? '✓' : '→'}
+        </div>
+        <div class="nav-label">${tl(instStep.label)}${instDone?' <span style="opacity:0.6;font-size:0.68rem">✓</span>':''}</div>
+      </div>
+    </div>`;
   }
 
   html += `
@@ -13621,123 +13645,6 @@ function radio(key, label, options, hintText='') {
 }
 // ═══════════════════════════════════════════════
 // PROM — Psychometrische Selbstauskunft
-// PHQ-9 / GAD-7 / WHO-5 (Public Domain)
-// ═══════════════════════════════════════════════
-var PHQ9_FRAGEN = [
-  'Wenig Interesse oder Freude an Ihren Tätigkeiten',
-  'Gefühl der Niedergeschlagenheit, Schwermut oder Hoffnungslosigkeit',
-  'Schwierigkeiten, ein- oder durchzuschlafen, oder zu viel Schlafen',
-  'Gefühl der Müdigkeit oder des Energiemangels',
-  'Verminderter Appetit oder übermäßiges Essen',
-  'Schlechte Meinung von sich selbst; Gefühl, ein Versager zu sein oder andere enttäuscht zu haben',
-  'Schwierigkeiten, sich auf Dinge zu konzentrieren, z. B. beim Lesen oder Fernsehen',
-  'Verlangsamte Bewegung oder Sprache — oder im Gegenteil: Unruhe, Umherbewegen',
-  'Gedanken, dass Sie lieber tot wären, oder Gedanken, sich selbst Schaden zuzufügen'
-];
-var GAD7_FRAGEN = [
-  'Gefühl der Nervosität, Angst oder Anspannung',
-  'Nicht in der Lage sein, Sorgen zu stoppen oder zu kontrollieren',
-  'Übermäßige Sorgen über verschiedene Angelegenheiten',
-  'Schwierigkeiten zu entspannen',
-  'So rastlos sein, dass es schwer fällt, ruhig zu sitzen',
-  'Leicht reizbar oder gereizt sein',
-  'Angst haben, dass etwas Schreckliches passieren könnte'
-];
-var WHO5_FRAGEN = [
-  'Ich war froh und guter Laune',
-  'Ich habe mich ruhig und entspannt gefühlt',
-  'Ich habe mich aktiv und lebhaft gefühlt',
-  'Ich bin ausgeruht aufgewacht und habe mich frisch gefühlt',
-  'Mein Alltag war voller Dinge, die mich interessieren'
-];
-
-function promRadioRow(prefix, qnum, text) {
-  var key = prefix + '_q' + qnum;
-  var val = get(key) || '';
-  var isWho = (prefix === 'who5');
-  var opts = isWho
-    ? [['0','Zu keinem Zeitpunkt'],['1','Ab und zu'],['2','Weniger als die Hälfte der Zeit'],['3','Mehr als die Hälfte der Zeit'],['4','Meistens'],['5','Die ganze Zeit']]
-    : [['0','Überhaupt nicht'],['1','An einzelnen Tagen'],['2','Mehr als die Hälfte der Tage'],['3','Beinahe jeden Tag']];
-  var html = '<div style="margin-bottom:0.75rem;padding:0.6rem 0.7rem;background:var(--beige);border-radius:8px">';
-  html += '<div style="font-size:0.84rem;color:var(--ink);margin-bottom:0.45rem;line-height:1.4"><strong>' + qnum + '.</strong> ' + text + '</div>';
-  html += '<div style="display:flex;flex-wrap:wrap;gap:5px">';
-  opts.forEach(function(o) {
-    var sel = (val === o[0]);
-    html += '<label style="display:flex;align-items:center;font-size:0.76rem;cursor:pointer;padding:4px 10px;border-radius:16px;border:1.5px solid ' +
-      (sel ? 'var(--forest)' : 'var(--border)') + ';background:' +
-      (sel ? 'var(--forest)' : 'var(--bg,#fff)') + ';color:' +
-      (sel ? '#fff' : 'var(--ink2)') + '">' +
-      '<input type="radio" name="' + key + '" value="' + o[0] + '" ' + (sel ? 'checked' : '') +
-      ' onchange="set(\'' + key + '\',this.value);renderStep()" style="position:absolute;opacity:0;pointer-events:none">' +
-      o[1] + '</label>';
-  });
-  html += '</div></div>';
-  return html;
-}
-
-function promCalcScore(prefix, count) {
-  var total = 0;
-  var answered = 0;
-  for (var i = 1; i <= count; i++) {
-    var v = get(prefix + '_q' + i);
-    if (v !== '' && v !== null && v !== undefined) {
-      total += parseInt(v, 10);
-      answered++;
-    }
-  }
-  return { score: total, answered: answered, complete: (answered === count) };
-}
-
-function promScoreBox(prefix, count) {
-  var r = promCalcScore(prefix, count);
-  if (!r.complete) {
-    return '<div style="font-size:0.78rem;color:var(--ink3);padding:0.4rem 0;text-align:center">' +
-      r.answered + ' von ' + count + ' Fragen beantwortet — Ergebnis erscheint nach der letzten Antwort.</div>';
-  }
-  set(prefix + '_score', String(r.score));
-  if (!get(prefix + '_datum')) { set(prefix + '_datum', new Date().toISOString().slice(0, 10)); }
-  var label, color, note = '';
-  if (prefix === 'phq9') {
-    if (r.score <= 4)       { label = 'Minimal (0–4)';            color = 'var(--forest)'; }
-    else if (r.score <= 9)  { label = 'Leicht (5–9)';             color = '#b8860b';  note = 'Empfehlung: Verlaufsbeobachtung.'; }
-    else if (r.score <= 14) { label = 'Mittelgradig (10–14)';     color = '#d46b08';  note = 'Empfehlung: Sprechen Sie mit Ihrer Ärztin oder Ihrem Arzt.'; }
-    else if (r.score <= 19) { label = 'Mittelgradig schwer (15–19)'; color = '#c0392b'; note = 'Empfehlung: Ärztliche Vorstellung empfohlen.'; }
-    else                    { label = 'Schwer (20–27)';            color = '#7b0000';  note = 'Empfehlung: Ärztliche Vorstellung dringend empfohlen.'; }
-    return '<div style="margin:0.5rem 0 0.3rem;padding:0.75rem;border-radius:8px;border-left:4px solid ' + color + ';background:#fff">' +
-      '<div style="font-size:0.84rem;color:var(--ink)">PHQ-9-Ergebnis: <strong style="color:' + color + '">' + r.score + '\u202f/\u202f27 — ' + label + '</strong></div>' +
-      (note ? '<div style="font-size:0.76rem;color:var(--ink3);margin-top:3px">' + note + '</div>' : '') +
-      '<div style="font-size:0.72rem;color:var(--ink3);margin-top:3px">Dieses Ergebnis ersetzt keine ärztliche Diagnose.</div>' +
-    '</div>';
-  }
-  if (prefix === 'gad7') {
-    if (r.score <= 4)       { label = 'Minimal (0–4)';        color = 'var(--forest)'; }
-    else if (r.score <= 9)  { label = 'Leicht (5–9)';         color = '#b8860b';  note = 'Empfehlung: Verlaufsbeobachtung.'; }
-    else if (r.score <= 14) { label = 'Mittelgradig (10–14)'; color = '#d46b08';  note = 'Empfehlung: Sprechen Sie mit Ihrer Ärztin oder Ihrem Arzt.'; }
-    else                    { label = 'Schwer (15–21)';        color = '#c0392b';  note = 'Empfehlung: Ärztliche Vorstellung empfohlen.'; }
-    return '<div style="margin:0.5rem 0 0.3rem;padding:0.75rem;border-radius:8px;border-left:4px solid ' + color + ';background:#fff">' +
-      '<div style="font-size:0.84rem;color:var(--ink)">GAD-7-Ergebnis: <strong style="color:' + color + '">' + r.score + '\u202f/\u202f21 — ' + label + '</strong></div>' +
-      (note ? '<div style="font-size:0.76rem;color:var(--ink3);margin-top:3px">' + note + '</div>' : '') +
-      '<div style="font-size:0.72rem;color:var(--ink3);margin-top:3px">Dieses Ergebnis ersetzt keine ärztliche Diagnose.</div>' +
-    '</div>';
-  }
-  // WHO-5
-  var pct = Math.round(r.score * 4);
-  set('who5_prozent', String(pct));
-  if (pct >= 68)      { label = 'Gut ('     + pct + '\u202f%)';     color = 'var(--forest)'; }
-  else if (pct >= 50) { label = 'Mittel ('  + pct + '\u202f%)';     color = '#b8860b'; }
-  else                { label = 'Niedrig (' + pct + '\u202f%)';     color = '#c0392b';
-    note = 'Hinweis: Ein Wert unter 50\u202f% empfiehlt ein Gespräch mit Ihrer Ärztin oder Ihrem Arzt.'; }
-  return '<div style="margin:0.5rem 0 0.3rem;padding:0.75rem;border-radius:8px;border-left:4px solid ' + color + ';background:#fff">' +
-    '<div style="font-size:0.84rem;color:var(--ink)">WHO-5-Ergebnis: <strong style="color:' + color + '">' + r.score + '\u202f/\u202f25 (' + pct + '\u202f%) — ' + label + '</strong></div>' +
-    (note ? '<div style="font-size:0.76rem;color:var(--ink3);margin-top:3px">' + note + '</div>' : '') +
-    '<div style="font-size:0.72rem;color:var(--ink3);margin-top:3px">Dieses Ergebnis ersetzt keine ärztliche Diagnose.</div>' +
-  '</div>';
-}
-
-function promRenderBlock(prefix, fragen) {
-  return fragen.map(function(q, i) { return promRadioRow(prefix, i + 1, q); }).join('');
-}
-
 function esc(s) { return String(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
 
 function validateField(el) {
@@ -14606,7 +14513,7 @@ function stepDots() {
   ];
   var msg = msgs[0][1];
   for (var m = 0; m < msgs.length; m++) { if (pct >= msgs[m][0]) msg = msgs[m][1]; }
-  var times = {start:3,kontakte:3,infokontakte:2,finanzen:5,versich:3,immobilien:2,vertraege:3,testament:4,gesundheit:5,prom:4,pflege:5,haustiere:2,digital:4,persoenliches:3,bestattung:4,assistenten:1,notfall:2,dokumente:2,erinnerung:1,exportStep:1};
+  var times = {start:3,kontakte:3,infokontakte:2,finanzen:5,versich:3,immobilien:2,vertraege:3,testament:4,gesundheit:5,institutionen:2,pflege:5,haustiere:2,digital:4,persoenliches:3,bestattung:4,assistenten:1,notfall:2,dokumente:2,erinnerung:1,exportStep:1};
   var sid = STEPS[currentStep] ? STEPS[currentStep].id : '';
   var mins = times[sid] || 0;
   return `<div style="margin:0.6rem 0">
@@ -14625,7 +14532,7 @@ function stepDots() {
 
 function navButtons(hideBack=false, lastStep=false) {
   const done = isStepDone(currentStep);
-  const isExport = STEPS[currentStep].id === 'exportStep' || STEPS[currentStep].id === 'einstellungen';
+  const isExport = STEPS[currentStep].id === 'exportStep' || STEPS[currentStep].id === 'einstellungen' || STEPS[currentStep].id === 'institutionen';
 
   // Fokus-Modus: nur durch relevante Steps navigieren, X/Y anzeigen
   if (window._goalMode && window._goalRelevant) {
@@ -14660,7 +14567,648 @@ function navButtons(hideBack=false, lastStep=false) {
   </div>`;
 }
 
+// ═══════════════════════════════════════════════
+// COMPANION-TEMPLATE-MECHANISMUS (beta.12)
+// Offline-Loader für externe Fragebogen-Vorlagen.
+// Keine Netzwerkzugriffe. Keine Code-Ausführung aus Templates.
+// ═══════════════════════════════════════════════
+
+// Validator — prüft, ob ein Objekt ein gültiges Companion-Template ist.
+// Gibt ein Array mit Fehlertexten zurück; leeres Array bedeutet gültig.
+function tplValidate(t) {
+  const errs = [];
+  if (!t || typeof t !== 'object') { errs.push('Datei enthält kein Objekt.'); return errs; }
+  if (t.schemaVersion !== '1.0') errs.push('Feld „schemaVersion“ muss „1.0“ sein.');
+  if (typeof t.id !== 'string' || !/^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/.test(t.id)) errs.push('Feld „id“ fehlt oder ist ungültig.');
+  if (typeof t.version !== 'string' || !/^\d+\.\d+\.\d+$/.test(t.version)) errs.push('Feld „version“ muss im Format X.Y.Z vorliegen.');
+  if (!t.title || typeof t.title.short !== 'string' || typeof t.title.full !== 'string') errs.push('Feld „title.short“ oder „title.full“ fehlt.');
+  if (typeof t.locale !== 'string' || !/^[a-z]{2}(-[A-Z]{2})?$/.test(t.locale)) errs.push('Feld „locale“ muss BCP-47 sein (z. B. de-DE).');
+  if (!t.issuer || typeof t.issuer.name !== 'string') errs.push('Feld „issuer.name“ fehlt.');
+  if (!t.scale || !Array.isArray(t.scale.options) || t.scale.options.length < 2) errs.push('Feld „scale.options“ braucht mindestens zwei Einträge.');
+  if (!Array.isArray(t.items) || t.items.length < 1) errs.push('Feld „items“ fehlt oder ist leer.');
+  // Items im Detail pruefen (relevant ab Renderer-Schritt)
+  if (Array.isArray(t.items)) {
+    const seenItemIds = {};
+    t.items.forEach(function (it, i) {
+      if (!it || typeof it !== 'object') {
+        errs.push('Item ' + (i + 1) + ' ist kein Objekt.');
+        return;
+      }
+      if (typeof it.id !== 'string' || !/^[A-Za-z0-9_-]+$/.test(it.id)) {
+        errs.push('Item ' + (i + 1) + ': Feld „id“ fehlt oder enthält unerlaubte Zeichen.');
+      } else if (seenItemIds[it.id]) {
+        errs.push('Item ' + (i + 1) + ': id „' + it.id + '“ ist doppelt vergeben.');
+      } else {
+        seenItemIds[it.id] = true;
+      }
+      if (typeof it.text !== 'string' || it.text.length === 0) {
+        errs.push('Item ' + (i + 1) + ': Feld „text“ fehlt oder ist leer.');
+      }
+    });
+  }
+  // Scale-Options im Detail pruefen
+  if (t.scale && Array.isArray(t.scale.options)) {
+    t.scale.options.forEach(function (opt, i) {
+      if (!opt || typeof opt !== 'object') {
+        errs.push('Antwort-Option ' + (i + 1) + ' ist kein Objekt.');
+        return;
+      }
+      if (typeof opt.value !== 'number' || !isFinite(opt.value)) {
+        errs.push('Antwort-Option ' + (i + 1) + ': Feld „value“ muss eine Zahl sein.');
+      }
+      if (typeof opt.label !== 'string' || opt.label.length === 0) {
+        errs.push('Antwort-Option ' + (i + 1) + ': Feld „label“ fehlt oder ist leer.');
+      }
+    });
+  }
+  const validMethods = ['sum', 'sumPercent', 'sumInverted', 'sumInvertedPercent'];
+  if (!t.scoring || validMethods.indexOf(t.scoring.method) < 0) errs.push('Feld „scoring.method“ muss einer von ' + validMethods.join(', ') + ' sein.');
+  if (!t.scoring || !Array.isArray(t.scoring.ranges) || t.scoring.ranges.length < 1) errs.push('Feld „scoring.ranges“ fehlt.');
+  // Ranges im Detail pruefen (relevant ab Scoring-Schritt)
+  if (t.scoring && Array.isArray(t.scoring.ranges)) {
+    t.scoring.ranges.forEach(function (r, i) {
+      if (!r || typeof r !== 'object') {
+        errs.push('Score-Bereich ' + (i + 1) + ' ist kein Objekt.');
+        return;
+      }
+      if (typeof r.min !== 'number') errs.push('Score-Bereich ' + (i + 1) + ': Feld „min“ muss eine Zahl sein.');
+      if (typeof r.max !== 'number') errs.push('Score-Bereich ' + (i + 1) + ': Feld „max“ muss eine Zahl sein.');
+      if (typeof r.min === 'number' && typeof r.max === 'number' && r.min > r.max) {
+        errs.push('Score-Bereich ' + (i + 1) + ': „min“ darf nicht größer als „max“ sein.');
+      }
+      if (typeof r.category !== 'string' || r.category.length === 0) {
+        errs.push('Score-Bereich ' + (i + 1) + ': Feld „category“ fehlt oder ist leer.');
+      }
+    });
+  }
+  if (!t.license || typeof t.license.id !== 'string') errs.push('Feld „license.id“ fehlt.');
+  // LOINC-Objekt auf Template-Ebene (optional)
+  if (t.loinc !== undefined) {
+    if (!t.loinc || typeof t.loinc !== 'object') {
+      errs.push('Feld „loinc“ muss ein Objekt sein, falls vorhanden.');
+    } else if (typeof t.loinc.code !== 'string' || t.loinc.code.length === 0) {
+      errs.push('Feld „loinc.code“ muss ein nicht-leerer String sein, falls „loinc“ vorhanden.');
+    }
+  }
+  // LOINC-Objekte auf Item-Ebene (optional)
+  if (Array.isArray(t.items)) {
+    t.items.forEach(function (it, i) {
+      if (it && it.loinc !== undefined) {
+        if (!it.loinc || typeof it.loinc !== 'object') {
+          errs.push('Item ' + (i + 1) + ': Feld „loinc“ muss ein Objekt sein, falls vorhanden.');
+        } else if (typeof it.loinc.code !== 'string' || it.loinc.code.length === 0) {
+          errs.push('Item ' + (i + 1) + ': Feld „loinc.code“ muss ein nicht-leerer String sein, falls „loinc“ vorhanden.');
+        }
+      }
+    });
+  }
+  // Semantik: Safety-Regeln müssen auf existierende Items verweisen
+  if (Array.isArray(t.safety) && Array.isArray(t.items)) {
+    const ids = t.items.map(function (i) { return i && i.id; });
+    const validOps = ['eq', 'ne', 'lt', 'lte', 'gt', 'gte'];
+    t.safety.forEach(function (r, i) {
+      if (!r || typeof r !== 'object') {
+        errs.push('Safety-Regel ' + (i + 1) + ' ist kein Objekt.');
+        return;
+      }
+      // Bedingungs-Prüfung
+      if (!r.when || typeof r.when !== 'object') {
+        errs.push('Safety-Regel ' + (i + 1) + ': Feld „when“ fehlt.');
+      } else {
+        if (ids.indexOf(r.when.itemId) < 0) {
+          errs.push('Safety-Regel ' + (i + 1) + ' verweist auf unbekanntes Item „' + r.when.itemId + '“.');
+        }
+        if (validOps.indexOf(r.when.op) < 0) {
+          errs.push('Safety-Regel ' + (i + 1) + ': Feld „when.op“ muss einer von ' + validOps.join(', ') + ' sein.');
+        }
+        if (typeof r.when.value !== 'number' || !isFinite(r.when.value)) {
+          errs.push('Safety-Regel ' + (i + 1) + ': Feld „when.value“ muss eine Zahl sein.');
+        }
+      }
+      // Aktions-Prüfung
+      if (!r.action || typeof r.action !== 'object') {
+        errs.push('Safety-Regel ' + (i + 1) + ': Feld „action“ fehlt.');
+      } else {
+        if (r.action.type !== 'showWarning') {
+          errs.push('Safety-Regel ' + (i + 1) + ': Feld „action.type“ muss „showWarning“ sein (v1.0).');
+        }
+        const hasTitle = typeof r.action.title === 'string' && r.action.title.length > 0;
+        const hasMessage = typeof r.action.message === 'string' && r.action.message.length > 0;
+        if (!hasTitle && !hasMessage) {
+          errs.push('Safety-Regel ' + (i + 1) + ': mindestens „action.title“ oder „action.message“ muss vorhanden sein.');
+        }
+        // Optionale Ressourcen
+        if (r.action.resources !== undefined && !Array.isArray(r.action.resources)) {
+          errs.push('Safety-Regel ' + (i + 1) + ': Feld „action.resources“ muss ein Array sein.');
+        }
+        if (Array.isArray(r.action.resources)) {
+          r.action.resources.forEach(function (res, j) {
+            if (!res || typeof res !== 'object') {
+              errs.push('Safety-Regel ' + (i + 1) + ', Ressource ' + (j + 1) + ': ist kein Objekt.');
+              return;
+            }
+            if (typeof res.name !== 'string' || res.name.length === 0) {
+              errs.push('Safety-Regel ' + (i + 1) + ', Ressource ' + (j + 1) + ': Feld „name“ fehlt.');
+            }
+          });
+        }
+      }
+    });
+  }
+  return errs;
+}
+
+// Liste der geladenen Templates holen
+function tplGetLoaded() {
+  try { return JSON.parse(get('tpl_loaded', '[]')) || []; }
+  catch (e) { return []; }
+}
+
+// Ein Template speichern (ersetzt bestehendes mit gleicher id)
+function tplSave(t) {
+  const list = tplGetLoaded();
+  const idx = list.findIndex(function (x) { return x.id === t.id; });
+  if (idx >= 0) list[idx] = t; else list.push(t);
+  set('tpl_loaded', JSON.stringify(list));
+}
+
+// Ein Template entfernen
+function tplRemove(id) {
+  vivoConfirm('Diese Vorlage wirklich entfernen?', function () {
+    const list = tplGetLoaded().filter(function (x) { return x.id !== id; });
+    set('tpl_loaded', JSON.stringify(list));
+    renderStep();
+  });
+}
+
+// Datei-Inhalt verarbeiten (gemeinsam für Dateidialog und Drag-&-Drop)
+function tplLoadFromFile(file) {
+  const reader = new FileReader();
+  reader.onload = function (ev) {
+    let obj = null;
+    try { obj = JSON.parse(ev.target.result); }
+    catch (e) { alert('Die Datei enthält kein gültiges JSON: ' + e.message); return; }
+    const errs = tplValidate(obj);
+    if (errs.length > 0) {
+      alert('Die Datei ist kein gültiges Companion-Template:\n\n- ' + errs.join('\n- '));
+      return;
+    }
+    tplSave(obj);
+    renderStep();
+  };
+  reader.onerror = function () { alert('Die Datei konnte nicht gelesen werden.'); };
+  reader.readAsText(file);
+}
+
+// Dateidialog öffnen
+function tplOpenFileDialog() {
+  const inp = document.getElementById('tpl-file-input');
+  if (inp) inp.click();
+}
+
+// Drag-&-Drop-Handler
+function tplOnDragOver(ev) { ev.preventDefault(); ev.currentTarget.style.background = 'var(--beige-dk)'; }
+function tplOnDragLeave(ev) { ev.currentTarget.style.background = ''; }
+function tplOnDrop(ev) {
+  ev.preventDefault();
+  ev.currentTarget.style.background = '';
+  const f = ev.dataTransfer && ev.dataTransfer.files && ev.dataTransfer.files[0];
+  if (f) tplLoadFromFile(f);
+}
+
+// HTML-Escape fuer Template-Inhalte. Wichtig: Inhalte kommen aus geladenen
+// Dateien und werden in den DOM eingesetzt — ohne Escape waere XSS moeglich.
+function tplEscape(s) {
+  if (s === null || s === undefined) return '';
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+// Fragen eines Templates als Chip-Button-Reihen rendern.
+function tplRenderItems(t) {
+  if (!Array.isArray(t.items) || !t.scale || !Array.isArray(t.scale.options)) return '';
+  let html = '';
+  t.items.forEach(function (item, idx) {
+    const key = 'tpl_' + t.id + '_' + item.id;
+    const val = get(key, '');
+    html += '<div style="margin-bottom:0.75rem;padding:0.6rem 0.7rem;background:var(--beige);border-radius:8px">';
+    html += '<div style="font-size:0.84rem;color:var(--ink);margin-bottom:0.45rem;line-height:1.4"><strong>' + (idx + 1) + '.</strong> ' + tplEscape(item.text) + '</div>';
+    html += '<div style="display:flex;flex-wrap:wrap;gap:5px">';
+    t.scale.options.forEach(function (opt) {
+      const v = String(opt.value);
+      const sel = (String(val) === v);
+      html += '<label style="display:flex;align-items:center;font-size:0.76rem;cursor:pointer;padding:4px 10px;border-radius:16px;border:1.5px solid '
+        + (sel ? 'var(--forest)' : 'var(--border)') + ';background:'
+        + (sel ? 'var(--forest)' : 'var(--bg,#fff)') + ';color:'
+        + (sel ? '#fff' : 'var(--ink2)') + '">'
+        + '<input type="radio" name="' + tplEscape(key) + '" value="' + tplEscape(v) + '" ' + (sel ? 'checked' : '')
+        + ' onchange="set(\'' + tplEscape(key) + '\',this.value);renderStep()" style="position:absolute;opacity:0;pointer-events:none">'
+        + tplEscape(opt.label) + '</label>';
+    });
+    html += '</div></div>';
+  });
+  return html;
+}
+
+// Zaehlt, wie viele Fragen eines Templates bereits beantwortet sind.
+// Dient nur der Fortschrittsanzeige — echtes Scoring folgt in Schritt 4.
+function tplCountAnswered(t) {
+  if (!Array.isArray(t.items)) return { answered: 0, total: 0 };
+  let answered = 0;
+  t.items.forEach(function (item) {
+    const v = get('tpl_' + t.id + '_' + item.id, '');
+    if (v !== '' && v !== null && v !== undefined) answered++;
+  });
+  return { answered: answered, total: t.items.length };
+}
+
+// Berechnet den Gesamt-Score eines Templates.
+// Gibt null zurueck, wenn noch nicht alle Fragen beantwortet sind.
+// Unterstuetzt vier Scoring-Methoden: sum, sumPercent, sumInverted,
+// sumInvertedPercent — rein deklarativ, kein Code aus Templates.
+function tplCalcScore(t) {
+  if (!Array.isArray(t.items) || !t.scale || !Array.isArray(t.scale.options) || !t.scoring) return null;
+  const prog = tplCountAnswered(t);
+  if (prog.answered !== prog.total || prog.total === 0) return null;
+
+  // Summe der Antwortwerte
+  let sum = 0;
+  t.items.forEach(function (item) {
+    const v = get('tpl_' + t.id + '_' + item.id, '');
+    sum += Number(v);
+  });
+
+  // Maximum pro Item ist die hoechste scale.option.value
+  let maxPerItem = -Infinity;
+  t.scale.options.forEach(function (opt) {
+    if (typeof opt.value === 'number' && opt.value > maxPerItem) maxPerItem = opt.value;
+  });
+  const maxTotal = maxPerItem * t.items.length;
+
+  switch (t.scoring.method) {
+    case 'sum':
+      return sum;
+    case 'sumInverted':
+      return maxTotal - sum;
+    case 'sumPercent':
+      return maxTotal > 0 ? Math.round((sum / maxTotal) * 100) : 0;
+    case 'sumInvertedPercent':
+      return maxTotal > 0 ? Math.round(((maxTotal - sum) / maxTotal) * 100) : 0;
+    default:
+      return null;
+  }
+}
+
+// Findet die zum Score passende Range-Kategorie.
+function tplFindRange(t, score) {
+  if (score === null || score === undefined || !t.scoring || !Array.isArray(t.scoring.ranges)) return null;
+  for (let i = 0; i < t.scoring.ranges.length; i++) {
+    const r = t.scoring.ranges[i];
+    if (r && typeof r.min === 'number' && typeof r.max === 'number'
+        && score >= r.min && score <= r.max) {
+      return r;
+    }
+  }
+  return null;
+}
+
+// Rendert die Auswertungsbox eines Templates (Score plus Kategorie).
+// Bei Teil-Beantwortung: neutraler Hinweis, keine Werte.
+function tplRenderScore(t) {
+  const score = tplCalcScore(t);
+  if (score === null) {
+    return '<div style="padding:0.75rem;margin-top:0.75rem;background:var(--beige);border-radius:6px;color:var(--ink2);font-size:0.85rem;text-align:center">Auswertung folgt, sobald alle Fragen beantwortet sind.</div>';
+  }
+  const isPercent = (t.scoring.method === 'sumPercent' || t.scoring.method === 'sumInvertedPercent');
+  const scoreText = isPercent ? (score + ' %') : String(score);
+  const range = tplFindRange(t, score);
+  let html = '<div style="padding:0.8rem;margin-top:0.75rem;background:var(--bg,#fff);border:1.5px solid var(--forest);border-radius:8px">';
+  html += '<div style="font-size:0.82rem;color:var(--ink2);margin-bottom:2px">Gesamt-Score</div>';
+  html += '<div style="font-size:1.5rem;font-weight:bold;color:var(--forest);line-height:1.1">' + tplEscape(scoreText) + '</div>';
+  if (range) {
+    html += '<div style="font-size:0.98rem;color:var(--ink);margin-top:8px;font-weight:bold">' + tplEscape(range.category) + '</div>';
+    if (range.description) {
+      html += '<div style="font-size:0.85rem;color:var(--ink2);margin-top:3px;line-height:1.45">' + tplEscape(range.description) + '</div>';
+    }
+  } else {
+    html += '<div style="font-size:0.82rem;color:var(--ink2);margin-top:6px">Zum Score liegt keine passende Bewertung in der Vorlage vor.</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+// Sicherheits-Helfer: URL auf http/https beschraenken.
+// Blockiert javascript:, data:, file: und aehnliche gefaehrliche Schemata
+// aus geladenen Template-Vorlagen.
+function tplSafeUrl(u) {
+  if (typeof u !== 'string') return '';
+  const s = u.trim();
+  if (/^https?:\/\//i.test(s)) return s;
+  return '';
+}
+
+// Sicherheits-Helfer: Telefonnummer auf typische Zeichen begrenzen.
+function tplSafeTel(t) {
+  if (typeof t !== 'string') return '';
+  return t.replace(/[^0-9\s+\-()]/g, '');
+}
+
+// Wertet eine einzelne Safety-Bedingung aus (deklarative Operatoren).
+function tplEvalCondition(when, rawValue) {
+  if (!when || typeof when.op !== 'string') return false;
+  const v = Number(rawValue);
+  const target = Number(when.value);
+  if (isNaN(v) || isNaN(target)) return false;
+  switch (when.op) {
+    case 'eq':  return v === target;
+    case 'ne':  return v !== target;
+    case 'lt':  return v < target;
+    case 'lte': return v <= target;
+    case 'gt':  return v > target;
+    case 'gte': return v >= target;
+    default: return false;
+  }
+}
+
+// Prueft alle Safety-Regeln eines Templates.
+// Gibt ein Array der ausgeloesten Regeln zurueck.
+// Fehlende Antworten loesen keine Regel aus.
+function tplCheckSafety(t) {
+  if (!Array.isArray(t.safety)) return [];
+  const triggered = [];
+  t.safety.forEach(function (rule) {
+    if (!rule || !rule.when || !rule.action) return;
+    const val = get('tpl_' + t.id + '_' + rule.when.itemId, '');
+    if (val === '' || val === null || val === undefined) return;
+    if (tplEvalCondition(rule.when, val)) triggered.push(rule);
+  });
+  return triggered;
+}
+
+// Rendert ausgeloeste Sicherheitshinweise als HTML.
+// Rote Umrandung, fettgedruckte Ueberschrift, optionale Ressourcen mit
+// klickbaren Telefon- und Webadress-Links.
+function tplRenderSafety(t) {
+  const triggered = tplCheckSafety(t);
+  if (triggered.length === 0) return '';
+  let html = '';
+  triggered.forEach(function (rule) {
+    if (!rule.action || rule.action.type !== 'showWarning') return;
+    html += '<div style="padding:0.85rem;margin-top:0.75rem;background:var(--red-lt,#fff5f5);border:2px solid var(--red,#c0392b);border-radius:8px;color:var(--ink)">';
+    if (rule.action.title) {
+      html += '<div style="font-weight:bold;font-size:1rem;color:var(--red,#c0392b);margin-bottom:6px">' + tplEscape(rule.action.title) + '</div>';
+    }
+    if (rule.action.message) {
+      html += '<div style="font-size:0.88rem;line-height:1.5">' + tplEscape(rule.action.message) + '</div>';
+    }
+    if (Array.isArray(rule.action.resources) && rule.action.resources.length > 0) {
+      html += '<div style="font-size:0.85rem;margin-top:10px;padding-top:8px;border-top:1px solid var(--red,#c0392b)">';
+      rule.action.resources.forEach(function (res) {
+        if (!res || typeof res.name !== 'string') return;
+        html += '<div style="margin-bottom:5px"><strong>' + tplEscape(res.name) + '</strong>';
+        if (res.phone) {
+          const telSafe = tplSafeTel(res.phone);
+          const telStripped = telSafe.replace(/\s/g, '');
+          if (telStripped.length > 0) {
+            html += ' &middot; <a href="tel:' + tplEscape(telStripped) + '" style="color:var(--red,#c0392b);text-decoration:underline;font-weight:bold">' + tplEscape(telSafe) + '</a>';
+          }
+        }
+        if (res.url) {
+          const urlSafe = tplSafeUrl(res.url);
+          if (urlSafe) {
+            html += ' &middot; <a href="' + tplEscape(urlSafe) + '" target="_blank" rel="noopener noreferrer" style="color:var(--red,#c0392b);text-decoration:underline">' + tplEscape(urlSafe) + '</a>';
+          }
+        }
+        html += '</div>';
+      });
+      html += '</div>';
+    }
+    html += '</div>';
+  });
+  return html;
+}
+
+// ---- FHIR-Export (Schritt 6) ----
+// Baut ein QuestionnaireResponse aus den bisherigen Antworten.
+// Enthaelt linkId je Item, optional LOINC-Code, Antwortwert als Integer.
+function tplBuildQuestionnaireResponse(t) {
+  if (!Array.isArray(t.items)) return null;
+  const items = [];
+  t.items.forEach(function (item) {
+    const key = 'tpl_' + t.id + '_' + item.id;
+    const val = get(key, '');
+    if (val === '' || val === null || val === undefined) return;
+    const entry = {
+      linkId: item.id,
+      answer: [{ valueInteger: Number(val) }]
+    };
+    if (typeof item.text === 'string' && item.text.length > 0) entry.text = item.text;
+    if (item.loinc && typeof item.loinc.code === 'string') {
+      const coding = { system: 'http://loinc.org', code: item.loinc.code };
+      if (typeof item.loinc.display === 'string' && item.loinc.display.length > 0) {
+        coding.display = item.loinc.display;
+      }
+      entry.code = [coding];
+    }
+    items.push(entry);
+  });
+  const prog = tplCountAnswered(t);
+  const qr = {
+    resourceType: 'QuestionnaireResponse',
+    status: (prog.answered === prog.total && prog.total > 0) ? 'completed' : 'in-progress',
+    authored: new Date().toISOString(),
+    questionnaire: t.id,
+    item: items
+  };
+  return qr;
+}
+
+// Baut eine Observation aus dem berechneten Gesamt-Score.
+// Nur bei vollstaendiger Beantwortung (sonst null).
+function tplBuildObservation(t) {
+  const score = tplCalcScore(t);
+  if (score === null) return null;
+  const isPercent = (t.scoring.method === 'sumPercent' || t.scoring.method === 'sumInvertedPercent');
+  const range = tplFindRange(t, score);
+  const obs = {
+    resourceType: 'Observation',
+    status: 'final',
+    effectiveDateTime: new Date().toISOString(),
+    code: {}
+  };
+  if (t.loinc && typeof t.loinc.code === 'string') {
+    const coding = { system: 'http://loinc.org', code: t.loinc.code };
+    if (typeof t.loinc.display === 'string' && t.loinc.display.length > 0) {
+      coding.display = t.loinc.display;
+    }
+    obs.code.coding = [coding];
+  }
+  if (t.title && typeof t.title.full === 'string' && t.title.full.length > 0) {
+    obs.code.text = t.title.full;
+  } else if (t.title && typeof t.title.short === 'string') {
+    obs.code.text = t.title.short;
+  }
+  if (isPercent) {
+    obs.valueQuantity = {
+      value: score,
+      unit: '%',
+      system: 'http://unitsofmeasure.org',
+      code: '%'
+    };
+  } else {
+    obs.valueInteger = score;
+  }
+  if (range && typeof range.category === 'string') {
+    obs.interpretation = [{ text: range.category }];
+  }
+  return obs;
+}
+
+// Fasst QuestionnaireResponse und Observation in einem FHIR-Bundle zusammen.
+function tplBuildFhirBundle(t) {
+  const entries = [];
+  const qr = tplBuildQuestionnaireResponse(t);
+  if (qr) entries.push({ resource: qr });
+  const obs = tplBuildObservation(t);
+  if (obs) entries.push({ resource: obs });
+  const bundle = {
+    resourceType: 'Bundle',
+    type: 'collection',
+    timestamp: new Date().toISOString(),
+    entry: entries
+  };
+  if (typeof t.fhirProfile === 'string' && t.fhirProfile.length > 0) {
+    bundle.meta = { profile: [t.fhirProfile] };
+  }
+  return bundle;
+}
+
+// Loest den Download des FHIR-Bundles als JSON-Datei aus.
+function tplDownloadFhir(templateId) {
+  const list = tplGetLoaded();
+  const t = list.find(function (x) { return x.id === templateId; });
+  if (!t) return;
+  const bundle = tplBuildFhirBundle(t);
+  const json = JSON.stringify(bundle, null, 2);
+  const blob = new Blob([json], { type: 'application/fhir+json' });
+  const url = URL.createObjectURL(blob);
+  const date = new Date().toISOString().split('T')[0];
+  const filename = t.id + '-' + date + '.fhir.json';
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+}
+
+// ---- QR-Uebergabe (Schritt 7) ----
+// Baut eine kompakte Text-Darstellung des Template-Ergebnisses fuer den QR-Code.
+// Format: VIVO-PROM|{id}|{version}|Score:{n}|Kat:{category}|Datum:{YYYY-MM-DD}|Antworten:{a,b,c}
+// Pipe-separiert, konsistent mit generateQRStickers(). Kompakt und auch
+// ohne spezielle Software mit dem Auge lesbar.
+function tplBuildQrText(t) {
+  if (!Array.isArray(t.items)) return '';
+  const score = tplCalcScore(t);
+  const isPercent = (t.scoring && (t.scoring.method === 'sumPercent' || t.scoring.method === 'sumInvertedPercent'));
+  const range = (score !== null) ? tplFindRange(t, score) : null;
+  const date = new Date().toISOString().split('T')[0];
+  const answers = [];
+  t.items.forEach(function (item) {
+    answers.push(get('tpl_' + t.id + '_' + item.id, ''));
+  });
+  let s = 'VIVO-PROM|' + t.id + '|' + (t.version || '');
+  if (score !== null) s += '|Score:' + (isPercent ? score + '%' : String(score));
+  if (range && typeof range.category === 'string') s += '|Kat:' + range.category;
+  s += '|Datum:' + date;
+  s += '|Antworten:' + answers.join(',');
+  return s;
+}
+
+// Rendert den QR-Code als inline-Bild unterhalb des FHIR-Knopfs.
+// Nur sichtbar, wenn das Template komplett beantwortet ist.
+function tplRenderQr(t) {
+  const prog = tplCountAnswered(t);
+  if (prog.answered !== prog.total || prog.total === 0) return '';
+  if (typeof makeQRDataUrl !== 'function') return '';
+  const text = tplBuildQrText(t);
+  if (!text) return '';
+  const dataUrl = makeQRDataUrl(text, 5);
+  if (!dataUrl) return '';
+  return '<div style="padding:0.8rem;margin-top:0.75rem;background:var(--beige);border-radius:8px;text-align:center">'
+    + '<div style="font-size:0.82rem;color:var(--ink2);margin-bottom:6px;font-weight:bold">QR-Code zur Weitergabe</div>'
+    + '<img src="' + tplEscape(dataUrl) + '" alt="QR-Code mit Ergebnis" style="max-width:180px;width:100%;height:auto;background:#fff;padding:4px;border-radius:4px">'
+    + '<div style="font-size:0.72rem;color:var(--ink3);margin-top:6px;line-height:1.4">Empfänger scannt mit Handy oder Scanner-App</div>'
+    + '</div>';
+}
+
 const STEP_RENDERERS = {
+  institutionen: () => {
+    const list = tplGetLoaded();
+    let cards = '';
+    if (list.length === 0) {
+      cards = '<div style="padding:1rem;background:var(--beige);border-radius:8px;color:var(--ink2);text-align:center">Noch keine Fragebogen-Vorlage geladen.</div>';
+    } else {
+      cards = list.map(function (t) {
+        const prog = tplCountAnswered(t);
+        const progText = prog.answered + ' von ' + prog.total + ' Fragen beantwortet';
+        const isComplete = (prog.answered === prog.total && prog.total > 0);
+        const fhirBtn = isComplete
+          ? '<div style="margin-top:0.75rem;text-align:center"><button class="btn-nav primary" onclick="tplDownloadFhir(\'' + tplEscape(t.id) + '\')" style="font-size:0.88rem">Ergebnis herunterladen</button><div style="font-size:0.78rem;color:var(--ink3);margin-top:4px">Als strukturierte Datei zum Weiterreichen</div></div>'
+          : '';
+        return '<div style="margin-bottom:1.25rem">'
+          // Metadaten-Karte (oben)
+          + '<div style="padding:1rem;background:var(--beige);border-radius:8px 8px 0 0">'
+          + '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">'
+          + '<div style="flex:1;min-width:0">'
+          + '<div style="font-weight:bold;font-size:1.05rem">' + tplEscape(t.title.short) + ' — Version ' + tplEscape(t.version) + '</div>'
+          + '<div style="font-size:0.9rem;color:var(--ink2);margin-top:2px">' + tplEscape(t.title.full) + '</div>'
+          + '<div style="font-size:0.85rem;color:var(--ink2);margin-top:6px">Herausgeber: ' + tplEscape(t.issuer.name) + '</div>'
+          + '<div style="font-size:0.85rem;color:var(--ink2)">Fragen: ' + t.items.length + ' &middot; Sprache: ' + tplEscape(t.locale) + ' &middot; Lizenz: ' + tplEscape(t.license.id) + '</div>'
+          + '<div style="font-size:0.82rem;color:var(--forest);margin-top:6px;font-weight:bold">' + progText + '</div>'
+          + '</div>'
+          + '<button class="btn-remove" onclick="tplRemove(\'' + tplEscape(t.id) + '\')" title="Vorlage entfernen">✕</button>'
+          + '</div>'
+          + '</div>'
+          // Fragen-Bereich (unten, abgesetzt)
+          + '<div style="padding:0.75rem;background:var(--bg,#fff);border:1px solid var(--border);border-top:none;border-radius:0 0 8px 8px">'
+          + tplRenderItems(t)
+          + tplRenderSafety(t)
+          + tplRenderScore(t)
+          + fhirBtn
+          + tplRenderQr(t)
+          + '</div>'
+          + '</div>';
+      }).join('');
+    }
+    return `
+    <div class="step-header">
+      <h1>Für Institutionen</h1>
+      <p>Hier finden Sie Funktionen zur strukturierten Datenweitergabe an Institutionen — Fragebögen ausfüllen, Ergebnisse übergeben.</p>
+      ${stepDots()}
+    </div>
+    <div style="font-size:0.82rem;color:var(--ink2);margin-bottom:1rem;line-height:1.5">
+      Vorlagen bleiben ausschließlich auf Ihrem Gerät und werden nicht ins Internet gesendet. Vollständig ausgefüllte Vorlagen können heruntergeladen oder als QR-Code weitergegeben werden.
+    </div>
+
+    <input type="file" id="tpl-file-input" accept="application/json,.json" style="display:none" onchange="if(this.files[0]) tplLoadFromFile(this.files[0]); this.value='';">
+
+    <div ondragover="tplOnDragOver(event)" ondragleave="tplOnDragLeave(event)" ondrop="tplOnDrop(event)"
+         style="border:2px dashed var(--border);border-radius:10px;padding:1.5rem;text-align:center;margin-bottom:1rem;transition:background 0.2s">
+      <div style="margin-bottom:0.8rem;color:var(--ink2)">Datei hier ablegen oder:</div>
+      <button class="btn-nav primary" onclick="tplOpenFileDialog()">Datei auswählen</button>
+    </div>
+
+    <h3 style="margin:1rem 0 0.6rem">Geladene Vorlagen (${list.length})</h3>
+    ${cards}
+
+    ${navButtons()}`;
+  },
   start: () => `
     <div class="step-header">
       <h1>Über mich</h1>
@@ -15241,39 +15789,29 @@ const STEP_RENDERERS = {
       </div>
       <div style="margin-top:12px">${field('befund_sonstiges','Weitere Befunde','z. B. Lungenfunktion, Neurologiebericht')}</div>
     `)}
-    ${navButtons()}`,
 
-  prom: () => `
-    <div class="step-header">
-      <h1>Wohlbefinden & Seele</h1>
-      <p>Drei kurze Fragebögen zur psychischen Gesundheit — freiwillig, vertraulich, nur auf Ihrem Gerät.</p>
-      ${stepDots()}
-    </div>
-    <div class="infobox" style="margin-bottom:1rem">Alle Angaben sind freiwillig. Die Auswertung bleibt ausschließlich auf Ihrem Gerät. Niemand sieht diese Daten — außer Sie geben sie ausdrücklich weiter.</div>
 
-    <div class="field-section-title">PHQ-9 — Stimmung (letzte 2 Wochen)</div>
-    <div style="font-size:0.78rem;color:var(--ink3);margin-bottom:0.5rem">9 Fragen · Kroenke & Spitzer · Public Domain</div>
-    <div style="font-size:0.82rem;color:var(--ink2);margin-bottom:0.75rem;line-height:1.4">Wie oft wurden Sie in den letzten zwei Wochen durch folgende Probleme beeinträchtigt?</div>
-    ${promRenderBlock('phq9', PHQ9_FRAGEN)}
-    ${promScoreBox('phq9', 9)}
-
-    <div class="field-section-title" style="margin-top:1.5rem">GAD-7 — Angst (letzte 2 Wochen)</div>
-    <div style="font-size:0.78rem;color:var(--ink3);margin-bottom:0.5rem">7 Fragen · Spitzer et al. · Public Domain</div>
-    <div style="font-size:0.82rem;color:var(--ink2);margin-bottom:0.75rem;line-height:1.4">Wie oft wurden Sie in den letzten zwei Wochen durch folgende Probleme beeinträchtigt?</div>
-    ${promRenderBlock('gad7', GAD7_FRAGEN)}
-    ${promScoreBox('gad7', 7)}
-
-    <div class="field-section-title" style="margin-top:1.5rem">WHO-5 — Wohlbefinden (letzte 2 Wochen)</div>
-    <div style="font-size:0.78rem;color:var(--ink3);margin-bottom:0.5rem">5 Fragen · Weltgesundheitsorganisation · Public Domain</div>
-    <div style="font-size:0.82rem;color:var(--ink2);margin-bottom:0.75rem;line-height:1.4">Wie häufig haben die folgenden Aussagen in den letzten zwei Wochen auf Sie zugetroffen?</div>
-    ${promRenderBlock('who5', WHO5_FRAGEN)}
-    ${promScoreBox('who5', 5)}
-
-    <div style="margin-top:1rem;font-size:0.74rem;color:var(--ink3);line-height:1.5;padding:0.6rem;background:var(--beige);border-radius:6px">
-      PHQ-9 und GAD-7 wurden entwickelt von Kroenke, Spitzer und Williams (Public Domain).
-      WHO-5 wurde entwickelt von der Weltgesundheitsorganisation (Public Domain).
-      Keiner dieser Fragebögen ersetzt eine ärztliche Diagnose.
-      Bei anhaltenden Beschwerden wenden Sie sich bitte an Ihre Ärztin oder Ihren Arzt.
+    <div class="field-section-title" style="margin-top:1.5rem">Daten weitergeben</div>
+    <div style="font-size:0.82rem;color:var(--ink2);margin-bottom:0.75rem;line-height:1.5">Erzeugen Sie verschlüsselte Dateien oder Codes zur gezielten Weitergabe an Institutionen. Keine Daten verlassen Ihr Gerät ohne Ihre Aktion.</div>
+    <div class="export-grid">
+      <div class="export-card" onclick="weitergabeOpen()">
+        <div class="ec-icon"></div>
+        <div class="ec-title">Weitergabe-Datei</div>
+        <div class="ec-sub">Verschlüsselte Datei für Institution, Familie oder Behörde erstellen</div>
+        <div class="ec-btn">Erstellen</div>
+      </div>
+      <div class="export-card" onclick="qrUebergabeOpen()">
+        <div class="ec-icon"></div>
+        <div class="ec-title">QR-Übergabe</div>
+        <div class="ec-sub">Verschlüsselten QR-Code für spontane Weitergabe erzeugen</div>
+        <div class="ec-btn">Erstellen</div>
+      </div>
+      <div class="export-card" onclick="qrEmpfangOpen()">
+        <div class="ec-icon"></div>
+        <div class="ec-title">QR-Code einlesen</div>
+        <div class="ec-sub">Verschlüsselten QR-Code scannen und entschlüsseln</div>
+        <div class="ec-btn">Starten</div>
+      </div>
     </div>
     ${navButtons()}`,
 
@@ -16143,28 +16681,6 @@ const STEP_RENDERERS = {
       </div>
     </div>
 
-    <div class="field-section-title" style="margin-top:1.5rem">Daten weitergeben</div>
-    <div class="infobox">Diese Funktionen erzeugen verschlüsselte Dateien oder Codes, die Sie gezielt weitergeben können. Keine Daten verlassen Ihr Gerät ohne Ihre Aktion.</div>
-    <div class="export-grid">
-      <div class="export-card" onclick="weitergabeOpen()">
-        <div class="ec-icon"></div>
-        <div class="ec-title">Weitergabe-Datei</div>
-        <div class="ec-sub">Verschluesselte Datei fuer Arzt, Familie oder Behoerde erstellen</div>
-        <div class="ec-btn">Erstellen</div>
-      </div>
-      <div class="export-card" onclick="qrUebergabeOpen()">
-        <div class="ec-icon"></div>
-        <div class="ec-title">QR-Uebergabe</div>
-        <div class="ec-sub">Verschluesselten QR-Code fuer spontane Weitergabe erzeugen</div>
-        <div class="ec-btn">Erstellen</div>
-      </div>
-      <div class="export-card" onclick="qrEmpfangOpen()">
-        <div class="ec-icon"></div>
-        <div class="ec-title">QR-Code einlesen</div>
-        <div class="ec-sub">Verschluesselten QR-Code scannen und entschluesseln</div>
-        <div class="ec-btn">Starten</div>
-      </div>
-    </div>
 
     <div class="field-section-title" style="margin-top:1.5rem">Eigener Datenspeicher</div>
     <div class="infobox">Ein Solid Pod ist ein persönlicher Datenspeicher im Internet, den nur Sie kontrollieren — wie eine eigene Cloud ohne fremdes Unternehmen dahinter. Anbieter wie solidcommunity.net bieten kostenlose Pods an. Diese Funktion ist kein Werkzeug zur Weitergabe an andere: Sie exportieren Ihre Daten als Datei und laden diese selbst in Ihren Pod hoch.</div>

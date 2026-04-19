@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "1.0",
+  "id": "phq9-de-v1",
+  "version": "1.0.0",
+  "locale": "de-DE",
+  "title": {
+    "short": "PHQ-9",
+    "full": "PHQ-9 — Stimmung (letzte 2 Wochen)"
+  },
+  "issuer": {
+    "name": "Kroenke, Spitzer & Williams"
+  },
+  "license": {
+    "id": "Public Domain"
+  },
+  "loinc": {
+    "code": "44249-1"
+  },
+  "instruction": "Wie oft wurden Sie in den letzten zwei Wochen durch folgende Probleme beeinträchtigt?",
+  "scale": {
+    "options": [
+      { "value": 0, "label": "Überhaupt nicht" },
+      { "value": 1, "label": "An einzelnen Tagen" },
+      { "value": 2, "label": "Mehr als die Hälfte der Tage" },
+      { "value": 3, "label": "Beinahe jeden Tag" }
+    ]
+  },
+  "items": [
+    { "id": "PHQ9_01", "text": "Wenig Interesse oder Freude an Ihren Tätigkeiten" },
+    { "id": "PHQ9_02", "text": "Gefühl der Niedergeschlagenheit, Schwermut oder Hoffnungslosigkeit" },
+    { "id": "PHQ9_03", "text": "Schwierigkeiten, ein- oder durchzuschlafen, oder zu viel Schlafen" },
+    { "id": "PHQ9_04", "text": "Gefühl der Müdigkeit oder des Energiemangels" },
+    { "id": "PHQ9_05", "text": "Verminderter Appetit oder übermäßiges Essen" },
+    { "id": "PHQ9_06", "text": "Schlechte Meinung von sich selbst; Gefühl, ein Versager zu sein oder andere enttäuscht zu haben" },
+    { "id": "PHQ9_07", "text": "Schwierigkeiten, sich auf Dinge zu konzentrieren, z. B. beim Lesen oder Fernsehen" },
+    { "id": "PHQ9_08", "text": "Verlangsamte Bewegung oder Sprache — oder im Gegenteil: Unruhe, Umherbewegen" },
+    { "id": "PHQ9_09", "text": "Gedanken, dass Sie lieber tot wären, oder Gedanken, sich selbst Schaden zuzufügen" }
+  ],
+  "scoring": {
+    "method": "sum",
+    "ranges": [
+      { "min": 0,  "max": 4,  "category": "Minimal (0–4)",              "color": "#2e7d32" },
+      { "min": 5,  "max": 9,  "category": "Leicht (5–9)",               "color": "#b8860b", "note": "Empfehlung: Verlaufsbeobachtung." },
+      { "min": 10, "max": 14, "category": "Mittelgradig (10–14)",       "color": "#d46b08", "note": "Empfehlung: Fachärztliche Abklärung." },
+      { "min": 15, "max": 19, "category": "Mittelgradig schwer (15–19)","color": "#c0392b", "note": "Empfehlung: Ärztliche Vorstellung empfohlen." },
+      { "min": 20, "max": 27, "category": "Schwer (20–27)",             "color": "#7b0000", "note": "Empfehlung: Ärztliche Vorstellung dringend empfohlen." }
+    ]
+  },
+  "safety": [
+    {
+      "when": { "itemId": "PHQ9_09", "op": "gte", "value": 1 },
+      "action": {
+        "type": "showWarning",
+        "message": "Sie haben angegeben, Gedanken zu haben, sich selbst Schaden zuzufügen. Bitte wenden Sie sich an eine Fachkraft oder rufen Sie die Telefonseelsorge an.",
+        "resources": [
+          { "name": "Telefonseelsorge", "phone": "0800 111 0 111", "note": "Kostenlos, 24 Stunden, anonym" },
+          { "name": "Telefonseelsorge (alternativ)", "phone": "0800 111 0 222", "note": "Kostenlos, 24 Stunden, anonym" }
+        ]
+      }
+    }
+  ]
+}

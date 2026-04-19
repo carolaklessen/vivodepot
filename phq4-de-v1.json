@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "1.0",
+  "id": "phq4-de-v1",
+  "version": "1.0.0",
+  "locale": "de-DE",
+  "title": {
+    "short": "PHQ-4",
+    "full": "PHQ-4 — Ultrakurzscreening (letzte 2 Wochen)"
+  },
+  "issuer": {
+    "name": "Kroenke, Spitzer & Williams"
+  },
+  "license": {
+    "id": "Public Domain"
+  },
+  "loinc": {
+    "code": "69724-3"
+  },
+  "instruction": "Wie oft wurden Sie in den letzten zwei Wochen durch folgende Probleme beeinträchtigt?",
+  "scale": {
+    "options": [
+      { "value": 0, "label": "Überhaupt nicht" },
+      { "value": 1, "label": "An einzelnen Tagen" },
+      { "value": 2, "label": "Mehr als die Hälfte der Tage" },
+      { "value": 3, "label": "Beinahe jeden Tag" }
+    ]
+  },
+  "items": [
+    { "id": "PHQ4_01", "text": "Wenig Interesse oder Freude an Ihren Tätigkeiten" },
+    { "id": "PHQ4_02", "text": "Gefühl der Niedergeschlagenheit, Schwermut oder Hoffnungslosigkeit" },
+    { "id": "PHQ4_03", "text": "Sich nervös, ängstlich oder angespannt fühlen" },
+    { "id": "PHQ4_04", "text": "Nicht in der Lage sein, Sorgen zu stoppen oder zu kontrollieren" }
+  ],
+  "scoring": {
+    "method": "sum",
+    "ranges": [
+      { "min": 0,  "max": 2,  "category": "Normal (0–2)",        "color": "#2e7d32" },
+      { "min": 3,  "max": 5,  "category": "Leicht (3–5)",        "color": "#b8860b", "note": "Empfehlung: Weiteres Screening empfohlen." },
+      { "min": 6,  "max": 8,  "category": "Mittelgradig (6–8)",  "color": "#d46b08", "note": "Empfehlung: Fachärztliche Abklärung." },
+      { "min": 9,  "max": 12, "category": "Schwer (9–12)",       "color": "#7b0000", "note": "Empfehlung: Ärztliche Vorstellung dringend empfohlen." }
+    ],
+    "subscores": [
+      {
+        "id": "depression",
+        "label": "Depressivität",
+        "itemIds": ["PHQ4_01", "PHQ4_02"],
+        "max": 6,
+        "threshold": 3,
+        "note": "Subscore ≥ 3: PHQ-9 empfohlen."
+      },
+      {
+        "id": "anxiety",
+        "label": "Angst",
+        "itemIds": ["PHQ4_03", "PHQ4_04"],
+        "max": 6,
+        "threshold": 3,
+        "note": "Subscore ≥ 3: GAD-7 empfohlen."
+      }
+    ],
+    "routing": [
+      {
+        "when": { "subscoreId": "depression", "op": "gte", "value": 3 },
+        "action": { "type": "recommend", "instrument": "phq9-de-v1", "label": "PHQ-9 empfohlen" }
+      },
+      {
+        "when": { "subscoreId": "anxiety", "op": "gte", "value": 3 },
+        "action": { "type": "recommend", "instrument": "gad7-de-v1", "label": "GAD-7 empfohlen" }
+      }
+    ]
+  },
+  "safety": []
+}

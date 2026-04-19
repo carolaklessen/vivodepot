@@ -4,13 +4,72 @@ Alle wichtigen Änderungen werden in dieser Datei dokumentiert.
 
 ---
 
+## [1.0.0-beta.17] — April 2026
+
+### Neu
+
+- **PROM-Modul Phase 1 vollständig** — Alle vier Public-Domain-Fragebögen implementiert, FHIR-konform exportierbar, EHDS-aligniert.
+
+- **PHQ-4 Routing-UI** — Nach Ausfüllen des PHQ-4-Ultrakurzscreenings erscheint automatisch ein Hinweis mit Schaltfläche: bei Depressivitäts-Subscore ≥ 3 → PHQ-9, bei Angst-Subscore ≥ 3 → GAD-7. Scrollen direkt zum Fragebogen. Kein Routing bei unvollständigem PHQ-4.
+
+- **FHIR-Export: PROM-Ressourcen** — `generateFHIR()` erzeugt für jeden vollständig ausgefüllten PROM zwei neue FHIR-Ressourcen: `QuestionnaireResponse` (Einzelantworten mit LOINC-Fragebogen-Code) und `Observation` (Gesamtscore mit LOINC-Score-Code). WHO-5 als Prozentscore (×4). PGHD-Tag (`Patient-Generated Health Data`) im `meta.tag` — explizite EHDS-Kategorie.
+
+- **EHDS-Konformitätsindikator** — Statischer Block im Export-Step. Zweischichtig: Bürger-Schicht in einfacher Sprache, Institutions-Schicht mit technischem Zertifizierungssignal (FHIR R4 · HL7 EU Base IG 1.0 · PGHD · EUPL-1.2). Grüner linker Rand, ARIA-konform.
+
+- **JSON-Vorlagen: Ordner `templates/`** — Alle vier PROM-Vorlagen im neuen Unterordner `templates/`. Standardisiertes Schema 1.0: Pflichtfelder, LOINC-Codes, Scoring-Bereiche, Safety-Regeln.
+
+### JSON-Vorlagen (Schema 1.0)
+
+| Datei | Instrument | Items | Skala | Max | LOINC |
+|---|---|---|---|---|---|
+| `phq9-de-v1.json` | PHQ-9 Stimmung | 9 | 0–3 | 27 | 44249-1 |
+| `gad7-de-v1.json` | GAD-7 Angst | 7 | 0–3 | 21 | 69737-5 |
+| `who5-de-v1.json` | WHO-5 Wohlbefinden | 5 | 0–5 | 25 | 71969-0 |
+| `phq4-de-v1.json` | PHQ-4 Kurzscreening | 4 | 0–3 | 12 | 69724-3 |
+
+PHQ-4 enthält zusätzlich `scoring.subscores` (Depression, Angst) und `scoring.routing` (Weiterleitung zu PHQ-9 bzw. GAD-7 bei Subscore ≥ 3).
+
+### FHIR-LOINC-Codes
+
+| Instrument | Fragebogen | Score |
+|---|---|---|
+| PHQ-9 | 44249-1 | 44261-6 |
+| GAD-7 | 69737-5 | 70274-6 |
+| WHO-5 | 71969-0 | 71969-0 |
+
+### Tests
+
+101 neue Tests in 4 neuen Sektionen:
+
+| Sektion | Inhalt | Tests |
+|---|---|---|
+| 29 | JSON-Vorlagen: Pflichtfelder, Schema, Lückenlosigkeit, Safety, PHQ-4-Subscores/Routing | 58 |
+| 30 | FHIR-PROM-Export: QuestionnaireResponse, Observation, LOINC-Codes, PGHD-Tag | 25 |
+| 31 | EHDS-Indikator: Funktion, Texte, CSS, ARIA, Export-Step-Einbindung | 17 |
+| 32 | PHQ-4-Routing-UI: Subscore-Berechnung, Schwellenwert, Texte, CSS, ARIA, Scroll-Ziele | 24 |
+
+Gesamt: **1459 Tests, 1458 bestehen.** (1 schlägt nur außerhalb des Repos fehl: SOVEREIGNTY.md-Pfadtest)
+
+### Dateien
+
+| Datei | Änderung |
+|---|---|
+| `VIVODEPOT.html` | FHIR-PROM-Export, EHDS-Indikator, PHQ-4-Routing-UI, PHQ4_FRAGEN |
+| `test_vivodepot.py` | +101 Tests (Sektionen 29–32), Pfad auf `templates/` |
+| `templates/phq9-de-v1.json` | Neu |
+| `templates/gad7-de-v1.json` | Neu |
+| `templates/who5-de-v1.json` | Neu |
+| `templates/phq4-de-v1.json` | Neu |
+
+---
+
 ## [1.0.0-beta.11] — April 2026
 
 ### Neu
 
 - **Schritt „Wohlbefinden & Seele" (PROM)** — Neuer Schritt nach „Meine Gesundheit" mit drei gemeinfreien, validierten Selbstauskunft-Fragebögen: PHQ-9 (Stimmung, 9 Fragen, Score 0–27), GAD-7 (Angst, 7 Fragen, Score 0–21) und WHO-5 (Wohlbefinden, 5 Fragen, Score 0–25 / 0–100 %). Antworten werden als Chip-Buttons ausgewählt; Score und Schweregrad erscheinen automatisch nach der letzten Antwort. Alle Ergebnisse werden im Autosave gespeichert. Datenschutzhinweis, Quellenangaben und Haftungsausschluss direkt im Schritt sichtbar. Fokus-Ziel „Für den Arztbesuch" enthält den neuen Schritt.
 
-- **QR-Export: PROM-Scores im Notfall-Profil** — Das QR-Übergabe-Profil „Notfall" enthält jetzt automatisch PHQ-9-Score und -Datum, GAD-7-Score und -Datum sowie WHO-5-Score, Prozentwert und Datum. Keine manuelle Auswahl nötig. Lesbare Bezeichnungen für alle sieben neuen Felder in `WG_FELDNAMEN` ergänzt.
+- **QR-Export: PROM-Scores im Notfall-Profil** — Das QR-Übergabe-Profil „Notfall" enthält jetzt automatisch PHQ-9-Score und -Datum, GAD-7-Score und -Datum sowie WHO-5-Score, Prozentwert und Datum.
 
 ### Tests
 
@@ -21,20 +80,7 @@ Alle wichtigen Änderungen werden in dieser Datei dokumentiert.
 | 66 | PROM: STEPS-Eintrag, Zeitmessung, Fokus-Ziel, Arrays, Hilfsfunktionen, Score-Logik, Renderer, Quellenangaben | 24 |
 | 67 | QR-PROM: PROM-Felder im notfall-Profil, lesbare Feldnamen | 11 |
 
-Gesamt: **1086 Tests, 1085 bestehen.** (1 schlägt nur außerhalb des Repos fehl: SOVEREIGNTY.md-Pfadtest)
-
-### Neue Hilfsfunktionen
-
-| Funktion | Aufgabe |
-|---|---|
-| `promRadioRow(prefix, qnum, text)` | Rendert eine Frage mit Chip-Buttons |
-| `promCalcScore(prefix, count)` | Berechnet Score aus gespeicherten Antworten |
-| `promScoreBox(prefix, count)` | Rendert Ergebnis-Box mit Schweregrad |
-| `promRenderBlock(prefix, fragen)` | Rendert den vollständigen Fragebogenblock |
-
-### Neue globale Konstanten
-
-`PHQ9_FRAGEN`, `GAD7_FRAGEN`, `WHO5_FRAGEN` — Arrays mit den Fragetexten der drei Instrumente (Public Domain).
+Gesamt: **1086 Tests, 1085 bestehen.**
 
 ### Dateien
 
@@ -47,72 +93,27 @@ Gesamt: **1086 Tests, 1085 bestehen.** (1 schlägt nur außerhalb des Repos fehl
 
 ## [1.0.0-beta.10] — April 2026
 
-### Neu
+- **vivodepot-lesen.html** — Eigenständige Leseansicht für QR-Übergabe und Weitergabe-Dateien.
+- **QR-Übergabe: URL-Format mit Hash-Fragment** — Payload erreicht Server nie.
+- **QR-Übergabe: Mehr-Teile-QR** — Bis zu 6 QR-Codes für größere Datensätze.
+- UX-Korrekturen ANF-UX-01 bis ANF-UX-07.
 
-- **vivodepot-lesen.html — Eigenständige Leseansicht** — Neue Begleitdatei für die sichere Datenübergabe ohne gemeinsame App-Installation. Zwei Eingabewege: QR-Code (Kamerascan, inkl. automatischer Mehr-Teile-Erkennung) und Weitergabe-Datei (Drag & Drop oder Auswahl). Entschlüsselungslogik identisch zu VIVODEPOT (PBKDF2 + AES-256-GCM). Kein Speichern, kein Netzwerkzugriff, keine Datenhaltung. Logo als Base64 eingebettet. Versionsnummer korrespondiert mit VIVODEPOT.html. Bereitgestellt unter `carolaklessen.github.io/vivodepot/vivodepot-lesen.html`.
-
-- **QR-Übergabe: URL-Format mit Hash-Fragment** — QR-Codes verlinken direkt auf die Leseansicht. Das verschlüsselte Hash-Fragment (`#PAYLOAD`) verlässt den Server nie — vollständig datenschutzkonform. Empfänger ohne VIVODEPOT scannen mit normalem Smartphone; der Browser öffnet die Leseansicht direkt. Konfiguriert über Konstante `QR_LESEN_URL`. Rückwärtskompatibel: `qreQrErkannt()` versteht URL- und Legacy-JSON-Format.
-
-- **QR-Übergabe: Mehr-Teile-QR-Codes** — Löst das USB-Verbotsproblem in Institutionen (Arztpraxen, Kanzleien, Behörden). Payload > 1800 Zeichen → automatische Aufteilung in Chunks à 1200 Zeichen (max. 6). Jeder Chunk trägt gemeinsame ID + Teilnummer. Schritt-3: Karussell mit ◀ / ▶, Beschriftung „Code X von Y — zuerst zeigen". Leseansicht sammelt Teile automatisch und startet Kamera nach jedem Teil neu.
-
-- **Leseansicht: Hash-Erkennung beim Laden** — URL mit `#`-Fragment automatisch erkannt → direkt zur PIN-Eingabe.
-
-- **Leseansicht: Weitergabe-Datei öffnen** — Die Leseansicht entschlüsselt auch `VIVODEPOT_Weitergabe_*.html`-Dateien.
-
-### Verbessert (UX-Korrekturen ANF-UX-01 bis ANF-UX-07)
-
-- **ANF-UX-01** — Lock-Button: Emoji 🔒 als sichtbarer Inhalt (war leer).
-- **ANF-UX-02** — Welcome-Modal: Schriftgröße-Hinweis → direkt auf „A⁺"-Button in Topbar; ⋮ als Alternative.
-- **ANF-UX-03** — EUDI-Import-Karte: `w&auml;hlen` → `wählen`.
-- **ANF-UX-04** — Infobox „Daten weitergeben": ASCII-Umschreibungen → korrekte Umlaute.
-- **ANF-UX-05** — Solid Pod: eigene Gruppe „Eigener Datenspeicher" mit Infobox + solidcommunity.net-Hinweis.
-- **ANF-UX-06** — Import-Infobox: EUDI Wallet (SD-JWT) als viertes Format ergänzt.
-- **ANF-UX-07** — Export-Tabs: Führende Leerzeichen entfernt.
-
-### Weitere Verbesserungen
-
-- FIM-Karte: `\uFE0F` aus ec-icon entfernt → Leerraum über Kartentitel beseitigt.
-- Solid Pod Karte: Untertitel auf „Daten in den eigenen Pod exportieren — kompatibel mit solidcommunity.net" geändert.
-
-### Tests
-
-29 neue Tests in 3 neuen Sektionen:
-
-| Sektion | Inhalt | Tests |
-|---|---|---|
-| 63 | QR-URL-Format: `QR_LESEN_URL`, GitHub-URL, Base64url, Hash-Fragment, Rückwärtskompatibilität | 7 |
-| 64 | Mehr-Teile-QR: Schwellwerte, Chunk-Logik, Zustandsvariablen, Karussell-UI | 14 |
-| 65 | ANF-UX-01–07: Lock-Button, Umlaute, Infobox, Solid-Pod-Gruppe, FIM-Icon | 8 |
-
-Gesamt: **1051 Tests, 1050 bestehen.** (1 schlägt nur außerhalb des Repos fehl: SOVEREIGNTY.md-Pfadtest)
-
-### Dateien
-
-| Datei | Änderung |
-|---|---|
-| `VIVODEPOT.html` | UX-Fixes, QR-URL-Format, Mehr-Teile-QR, Karussell-UI |
-| `vivodepot-lesen.html` | **Neu** |
-| `test_vivodepot.py` | +29 Tests (Sektionen 63–65) |
+Gesamt: **1051 Tests, 1050 bestehen.**
 
 ---
 
 ## [1.0.0-beta.9] — April 2026
 
-### Neu
+- Solid Pod Export (Turtle, .ttl), Datenaustausch-Step.
 
-- **ANF-05 Solid Pod Export** — Turtle-Format (.ttl), Linked-Data (vcard:, schema:), Modal mit Kategorienauswahl.
-- **Datenaustausch-Step** — Neuer Schritt bündelt alle Import- und Export-Wege.
-- **Strukturumstellung Sidebar** — 21 Schritte (bisher 20).
-
-### Tests
-
-43 neue Tests — Gesamt: 1093 Tests, 0 Fehler.
+Gesamt: 1093 Tests, 0 Fehler.
 
 ---
 
 ## [1.0.0-beta.8] — April 2026
 
-Weitergabe-Datei (4 Profile), QR-Übergabe (ANF-06), Einkommensdaten (ANF-01), Kind-Daten (ANF-02), EUDI-Wallet (ANF-03), FHIR (ANF-04).
+Weitergabe-Datei (4 Profile), QR-Übergabe, Einkommensdaten, Kind-Daten, EUDI-Wallet, FHIR.
+
 Gesamt: 1050 Tests, 0 Fehler.
 
 ---

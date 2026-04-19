@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "1.0",
+  "id": "gad7-de-v1",
+  "version": "1.0.0",
+  "locale": "de-DE",
+  "title": {
+    "short": "GAD-7",
+    "full": "GAD-7 — Angst (letzte 2 Wochen)"
+  },
+  "issuer": {
+    "name": "Spitzer, Kroenke, Williams & Löwe"
+  },
+  "license": {
+    "id": "Public Domain"
+  },
+  "loinc": {
+    "code": "69737-5"
+  },
+  "instruction": "Wie oft wurden Sie in den letzten zwei Wochen durch folgende Probleme beeinträchtigt?",
+  "scale": {
+    "options": [
+      { "value": 0, "label": "Überhaupt nicht" },
+      { "value": 1, "label": "An einzelnen Tagen" },
+      { "value": 2, "label": "Mehr als die Hälfte der Tage" },
+      { "value": 3, "label": "Beinahe jeden Tag" }
+    ]
+  },
+  "items": [
+    { "id": "GAD7_01", "text": "Sich nervös, ängstlich oder angespannt fühlen" },
+    { "id": "GAD7_02", "text": "Nicht in der Lage sein, Sorgen zu stoppen oder zu kontrollieren" },
+    { "id": "GAD7_03", "text": "Übermäßige Sorgen über verschiedene Angelegenheiten" },
+    { "id": "GAD7_04", "text": "Schwierigkeiten zu entspannen" },
+    { "id": "GAD7_05", "text": "So rastlos sein, dass Stillsitzen schwerfällt" },
+    { "id": "GAD7_06", "text": "Leicht reizbar oder leicht verärgert sein" },
+    { "id": "GAD7_07", "text": "Angst haben, dass etwas Schreckliches passieren könnte" }
+  ],
+  "scoring": {
+    "method": "sum",
+    "ranges": [
+      { "min": 0,  "max": 4,  "category": "Minimal (0–4)",        "color": "#2e7d32" },
+      { "min": 5,  "max": 9,  "category": "Leicht (5–9)",         "color": "#b8860b", "note": "Empfehlung: Verlaufsbeobachtung." },
+      { "min": 10, "max": 14, "category": "Mittelgradig (10–14)", "color": "#d46b08", "note": "Empfehlung: Fachärztliche Abklärung." },
+      { "min": 15, "max": 21, "category": "Schwer (15–21)",       "color": "#7b0000", "note": "Empfehlung: Ärztliche Vorstellung dringend empfohlen." }
+    ]
+  },
+  "safety": []
+}

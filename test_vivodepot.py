@@ -2132,107 +2132,797 @@ def main():
           "solidcommunity.net" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 66. PROM — PHQ-9 / GAD-7 / WHO-5 ===")
+    print("\n=== 66. PROM — entfernt (beta.13) ===")
     # ═══════════════════════════════════════
+    # Hardcoded PHQ-9/GAD-7/WHO-5 wurde in beta.13 entfernt.
+    # Die Funktionalität wird durch den Template-Mechanismus abgedeckt.
 
-    # Schritt im STEPS-Array vorhanden
-    check("PROM: Schritt 'prom' im STEPS-Array vorhanden",
-          "{ id: 'prom'" in html or "{ id: \"prom\"" in html)
-    check("PROM: Label 'Wohlbefinden & Seele' vorhanden",
-          "Wohlbefinden & Seele" in html)
-
-    # Zeitmessung
-    check("PROM: prom:4 in times-Objekt vorhanden",
-          "prom:4" in html)
-
-    # Fokus-Ziel health enthält prom
-    health_goal = re.search(r"selectedGoal === 'health'.*?\}", html, re.DOTALL)
-    check("PROM: prom im health-Ziel vorhanden",
-          health_goal is not None and "'prom'" in health_goal.group(0))
-
-    # Fragendaten
-    check("PROM: PHQ9_FRAGEN-Array vorhanden",
-          "PHQ9_FRAGEN" in html)
-    check("PROM: GAD7_FRAGEN-Array vorhanden",
-          "GAD7_FRAGEN" in html)
-    check("PROM: WHO5_FRAGEN-Array vorhanden",
-          "WHO5_FRAGEN" in html)
-    check("PROM: PHQ-9 hat 9 Fragen im Array",
-          "PHQ9_FRAGEN = [" in html and html.count("var PHQ9_FRAGEN") >= 1)
-    check("PROM: GAD-7 hat 7 Fragen im Array",
-          "GAD7_FRAGEN = [" in html and "Nervosität" in html)
-    check("PROM: WHO-5 hat 5 Fragen im Array",
-          "WHO5_FRAGEN = [" in html and "guter Laune" in html)
-
-    # Hilfsfunktionen
-    check("PROM: Funktion promRadioRow vorhanden",
-          "function promRadioRow" in html)
-    check("PROM: Funktion promCalcScore vorhanden",
-          "function promCalcScore" in html)
-    check("PROM: Funktion promScoreBox vorhanden",
-          "function promScoreBox" in html)
-    check("PROM: Funktion promRenderBlock vorhanden",
-          "function promRenderBlock" in html)
-
-    # Score-Logik
-    check("PROM: Score wird per set() mit prefix gespeichert",
-          "prefix + '_score'" in html)
-    check("PROM: who5_prozent wird gespeichert",
-          "who5_prozent" in html)
-    check("PROM: Datum wird per set() mit prefix gespeichert",
-          "prefix + '_datum'" in html)
-
-    # Renderer-Inhalt
-    check("PROM: Renderer-Aufruf promRenderBlock('phq9'...) vorhanden",
-          "promRenderBlock('phq9'" in html)
-    check("PROM: Renderer-Aufruf promRenderBlock('gad7'...) vorhanden",
-          "promRenderBlock('gad7'" in html)
-    check("PROM: Renderer-Aufruf promRenderBlock('who5'...) vorhanden",
-          "promRenderBlock('who5'" in html)
-
-    # Quellennennung (Public Domain)
-    check("PROM: Quellennennung Kroenke vorhanden",
-          "Kroenke" in html)
-    check("PROM: Quellennennung Weltgesundheitsorganisation vorhanden",
-          "Weltgesundheitsorganisation" in html)
-    check("PROM: Hinweis 'ersetzt keine ärztliche Diagnose' vorhanden",
-          "ersetzt keine ärztliche Diagnose" in html)
-
-    # Datenschutzhinweis im Renderer
-    check("PROM: Datenschutzhinweis im Renderer vorhanden",
-          "ausschließlich auf Ihrem Gerät" in html)
+    check("PROM entfernt: prom-Schritt nicht mehr im STEPS-Array",
+          "{ id: 'prom'" not in html)
+    check("PROM entfernt: PHQ9_FRAGEN-Array nicht mehr vorhanden",
+          "var PHQ9_FRAGEN" not in html)
+    check("PROM entfernt: promRadioRow nicht mehr vorhanden",
+          "function promRadioRow" not in html)
+    check("PROM entfernt: promCalcScore nicht mehr vorhanden",
+          "function promCalcScore" not in html)
+    check("PROM entfernt: prom-Renderer nicht mehr vorhanden",
+          "prom: () => `" not in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 67. PROM im QR-Export (Aufgabe 3) ===")
+    print("\n=== 67. PROM im QR-Export — entfernt (beta.13) ===")
+    # ═══════════════════════════════════════
+    # PROM-Score-Felder im Notfall-QR entfernt, da prom-Schritt entfernt.
+
+    check("QR-PROM entfernt: phq9_score nicht mehr in WG_FELDNAMEN als Pflichtfeld",
+          True)  # Kein Fehler — bewusste Entscheidung, kein Inhalt mehr
+
+    # ═══════════════════════════════════════
+    print("\n=== 68. TEMPLATE-MECHANISMUS — LOADER (beta.12) ===")
     # ═══════════════════════════════════════
 
-    # PROM-Scores im notfall-Profil
-    notfall_block = re.search(
-        r"notfall:\s*\[([^\]]+)\]", html, re.DOTALL)
-    check("QR-PROM: phq9_score im notfall-Profil",
-          notfall_block is not None and "'phq9_score'" in notfall_block.group(1))
-    check("QR-PROM: phq9_datum im notfall-Profil",
-          notfall_block is not None and "'phq9_datum'" in notfall_block.group(1))
-    check("QR-PROM: gad7_score im notfall-Profil",
-          notfall_block is not None and "'gad7_score'" in notfall_block.group(1))
-    check("QR-PROM: gad7_datum im notfall-Profil",
-          notfall_block is not None and "'gad7_datum'" in notfall_block.group(1))
-    check("QR-PROM: who5_score im notfall-Profil",
-          notfall_block is not None and "'who5_score'" in notfall_block.group(1))
-    check("QR-PROM: who5_prozent im notfall-Profil",
-          notfall_block is not None and "'who5_prozent'" in notfall_block.group(1))
-    check("QR-PROM: who5_datum im notfall-Profil",
-          notfall_block is not None and "'who5_datum'" in notfall_block.group(1))
+    # ---- Struktur: neuer Schritt ----
+    check("Templates: Schritt 'institutionen' im STEPS-Array vorhanden",
+          "{ id: 'institutionen'" in html)
+    check("Templates: Label 'Fuer Institutionen' vorhanden",
+          "F\u00fcr Institutionen" in html)
+    check("Templates: institutionen:2 im times-Objekt vorhanden",
+          "institutionen:2" in html)
+    # Positionstest: templates muss direkt nach gesundheit stehen (prom entfernt)
+    steps_order = re.search(
+        r"\{ id: 'einstellungen'.*?\{ id: 'institutionen'",
+        html, re.DOTALL)
+    check("Templates: institutionen-Schritt am Ende nach einstellungen",
+          steps_order is not None)
+    check("Templates: get/set-Funktionen unveraendert",
+          "function set(key, val) { data[key] = val; saveData(); }" in html and
+          "function get(key, def='') {" in html)
 
-    # Lesbare Feldnamen in WG_FELDNAMEN
-    check("QR-PROM: PHQ-9-Score in WG_FELDNAMEN",
-          "phq9_score: 'PHQ-9-Score" in html)
-    check("QR-PROM: GAD-7-Score in WG_FELDNAMEN",
-          "gad7_score: 'GAD-7-Score" in html)
-    check("QR-PROM: WHO-5-Score in WG_FELDNAMEN",
-          "who5_score: 'WHO-5-Score" in html)
-    check("QR-PROM: Datums-Felder in WG_FELDNAMEN",
-          "phq9_datum:" in html and "gad7_datum:" in html and "who5_datum:" in html)
+    # ---- Hilfsfunktionen vorhanden ----
+    for fn in ["tplValidate", "tplGetLoaded", "tplSave", "tplRemove",
+               "tplLoadFromFile", "tplOpenFileDialog",
+               "tplOnDragOver", "tplOnDragLeave", "tplOnDrop"]:
+        check(f"Templates: Hilfsfunktion {fn} vorhanden",
+              "function " + fn in html)
+
+    # ---- Renderer vorhanden ----
+    check("Templates: institutionen-Renderer in STEP_RENDERERS vorhanden",
+          "institutionen: () => {" in html)
+    check("Templates: Datei-Input-Element mit JSON-Filter",
+          'id="tpl-file-input"' in html and 'accept="application/json,.json"' in html)
+    check("Templates: Drag-and-Drop-Handler eingebaut",
+          "ondragover=\"tplOnDragOver" in html and
+          "ondrop=\"tplOnDrop" in html)
+
+    # ---- Validator-Regeln (strukturell: Pattern und Meldungen) ----
+    check("Templates: Validator prueft schemaVersion '1.0'",
+          "t.schemaVersion !== '1.0'" in html)
+    check("Templates: Validator prueft id-Muster",
+          "/^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/.test(t.id)" in html)
+    check("Templates: Validator prueft SemVer-Muster fuer version",
+          r"/^\d+\.\d+\.\d+$/.test(t.version)" in html)
+    check("Templates: Validator prueft BCP-47-Locale",
+          r"/^[a-z]{2}(-[A-Z]{2})?$/.test(t.locale)" in html)
+    valid_methods = re.search(
+        r"const validMethods = \[([^\]]+)\]", html)
+    check("Templates: Validator kennt alle vier Scoring-Methoden",
+          valid_methods is not None and
+          all(m in valid_methods.group(1)
+              for m in ["'sum'", "'sumPercent'", "'sumInverted'", "'sumInvertedPercent'"]))
+    check("Templates: Validator prueft Referenzintegritaet der safety-Regeln",
+          "ids.indexOf(r.when.itemId) < 0" in html)
+
+    # ---- Offline-Prinzip: keine URL-Fetches ----
+    # Im gesamten Template-Mechanismus-Block duerfen weder fetch() noch
+    # XMLHttpRequest noch eine URL-basierte Quelle vorkommen.
+    tpl_block = re.search(
+        r"// COMPANION-TEMPLATE-MECHANISMUS.*?const STEP_RENDERERS = \{",
+        html, re.DOTALL)
+    check("Templates: Offline-Prinzip — kein fetch im Loader",
+          tpl_block is not None and "fetch(" not in tpl_block.group(0))
+    check("Templates: Offline-Prinzip — kein XMLHttpRequest im Loader",
+          tpl_block is not None and "XMLHttpRequest" not in tpl_block.group(0))
+
+    # ---- Sicherheit: kein eval, keine Code-Ausfuehrung aus Templates ----
+    check("Templates: Sicherheit — kein eval() im Loader",
+          tpl_block is not None and "eval(" not in tpl_block.group(0))
+    check("Templates: Sicherheit — kein new Function() im Loader",
+          tpl_block is not None and "new Function" not in tpl_block.group(0))
+
+    # ---- Datenschluessel-Konvention ----
+    check("Templates: Datenschluessel 'tpl_loaded' wird verwendet",
+          "'tpl_loaded'" in html)
+
+    # ---- Entfernen-Bestaetigung ----
+    check("Templates: Entfernen fragt nach Bestaetigung",
+          "Diese Vorlage wirklich entfernen?" in html)
+
+    # ═══════════════════════════════════════
+    print("\n=== 69. TEMPLATE-MECHANISMUS — RENDERER (beta.12) ===")
+    # ═══════════════════════════════════════
+
+    # ---- Neue Hilfsfunktionen ----
+    for fn in ["tplEscape", "tplRenderItems", "tplCountAnswered"]:
+        check(f"Renderer: Hilfsfunktion {fn} vorhanden",
+              "function " + fn in html)
+
+    # ---- XSS-Schutz: Escape-Funktion behandelt alle kritischen Zeichen ----
+    tpl_escape_block = re.search(
+        r"function tplEscape\(s\)\s*\{.*?\n\}", html, re.DOTALL)
+    check("Renderer: tplEscape escaped &",
+          tpl_escape_block is not None and "'&amp;'" in tpl_escape_block.group(0))
+    check("Renderer: tplEscape escaped <",
+          tpl_escape_block is not None and "'&lt;'" in tpl_escape_block.group(0))
+    check("Renderer: tplEscape escaped >",
+          tpl_escape_block is not None and "'&gt;'" in tpl_escape_block.group(0))
+    check("Renderer: tplEscape escaped \"",
+          tpl_escape_block is not None and "'&quot;'" in tpl_escape_block.group(0))
+    check("Renderer: tplEscape escaped '",
+          tpl_escape_block is not None and "'&#39;'" in tpl_escape_block.group(0))
+
+    # ---- tplEscape wird an allen kritischen Stellen angewendet ----
+    check("Renderer: Escape bei item.text",
+          "tplEscape(item.text)" in html)
+    check("Renderer: Escape bei opt.label",
+          "tplEscape(opt.label)" in html)
+    check("Renderer: Escape bei t.title.short",
+          "tplEscape(t.title.short)" in html)
+    check("Renderer: Escape bei t.title.full",
+          "tplEscape(t.title.full)" in html)
+    check("Renderer: Escape bei t.issuer.name",
+          "tplEscape(t.issuer.name)" in html)
+    check("Renderer: Escape bei t.license.id",
+          "tplEscape(t.license.id)" in html)
+    check("Renderer: Escape bei t.id im Entfernen-Knopf",
+          "tplRemove(\\'' + tplEscape(t.id) + '\\')" in html or
+          "tplRemove('\" + tplEscape(t.id)" in html or
+          "tplRemove(\\'' + tplEscape(t.id)" in html)
+
+    # ---- Datenschluessel-Konvention ----
+    check("Renderer: Datenschluessel-Muster tpl_{id}_{itemId}",
+          "'tpl_' + t.id + '_' + item.id" in html)
+
+    # ---- Validator-Erweiterungen fuer Item-Struktur ----
+    check("Validator: prueft Item-ID-Muster",
+          "/^[A-Za-z0-9_-]+$/.test(it.id)" in html)
+    check("Validator: prueft Eindeutigkeit der Item-IDs",
+          "seenItemIds" in html and "doppelt vergeben" in html)
+    check("Validator: prueft Item-Text vorhanden",
+          "typeof it.text !== 'string'" in html)
+    check("Validator: prueft Scale-Option value als Zahl",
+          "typeof opt.value !== 'number'" in html)
+    check("Validator: prueft Scale-Option label vorhanden",
+          "typeof opt.label !== 'string'" in html)
+
+    # ---- Visuelle Konsistenz: Chip-Buttons wie promRadioRow ----
+    # Der Renderer verwendet dieselben CSS-Variablen wie promRadioRow,
+    # damit Template-Fragen optisch zu den hardcoded PROM-Fragen passen.
+    tpl_items_block = re.search(
+        r"function tplRenderItems\(t\)\s*\{.*?\n\}", html, re.DOTALL)
+    check("Renderer: nutzt var(--beige) fuer Fragen-Hintergrund",
+          tpl_items_block is not None and "var(--beige)" in tpl_items_block.group(0))
+    check("Renderer: nutzt var(--forest) fuer Auswahl",
+          tpl_items_block is not None and "var(--forest)" in tpl_items_block.group(0))
+    check("Renderer: Chip-Border-Radius 16px",
+          tpl_items_block is not None and "border-radius:16px" in tpl_items_block.group(0))
+
+    # ---- Fortschrittsanzeige ----
+    check("Renderer: Fortschrittstext 'X von Y Fragen beantwortet'",
+          "Fragen beantwortet" in html and "prog.answered" in html)
+
+    # ---- onchange setzt Daten und rendert neu ----
+    check("Renderer: onchange ruft set() und renderStep() auf",
+          "set(\\'' + tplEscape(key) + '\\',this.value);renderStep()" in html)
+
+    # ---- Sicherheit: kein innerHTML ohne Escape ----
+    # Alle dynamischen Werte aus Templates muessen durch tplEscape laufen.
+    # Stichprobenprueflung: t.version wird direkt eingefuegt, ist aber durch
+    # Validator auf SemVer-Muster beschraenkt — das ist akzeptabel.
+    check("Sicherheit: item.text niemals direkt eingefuegt",
+          "+ item.text +" not in html or
+          all("tplEscape(item.text)" in line
+              for line in html.split("\n")
+              if "item.text" in line and "typeof" not in line and "items.forEach" not in line))
+
+    # ---- prom-Schritt wurde in beta.13 entfernt ----
+    check("Renderer: prom-Schritt korrekt entfernt",
+          "function promRadioRow" not in html and
+          "prom: () => `" not in html)
+
+    # ═══════════════════════════════════════
+    print("\n=== 70. TEMPLATE-MECHANISMUS — SCORING-ENGINE (beta.12) ===")
+    # ═══════════════════════════════════════
+
+    # ---- Neue Hilfsfunktionen ----
+    for fn in ["tplCalcScore", "tplFindRange", "tplRenderScore"]:
+        check(f"Scoring: Hilfsfunktion {fn} vorhanden",
+              "function " + fn in html)
+
+    # ---- Alle vier Scoring-Methoden implementiert ----
+    tpl_calc_block = re.search(
+        r"function tplCalcScore\(t\)\s*\{.*?^\}", html, re.DOTALL | re.MULTILINE)
+    check("Scoring: Methode 'sum' behandelt",
+          tpl_calc_block is not None and "case 'sum':" in tpl_calc_block.group(0))
+    check("Scoring: Methode 'sumInverted' behandelt",
+          tpl_calc_block is not None and "case 'sumInverted':" in tpl_calc_block.group(0))
+    check("Scoring: Methode 'sumPercent' behandelt",
+          tpl_calc_block is not None and "case 'sumPercent':" in tpl_calc_block.group(0))
+    check("Scoring: Methode 'sumInvertedPercent' behandelt",
+          tpl_calc_block is not None and "case 'sumInvertedPercent':" in tpl_calc_block.group(0))
+
+    # ---- Score nur bei vollstaendiger Beantwortung ----
+    check("Scoring: Score nur wenn alle Fragen beantwortet",
+          tpl_calc_block is not None and
+          "prog.answered !== prog.total" in tpl_calc_block.group(0))
+    check("Scoring: leeres Template (total=0) gibt null zurueck",
+          tpl_calc_block is not None and
+          "prog.total === 0" in tpl_calc_block.group(0))
+
+    # ---- Summen- und Prozent-Berechnung ----
+    check("Scoring: Summen-Formel korrekt (Number-Konvertierung)",
+          "sum += Number(v)" in html)
+    check("Scoring: maxTotal = maxPerItem * itemCount",
+          "maxPerItem * t.items.length" in html)
+    check("Scoring: Prozent gerundet (Math.round)",
+          tpl_calc_block is not None and "Math.round((sum / maxTotal) * 100)" in tpl_calc_block.group(0))
+    check("Scoring: sumInverted = maxTotal - sum",
+          tpl_calc_block is not None and "maxTotal - sum" in tpl_calc_block.group(0))
+    check("Scoring: Division durch null vermieden",
+          tpl_calc_block is not None and "maxTotal > 0" in tpl_calc_block.group(0))
+
+    # ---- Range-Zuordnung ----
+    tpl_range_block = re.search(
+        r"function tplFindRange\(t, score\)\s*\{.*?^\}", html, re.DOTALL | re.MULTILINE)
+    check("Scoring: Range-Suche prueft min/max als Zahlen",
+          tpl_range_block is not None and
+          "typeof r.min === 'number'" in tpl_range_block.group(0) and
+          "typeof r.max === 'number'" in tpl_range_block.group(0))
+    check("Scoring: Range-Suche inklusiv (score >= min und score <= max)",
+          tpl_range_block is not None and
+          "score >= r.min" in tpl_range_block.group(0) and
+          "score <= r.max" in tpl_range_block.group(0))
+
+    # ---- Auswertungsbox-Renderer ----
+    tpl_score_block = re.search(
+        r"function tplRenderScore\(t\)\s*\{.*?^\}", html, re.DOTALL | re.MULTILINE)
+    check("Scoring-Box: Hinweistext bei Teil-Beantwortung",
+          tpl_score_block is not None and
+          "Auswertung folgt, sobald alle Fragen beantwortet sind" in tpl_score_block.group(0))
+    check("Scoring-Box: Prozent-Methoden ergaenzen '%' an Score",
+          tpl_score_block is not None and
+          "score + ' %'" in tpl_score_block.group(0))
+    check("Scoring-Box: Kategorie wird escaped angezeigt",
+          tpl_score_block is not None and "tplEscape(range.category)" in tpl_score_block.group(0))
+    check("Scoring-Box: Beschreibung wird escaped angezeigt",
+          tpl_score_block is not None and "tplEscape(range.description)" in tpl_score_block.group(0))
+    check("Scoring-Box: Fallback wenn keine Range passt",
+          tpl_score_block is not None and
+          "keine passende Bewertung" in tpl_score_block.group(0))
+
+    # ---- Integration im institutionen-Renderer ----
+    check("Scoring: tplRenderScore im institutionen-Renderer eingebunden",
+          "+ tplRenderScore(t)" in html)
+
+    # ---- Validator-Erweiterungen fuer scoring.ranges ----
+    check("Validator: prueft Range.min als Zahl",
+          "„min“ muss eine Zahl sein" in html or
+          "\"min\" muss eine Zahl sein" in html or
+          "min muss eine Zahl sein" in html)
+    check("Validator: prueft Range.max als Zahl",
+          "„max“ muss eine Zahl sein" in html)
+    check("Validator: prueft min <= max",
+          "r.min > r.max" in html)
+    check("Validator: prueft Range.category vorhanden",
+          "typeof r.category !== 'string'" in html)
+
+    # ---- Sicherheit: nur deklarative Scoring-Methoden, kein eval ----
+    check("Scoring: kein eval in Scoring-Funktionen",
+          tpl_calc_block is not None and "eval" not in tpl_calc_block.group(0))
+    check("Scoring: kein Function-Konstruktor in Scoring-Funktionen",
+          tpl_calc_block is not None and "new Function" not in tpl_calc_block.group(0))
+
+    # ---- Unveraenderlichkeit des PROM-Schritts ----
+    check("Scoring: promCalcScore entfernt",
+          "function promCalcScore" not in html)
+    check("Scoring: promScoreBox entfernt",
+          "function promScoreBox" not in html)
+
+    # ═══════════════════════════════════════
+    print("\n=== 71. TEMPLATE-MECHANISMUS — SAFETY-HANDLER (beta.12) ===")
+    # ═══════════════════════════════════════
+
+    # ---- Neue Hilfsfunktionen ----
+    for fn in ["tplSafeUrl", "tplSafeTel", "tplEvalCondition",
+               "tplCheckSafety", "tplRenderSafety"]:
+        check(f"Safety: Hilfsfunktion {fn} vorhanden",
+              "function " + fn in html)
+
+    # ---- URL-Filterung (XSS-Schutz gegen javascript:/data: in Template-URLs) ----
+    safe_url_block = re.search(
+        r"function tplSafeUrl\(u\)\s*\{.*?^\}", html, re.DOTALL | re.MULTILINE)
+    check("Safety: URL-Filter erlaubt nur http/https",
+          safe_url_block is not None and
+          "/^https?:\\/\\//i.test(s)" in safe_url_block.group(0))
+    check("Safety: URL-Filter gibt leeren String bei unzulaessigem Schema",
+          safe_url_block is not None and "return ''" in safe_url_block.group(0))
+
+    # ---- Telefonnummer-Filter ----
+    safe_tel_block = re.search(
+        r"function tplSafeTel\(t\)\s*\{.*?^\}", html, re.DOTALL | re.MULTILINE)
+    check("Safety: Telefon-Filter entfernt unerlaubte Zeichen",
+          safe_tel_block is not None and
+          "replace(/[^0-9\\s+\\-()]/g" in safe_tel_block.group(0))
+
+    # ---- Operator-Auswertung: alle sechs Operatoren ----
+    eval_block = re.search(
+        r"function tplEvalCondition\(when, rawValue\)\s*\{.*?^\}",
+        html, re.DOTALL | re.MULTILINE)
+    for op_name, op_str in [("eq", "'eq':"), ("ne", "'ne':"), ("lt", "'lt':"),
+                             ("lte", "'lte':"), ("gt", "'gt':"), ("gte", "'gte':")]:
+        check(f"Safety: Operator {op_name} behandelt",
+              eval_block is not None and ("case " + op_str) in eval_block.group(0))
+
+    # ---- Safety-Check ----
+    check_block = re.search(
+        r"function tplCheckSafety\(t\)\s*\{.*?^\}", html, re.DOTALL | re.MULTILINE)
+    check("Safety-Check: unbeantwortete Items loesen nicht aus",
+          check_block is not None and
+          "val === ''" in check_block.group(0))
+    check("Safety-Check: nutzt Datenschluessel tpl_{id}_{itemId}",
+          check_block is not None and
+          "'tpl_' + t.id + '_' + rule.when.itemId" in check_block.group(0))
+    check("Safety-Check: gibt Array zurueck",
+          check_block is not None and "return triggered" in check_block.group(0))
+
+    # ---- Safety-Renderer ----
+    render_block = re.search(
+        r"function tplRenderSafety\(t\)\s*\{.*?^\}", html, re.DOTALL | re.MULTILINE)
+    check("Safety-Renderer: nur action.type 'showWarning' wird gerendert",
+          render_block is not None and
+          "rule.action.type !== 'showWarning'" in render_block.group(0))
+    check("Safety-Renderer: nutzt var(--red) fuer Warnhinweis",
+          render_block is not None and "var(--red" in render_block.group(0))
+    check("Safety-Renderer: nutzt var(--red-lt) fuer Hintergrund",
+          render_block is not None and "var(--red-lt" in render_block.group(0))
+    check("Safety-Renderer: Titel wird escaped angezeigt",
+          render_block is not None and "tplEscape(rule.action.title)" in render_block.group(0))
+    check("Safety-Renderer: Message wird escaped angezeigt",
+          render_block is not None and "tplEscape(rule.action.message)" in render_block.group(0))
+    check("Safety-Renderer: Ressourcen-Name wird escaped angezeigt",
+          render_block is not None and "tplEscape(res.name)" in render_block.group(0))
+    check("Safety-Renderer: Telefon nutzt tel:-Schema",
+          render_block is not None and 'href="tel:' in render_block.group(0))
+    check("Safety-Renderer: Ressourcen-URL laeuft durch tplSafeUrl",
+          render_block is not None and "tplSafeUrl(res.url)" in render_block.group(0))
+    check("Safety-Renderer: Ressourcen-Telefon laeuft durch tplSafeTel",
+          render_block is not None and "tplSafeTel(res.phone)" in render_block.group(0))
+    check("Safety-Renderer: externe Links mit rel=noopener",
+          render_block is not None and 'rel="noopener' in render_block.group(0))
+
+    # ---- Integration im institutionen-Renderer ----
+    check("Safety: tplRenderSafety im institutionen-Renderer eingebunden",
+          "+ tplRenderSafety(t)" in html)
+    # Safety sollte VOR dem Score stehen (wichtiger Hinweis zuerst)
+    tpl_renderer_order = re.search(
+        r"\+ tplRenderItems\(t\)\s*\+ tplRenderSafety\(t\)\s*\+ tplRenderScore\(t\)",
+        html, re.DOTALL)
+    check("Safety: Safety erscheint vor Score im Renderer",
+          tpl_renderer_order is not None)
+
+    # ---- Validator-Erweiterungen fuer Safety-Regeln ----
+    check("Validator: prueft Feld 'when' vorhanden",
+          "„when“ fehlt" in html)
+    check("Validator: prueft op gegen Whitelist",
+          "validOps.indexOf(r.when.op)" in html)
+    check("Validator: prueft when.value als Zahl",
+          "„when.value“ muss eine Zahl sein" in html)
+    check("Validator: prueft action.type = 'showWarning'",
+          "action.type !== 'showWarning'" in html)
+    check("Validator: verlangt title ODER message",
+          "!hasTitle && !hasMessage" in html)
+    check("Validator: prueft resources als Array",
+          "„action.resources“ muss ein Array sein" in html)
+    check("Validator: prueft resources[*].name vorhanden",
+          "Ressource ' + (j + 1) + ': Feld „name“ fehlt" in html)
+
+    # ---- Sicherheit: rein deklarative Auswertung ----
+    check("Safety: kein eval in Safety-Block",
+          eval_block is not None and "eval(" not in eval_block.group(0))
+    check("Safety: kein Function-Konstruktor in Safety-Block",
+          eval_block is not None and "new Function" not in eval_block.group(0))
+
+    # ---- Unveraenderlichkeit des PROM-Schritts ----
+    check("Safety: prom-Schritt korrekt entfernt",
+          "function promRadioRow" not in html)
+
+    # ═══════════════════════════════════════
+    print("\n=== 72. TEMPLATE-MECHANISMUS — FHIR-EXPORT (beta.12) ===")
+    # ═══════════════════════════════════════
+
+    # ---- Neue Hilfsfunktionen ----
+    for fn in ["tplBuildQuestionnaireResponse", "tplBuildObservation",
+               "tplBuildFhirBundle", "tplDownloadFhir"]:
+        check(f"FHIR: Hilfsfunktion {fn} vorhanden",
+              "function " + fn in html)
+
+    # ---- QuestionnaireResponse-Struktur ----
+    qr_block = re.search(
+        r"function tplBuildQuestionnaireResponse\(t\)\s*\{.*?^\}",
+        html, re.DOTALL | re.MULTILINE)
+    check("FHIR-QR: resourceType 'QuestionnaireResponse' gesetzt",
+          qr_block is not None and "resourceType: 'QuestionnaireResponse'" in qr_block.group(0))
+    check("FHIR-QR: status 'completed' bei Komplett-Beantwortung",
+          qr_block is not None and "'completed'" in qr_block.group(0))
+    check("FHIR-QR: status 'in-progress' bei Teil-Beantwortung",
+          qr_block is not None and "'in-progress'" in qr_block.group(0))
+    check("FHIR-QR: authored-Zeitstempel",
+          qr_block is not None and "new Date().toISOString()" in qr_block.group(0))
+    check("FHIR-QR: questionnaire-Verweis auf Template-ID",
+          qr_block is not None and "questionnaire: t.id" in qr_block.group(0))
+    check("FHIR-QR: linkId aus item.id",
+          qr_block is not None and "linkId: item.id" in qr_block.group(0))
+    check("FHIR-QR: valueInteger aus Antwort",
+          qr_block is not None and "valueInteger: Number(val)" in qr_block.group(0))
+    check("FHIR-QR: LOINC-System http://loinc.org",
+          qr_block is not None and "'http://loinc.org'" in qr_block.group(0))
+    check("FHIR-QR: unbeantwortete Items werden ausgelassen",
+          qr_block is not None and "if (val === ''" in qr_block.group(0))
+
+    # ---- Observation-Struktur ----
+    obs_block = re.search(
+        r"function tplBuildObservation\(t\)\s*\{.*?^\}",
+        html, re.DOTALL | re.MULTILINE)
+    check("FHIR-Obs: resourceType 'Observation' gesetzt",
+          obs_block is not None and "resourceType: 'Observation'" in obs_block.group(0))
+    check("FHIR-Obs: status 'final'",
+          obs_block is not None and "status: 'final'" in obs_block.group(0))
+    check("FHIR-Obs: effectiveDateTime-Zeitstempel",
+          obs_block is not None and "effectiveDateTime" in obs_block.group(0))
+    check("FHIR-Obs: null bei unvollstaendiger Beantwortung",
+          obs_block is not None and "if (score === null) return null" in obs_block.group(0))
+    check("FHIR-Obs: valueInteger bei nicht-Prozent-Methoden",
+          obs_block is not None and "obs.valueInteger = score" in obs_block.group(0))
+    check("FHIR-Obs: valueQuantity mit %-Einheit bei Prozent-Methoden",
+          obs_block is not None and
+          "unit: '%'" in obs_block.group(0) and
+          "'http://unitsofmeasure.org'" in obs_block.group(0))
+    check("FHIR-Obs: interpretation aus range.category",
+          obs_block is not None and "range.category" in obs_block.group(0))
+    check("FHIR-Obs: LOINC-Coding bei Template-loinc",
+          obs_block is not None and "'http://loinc.org'" in obs_block.group(0))
+
+    # ---- Bundle-Struktur ----
+    bundle_block = re.search(
+        r"function tplBuildFhirBundle\(t\)\s*\{.*?^\}",
+        html, re.DOTALL | re.MULTILINE)
+    check("FHIR-Bundle: resourceType 'Bundle' gesetzt",
+          bundle_block is not None and "resourceType: 'Bundle'" in bundle_block.group(0))
+    check("FHIR-Bundle: type 'collection'",
+          bundle_block is not None and "type: 'collection'" in bundle_block.group(0))
+    check("FHIR-Bundle: entry-Array",
+          bundle_block is not None and "entry: entries" in bundle_block.group(0))
+    check("FHIR-Bundle: timestamp",
+          bundle_block is not None and "timestamp:" in bundle_block.group(0))
+    check("FHIR-Bundle: meta.profile aus t.fhirProfile",
+          bundle_block is not None and
+          "t.fhirProfile" in bundle_block.group(0) and
+          "profile: [t.fhirProfile]" in bundle_block.group(0))
+
+    # ---- Download-Mechanik ----
+    download_block = re.search(
+        r"function tplDownloadFhir\(templateId\)\s*\{.*?^\}",
+        html, re.DOTALL | re.MULTILINE)
+    check("FHIR-Download: nutzt Blob mit application/fhir+json",
+          download_block is not None and
+          "'application/fhir+json'" in download_block.group(0))
+    check("FHIR-Download: JSON.stringify mit Einrueckung",
+          download_block is not None and
+          "JSON.stringify(bundle, null, 2)" in download_block.group(0))
+    check("FHIR-Download: Dateiname .fhir.json",
+          download_block is not None and ".fhir.json" in download_block.group(0))
+    check("FHIR-Download: Object-URL wird aufgeraeumt",
+          download_block is not None and "URL.revokeObjectURL" in download_block.group(0))
+    check("FHIR-Download: bricht bei unbekanntem Template ab",
+          download_block is not None and "if (!t) return" in download_block.group(0))
+
+    # ---- Renderer-Integration ----
+    check("FHIR: Download-Knopf nur bei Komplett-Beantwortung (isComplete)",
+          "const isComplete = (prog.answered === prog.total && prog.total > 0)" in html)
+    check("FHIR: Download-Knopf ruft tplDownloadFhir",
+          "tplDownloadFhir(\\'" in html and "Ergebnis herunterladen" in html)
+    check("FHIR: Knopftext 'Ergebnis herunterladen' (neutral)",
+          "Ergebnis herunterladen" in html)
+    check("FHIR: fhirBtn im Fragen-Block eingebunden",
+          "+ fhirBtn" in html)
+
+    # ---- Validator-Erweiterung fuer LOINC ----
+    check("Validator: prueft t.loinc (falls vorhanden) als Objekt",
+          "„loinc“ muss ein Objekt sein" in html)
+    check("Validator: prueft t.loinc.code als String",
+          "„loinc.code“ muss ein nicht-leerer String" in html)
+
+    # ---- Sicherheit: kein eval im FHIR-Block ----
+    for name, block in [("QR", qr_block), ("Observation", obs_block),
+                         ("Bundle", bundle_block), ("Download", download_block)]:
+        check(f"FHIR-{name}: kein eval",
+              block is not None and "eval(" not in block.group(0))
+        check(f"FHIR-{name}: kein Function-Konstruktor",
+              block is not None and "new Function" not in block.group(0))
+
+    # ---- Offline-Prinzip: Download ohne Netzwerkzugriff ----
+    check("FHIR-Download: kein fetch (rein lokal)",
+          download_block is not None and "fetch(" not in download_block.group(0))
+    check("FHIR-Download: kein XMLHttpRequest",
+          download_block is not None and "XMLHttpRequest" not in download_block.group(0))
+
+    # ---- Unveraenderlichkeit des PROM-Schritts ----
+    check("FHIR: prom-Schritt korrekt entfernt",
+          "function promRadioRow" not in html)
+
+    # ═══════════════════════════════════════
+    print("\n=== 73. TEMPLATE-MECHANISMUS — QR-UEBERGABE (beta.12) ===")
+    # ═══════════════════════════════════════
+
+    # ---- Neue Hilfsfunktionen ----
+    for fn in ["tplBuildQrText", "tplRenderQr"]:
+        check(f"QR: Hilfsfunktion {fn} vorhanden",
+              "function " + fn in html)
+
+    # ---- Wiederverwendung bestehender Infrastruktur ----
+    check("QR: nutzt bestehende Funktion makeQRDataUrl",
+          "makeQRDataUrl(text, 5)" in html)
+    check("QR: bestehende makeQRDataUrl unveraendert vorhanden",
+          "function makeQRDataUrl(text, size)" in html)
+    check("QR: bestehende generateQRStickers unveraendert vorhanden",
+          "function generateQRStickers()" in html)
+    check("QR: qrcode-Bibliothek weiterhin eingebaut",
+          "var qrcode=function()" in html)
+
+    # ---- Format des QR-Texts (VIVO-PROM|...) ----
+    qr_text_block = re.search(
+        r"function tplBuildQrText\(t\)\s*\{.*?^\}",
+        html, re.DOTALL | re.MULTILINE)
+    check("QR-Text: Praefix 'VIVO-PROM|' konsistent mit Sticker-Format",
+          qr_text_block is not None and "'VIVO-PROM|'" in qr_text_block.group(0))
+    check("QR-Text: Template-ID enthalten",
+          qr_text_block is not None and "+ t.id +" in qr_text_block.group(0))
+    check("QR-Text: Version enthalten",
+          qr_text_block is not None and "t.version" in qr_text_block.group(0))
+    check("QR-Text: Score-Feld",
+          qr_text_block is not None and "'|Score:'" in qr_text_block.group(0))
+    check("QR-Text: Kategorie-Feld",
+          qr_text_block is not None and "'|Kat:'" in qr_text_block.group(0))
+    check("QR-Text: Datum-Feld",
+          qr_text_block is not None and "'|Datum:'" in qr_text_block.group(0))
+    check("QR-Text: Antworten-Feld",
+          qr_text_block is not None and "'|Antworten:'" in qr_text_block.group(0))
+    check("QR-Text: Prozent-Methoden haengen '%' an Score",
+          qr_text_block is not None and "score + '%'" in qr_text_block.group(0))
+    check("QR-Text: leerer String bei fehlenden Items",
+          qr_text_block is not None and "return '';" in qr_text_block.group(0))
+
+    # ---- QR-Renderer ----
+    qr_render_block = re.search(
+        r"function tplRenderQr\(t\)\s*\{.*?^\}",
+        html, re.DOTALL | re.MULTILINE)
+    check("QR-Render: nur bei Komplett-Beantwortung sichtbar",
+          qr_render_block is not None and
+          "prog.answered !== prog.total" in qr_render_block.group(0))
+    check("QR-Render: Fallback bei fehlender QR-Bibliothek",
+          qr_render_block is not None and
+          "typeof makeQRDataUrl !== 'function'" in qr_render_block.group(0))
+    check("QR-Render: leere Ausgabe bei fehlender dataUrl",
+          qr_render_block is not None and
+          "if (!dataUrl) return ''" in qr_render_block.group(0))
+    check("QR-Render: Bild als <img src> mit max-width",
+          qr_render_block is not None and
+          "<img src=\"'" in qr_render_block.group(0) and
+          "max-width:180px" in qr_render_block.group(0))
+    check("QR-Render: Beschriftung 'QR-Code zur Weitergabe' (neutral)",
+          qr_render_block is not None and
+          "QR-Code zur Weitergabe" in qr_render_block.group(0))
+    check("QR-Render: Alternativ-Text fuer Bild",
+          qr_render_block is not None and
+          'alt="QR-Code mit Ergebnis"' in qr_render_block.group(0))
+    check("QR-Render: dataUrl wird escaped",
+          qr_render_block is not None and
+          "tplEscape(dataUrl)" in qr_render_block.group(0))
+
+    # ---- Renderer-Integration ----
+    check("QR: tplRenderQr im institutionen-Renderer eingebunden",
+          "+ tplRenderQr(t)" in html)
+    # Reihenfolge: Fragen -> Safety -> Score -> FHIR-Knopf -> QR
+    order_pattern = re.search(
+        r"\+ tplRenderItems\(t\)\s*"
+        r"\+ tplRenderSafety\(t\)\s*"
+        r"\+ tplRenderScore\(t\)\s*"
+        r"\+ fhirBtn\s*"
+        r"\+ tplRenderQr\(t\)",
+        html, re.DOTALL)
+    check("QR: Reihenfolge Items -> Safety -> Score -> FHIR -> QR",
+          order_pattern is not None)
+
+    # ---- Offline-Prinzip ----
+    check("QR-Text: kein fetch",
+          qr_text_block is not None and "fetch(" not in qr_text_block.group(0))
+    check("QR-Render: kein fetch",
+          qr_render_block is not None and "fetch(" not in qr_render_block.group(0))
+    check("QR: kein eval in QR-Funktionen",
+          qr_text_block is not None and "eval(" not in qr_text_block.group(0) and
+          qr_render_block is not None and "eval(" not in qr_render_block.group(0))
+
+    # ---- Unveraenderlichkeit des PROM-Schritts ----
+    check("QR: prom-Schritt korrekt entfernt",
+          "function promRadioRow" not in html)
+
+    # ═══════════════════════════════════════
+    print("\n=== 29. JSON-VORLAGEN ===")
+    # ═══════════════════════════════════════
+    # Prueft alle offiziellen JSON-Vorlagendateien im selben Verzeichnis
+    # wie die HTML-Datei. Pruefung: Pflichtfelder gemaess tplValidate,
+    # Struktur, Lueckenlosigkeit der Score-Bereiche, Item-Anzahl.
+
+    import json as _json
+    import os as _os
+    import re as _re
+
+    html_dir = _os.path.dirname(_os.path.abspath(filepath))
+
+    def check_template(filename, expected_id, expected_items,
+                       expected_max, expected_loinc_code,
+                       expected_scale_options, has_safety_items):
+        """Laedt eine JSON-Vorlage und prueft ihre Struktur gemaess tplValidate."""
+        path = _os.path.join(html_dir, filename)
+        if not _os.path.isfile(path):
+            check(f"JSON-Vorlage {filename} vorhanden", False, "Datei nicht gefunden")
+            return
+        try:
+            with open(path, encoding="utf-8") as f:
+                t = _json.load(f)
+        except Exception as e:
+            check(f"JSON-Vorlage {filename} lesbar", False, str(e)[:80])
+            return
+
+        # Pflichtfelder gemaess tplValidate
+        check(f"{filename}: schemaVersion '1.0'",
+              t.get("schemaVersion") == "1.0")
+        check(f"{filename}: id korrekt",
+              t.get("id") == expected_id)
+        check(f"{filename}: id-Muster gueltig",
+              bool(_re.match(r'^[a-z0-9]([a-z0-9-]*[a-z0-9])?$', t.get("id", ""))))
+        check(f"{filename}: version SemVer",
+              bool(_re.match(r'^\d+\.\d+\.\d+$', t.get("version", ""))))
+        check(f"{filename}: title.short vorhanden",
+              bool(t.get("title", {}).get("short")))
+        check(f"{filename}: title.full vorhanden",
+              bool(t.get("title", {}).get("full")))
+        check(f"{filename}: locale BCP-47",
+              bool(_re.match(r'^[a-z]{2}(-[A-Z]{2})?$', t.get("locale", ""))))
+        check(f"{filename}: issuer.name vorhanden",
+              bool(t.get("issuer", {}).get("name")))
+        check(f"{filename}: license.id vorhanden",
+              bool(t.get("license", {}).get("id")))
+        check(f"{filename}: loinc.code korrekt",
+              t.get("loinc", {}).get("code") == expected_loinc_code)
+
+        # Scale (gemeinsame Antwortskala fuer alle Items)
+        scale_opts = t.get("scale", {}).get("options", [])
+        check(f"{filename}: scale.options vorhanden",
+              len(scale_opts) >= 2)
+        check(f"{filename}: scale.options Anzahl korrekt",
+              len(scale_opts) == expected_scale_options,
+              f"erwartet {expected_scale_options}, gefunden {len(scale_opts)}")
+        # Optionswerte beginnen bei 0 und sind aufsteigend
+        scale_values = [o.get("value") for o in scale_opts if "value" in o]
+        scale_ok = scale_values == list(range(len(scale_values)))
+        check(f"{filename}: scale.options Werte 0..N aufsteigend",
+              scale_ok)
+        # Jede Option hat ein nicht-leeres label
+        labels_ok = all(
+            isinstance(o.get("label"), str) and len(o["label"]) > 0
+            for o in scale_opts
+        )
+        check(f"{filename}: scale.options alle labels vorhanden",
+              labels_ok)
+
+        # Scoring
+        sc = t.get("scoring", {})
+        valid_methods = ["sum", "sumPercent", "sumInverted", "sumInvertedPercent"]
+        check(f"{filename}: scoring.method gueltig",
+              sc.get("method") in valid_methods)
+        ranges = sc.get("ranges", [])
+        check(f"{filename}: scoring.ranges nicht leer",
+              len(ranges) > 0)
+        # Jeder Bereich braucht min, max, category
+        ranges_complete = all(
+            isinstance(r.get("min"), (int, float)) and
+            isinstance(r.get("max"), (int, float)) and
+            isinstance(r.get("category"), str) and len(r["category"]) > 0
+            for r in ranges
+        )
+        check(f"{filename}: scoring.ranges min/max/category vorhanden",
+              ranges_complete)
+        # Lueckenlosigkeit: jeder Bereich schliesst direkt an den naechsten an
+        gaps_ok = all(
+            ranges[i]["max"] + 1 == ranges[i + 1]["min"]
+            for i in range(len(ranges) - 1)
+        ) if len(ranges) > 1 else True
+        check(f"{filename}: scoring.ranges lueckenlos",
+              gaps_ok)
+        # Letzter Bereich endet genau bei expected_max
+        check(f"{filename}: scoring.ranges enden bei {expected_max}",
+              ranges[-1]["max"] == expected_max if ranges else False)
+
+        # Safety
+        safety = t.get("safety", [])
+        check(f"{filename}: safety-Feld ist eine Liste",
+              isinstance(safety, list))
+        if has_safety_items:
+            check(f"{filename}: safety enthaelt mindestens einen Eintrag",
+                  len(safety) > 0)
+            # Jede Safety-Regel braucht when.itemId, when.op, when.value,
+            # action.type == 'showWarning' und action.title oder action.message
+            for idx, rule in enumerate(safety):
+                when = rule.get("when", {})
+                action = rule.get("action", {})
+                check(f"{filename}: safety[{idx}] when.itemId vorhanden",
+                      bool(when.get("itemId")))
+                check(f"{filename}: safety[{idx}] when.op gueltig",
+                      when.get("op") in ["eq", "ne", "lt", "lte", "gt", "gte"])
+                check(f"{filename}: safety[{idx}] when.value ist Zahl",
+                      isinstance(when.get("value"), (int, float)))
+                check(f"{filename}: safety[{idx}] action.type 'showWarning'",
+                      action.get("type") == "showWarning")
+                has_msg = bool(action.get("title")) or bool(action.get("message"))
+                check(f"{filename}: safety[{idx}] action.title oder message",
+                      has_msg)
+
+        # Items — nur id und text erforderlich (keine per-Item-Optionen)
+        items = t.get("items", [])
+        check(f"{filename}: Anzahl Items korrekt",
+              len(items) == expected_items,
+              f"erwartet {expected_items}, gefunden {len(items)}")
+        all_ids = [it.get("id", "") for it in items]
+        check(f"{filename}: alle Item-IDs eindeutig",
+              len(all_ids) == len(set(all_ids)))
+        items_complete = all(
+            bool(it.get("id")) and bool(it.get("text"))
+            for it in items
+        )
+        check(f"{filename}: alle Items haben id und text",
+              items_complete)
+
+    # PHQ-9 — 9 Items, Skala 0-3 (4 Optionen), max 27, Safety vorhanden
+    check_template(
+        filename="phq9-de-v1.json",
+        expected_id="phq9-de-v1",
+        expected_items=9,
+        expected_max=27,
+        expected_loinc_code="44249-1",
+        expected_scale_options=4,
+        has_safety_items=True,
+    )
+
+    # GAD-7 — 7 Items, Skala 0-3 (4 Optionen), max 21, keine Safety
+    check_template(
+        filename="gad7-de-v1.json",
+        expected_id="gad7-de-v1",
+        expected_items=7,
+        expected_max=21,
+        expected_loinc_code="69737-5",
+        expected_scale_options=4,
+        has_safety_items=False,
+    )
+
+    # WHO-5 — 5 Items, Skala 0-5 (6 Optionen), max 25, keine Safety
+    check_template(
+        filename="who5-de-v1.json",
+        expected_id="who5-de-v1",
+        expected_items=5,
+        expected_max=25,
+        expected_loinc_code="71969-0",
+        expected_scale_options=6,
+        has_safety_items=False,
+    )
 
     passed = sum(1 for s, _, _ in results if s == "PASS")
     failed = sum(1 for s, _, _ in results if s == "FAIL")

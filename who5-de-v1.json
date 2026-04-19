@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "1.0",
+  "id": "who5-de-v1",
+  "version": "1.0.0",
+  "locale": "de-DE",
+  "title": {
+    "short": "WHO-5",
+    "full": "WHO-5 — Wohlbefinden (letzte 2 Wochen)"
+  },
+  "issuer": {
+    "name": "WHO Regionalbüro Europa"
+  },
+  "license": {
+    "id": "Public Domain"
+  },
+  "loinc": {
+    "code": "71969-0"
+  },
+  "instruction": "Bitte geben Sie für jede der folgenden Aussagen an, wie oft sie in den letzten zwei Wochen auf Sie zugetroffen hat.",
+  "scale": {
+    "options": [
+      { "value": 0, "label": "Zu keinem Zeitpunkt" },
+      { "value": 1, "label": "Selten" },
+      { "value": 2, "label": "Manchmal" },
+      { "value": 3, "label": "Mehr als die Hälfte der Zeit" },
+      { "value": 4, "label": "Meistens" },
+      { "value": 5, "label": "Die ganze Zeit" }
+    ]
+  },
+  "items": [
+    { "id": "WHO5_01", "text": "Ich war froh und guter Stimmung" },
+    { "id": "WHO5_02", "text": "Ich habe mich ruhig und entspannt gefühlt" },
+    { "id": "WHO5_03", "text": "Ich habe mich aktiv und lebhaft gefühlt" },
+    { "id": "WHO5_04", "text": "Ich bin ausgeschlafen aufgewacht und habe mich erholt gefühlt" },
+    { "id": "WHO5_05", "text": "Mein Alltag war voller Dinge, die mich interessieren" }
+  ],
+  "scoring": {
+    "method": "sum",
+    "ranges": [
+      { "min": 0,  "max": 7,  "category": "Stark beeinträchtigt (0–7)",   "color": "#7b0000", "note": "Empfehlung: Ärztliche Vorstellung empfohlen." },
+      { "min": 8,  "max": 12, "category": "Beeinträchtigt (8–12)",         "color": "#c0392b", "note": "Empfehlung: Weiteres Screening auf Depression empfohlen." },
+      { "min": 13, "max": 17, "category": "Mäßig (13–17)",                 "color": "#d46b08", "note": "Empfehlung: Verlaufsbeobachtung." },
+      { "min": 18, "max": 25, "category": "Gut (18–25)",                   "color": "#2e7d32" }
+    ]
+  },
+  "safety": []
+}
