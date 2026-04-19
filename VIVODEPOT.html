@@ -20287,172 +20287,242 @@ function generateUUID() {
 
 function generateFHIR() {
   toast('FHIR-Export wird erstellt…');
-  var name = [get('vorname'),get('nachname')].filter(Boolean).join(' ')||'—';
   var now = new Date().toISOString();
 
-  var patient = {
+  // Jede Ressource erhält eine echte UUID als fullUrl (IPS-Anforderung).
+  var patientUUID     = generateUUID();
+  var compositionUUID = generateUUID();
+
+  // Hilfsfunktion: Narrativ-Text für Composition-Sektionen (IPS-Pflicht).
+  function narrativ(text) {
+    return {
+      status: 'generated',
+      div: '<div xmlns="http://www.w3.org/1999/xhtml">' + text + '</div>'
+    };
+  }
+
+  // Patient — IPS-konform: keine leeren Arrays, keine leeren Strings,
+  // kein trailing Whitespace, IPS-Patientenprofil in meta.
+  var vorname  = (get('vorname')  || '').trim();
+  var nachname = (get('nachname') || '').trim();
+  var patient  = {
     resourceType: 'Patient',
-    id: 'patient-1',
-    name: [{ family: get('nachname')||'', given: [get('vorname')||''] }],
-    birthDate: get('geburtsdatum')||undefined,
-    address: [{ line: [get('strasse')||''], city: get('plz_ort')||'', country: 'DE' }],
-    telecom: get('telefon') ? [{ system:'phone', value:get('telefon') }] : [],
-    extension: []
+    id: patientUUID,
+    meta: {
+      profile: ['http://hl7.org/fhir/uv/ips/StructureDefinition/Patient-uv-ips']
+    },
+    name: [{ family: nachname, given: vorname ? [vorname] : [] }]
   };
-  // Blutgruppe
-  if (get('blutgruppe')) patient.extension.push({ url:'http://hl7.org/fhir/StructureDefinition/patient-bloodGroup', valueString: get('blutgruppe') });
 
-  var entries = [{ fullUrl:'urn:uuid:patient-1', resource:patient }];
+  var geburtsdatum = get('geburtsdatum');
+  if (geburtsdatum) patient.birthDate = geburtsdatum;
 
-  // AllergyIntolerance
+  var telefon = (get('telefon') || '').trim();
+  if (telefon) patient.telecom = [{ system: 'phone', value: telefon }];
+
+  var strasse  = (get('strasse')  || '').trim();
+  var plz_ort  = (get('plz_ort')  || '').trim();
+  if (strasse || plz_ort) {
+    var adresse = { country: 'DE' };
+    if (strasse) adresse.line = [strasse];
+    if (plz_ort) adresse.city = plz_ort;
+    patient.address = [adresse];
+  }
+
+  // Blutgruppe als Observation (nicht als Patient-Extension, die im IPS-Profil
+  // nicht zugelassen ist).
+  var blutgruppeUUID = null;
+  var blutgruppe = get('blutgruppe');
+
+  var entries = [{ fullUrl: 'urn:uuid:' + patientUUID, resource: patient }];
+
+  // Blutgruppe als Observation
+  if (blutgruppe) {
+    blutgruppeUUID = generateUUID();
+    entries.push({ fullUrl: 'urn:uuid:' + blutgruppeUUID, resource: {
+      resourceType: 'Observation',
+      id: blutgruppeUUID,
+      status: 'final',
+      category: [{ coding: [{ system: 'http://terminology.hl7.org/CodeSystem/observation-category', code: 'laboratory' }] }],
+      code: { coding: [{ system: 'http://loinc.org', code: '883-9' }], text: 'Blutgruppe' },
+      subject: { reference: 'urn:uuid:' + patientUUID },
+      effectiveDateTime: now,
+      valueCodeableConcept: { text: blutgruppe }
+    }});
+  }
+
+  // AllergyIntolerance — IPS-Profil, verificationStatus (Pflicht in IPS).
+  var allergyUUIDs = [];
   if (get('allergien')) {
-    get('allergien').split(',').forEach(function(a,i){
+    get('allergien').split(',').forEach(function(a) {
       a = a.trim();
       if (!a) return;
-      entries.push({ fullUrl:'urn:uuid:allergy-'+(i+1), resource:{
-        resourceType:'AllergyIntolerance', id:'allergy-'+(i+1),
-        patient:{ reference:'urn:uuid:patient-1' },
-        code:{ text: a },
-        clinicalStatus:{ coding:[{system:'http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical',code:'active'}] },
+      var id = generateUUID();
+      allergyUUIDs.push(id);
+      entries.push({ fullUrl: 'urn:uuid:' + id, resource: {
+        resourceType: 'AllergyIntolerance',
+        id: id,
+        meta: { profile: ['http://hl7.org/fhir/uv/ips/StructureDefinition/AllergyIntolerance-uv-ips'] },
+        clinicalStatus:      { coding: [{ system: 'http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical',     code: 'active'    }] },
+        verificationStatus:  { coding: [{ system: 'http://terminology.hl7.org/CodeSystem/allergyintolerance-verification', code: 'confirmed' }] },
+        patient: { reference: 'urn:uuid:' + patientUUID },
+        code:    { text: a },
         recordedDate: now
       }});
     });
   }
 
-  // Conditions
+  // Condition — IPS-Profil.
+  var conditionUUIDs = [];
   if (get('krankheiten')) {
-    get('krankheiten').split(',').forEach(function(c,i){
+    get('krankheiten').split(',').forEach(function(c) {
       c = c.trim();
       if (!c) return;
-      entries.push({ fullUrl:'urn:uuid:condition-'+(i+1), resource:{
-        resourceType:'Condition', id:'condition-'+(i+1),
-        subject:{ reference:'urn:uuid:patient-1' },
-        code:{ text: c },
-        clinicalStatus:{ coding:[{system:'http://terminology.hl7.org/CodeSystem/condition-clinical',code:'active'}] },
+      var id = generateUUID();
+      conditionUUIDs.push(id);
+      entries.push({ fullUrl: 'urn:uuid:' + id, resource: {
+        resourceType: 'Condition',
+        id: id,
+        meta: { profile: ['http://hl7.org/fhir/uv/ips/StructureDefinition/Condition-uv-ips'] },
+        subject: { reference: 'urn:uuid:' + patientUUID },
+        code:    { text: c },
+        clinicalStatus: { coding: [{ system: 'http://terminology.hl7.org/CodeSystem/condition-clinical', code: 'active' }] },
         recordedDate: now
       }});
     });
   }
 
-  // MedicationStatements
-  getList('medikamente').forEach(function(m,i){
+  // MedicationStatement — IPS-Profil, Dosierungstext ohne Whitespace.
+  var medUUIDs = [];
+  getList('medikamente').forEach(function(m) {
     if (!m.name) return;
-    entries.push({ fullUrl:'urn:uuid:medication-'+(i+1), resource:{
-      resourceType:'MedicationStatement', id:'medication-'+(i+1),
-      subject:{ reference:'urn:uuid:patient-1' },
-      medicationCodeableConcept:{ text: m.name },
-      dosage: m.dosis ? [{ text: m.dosis }] : [],
-      status:'active',
+    var id = generateUUID();
+    medUUIDs.push(id);
+    entries.push({ fullUrl: 'urn:uuid:' + id, resource: {
+      resourceType: 'MedicationStatement',
+      id: id,
+      meta: { profile: ['http://hl7.org/fhir/uv/ips/StructureDefinition/MedicationStatement-uv-ips'] },
+      status: 'active',
+      medicationCodeableConcept: { text: m.name },
+      subject:      { reference: 'urn:uuid:' + patientUUID },
+      dosage:       m.dosis ? [{ text: m.dosis.trim() }] : [],
       dateAsserted: now
     }});
   });
 
-  // DeviceUseStatement (Implantate)
+  // DeviceUseStatement (Implantate).
+  var deviceUUIDs = [];
   if (get('implantate')) {
-    entries.push({ fullUrl:'urn:uuid:device-1', resource:{
-      resourceType:'DeviceUseStatement', id:'device-1',
-      subject:{ reference:'urn:uuid:patient-1' },
-      device:{ display: get('implantate') },
-      status:'active'
+    var id = generateUUID();
+    deviceUUIDs.push(id);
+    entries.push({ fullUrl: 'urn:uuid:' + id, resource: {
+      resourceType: 'DeviceUseStatement',
+      id: id,
+      status: 'active',
+      subject: { reference: 'urn:uuid:' + patientUUID },
+      device:  { display: get('implantate') }
     }});
   }
 
-  // Composition — muss als erstes Entry im IPS-Dokument stehen (IPS-Standard)
-  var compositionId = 'composition-1';
-  var sections = [];
-
-  var allergyRefs = entries
-    .filter(function(e) { return e.resource.resourceType === 'AllergyIntolerance'; })
-    .map(function(e) { return { reference: e.fullUrl }; });
-  if (allergyRefs.length > 0) {
-    sections.push({
-      title: 'Allergien und Unverträglichkeiten',
-      code: { coding: [{ system: 'http://loinc.org', code: '48765-2', display: 'Allergies and adverse reactions' }] },
-      entry: allergyRefs
-    });
+  // Hilfsfunktion: leere Sektion mit emptyReason aufbauen.
+  function leereSektionReason() {
+    return { coding: [{ system: 'http://terminology.hl7.org/CodeSystem/list-empty-reason', code: 'nilknown' }] };
   }
 
-  var medRefs = entries
-    .filter(function(e) { return e.resource.resourceType === 'MedicationStatement'; })
-    .map(function(e) { return { reference: e.fullUrl }; });
-  if (medRefs.length > 0) {
-    sections.push({
-      title: 'Medikamente',
-      code: { coding: [{ system: 'http://loinc.org', code: '10160-0', display: 'History of Medication use Narrative' }] },
-      entry: medRefs
-    });
+  // Composition-Sektionen: IPS 2.0.0 verlangt mindestens Allergien,
+  // Medikamente und Diagnosen — auch wenn leer (dann mit emptyReason).
+  // Jede Sektion braucht ein Narrativ (section.text).
+
+  // Sektion Allergien (48765-2) — Pflicht.
+  var sectionAllergien = {
+    title: 'Allergien und Unverträglichkeiten',
+    code:  { coding: [{ system: 'http://loinc.org', code: '48765-2' }] },
+    text:  narrativ(allergyUUIDs.length > 0 ? 'Allergien und Unverträglichkeiten vorhanden.' : 'Keine bekannten Allergien.')
+  };
+  if (allergyUUIDs.length > 0) {
+    sectionAllergien.entry = allergyUUIDs.map(function(id) { return { reference: 'urn:uuid:' + id }; });
+  } else {
+    sectionAllergien.emptyReason = leereSektionReason();
   }
 
-  var condRefs = entries
-    .filter(function(e) { return e.resource.resourceType === 'Condition'; })
-    .map(function(e) { return { reference: e.fullUrl }; });
-  if (condRefs.length > 0) {
-    sections.push({
-      title: 'Diagnosen und Erkrankungen',
-      code: { coding: [{ system: 'http://loinc.org', code: '11450-4', display: 'Problem list - Reported' }] },
-      entry: condRefs
-    });
+  // Sektion Medikamente (10160-0) — Pflicht.
+  var sectionMedikamente = {
+    title: 'Medikamente',
+    code:  { coding: [{ system: 'http://loinc.org', code: '10160-0' }] },
+    text:  narrativ(medUUIDs.length > 0 ? 'Medikamente vorhanden.' : 'Keine Medikamente bekannt.')
+  };
+  if (medUUIDs.length > 0) {
+    sectionMedikamente.entry = medUUIDs.map(function(id) { return { reference: 'urn:uuid:' + id }; });
+  } else {
+    sectionMedikamente.emptyReason = leereSektionReason();
   }
 
-  var deviceRefs = entries
-    .filter(function(e) { return e.resource.resourceType === 'DeviceUseStatement'; })
-    .map(function(e) { return { reference: e.fullUrl }; });
-  if (deviceRefs.length > 0) {
+  // Sektion Diagnosen (11450-4) — Pflicht.
+  var sectionDiagnosen = {
+    title: 'Diagnosen und Erkrankungen',
+    code:  { coding: [{ system: 'http://loinc.org', code: '11450-4' }] },
+    text:  narrativ(conditionUUIDs.length > 0 ? 'Erkrankungen vorhanden.' : 'Keine bekannten Erkrankungen.')
+  };
+  if (conditionUUIDs.length > 0) {
+    sectionDiagnosen.entry = conditionUUIDs.map(function(id) { return { reference: 'urn:uuid:' + id }; });
+  } else {
+    sectionDiagnosen.emptyReason = leereSektionReason();
+  }
+
+  var sections = [sectionAllergien, sectionMedikamente, sectionDiagnosen];
+
+  // Sektion Geräte (46264-8) — optional, nur wenn Daten vorhanden.
+  if (deviceUUIDs.length > 0) {
     sections.push({
       title: 'Implantate und medizinische Geräte',
-      code: { coding: [{ system: 'http://loinc.org', code: '46264-8', display: 'History of medical device use' }] },
-      entry: deviceRefs
+      code:  { coding: [{ system: 'http://loinc.org', code: '46264-8' }] },
+      text:  narrativ('Medizinische Geräte oder Implantate vorhanden.'),
+      entry: deviceUUIDs.map(function(id) { return { reference: 'urn:uuid:' + id }; })
     });
   }
 
   var composition = {
     resourceType: 'Composition',
-    id: compositionId,
-    meta: {
-      profile: ['http://hl7.org/fhir/uv/ips/StructureDefinition/Composition-uv-ips']
-    },
+    id:   compositionUUID,
+    meta: { profile: ['http://hl7.org/fhir/uv/ips/StructureDefinition/Composition-uv-ips'] },
     status: 'final',
     type: {
-      coding: [{
-        system: 'http://loinc.org',
-        code: '60591-5',
-        display: 'Patient summary Document'
-      }]
+      coding: [{ system: 'http://loinc.org', code: '60591-5', display: 'Patient Summary' }]
     },
-    subject: { reference: 'urn:uuid:patient-1' },
-    date: now,
-    author: [{ display: 'Vivodepot — Souveräner Bürger-Desktop' }],
-    title: 'International Patient Summary — Vivodepot',
+    subject:         { reference: 'urn:uuid:' + patientUUID },
+    date:            now,
+    author:          [{ display: 'Vivodepot — Souveräner Bürger-Desktop' }],
+    title:           'International Patient Summary — Vivodepot',
     confidentiality: 'N',
-    section: sections
+    section:         sections
   };
 
-  // Composition steht als erstes Entry vor allen anderen Ressourcen.
+  // Composition steht als erstes Entry (IPS-Pflicht).
   var allEntries = [
-    { fullUrl: 'urn:uuid:' + compositionId, resource: composition }
+    { fullUrl: 'urn:uuid:' + compositionUUID, resource: composition }
   ].concat(entries);
 
   var bundle = {
     resourceType: 'Bundle',
-    id: generateUUID(),
+    id:   generateUUID(),
     meta: {
       profile: ['http://hl7.org/fhir/uv/ips/StructureDefinition/Bundle-uv-ips'],
-      source: 'Vivodepot Souveraener Buerger-Desktop'
+      source:  'https://vivodepot.de'
     },
     identifier: {
       system: 'urn:ietf:rfc:3986',
-      value: 'urn:uuid:' + generateUUID()
+      value:  'urn:uuid:' + generateUUID()
     },
-    type: 'document',
+    type:      'document',
     timestamp: now,
-    entry: allEntries
+    entry:     allEntries
   };
 
   var json = JSON.stringify(bundle, null, 2);
-  var blob = new Blob([json], { type:'application/fhir+json' });
+  var blob = new Blob([json], { type: 'application/fhir+json' });
   var a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'IPS_'+(get('nachname')||'Patient')+'_'+new Date().toISOString().slice(0,10)+'.fhir.json';
+  a.download = 'IPS_' + (nachname || 'Patient') + '_' + new Date().toISOString().slice(0, 10) + '.fhir.json';
   a.click();
   toast('IPS-Dokument exportiert');
 }

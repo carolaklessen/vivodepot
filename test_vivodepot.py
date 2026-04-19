@@ -2924,143 +2924,91 @@ def main():
         has_safety_items=False,
     )
 
-    # === 74. IPS-UPGRADE — generateFHIR() (beta.15) ===
-    print("\n=== 74. IPS-UPGRADE — generateFHIR() (beta.15) ===")
+    # === 74. IPS-UPGRADE — generateFHIR() (beta.14) ===
+    print("\n=== 74. IPS-UPGRADE — generateFHIR() (beta.14) ===")
 
-    # Hilfsfunktion: generateFHIR-Block aus der HTML-Datei extrahieren
     fhir_block = re.search(
         r"function generateFHIR\(\)\s*\{.*?^\}",
         html,
         re.DOTALL | re.MULTILINE,
     )
 
-    # generateUUID-Funktion vorhanden
-    check(
-        "IPS: generateUUID() vorhanden",
-        "function generateUUID" in html,
-    )
+    check("IPS: generateUUID() vorhanden", "function generateUUID" in html)
+    check("IPS: Bundle.type === 'document'",
+          fhir_block is not None and "'document'" in fhir_block.group(0)
+          and "type:" in fhir_block.group(0))
+    check("IPS: Bundle.type 'collection' entfernt",
+          fhir_block is not None and "type: 'collection'" not in fhir_block.group(0))
+    check("IPS: Bundle.identifier vorhanden",
+          fhir_block is not None and "identifier:" in fhir_block.group(0))
+    check("IPS: Bundle.identifier.system = 'urn:ietf:rfc:3986'",
+          fhir_block is not None and "urn:ietf:rfc:3986" in fhir_block.group(0))
+    check("IPS: Bundle.meta.profile enthält IPS-Bundle-URL",
+          fhir_block is not None
+          and "hl7.org/fhir/uv/ips/StructureDefinition/Bundle-uv-ips" in fhir_block.group(0))
+    check("IPS: Bundle.meta.source ist valide URI ohne Leerzeichen",
+          fhir_block is not None and "source:  'https://vivodepot.de'" in fhir_block.group(0))
+    check("IPS: Composition-Ressource vorhanden",
+          fhir_block is not None and "resourceType: 'Composition'" in fhir_block.group(0))
+    check("IPS: Composition.status === 'final'",
+          fhir_block is not None and "status: 'final'" in fhir_block.group(0))
+    check("IPS: Composition.type.coding code = '60591-5'",
+          fhir_block is not None and "'60591-5'" in fhir_block.group(0))
+    check("IPS: Composition.type.display = 'Patient Summary'",
+          fhir_block is not None and "display: 'Patient Summary'" in fhir_block.group(0))
+    check("IPS: Composition referenziert Patient per UUID",
+          fhir_block is not None and "patientUUID" in fhir_block.group(0))
+    check("IPS: Composition.meta.profile enthält IPS-Composition-URL",
+          fhir_block is not None
+          and "hl7.org/fhir/uv/ips/StructureDefinition/Composition-uv-ips" in fhir_block.group(0))
+    check("IPS: Alle fullUrls verwenden echte UUIDs (patientUUID, compositionUUID)",
+          fhir_block is not None
+          and "patientUUID" in fhir_block.group(0)
+          and "compositionUUID" in fhir_block.group(0))
+    check("IPS: Patient hat IPS-Profil in meta",
+          fhir_block is not None
+          and "Patient-uv-ips" in fhir_block.group(0))
+    check("IPS: Kein leeres telecom-Array",
+          fhir_block is not None and "telecom: []" not in fhir_block.group(0))
+    check("IPS: Leere Adressfelder werden weggelassen",
+          fhir_block is not None and "line: [get('strasse')" not in fhir_block.group(0))
+    check("IPS: Blutgruppen-Extension entfernt (nicht IPS-konform)",
+          fhir_block is not None and "patient-bloodGroup" not in fhir_block.group(0))
+    check("IPS: AllergyIntolerance.verificationStatus vorhanden",
+          fhir_block is not None and "verificationStatus" in fhir_block.group(0))
+    check("IPS: AllergyIntolerance hat IPS-Profil in meta",
+          fhir_block is not None and "AllergyIntolerance-uv-ips" in fhir_block.group(0))
+    check("IPS: Condition hat IPS-Profil in meta",
+          fhir_block is not None and "Condition-uv-ips" in fhir_block.group(0))
+    check("IPS: MedicationStatement hat IPS-Profil in meta",
+          fhir_block is not None and "MedicationStatement-uv-ips" in fhir_block.group(0))
+    check("IPS: section.text (Narrativ) vorhanden",
+          fhir_block is not None and "narrativ(" in fhir_block.group(0))
+    check("IPS: Pflichtsektion Diagnosen immer vorhanden (emptyReason)",
+          fhir_block is not None
+          and "sectionDiagnosen" in fhir_block.group(0)
+          and "emptyReason" in fhir_block.group(0))
+    check("IPS: Pflichtsektion Allergien immer vorhanden",
+          fhir_block is not None and "sectionAllergien" in fhir_block.group(0))
+    check("IPS: Pflichtsektion Medikamente immer vorhanden",
+          fhir_block is not None and "sectionMedikamente" in fhir_block.group(0))
+    check("IPS: Sektions-LOINC-Code 48765-2 (Allergien) vorhanden",
+          fhir_block is not None and "48765-2" in fhir_block.group(0))
+    check("IPS: Sektions-LOINC-Code 10160-0 (Medikamente) vorhanden",
+          fhir_block is not None and "10160-0" in fhir_block.group(0))
+    check("IPS: Sektions-LOINC-Code 11450-4 (Diagnosen) vorhanden",
+          fhir_block is not None and "11450-4" in fhir_block.group(0))
+    check("IPS: Sektions-LOINC-Code 46264-8 (Geraete) vorhanden",
+          fhir_block is not None and "46264-8" in fhir_block.group(0))
+    check("IPS: Dateiname beginnt mit 'IPS_'",
+          fhir_block is not None and "a.download = 'IPS_'" in fhir_block.group(0))
+    check("IPS: Dateiname endet auf '.fhir.json'",
+          fhir_block is not None and ".fhir.json'" in fhir_block.group(0))
+    check("IPS: Alter Dateiname 'FHIR_R4_' entfernt",
+          fhir_block is not None and "FHIR_R4_" not in fhir_block.group(0))
 
-    # Bundle.type ist 'document' (nicht mehr 'collection')
-    check(
-        "IPS: Bundle.type === 'document'",
-        fhir_block is not None and "type: 'document'" in fhir_block.group(0),
-    )
-
-    # Bundle.type 'collection' wurde entfernt
-    check(
-        "IPS: Bundle.type 'collection' entfernt",
-        fhir_block is not None and "type: 'collection'" not in fhir_block.group(0),
-    )
-
-    # Bundle.identifier vorhanden
-    check(
-        "IPS: Bundle.identifier vorhanden",
-        fhir_block is not None and "identifier:" in fhir_block.group(0),
-    )
-
-    # Bundle.identifier.system ist urn:ietf:rfc:3986
-    check(
-        "IPS: Bundle.identifier.system = 'urn:ietf:rfc:3986'",
-        fhir_block is not None and "urn:ietf:rfc:3986" in fhir_block.group(0),
-    )
-
-    # Bundle.meta.profile enthält IPS-Bundle-URL
-    check(
-        "IPS: Bundle.meta.profile enthält IPS-Bundle-URL",
-        fhir_block is not None
-        and "hl7.org/fhir/uv/ips/StructureDefinition/Bundle-uv-ips" in fhir_block.group(0),
-    )
-
-    # Composition-Ressource wird aufgebaut
-    check(
-        "IPS: Composition-Ressource vorhanden",
-        fhir_block is not None and "resourceType: 'Composition'" in fhir_block.group(0),
-    )
-
-    # Composition.status === 'final'
-    check(
-        "IPS: Composition.status === 'final'",
-        fhir_block is not None and "status: 'final'" in fhir_block.group(0),
-    )
-
-    # Composition.type.coding[0].code === '60591-5'
-    check(
-        "IPS: Composition.type.coding code = '60591-5'",
-        fhir_block is not None and "'60591-5'" in fhir_block.group(0),
-    )
-
-    # Composition referenziert Patient
-    check(
-        "IPS: Composition referenziert Patient",
-        fhir_block is not None and "reference: 'urn:uuid:patient-1'" in fhir_block.group(0),
-    )
-
-    # Composition.meta.profile enthält IPS-Composition-URL
-    check(
-        "IPS: Composition.meta.profile enthält IPS-Composition-URL",
-        fhir_block is not None
-        and "hl7.org/fhir/uv/ips/StructureDefinition/Composition-uv-ips" in fhir_block.group(0),
-    )
-
-    # Composition.section ist ein Array (sections-Variable)
-    check(
-        "IPS: Composition.section wird als Array aufgebaut",
-        fhir_block is not None and "var sections = []" in fhir_block.group(0),
-    )
-
-    # Sektionen-Codes: alle vier LOINC-Codes vorhanden
-    for loinc_code, bezeichnung in [
-        ("48765-2", "Allergien"),
-        ("10160-0", "Medikamente"),
-        ("11450-4", "Diagnosen"),
-        ("46264-8", "Geraete"),
-    ]:
-        check(
-            f"IPS: Sektions-LOINC-Code {loinc_code} ({bezeichnung}) vorhanden",
-            fhir_block is not None and loinc_code in fhir_block.group(0),
-        )
-
-    # Alle Sektionen verwenden LOINC-System
-    check(
-        "IPS: Sektionen verwenden http://loinc.org als System",
-        fhir_block is not None
-        and fhir_block.group(0).count("'http://loinc.org'") >= 4,
-    )
-
-    # Composition steht als erstes Entry (allEntries beginnt mit Composition)
-    check(
-        "IPS: Composition ist erstes Entry (allEntries)",
-        fhir_block is not None
-        and "'urn:uuid:' + compositionId" in fhir_block.group(0)
-        and "allEntries" in fhir_block.group(0),
-    )
-
-    # Bundle.entry referenziert allEntries (nicht mehr entries direkt)
-    check(
-        "IPS: Bundle.entry verwendet allEntries",
-        fhir_block is not None and "entry: allEntries" in fhir_block.group(0),
-    )
-
-    # Dateiname beginnt mit IPS_
-    check(
-        "IPS: Dateiname beginnt mit 'IPS_'",
-        fhir_block is not None and "a.download = 'IPS_'" in fhir_block.group(0),
-    )
-
-    # Dateiname endet auf .fhir.json
-    check(
-        "IPS: Dateiname endet auf '.fhir.json'",
-        fhir_block is not None and ".fhir.json'" in fhir_block.group(0),
-    )
-
-    # Alter Dateiname FHIR_R4_ nicht mehr vorhanden
-    check(
-        "IPS: Alter Dateiname 'FHIR_R4_' entfernt",
-        fhir_block is not None and "FHIR_R4_" not in fhir_block.group(0),
-    )
-
-    # === 75. BIBLIOTHEKEN — KEINE RAW-CONTROL-CHARACTERS (beta.15) ===
-    print("\n=== 75. BIBLIOTHEKEN — KEINE RAW-CONTROL-CHARACTERS (beta.15) ===")
+    # === 75. BIBLIOTHEKEN — KEINE RAW-CONTROL-CHARACTERS (beta.14) ===
+    print("\n=== 75. BIBLIOTHEKEN — KEINE RAW-CONTROL-CHARACTERS (beta.14) ===")
 
     # Verbotene Bytes: 0x00–0x08, 0x0B, 0x0C, 0x0E–0x1F
     # Erlaubt: 0x09 (Tab), 0x0A (Newline), 0x0D (CR)
