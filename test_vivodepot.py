@@ -2309,9 +2309,9 @@ def main():
     check("Renderer: Fortschrittstext 'X von Y Fragen beantwortet'",
           "Fragen beantwortet" in html and "prog.answered" in html)
 
-    # ---- onchange setzt Daten und rendert neu ----
-    check("Renderer: onchange ruft set() und renderStep() auf",
-          "set(\\'' + tplEscape(key) + '\\',this.value);renderStep()" in html)
+    # ---- onchange setzt Daten und rendert neu (mit preserveScroll) ----
+    check("Renderer: onchange ruft set() und renderStep(true) auf",
+          "set(\\'' + tplEscape(key) + '\\',this.value);renderStep(true)" in html)
 
     # ---- Sicherheit: kein innerHTML ohne Escape ----
     # Alle dynamischen Werte aus Templates muessen durch tplEscape laufen.
@@ -2716,10 +2716,10 @@ def main():
     check("QR-Render: Bild als <img src> mit max-width",
           qr_render_block is not None and
           "<img src=\"'" in qr_render_block.group(0) and
-          "max-width:180px" in qr_render_block.group(0))
-    check("QR-Render: Beschriftung 'QR-Code zur Weitergabe' (neutral)",
+          "max-width:220px" in qr_render_block.group(0))
+    check("QR-Render: Beschriftung 'Fragebogen ausgefüllt — was jetzt?'",
           qr_render_block is not None and
-          "QR-Code zur Weitergabe" in qr_render_block.group(0))
+          "Fragebogen ausgef\u00fcllt \u2014 was jetzt?" in qr_render_block.group(0))
     check("QR-Render: Alternativ-Text fuer Bild",
           qr_render_block is not None and
           'alt="QR-Code mit Ergebnis"' in qr_render_block.group(0))

@@ -15034,7 +15034,7 @@ function tplRenderItems(t) {
         + (sel ? 'var(--forest)' : 'var(--bg,#fff)') + ';color:'
         + (sel ? '#fff' : 'var(--ink2)') + '">'
         + '<input type="radio" name="' + tplEscape(key) + '" value="' + tplEscape(v) + '" ' + (sel ? 'checked' : '')
-        + ' onchange="set(\'' + tplEscape(key) + '\',this.value);renderStep()" style="position:absolute;opacity:0;pointer-events:none">'
+        + ' onchange="set(\'' + tplEscape(key) + '\',this.value);renderStep(true)" style="position:absolute;opacity:0;pointer-events:none">'
         + tplEscape(opt.label) + '</label>';
     });
     html += '</div></div>';
@@ -15363,16 +15363,30 @@ function tplBuildQrText(t) {
 function tplRenderQr(t) {
   const prog = tplCountAnswered(t);
   if (prog.answered !== prog.total || prog.total === 0) return '';
-  if (typeof makeQRDataUrl !== 'function') return '';
+
+  const downloadBtn = '<div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);text-align:center">'
+    + '<button class="btn-nav primary" onclick="tplDownloadFhir(\'' + tplEscape(t.id) + '\')" style="font-size:0.88rem">Ergebnis herunterladen</button>'
+    + '<div style="font-size:0.75rem;color:var(--ink3);margin-top:4px">Für Personen, die lieber eine Datei mitbringen möchten.</div>'
+    + '</div>';
+
+  const boxStart = '<div style="padding:1.25rem;margin-top:1rem;background:#e8f4e8;border:2px solid var(--forest);border-radius:10px;text-align:center">'
+    + '<div style="font-size:1.1rem;font-weight:bold;color:var(--forest);margin-bottom:0.5rem">Fragebogen ausgefüllt — was jetzt?</div>';
+
+  if (typeof makeQRDataUrl !== 'function') {
+    return boxStart
+      + '<div style="font-size:0.9rem;color:var(--ink2);margin-bottom:0.5rem;line-height:1.5">Laden Sie das Ergebnis herunter und zeigen Sie es beim nächsten Termin Ihrer Ärztin oder Ihrem Arzt.</div>'
+      + downloadBtn + '</div>';
+  }
+
   const text = tplBuildQrText(t);
   if (!text) return '';
   const dataUrl = makeQRDataUrl(text, 5);
   if (!dataUrl) return '';
-  return '<div style="padding:0.8rem;margin-top:0.75rem;background:var(--beige);border-radius:8px;text-align:center">'
-    + '<div style="font-size:0.82rem;color:var(--ink2);margin-bottom:6px;font-weight:bold">QR-Code zur Weitergabe</div>'
-    + '<img src="' + tplEscape(dataUrl) + '" alt="QR-Code mit Ergebnis" style="max-width:180px;width:100%;height:auto;background:#fff;padding:4px;border-radius:4px">'
-    + '<div style="font-size:0.72rem;color:var(--ink3);margin-top:6px;line-height:1.4">Empfänger scannt mit Handy oder Scanner-App</div>'
-    + '</div>';
+
+  return boxStart
+    + '<div style="font-size:0.9rem;color:var(--ink2);margin-bottom:1rem;line-height:1.5">Zeigen Sie diesen Code beim nächsten Termin Ihrer Ärztin oder Ihrem Arzt.</div>'
+    + '<img src="' + tplEscape(dataUrl) + '" alt="QR-Code mit Ergebnis" style="max-width:220px;width:100%;height:auto;background:#fff;padding:8px;border-radius:6px">'
+    + downloadBtn + '</div>';
 }
 
 const STEP_RENDERERS = {
@@ -15386,9 +15400,7 @@ const STEP_RENDERERS = {
         const prog = tplCountAnswered(t);
         const progText = prog.answered + ' von ' + prog.total + ' Fragen beantwortet';
         const isComplete = (prog.answered === prog.total && prog.total > 0);
-        const fhirBtn = isComplete
-          ? '<div style="margin-top:0.75rem;text-align:center"><button class="btn-nav primary" onclick="tplDownloadFhir(\'' + tplEscape(t.id) + '\')" style="font-size:0.88rem">Ergebnis herunterladen</button><div style="font-size:0.78rem;color:var(--ink3);margin-top:4px">Als strukturierte Datei zum Weiterreichen</div></div>'
-          : '';
+        const fhirBtn = ''; // Download-Schaltfläche ist in tplRenderQr enthalten
         return '<div style="margin-bottom:1.25rem">'
           // Metadaten-Karte (oben)
           + '<div style="padding:1rem;background:var(--beige);border-radius:8px 8px 0 0">'
@@ -15417,7 +15429,7 @@ const STEP_RENDERERS = {
     return `
     <div class="step-header">
       <h1>Für Institutionen</h1>
-      <p>Hier finden Sie Funktionen zur strukturierten Datenweitergabe an Institutionen — Fragebögen ausfüllen, Ergebnisse übergeben.</p>
+      <p>Vorlage laden, Fragebogen ausfüllen, Ergebnis weitergeben — alles auf dieser Seite.</p>
       ${stepDots()}
     </div>
     <div style="font-size:0.82rem;color:var(--ink2);margin-bottom:1rem;line-height:1.5">
