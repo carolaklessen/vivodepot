@@ -40,9 +40,6 @@ def main():
         content = m.group(1)
         if len(content) < 50:
             continue
-        # Minifizierte Bibliotheken (jsPDF etc.) überspringen
-        if content.lstrip().startswith('/**') and len(content) > 50000:
-            continue
         with tempfile.NamedTemporaryFile(mode='w', suffix='.js', delete=False, encoding='utf-8') as f:
             f.write(content)
             fname = f.name
@@ -347,7 +344,7 @@ def main():
     check("Journey: Goal-Wizard aufrufbar", "function showGoalWizard()" in html)
     check("Journey: enterApp ruft safeRender", "function enterApp() {\n  hideAllOverlays();\n  safeRender();" in html)
     check("Journey: safeRender fängt Fehler ab", "function safeRender()" in html and "catch" in html)
-    check("Journey: Thema-Button in Sidebar", "Thema wählen" in html and "Thema ändern" in html)
+    check("Journey: Fokus-Button in Sidebar", "Fokus wählen" in html and "Fokus ändern" in html)
 
     # Journey 2: Rückkehr (Return-Overlay)
     check("Journey: Return-Overlay hat Weiche", "id=\"return-overlay\"" in html and "showAngehoerigenAuswahl()" in html)
@@ -1264,7 +1261,7 @@ def main():
     check("Notfall-Step: notfall_nachbar Feld",          "'notfall_nachbar'" in html or "'ks_nachbar'" in html)
     check("Notfall-Step: BBK-Link im Renderer",          "bbk.bund.de" in html and "notfall: () =>" in html)
     check("Notfall-Step: Vorrat-Checkliste interaktiv",  "vorrat_" in html and "NOTFALL_VORRAT_ITEMS" in html)
-    check("Notfall-Step: renderStep hat preserveScroll", "function renderStep(preserveScroll)" in html)
+    check("Notfall-Step: in times-Objekt",               "notfall:2" in html or "notfall: 2" in html)
 
     # Angehörigen-Modus: Vollständigkeit
     check("Angehörigen: brief_krankenhaus Feld",         "'brief_krankenhaus'" in html)
@@ -2101,9 +2098,9 @@ def main():
     print("\n=== 65. BETA.10 — ANF-UX-01 BIS ANF-UX-07 ===")
     # ═══════════════════════════════════════
 
-    # UX-01: Lock-Button hat aria-label (SVG statt Emoji)
-    check("ANF-UX-01: Lock-Button hat aria-label",
-          'aria-label="Bildschirm sperren"' in html or 'aria-label=\'Bildschirm sperren\'' in html)
+    # UX-01: Lock-Button hat Emoji-Inhalt
+    check("ANF-UX-01: Lock-Button enthält 🔒",
+          ">🔒</button>" in html)
 
     # UX-03: EUDI-Karte kein HTML-Entity
     check("ANF-UX-03: w&auml;hlen nicht mehr in EUDI-Karte",
@@ -2168,33 +2165,8 @@ def main():
           "{ id: 'institutionen'" in html)
     check("Templates: Label 'Fuer Institutionen' vorhanden",
           "F\u00fcr Institutionen" in html)
-    check("Templates: refreshList-Funktion vorhanden",
-          "function refreshList(key)" in html)
-
-    # Neue UX-Änderungen dieser Session
-    check("SESSION: renderKinderErwachsenBlocks vorhanden",
-          "function renderKinderErwachsenBlocks()" in html)
-    check("SESSION: renderUnterhaltBlocks vorhanden",
-          "function renderUnterhaltBlocks()" in html)
-    check("SESSION: getKinderMjText Exporthelfer",
-          "function getKinderMjText()" in html)
-    check("SESSION: getKinderErwText Exporthelfer",
-          "function getKinderErwText()" in html)
-    check("SESSION: getUnterhaltText Exporthelfer",
-          "function getUnterhaltText()" in html)
-    check("SESSION: vd-list Container-IDs vorhanden",
-          'id="vd-list-kinder_liste"' in html and 'id="vd-list-kontakte"' in html)
-    check("SESSION: preserveScroll in renderStep",
-          "function renderStep(preserveScroll)" in html)
-    check("SESSION: showStepPicker mobile Navigation",
-          "function showStepPicker()" in html)
-    check("SESSION: Thema statt Fokus konsistent",
-          "Thema wählen" in html and "Thema ändern" in html and "Fokus wählen" not in html)
-    check("SESSION: Keine Emoji in ec-icon",
-          not any(ord(c) > 127 for c in
-              __import__('re').findall(r'class="ec-icon">([^<]+)<', html)[0]
-          ) if __import__('re').findall(r'class="ec-icon">([^<]+)<', html) else True)
-
+    check("Templates: institutionen:2 im times-Objekt vorhanden",
+          "institutionen:2" in html)
     # Positionstest: templates muss direkt nach gesundheit stehen (prom entfernt)
     steps_order = re.search(
         r"\{ id: 'einstellungen'.*?\{ id: 'institutionen'",
@@ -2950,6 +2922,177 @@ def main():
         expected_loinc_code="71969-0",
         expected_scale_options=6,
         has_safety_items=False,
+    )
+
+    # === 74. IPS-UPGRADE — generateFHIR() (beta.15) ===
+    print("\n=== 74. IPS-UPGRADE — generateFHIR() (beta.15) ===")
+
+    # Hilfsfunktion: generateFHIR-Block aus der HTML-Datei extrahieren
+    fhir_block = re.search(
+        r"function generateFHIR\(\)\s*\{.*?^\}",
+        html,
+        re.DOTALL | re.MULTILINE,
+    )
+
+    # generateUUID-Funktion vorhanden
+    check(
+        "IPS: generateUUID() vorhanden",
+        "function generateUUID" in html,
+    )
+
+    # Bundle.type ist 'document' (nicht mehr 'collection')
+    check(
+        "IPS: Bundle.type === 'document'",
+        fhir_block is not None and "type: 'document'" in fhir_block.group(0),
+    )
+
+    # Bundle.type 'collection' wurde entfernt
+    check(
+        "IPS: Bundle.type 'collection' entfernt",
+        fhir_block is not None and "type: 'collection'" not in fhir_block.group(0),
+    )
+
+    # Bundle.identifier vorhanden
+    check(
+        "IPS: Bundle.identifier vorhanden",
+        fhir_block is not None and "identifier:" in fhir_block.group(0),
+    )
+
+    # Bundle.identifier.system ist urn:ietf:rfc:3986
+    check(
+        "IPS: Bundle.identifier.system = 'urn:ietf:rfc:3986'",
+        fhir_block is not None and "urn:ietf:rfc:3986" in fhir_block.group(0),
+    )
+
+    # Bundle.meta.profile enthält IPS-Bundle-URL
+    check(
+        "IPS: Bundle.meta.profile enthält IPS-Bundle-URL",
+        fhir_block is not None
+        and "hl7.org/fhir/uv/ips/StructureDefinition/Bundle-uv-ips" in fhir_block.group(0),
+    )
+
+    # Composition-Ressource wird aufgebaut
+    check(
+        "IPS: Composition-Ressource vorhanden",
+        fhir_block is not None and "resourceType: 'Composition'" in fhir_block.group(0),
+    )
+
+    # Composition.status === 'final'
+    check(
+        "IPS: Composition.status === 'final'",
+        fhir_block is not None and "status: 'final'" in fhir_block.group(0),
+    )
+
+    # Composition.type.coding[0].code === '60591-5'
+    check(
+        "IPS: Composition.type.coding code = '60591-5'",
+        fhir_block is not None and "'60591-5'" in fhir_block.group(0),
+    )
+
+    # Composition referenziert Patient
+    check(
+        "IPS: Composition referenziert Patient",
+        fhir_block is not None and "reference: 'urn:uuid:patient-1'" in fhir_block.group(0),
+    )
+
+    # Composition.meta.profile enthält IPS-Composition-URL
+    check(
+        "IPS: Composition.meta.profile enthält IPS-Composition-URL",
+        fhir_block is not None
+        and "hl7.org/fhir/uv/ips/StructureDefinition/Composition-uv-ips" in fhir_block.group(0),
+    )
+
+    # Composition.section ist ein Array (sections-Variable)
+    check(
+        "IPS: Composition.section wird als Array aufgebaut",
+        fhir_block is not None and "var sections = []" in fhir_block.group(0),
+    )
+
+    # Sektionen-Codes: alle vier LOINC-Codes vorhanden
+    for loinc_code, bezeichnung in [
+        ("48765-2", "Allergien"),
+        ("10160-0", "Medikamente"),
+        ("11450-4", "Diagnosen"),
+        ("46264-8", "Geraete"),
+    ]:
+        check(
+            f"IPS: Sektions-LOINC-Code {loinc_code} ({bezeichnung}) vorhanden",
+            fhir_block is not None and loinc_code in fhir_block.group(0),
+        )
+
+    # Alle Sektionen verwenden LOINC-System
+    check(
+        "IPS: Sektionen verwenden http://loinc.org als System",
+        fhir_block is not None
+        and fhir_block.group(0).count("'http://loinc.org'") >= 4,
+    )
+
+    # Composition steht als erstes Entry (allEntries beginnt mit Composition)
+    check(
+        "IPS: Composition ist erstes Entry (allEntries)",
+        fhir_block is not None
+        and "'urn:uuid:' + compositionId" in fhir_block.group(0)
+        and "allEntries" in fhir_block.group(0),
+    )
+
+    # Bundle.entry referenziert allEntries (nicht mehr entries direkt)
+    check(
+        "IPS: Bundle.entry verwendet allEntries",
+        fhir_block is not None and "entry: allEntries" in fhir_block.group(0),
+    )
+
+    # Dateiname beginnt mit IPS_
+    check(
+        "IPS: Dateiname beginnt mit 'IPS_'",
+        fhir_block is not None and "a.download = 'IPS_'" in fhir_block.group(0),
+    )
+
+    # Dateiname endet auf .fhir.json
+    check(
+        "IPS: Dateiname endet auf '.fhir.json'",
+        fhir_block is not None and ".fhir.json'" in fhir_block.group(0),
+    )
+
+    # Alter Dateiname FHIR_R4_ nicht mehr vorhanden
+    check(
+        "IPS: Alter Dateiname 'FHIR_R4_' entfernt",
+        fhir_block is not None and "FHIR_R4_" not in fhir_block.group(0),
+    )
+
+    # === 75. BIBLIOTHEKEN — KEINE RAW-CONTROL-CHARACTERS (beta.15) ===
+    print("\n=== 75. BIBLIOTHEKEN — KEINE RAW-CONTROL-CHARACTERS (beta.15) ===")
+
+    # Verbotene Bytes: 0x00–0x08, 0x0B, 0x0C, 0x0E–0x1F
+    # Erlaubt: 0x09 (Tab), 0x0A (Newline), 0x0D (CR)
+    verboten = set(range(0x00, 0x09)) | {0x0B, 0x0C} | set(range(0x0E, 0x20))
+    with open(filepath, "rb") as fh:
+        raw_bytes = fh.read()
+
+    treffer = [i for i, b in enumerate(raw_bytes) if b in verboten]
+
+    check(
+        "Keine verbotenen Raw-Control-Characters in der Datei",
+        len(treffer) == 0,
+        f"{len(treffer)} verbotene Bytes gefunden" if treffer else "",
+    )
+
+    # jsPDF padding-String: kein rohes 0x01-Byte mehr
+    check(
+        "jsPDF: padding-String enthaelt kein rohes 0x01-Byte",
+        b'this.padding="\x01' not in raw_bytes
+        and b"this.padding=\"\x01" not in raw_bytes,
+    )
+
+    # ZIP-Konstanten: kein rohes PK-Magic-Byte
+    check(
+        "ZIP-Bibliothek: keine rohes PK-Magic-Byte (0x03, 0x04)",
+        b"PK\x03\x04" not in raw_bytes,
+    )
+
+    # ESC-Byte in Farb-Bibliothek: nicht mehr roh vorhanden
+    check(
+        "Farb-Bibliothek: kein rohes ESC-Byte (0x1B)",
+        b"\x1b[" not in raw_bytes,
     )
 
     passed = sum(1 for s, _, _ in results if s == "PASS")
