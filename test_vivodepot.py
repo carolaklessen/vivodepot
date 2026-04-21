@@ -712,7 +712,7 @@ def main():
     # ═══════════════════════════════════════
 
     check("Recht: EUPL-1.2 Lizenz", "EUPL" in html)
-    check("Recht: feedback@vivodepot.de", "feedback@vivodepot.de" in html)
+    check("Recht: hilfe@vivodepot.de", "hilfe@vivodepot.de" in html)
     check("Recht: organspende-register.de Link", "organspende-register.de" in html)
     check("Recht: showDatenschutz()", "showDatenschutz" in html)
     check("Recht: Datenschutzinformationen", "Datenschutz" in html)
@@ -984,7 +984,7 @@ def main():
     check("Legal: Datenschutz showDatenschutz()",  "showDatenschutz" in html)
     check("Legal: Datenschutz-Erwähnung (DSGVO-konform)", "Datenschutz" in html)
     check("Legal: EU AI Act Art. 50",              "EU AI Act" in html)
-    check("Legal: Kontakt feedback@vivodepot.de",  "feedback@vivodepot.de" in html)
+    check("Legal: Kontakt hilfe@vivodepot.de",  "hilfe@vivodepot.de" in html)
     check("Legal: GitHub-Link",                    "github.com" in html)
     check("Legal: Organspende-Register Link",       "organspende-register" in html)
     check("Legal: § 2077 BGB Testament",           "2077" in html)
@@ -2309,9 +2309,9 @@ def main():
     check("Renderer: Fortschrittstext 'X von Y Fragen beantwortet'",
           "Fragen beantwortet" in html and "prog.answered" in html)
 
-    # ---- onchange setzt Daten und rendert neu (mit preserveScroll) ----
-    check("Renderer: onchange ruft set() und renderStep(true) auf",
-          "set(\\'' + tplEscape(key) + '\\',this.value);renderStep(true)" in html)
+    # ---- onchange setzt Daten und rendert neu ----
+    check("Renderer: onchange ruft set() und renderStep() auf",
+          "set(\\'' + tplEscape(key) + '\\',this.value);renderStep()" in html)
 
     # ---- Sicherheit: kein innerHTML ohne Escape ----
     # Alle dynamischen Werte aus Templates muessen durch tplEscape laufen.
@@ -2716,10 +2716,10 @@ def main():
     check("QR-Render: Bild als <img src> mit max-width",
           qr_render_block is not None and
           "<img src=\"'" in qr_render_block.group(0) and
-          "max-width:220px" in qr_render_block.group(0))
-    check("QR-Render: Beschriftung 'Fragebogen ausgefüllt — was jetzt?'",
+          "max-width:180px" in qr_render_block.group(0))
+    check("QR-Render: Beschriftung 'QR-Code zur Weitergabe' (neutral)",
           qr_render_block is not None and
-          "Fragebogen ausgef\u00fcllt \u2014 was jetzt?" in qr_render_block.group(0))
+          "QR-Code zur Weitergabe" in qr_render_block.group(0))
     check("QR-Render: Alternativ-Text fuer Bild",
           qr_render_block is not None and
           'alt="QR-Code mit Ergebnis"' in qr_render_block.group(0))
@@ -3042,6 +3042,107 @@ def main():
         "Farb-Bibliothek: kein rohes ESC-Byte (0x1B)",
         b"\x1b[" not in raw_bytes,
     )
+
+    # === 76. DSGVO-EINWILLIGUNGSDOKUMENTATION IM FHIR-EXPORT (beta.15) ===
+    print("\n=== 76. DSGVO-EINWILLIGUNGSDOKUMENTATION IM FHIR-EXPORT (beta.15) ===")
+
+    check("DSGVO: Consent-Ressource im FHIR-Export vorhanden",
+          fhir_block is not None and "resourceType: 'Consent'" in fhir_block.group(0))
+    check("DSGVO: Consent-Status 'active'",
+          fhir_block is not None and "status: 'active'" in fhir_block.group(0))
+    check("DSGVO: Consent-Scope patient-privacy",
+          fhir_block is not None and "'patient-privacy'" in fhir_block.group(0))
+    check("DSGVO: LOINC-Code 59284-0 (Consent) vorhanden",
+          fhir_block is not None and "'59284-0'" in fhir_block.group(0))
+    check("DSGVO: Zeitstempel (dateTime) vorhanden",
+          fhir_block is not None and "dateTime: now" in fhir_block.group(0))
+    check("DSGVO: GDPR Art. 6 als Policy-URI vorhanden",
+          fhir_block is not None and "https://gdpr-info.eu/art-6-gdpr/" in fhir_block.group(0))
+    check("DSGVO: Zweck TREAT (Gesundheitsversorgung) vorhanden",
+          fhir_block is not None and "'TREAT'" in fhir_block.group(0))
+    check("DSGVO: Extension fuer exportierte Sektionen vorhanden",
+          fhir_block is not None and "exported-sections" in fhir_block.group(0))
+    check("DSGVO: Sektionsliste als valueString vorhanden",
+          fhir_block is not None and "exportierteSektionen" in fhir_block.group(0))
+    check("DSGVO: Consent-UUID generiert",
+          fhir_block is not None and "consentUUID = generateUUID()" in fhir_block.group(0))
+
+    # === 77. INSTITUTIONELLES REQUEST-TEMPLATE (beta.15) ===
+    print("\n=== 77. INSTITUTIONELLES REQUEST-TEMPLATE (beta.15) ===")
+
+    check("Template: Funktion downloadInstitutionTemplate vorhanden",
+          "function downloadInstitutionTemplate()" in html)
+    check("Template: schemaVersion '1.0' im Template",
+          "schemaVersion: '1.0'" in html)
+    check("Template: Dateiname Vivodepot_Muster_Vorlage_v1.json",
+          "Vivodepot_Muster_Vorlage_v1.json" in html)
+    check("Template: items-Array mit Beispielfragen vorhanden",
+          "MUSTER_01" in html and "MUSTER_02" in html)
+    check("Template: scale.options vorhanden",
+          "scale: {" in html and "options: [" in html)
+    check("Template: scoring.method vorhanden",
+          "method: 'sum'" in html)
+    check("Template: safety-Array vorhanden",
+          "safety: []" in html)
+    check("Template: Button 'Muster-Vorlage herunterladen' in UI",
+          "Muster-Vorlage herunterladen" in html)
+    check("Template: Hinweis fuer Institutionen vorhanden",
+          "Noch keine Vorlage?" in html)
+    check("Template: Toast-Meldung fuer Download vorhanden",
+          "Muster-Vorlage heruntergeladen" in html)
+    check("Template: Folgehinweis nach Download vorhanden",
+          "heruntergeladene Datei oben einlesen" in html)
+    check("Template: Support-Block unter der Vorlagenliste platziert",
+          html.index("support@vivodepot.de") > html.index("Geladene Vorlagen"))
+
+    # === 78. SUPPORTKANAL IN EINSTELLUNGEN (beta.15) ===
+    print("\n=== 78. SUPPORTKANAL IN EINSTELLUNGEN (beta.15) ===")
+
+    check("Support: Abschnitt 'Hilfe & Kontakt' vorhanden",
+          "Hilfe &amp; Kontakt" in html or "Hilfe & Kontakt" in html)
+    check("Support: Hinweistext fuer Nutzer vorhanden",
+          "Haben Sie Fragen oder funktioniert etwas nicht?" in html)
+    check("Support: mailto-Link zu hilfe@vivodepot.de vorhanden",
+          "mailto:hilfe@vivodepot.de" in html)
+    check("Support: Vorbefuellter E-Mail-Betreff vorhanden",
+          "Hilfe%20mit%20Vivodepot" in html or "Hilfe mit Vivodepot" in html)
+    check("Support: Button 'Nachricht schreiben' vorhanden",
+          "Nachricht schreiben" in html)
+    check("Support: E-Mail-Adresse sichtbar als Text vorhanden",
+          "hilfe@vivodepot.de</div>" in html or "hilfe@vivodepot.de<" in html)
+    check("Support: Support-Block vor Passwort-Abschnitt platziert",
+          "Hilfe & Kontakt" in html and "Passwort & Verschl" in html and
+          html.index("Hilfe & Kontakt") < html.index("Passwort & Verschl"))
+    check("Support: Visuell hervorgehobener Block (border-left teal)",
+          "border-left:4px solid var(--teal)" in html or "border-left: 4px solid var(--teal)" in html)
+
+    # === 78. SUPPORTKANAL — HILFE-LINK IM MORE-MENU (beta.15) ===
+    print("\n=== 78. SUPPORTKANAL — HILFE-LINK IM MORE-MENU (beta.15) ===")
+
+    check("Support: Hilfe-Link im More-Menu vorhanden",
+          "Hilfe — hilfe@vivodepot.de" in html)
+    check("Support: mailto hilfe@ mit Betreff",
+          "mailto:hilfe@vivodepot.de?subject=Hilfe%20mit%20Vivodepot" in html)
+    check("Support: mailto hilfe@ mit vorausgefuelltem Body",
+          "hilfe@vivodepot.de?subject=Hilfe%20mit%20Vivodepot&body=Hallo" in html)
+    check("Support: Hilfe-Link schliesst More-Menu",
+          "Hilfe — hilfe@vivodepot.de" in html and "closeMoreMenu()" in html)
+    check("Support: Kein Hilfe-Button in Topbar",
+          "class=\"fs-btn\" title=\"Hilfe" not in html and
+          "aria-label=\"Hilfe\"" not in html)
+    check("Support: Einstellungen-Bereich Hilfe und Kontakt vorhanden",
+          "Hilfe &amp; Kontakt" in html or "Hilfe & Kontakt" in html)
+    check("Support: Nachricht schreiben Button in Einstellungen",
+          "Nachricht schreiben" in html)
+    check("Support: hilfe@ sichtbar in Einstellungen",
+          "hilfe@vivodepot.de</div>" in html)
+    check("Support: feedback@ nicht mehr im sichtbaren Bereich",
+          "feedback@vivodepot.de</div>" not in html and
+          "feedback@vivodepot.de</a>" not in html)
+    check("Support: support@ im Institutionen-Bereich vorhanden",
+          "support@vivodepot.de" in html)
+    check("Support: mailto support@ mit Anfrage-Betreff",
+          "mailto:support@vivodepot.de?subject=Anfrage%20Institution" in html)
 
     passed = sum(1 for s, _, _ in results if s == "PASS")
     failed = sum(1 for s, _, _ in results if s == "FAIL")

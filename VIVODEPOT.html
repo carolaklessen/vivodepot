@@ -21,7 +21,7 @@
   verbreitet. Die Lizenz regelt die sprachspezifischen Genehmigungen und
   Einschränkungen unter der Lizenz.
 
-  Kontakt: feedback@vivodepot.de
+  Kontakt: hilfe@vivodepot.de
 -->
 <html lang="de">
 <head>
@@ -11494,6 +11494,8 @@ textarea { min-height: 44px; }
         <div class="more-divider"></div>
         <button onclick="activatePassword(); closeMoreMenu()" id="lock-btn">Passwortschutz</button>
         <div class="more-divider"></div>
+        <a href="mailto:hilfe@vivodepot.de?subject=Hilfe%20mit%20Vivodepot&body=Hallo%2C%0A%0Aich%20brauche%20Hilfe%20mit%20folgendem%20Problem%3A%0A%0A" onclick="closeMoreMenu()" style="display:block;padding:10px 16px;font-size:0.9rem;color:inherit;text-decoration:none">Hilfe — hilfe@vivodepot.de</a>
+        <div class="more-divider"></div>
         <div style="padding:8px 16px;font-size:0.75rem;color:var(--ink3)" id="storage-meter"></div>
       </div>
     </div>
@@ -14988,6 +14990,54 @@ function tplLoadFromFile(file) {
   reader.readAsText(file);
 }
 
+// Muster-Vorlage für Institutionen herunterladen (v1-Lücke: institutionelles Request-Template)
+// Erstellt eine gültige, anpassbare JSON-Vorlage nach dem Vivodepot-Companion-Schema.
+function downloadInstitutionTemplate() {
+  var template = {
+    schemaVersion: '1.0',
+    id: 'institution-muster-v1',
+    version: '1.0.0',
+    locale: 'de-DE',
+    title: {
+      short: 'Muster-Vorlage',
+      full: 'Muster-Vorlage — Vivodepot Companion-Format v1.0'
+    },
+    issuer: {
+      name: 'Name der Institution eintragen'
+    },
+    license: {
+      id: 'intern'
+    },
+    instruction: 'Bitte beantworten Sie die folgenden Fragen.',
+    scale: {
+      options: [
+        { value: 0, label: 'Nein' },
+        { value: 1, label: 'Ja' }
+      ]
+    },
+    items: [
+      { id: 'MUSTER_01', text: 'Beispielfrage 1 — hier eigene Frage eintragen' },
+      { id: 'MUSTER_02', text: 'Beispielfrage 2 — hier eigene Frage eintragen' },
+      { id: 'MUSTER_03', text: 'Beispielfrage 3 — hier eigene Frage eintragen' }
+    ],
+    scoring: {
+      method: 'sum',
+      ranges: [
+        { min: 0, max: 1, category: 'Kein Bedarf',    color: '#2e7d32' },
+        { min: 2, max: 3, category: 'Weiteres klären', color: '#b8860b' }
+      ]
+    },
+    safety: []
+  };
+  var json = JSON.stringify(template, null, 2);
+  var blob = new Blob([json], { type: 'application/json' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'Vivodepot_Muster_Vorlage_v1.json';
+  a.click();
+  toast('Muster-Vorlage heruntergeladen');
+}
+
 // Dateidialog öffnen
 function tplOpenFileDialog() {
   const inp = document.getElementById('tpl-file-input');
@@ -15034,7 +15084,7 @@ function tplRenderItems(t) {
         + (sel ? 'var(--forest)' : 'var(--bg,#fff)') + ';color:'
         + (sel ? '#fff' : 'var(--ink2)') + '">'
         + '<input type="radio" name="' + tplEscape(key) + '" value="' + tplEscape(v) + '" ' + (sel ? 'checked' : '')
-        + ' onchange="set(\'' + tplEscape(key) + '\',this.value);renderStep(true)" style="position:absolute;opacity:0;pointer-events:none">'
+        + ' onchange="set(\'' + tplEscape(key) + '\',this.value);renderStep()" style="position:absolute;opacity:0;pointer-events:none">'
         + tplEscape(opt.label) + '</label>';
     });
     html += '</div></div>';
@@ -15363,30 +15413,16 @@ function tplBuildQrText(t) {
 function tplRenderQr(t) {
   const prog = tplCountAnswered(t);
   if (prog.answered !== prog.total || prog.total === 0) return '';
-
-  const downloadBtn = '<div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);text-align:center">'
-    + '<button class="btn-nav primary" onclick="tplDownloadFhir(\'' + tplEscape(t.id) + '\')" style="font-size:0.88rem">Ergebnis herunterladen</button>'
-    + '<div style="font-size:0.75rem;color:var(--ink3);margin-top:4px">Für Personen, die lieber eine Datei mitbringen möchten.</div>'
-    + '</div>';
-
-  const boxStart = '<div style="padding:1.25rem;margin-top:1rem;background:#e8f4e8;border:2px solid var(--forest);border-radius:10px;text-align:center">'
-    + '<div style="font-size:1.1rem;font-weight:bold;color:var(--forest);margin-bottom:0.5rem">Fragebogen ausgefüllt — was jetzt?</div>';
-
-  if (typeof makeQRDataUrl !== 'function') {
-    return boxStart
-      + '<div style="font-size:0.9rem;color:var(--ink2);margin-bottom:0.5rem;line-height:1.5">Laden Sie das Ergebnis herunter und zeigen Sie es beim nächsten Termin Ihrer Ärztin oder Ihrem Arzt.</div>'
-      + downloadBtn + '</div>';
-  }
-
+  if (typeof makeQRDataUrl !== 'function') return '';
   const text = tplBuildQrText(t);
   if (!text) return '';
   const dataUrl = makeQRDataUrl(text, 5);
   if (!dataUrl) return '';
-
-  return boxStart
-    + '<div style="font-size:0.9rem;color:var(--ink2);margin-bottom:1rem;line-height:1.5">Zeigen Sie diesen Code beim nächsten Termin Ihrer Ärztin oder Ihrem Arzt.</div>'
-    + '<img src="' + tplEscape(dataUrl) + '" alt="QR-Code mit Ergebnis" style="max-width:220px;width:100%;height:auto;background:#fff;padding:8px;border-radius:6px">'
-    + downloadBtn + '</div>';
+  return '<div style="padding:0.8rem;margin-top:0.75rem;background:var(--beige);border-radius:8px;text-align:center">'
+    + '<div style="font-size:0.82rem;color:var(--ink2);margin-bottom:6px;font-weight:bold">QR-Code zur Weitergabe</div>'
+    + '<img src="' + tplEscape(dataUrl) + '" alt="QR-Code mit Ergebnis" style="max-width:180px;width:100%;height:auto;background:#fff;padding:4px;border-radius:4px">'
+    + '<div style="font-size:0.72rem;color:var(--ink3);margin-top:6px;line-height:1.4">Empfänger scannt mit Handy oder Scanner-App</div>'
+    + '</div>';
 }
 
 const STEP_RENDERERS = {
@@ -15400,7 +15436,9 @@ const STEP_RENDERERS = {
         const prog = tplCountAnswered(t);
         const progText = prog.answered + ' von ' + prog.total + ' Fragen beantwortet';
         const isComplete = (prog.answered === prog.total && prog.total > 0);
-        const fhirBtn = ''; // Download-Schaltfläche ist in tplRenderQr enthalten
+        const fhirBtn = isComplete
+          ? '<div style="margin-top:0.75rem;text-align:center"><button class="btn-nav primary" onclick="tplDownloadFhir(\'' + tplEscape(t.id) + '\')" style="font-size:0.88rem">Ergebnis herunterladen</button><div style="font-size:0.78rem;color:var(--ink3);margin-top:4px">Als strukturierte Datei zum Weiterreichen</div></div>'
+          : '';
         return '<div style="margin-bottom:1.25rem">'
           // Metadaten-Karte (oben)
           + '<div style="padding:1rem;background:var(--beige);border-radius:8px 8px 0 0">'
@@ -15429,7 +15467,7 @@ const STEP_RENDERERS = {
     return `
     <div class="step-header">
       <h1>Für Institutionen</h1>
-      <p>Vorlage laden, Fragebogen ausfüllen, Ergebnis weitergeben — alles auf dieser Seite.</p>
+      <p>Hier finden Sie Funktionen zur strukturierten Datenweitergabe an Institutionen — Fragebögen ausfüllen, Ergebnisse übergeben.</p>
       ${stepDots()}
     </div>
     <div style="font-size:0.82rem;color:var(--ink2);margin-bottom:1rem;line-height:1.5">
@@ -15439,13 +15477,25 @@ const STEP_RENDERERS = {
     <input type="file" id="tpl-file-input" accept="application/json,.json" style="display:none" onchange="if(this.files[0]) tplLoadFromFile(this.files[0]); this.value='';">
 
     <div ondragover="tplOnDragOver(event)" ondragleave="tplOnDragLeave(event)" ondrop="tplOnDrop(event)"
-         style="border:2px dashed var(--border);border-radius:10px;padding:1.5rem;text-align:center;margin-bottom:1rem;transition:background 0.2s">
-      <div style="margin-bottom:0.8rem;color:var(--ink2)">Datei hier ablegen oder:</div>
+         style="border:2px dashed var(--border);border-radius:10px;padding:1.5rem;text-align:center;margin-bottom:0.5rem;transition:background 0.2s">
+      <div style="margin-bottom:0.8rem;color:var(--ink2)">Vorlage hier ablegen oder:</div>
       <button class="btn-nav primary" onclick="tplOpenFileDialog()">Datei auswählen</button>
+    </div>
+
+    <div style="font-size:0.82rem;color:var(--ink2);margin-bottom:1.25rem;line-height:1.5;padding:0 0.25rem">
+      Noch keine Vorlage?
+      <button class="btn-nav" onclick="downloadInstitutionTemplate()" style="font-size:0.82rem;padding:5px 12px;margin-left:4px">Muster-Vorlage herunterladen</button>
+      <span style="display:block;margin-top:0.4rem;color:var(--ink3)">Anschließend die heruntergeladene Datei oben einlesen — dann hier bearbeiten.</span>
     </div>
 
     <h3 style="margin:1rem 0 0.6rem">Geladene Vorlagen (${list.length})</h3>
     ${cards}
+
+    <div style="background:var(--beige);border-radius:10px;padding:0.9rem 1.1rem;margin-top:1.5rem;border-left:4px solid var(--forest)">
+      <div style="font-size:0.9rem;font-weight:600;color:var(--forest);margin-bottom:0.3rem">Fragen zur Integration oder zum Rollout?</div>
+      <div style="font-size:0.85rem;color:var(--ink2);margin-bottom:0.5rem">Für Pflegeheime, Kliniken und Behörden — wir helfen bei der Einführung.</div>
+      <a href="mailto:support@vivodepot.de?subject=Anfrage%20Institution&body=Hallo%2C%0A%0Awir%20sind%20eine%20Institution%20und%20interessieren%20uns%20f%C3%BCr%20Vivodepot%3A%0A%0A" style="color:var(--teal);font-size:0.88rem;font-weight:600">support@vivodepot.de</a>
+    </div>
 
     ${navButtons()}`;
   },
@@ -16755,6 +16805,16 @@ const STEP_RENDERERS = {
       ${stepDots()}
     </div>
 
+    <div class="field-section-title">${tl('Hilfe & Kontakt')}</div>
+    <div style="background:var(--beige);border-radius:10px;padding:1rem 1.2rem;margin-bottom:1.2rem;border-left:4px solid var(--teal)">
+      <div style="font-size:1rem;font-weight:600;color:var(--forest);margin-bottom:0.4rem">Haben Sie Fragen oder funktioniert etwas nicht?</div>
+      <div style="font-size:0.88rem;color:var(--ink2);line-height:1.6;margin-bottom:0.8rem">
+        Schreiben Sie uns — wir helfen gerne. Beschreiben Sie kurz, was nicht klappt. Ihre E-Mail-App öffnet sich automatisch.
+      </div>
+      <a href="mailto:hilfe@vivodepot.de?subject=Hilfe%20mit%20Vivodepot&body=Hallo%2C%0A%0Aich%20brauche%20Hilfe%20mit%20folgendem%20Problem%3A%0A%0A" style="display:inline-block;background:var(--teal);color:#fff;padding:10px 20px;border-radius:8px;text-decoration:none;font-size:0.9rem;font-weight:600">Nachricht schreiben</a>
+      <div style="font-size:0.78rem;color:var(--ink3);margin-top:0.6rem">hilfe@vivodepot.de</div>
+    </div>
+
     <div class="field-section-title">${tl('Passwort & Verschlüsselung')}</div>
     <div style="font-size:0.85rem;color:var(--ink2);margin-bottom:12px">
       ${sessionKey ? ' <strong style="color:var(--forest)">Ihre Daten sind verschlüsselt</strong> (AES-256-GCM)' : ' <strong style="color:var(--red)">Kein Passwort gesetzt</strong> — Daten werden unverschlüsselt gespeichert'}
@@ -16866,7 +16926,7 @@ const STEP_RENDERERS = {
       <strong>Version:</strong> ${VIVODEPOT_VERSION} &nbsp;<button onclick="checkForUpdates();toast('Update-Check läuft…')" style="font-size:0.78rem;padding:4px 10px;border:1px solid var(--forest);border-radius:6px;background:none;color:var(--forest);cursor:pointer;min-height:36px">Auf Updates prüfen</button><br>
       <strong>Benachrichtigungen:</strong> ${localStorage.getItem('vivodepot_email_optin') && localStorage.getItem('vivodepot_email_optin') !== 'dismissed' ? '<span style=\"color:var(--teal)\">✓ Angemeldet</span>' : '<button onclick=\"showEmailOptin()\" style=\"font-size:0.78rem;padding:4px 10px;border:1px solid var(--forest);border-radius:6px;background:none;color:var(--forest);cursor:pointer;min-height:36px\">E-Mail-Updates abonnieren</button>'}<br>
       <strong>Herausgeber:</strong> Vivodepot UG (haftungsbeschränkt)<br>
-      <strong>Kontakt:</strong> <a href="mailto:feedback@vivodepot.de" style="color:var(--teal)">feedback@vivodepot.de</a><br>
+      <strong>Kontakt:</strong> <a href="mailto:hilfe@vivodepot.de" style="color:var(--teal)">hilfe@vivodepot.de</a><br>
       <strong>Lizenz:</strong> <a href="https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12" target="_blank" style="color:var(--teal)">EUPL-1.2</a> (Open Source)<br>
       <strong>Quellcode:</strong> <a href="https://github.com/carolaklessen/vivodepot" target="_blank" style="color:var(--teal)">GitHub</a><br>
       <strong>Datenschutz:</strong> <a href="javascript:void(0)" onclick="showDatenschutz()" style="color:var(--teal)">Datenschutzinformationen anzeigen</a><br>
@@ -17162,8 +17222,8 @@ const STEP_RENDERERS = {
       <p style="font-size:0.85rem;color:var(--ink2);line-height:1.6;margin-bottom:12px"> Vivodepot wird laufend verbessert. Haben Sie einen Fehler gefunden, eine Idee oder möchten Sie uns etwas mitteilen?
       </p>
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:4px">
-        <code style="background:#fff;border:1px solid var(--border);border-radius:6px;padding:6px 12px;font-size:0.88rem;color:var(--forest);letter-spacing:0.02em;user-select:all">feedback@vivodepot.de</code>
-        <button onclick="(function(){try{navigator.clipboard.writeText('feedback@vivodepot.de').then(function(){toast('Adresse kopiert — in Ihre Mail-App einfügen');});}catch(e){toast('feedback@vivodepot.de — bitte kopieren');}; try{window.open('mailto:feedback@vivodepot.de?subject=Vivodepot%20Feedback','_self');}catch(e){}})()" class="btn-nav primary" style="font-size:0.85rem;cursor:pointer">✉ E-Mail öffnen / Adresse kopieren</button>
+        <code style="background:#fff;border:1px solid var(--border);border-radius:6px;padding:6px 12px;font-size:0.88rem;color:var(--forest);letter-spacing:0.02em;user-select:all">hilfe@vivodepot.de</code>
+        <button onclick="(function(){try{navigator.clipboard.writeText('hilfe@vivodepot.de').then(function(){toast('Adresse kopiert — in Ihre Mail-App einfügen');});}catch(e){toast('hilfe@vivodepot.de — bitte kopieren');}; try{window.open('mailto:hilfe@vivodepot.de?subject=Vivodepot%20Feedback','_self');}catch(e){}})();" class="btn-nav primary" style="font-size:0.85rem;cursor:pointer">✉ E-Mail öffnen / Adresse kopieren</button>
       </div>
       <p style="font-size:0.75rem;color:var(--ink3);margin-top:6px">Tipp: Adresse antippen und kopieren — dann in Ihre Mail-App einfügen.</p>
     </div>
@@ -20492,6 +20552,36 @@ function generateFHIR() {
       entry: deviceUUIDs.map(function(id) { return { reference: 'urn:uuid:' + id }; })
     });
   }
+
+  // DSGVO-Einwilligungsdokumentation (Art. 6 Abs. 1 lit. a DSGVO)
+  // Dokumentiert: Zeitstempel, exportierte Sektionen, Zweck der Datenübermittlung.
+  var consentUUID = generateUUID();
+  var exportierteSektionen = sections.length > 0
+    ? sections.map(function(s) { return s.title; }).join('; ')
+    : 'Keine medizinischen Sektionen vorhanden';
+  entries.push({
+    fullUrl: 'urn:uuid:' + consentUUID,
+    resource: {
+      resourceType: 'Consent',
+      id: consentUUID,
+      status: 'active',
+      scope: {
+        coding: [{ system: 'http://terminology.hl7.org/CodeSystem/consentscope', code: 'patient-privacy', display: 'Privacy Consent' }]
+      },
+      category: [{ coding: [{ system: 'http://loinc.org', code: '59284-0', display: 'Consent' }] }],
+      patient: { reference: 'urn:uuid:' + patientUUID },
+      dateTime: now,
+      policy: [{ uri: 'https://gdpr-info.eu/art-6-gdpr/' }],
+      provision: {
+        type: 'permit',
+        purpose: [{ system: 'http://terminology.hl7.org/CodeSystem/v3-ActReason', code: 'TREAT', display: 'Gesundheitsversorgung' }]
+      },
+      extension: [{
+        url: 'https://vivodepot.de/fhir/StructureDefinition/exported-sections',
+        valueString: exportierteSektionen
+      }]
+    }
+  });
 
   var composition = {
     resourceType: 'Composition',
