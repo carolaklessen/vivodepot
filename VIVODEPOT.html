@@ -11486,7 +11486,7 @@ textarea { min-height: 44px; }
         <div class="more-divider"></div>
         <button onclick="showAngehoerigenAuswahl(); closeMoreMenu()">Angehörigen-Ansicht testen</button>
         <div class="more-divider"></div>
-        <button onclick="exportJSON(); closeMoreMenu()">Daten exportieren (JSON)</button>
+        <button onclick="exportJSON(); closeMoreMenu()" title="Nur für Vivodepot — nicht für andere Programme">Datensicherung (JSON)</button>
         <label style="cursor:pointer" onclick="closeMoreMenu()">
           ⬆ Daten importieren
           <input type="file" accept=".json,.html" style="display:none;width:0;height:0" onchange="importData(event)">
@@ -12163,6 +12163,7 @@ function doGlobalSearch(query) {
 
 // Geschaetzte Bearbeitungszeit je Schritt (in Minuten, gerundet).
 // Wird fuer Fortschrittsanzeige und Nutzerhinweise verwendet.
+// Sonderfall: institutionen:2 ist bewusst gesetzt — Institutionen-Bereich hat 2 Subsektionen (Anfrage + Vorlage).
 var STEP_TIMES = {
   start:3, kontakte:5, infokontakte:3, testament:8, finanzen:6,
   versich:4, immobilien:4, vertraege:4, gesundheit:8, pflege:5,
@@ -17504,7 +17505,7 @@ const STEP_RENDERERS = {
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem">
       <button class="btn-nav" onclick="saveAsHTML()" style="font-size:0.85rem;background:var(--forest);color:#fff;border-color:var(--forest)">💾 Datei speichern</button>
-      <button class="btn-nav" onclick="exportJSON()" style="font-size:0.85rem">Daten exportieren (JSON)</button>
+      <button class="btn-nav" onclick="exportJSON()" style="font-size:0.85rem" title="Nur für Vivodepot — nicht für andere Programme">Datensicherung (JSON)</button>
       <label class="btn-nav" style="font-size:0.85rem;cursor:pointer">
         ⬆ Daten importieren
         <input type="file" accept=".json,.html" style="display:none;width:0;height:0" onchange="importData(event)">
