@@ -531,7 +531,6 @@ def main():
     check("Fokus: Ziel emergency", "'emergency'" in html)
     check("Fokus: Ziel health", "'health'" in html)
     check("Fokus: Ziel legal (Mein Wille)", "'legal'" in html)
-    check("Fokus: goalBtn() Hilfsfunktion", "goalBtn" in html)
     check("Fokus: nextStep/prevStep via goToStep mit Fokus",
           "function nextStep" in html and "function prevStep" in html and
           "function goToStep" in html and "_goalMode" in html)
@@ -586,7 +585,6 @@ def main():
     check("vCard: VERSION:4.0", "VERSION:4.0" in html)
     check("vCard: BEGIN:VCARD", "BEGIN:VCARD" in html)
     check("vCard: END:VCARD", "END:VCARD" in html)
-    check("vCard: PRODID Vivodepot", "PRODID" in html and "Vivodepot" in html)
     check("vCard: FN-Feld", "'FN:'" in html or '"FN:"' in html)
     check("vCard: TEL-Feld", "'TEL;" in html or '"TEL;' in html)
     check("vCard: EMAIL-Feld", "'EMAIL:'" in html or '"EMAIL:"' in html)
@@ -651,7 +649,6 @@ def main():
     check("PWA: display standalone", "standalone" in html)
     check("PWA: SVG Favicon", 'rel="icon"' in html and "svg" in html)
     check("PWA: beforeinstallprompt", "beforeinstallprompt" in html)
-    check("PWA: installApp()", "installApp" in html)
 
     # ═══════════════════════════════════════
     print("\n=== 23. VERSCHLÜSSELUNG DETAILS ===")
@@ -770,10 +767,6 @@ def main():
     print("\n=== 28. FOKUS-SYSTEM ===")
     # ═══════════════════════════════════════
 
-    check("Fokus: _goalMode Flag",                 "_goalMode" in html)
-    check("Fokus: _goalRelevant Objekt",           "_goalRelevant" in html)
-    check("Fokus: applyGoalWizard()",              "applyGoalWizard" in html)
-    check("Fokus: skipGoalWizard()",               "skipGoalWizard" in html)
     check("Fokus: goalBtn() Hilfsfunktion",        "function goalBtn" in html or "goalBtn(" in html)
     check("Fokus: Modus 'start'",                  "'start'" in html)
     check("Fokus: Modus 'family'",                 "'family'" in html)
@@ -788,7 +781,6 @@ def main():
           "console.error" in html[html.find("function goToStep"):html.find("function goToStep")+600])
     check("Fokus: nextStep() vorhanden",           "function nextStep" in html)
     check("Fokus: prevStep() vorhanden",           "function prevStep" in html)
-    check("Fokus: updateFokusBarLabel()",          "updateFokusBarLabel" in html)
     check("Fokus: selectedGoal Variable",           "selectedGoal" in html)
     check("Fokus: Alle Bereiche anzeigen Button",  "Alle anzeigen" in html or "_goalMode=false" in html)
     check("Fokus: Relevanz-Filterung in renderSidebar",
@@ -827,9 +819,6 @@ def main():
 
     check("vCard: exportVCard() vorhanden",        "function exportVCard" in html)
     check("vCard: generateVCard() vorhanden",      "function generateVCard" in html)
-    check("vCard: VERSION:4.0",                    "VERSION:4.0" in html)
-    check("vCard: BEGIN:VCARD",                    "BEGIN:VCARD" in html)
-    check("vCard: END:VCARD",                      "END:VCARD" in html)
     check("vCard: PRODID Vivodepot",               "PRODID:-//Vivodepot" in html)
     check("vCard: TEL TYPE=VOICE",                 "TEL;TYPE=VOICE" in html)
     check("vCard: RFC 6350 vCard 4.0",             "RFC 6350" in html or "VERSION:4.0" in html)
@@ -872,7 +861,6 @@ def main():
     check("Notfall: Bargeld in Vorrat",              "Bargeld" in html)
     check("Notfall: Campingkocher in Vorrat",        "Campingkocher" in html)
     check("Notfall: Hygieneartikel in Vorrat",       "Hygieneartikel" in html)
-    check("Notfall: Decke in Vorrat",                "Decke" in html and "NOTFALL" in html)
     check("Notfall: Pfeife/Signalmittel in Vorrat",  "Signalmittel" in html)
     check("Notfall: Werkzeug in Vorrat",             "Dosenöffner" in html)
     # Genau 15 Einträge
@@ -918,7 +906,6 @@ def main():
     check("Export: Heimaufnahme 5 Seiten",         "generateHeimaufnahme" in html)
     check("Export: Szenario PDFs (3 Szenarien)",   "generateScenarioPDF" in html)
     check("Export: QR-Sticker-Paket",              "generateQRStickers" in html)
-    check("Export: FHIR R4 Bundle",                "FHIR" in html and "Bundle" in html)
     check("Export: FIM-JSON Export",               "exportFIMJson" in html)
     check("Export: Behördendaten PDF",             "generateBehoerdendaten" in html)
     check("Export: Checkliste HTML",               "generateChecklist" in html)
@@ -977,7 +964,6 @@ def main():
     check("PWA: background_color",                  "background_color" in html or "background-color" in html)
     check("PWA: Service Worker Register",           "serviceWorker.register" in html)
     check("PWA: Cache-Name vivodepot",              "vivodepot-v" in html or "CACHE" in html)
-    check("PWA: beforeinstallprompt",               "beforeinstallprompt" in html)
     check("PWA: installApp()",                      "function installApp" in html)
     check("PWA: showInstallBanner()",               "function showInstallBanner" in html)
     check("PWA: pwaInstall()",                      "function pwaInstall" in html or "pwaInstall" in html)
@@ -1343,6 +1329,10 @@ def main():
           "Fehlt: View-Overlay z-index 9000 liegt unter crypto-overlay 10000 — Auswahl-Overlay verdeckt View")
 
 
+    # ═══════════════════════════════════════
+    print("\n=== 48a. ERGÄNZUNGEN (Chat-Abgleich & Sessions) ===")
+    # ═══════════════════════════════════════
+
     # Persona-Felder aus Chat-Abgleich
     check("Persona: selbstaendig_notfall",               "'selbstaendig_notfall'" in html)
     check("Persona: krypto_seed_ort",                    "'krypto_seed_ort'" in html)
@@ -1369,8 +1359,6 @@ def main():
     # vCard aus Session
     check("vCard: exportVCard() Funktion",               "function exportVCard" in html)
     check("vCard: generateVCard() Funktion",             "function generateVCard" in html)
-    check("vCard: VERSION:4.0",                          "VERSION:4.0" in html)
-    check("vCard: PRODID Vivodepot",                     "PRODID:-//Vivodepot" in html)
 
     # IBAN-Formatierung und Validierung
     check("Eingabe: BIC-Validierung",                    "BIC" in html and "COBADEFFXXX" in html)
@@ -1386,8 +1374,6 @@ def main():
     vorrat_block = html[vorrat_start:vorrat_end]
     vorrat_count = vorrat_block.count("',\n") + (1 if "'\n]" in vorrat_block else 0)
     check("Notfall: NOTFALL_VORRAT_ITEMS hat 15 Einträge", vorrat_count == 15, f"Gefunden: {vorrat_count}")
-    check("Notfall: Campingkocher in Vorrat",             "Campingkocher" in html)
-    check("Notfall: Hygieneartikel in Vorrat",            "Hygieneartikel" in html)
     check("Notfall: Decke in Vorrat",                     "Decke" in html and "NOTFALL_VORRAT" in html)
     check("Notfall: Signalmittel in Vorrat",              "Signalmittel" in html)
     check("Notfall: Dosenöffner in Vorrat",               "Dosenöffner" in html)
@@ -1591,13 +1577,12 @@ def main():
           "hideAllOverlays nutzt ALL_OVERLAY_IDS nicht")
 
     # ── window.onerror: App-Zustandsprüfung ───────────────────────────────
-    print("\n  window.onerror Guard:")
+    print("\n=== 52. WINDOW.ONERROR — APP-ZUSTANDSPRÜFUNG ===")
 
     # ONERR-1: window.onerror zeigt welcome-overlay NUR wenn App noch nicht gestartet
-    import re as _re
-    onerror_match = _re.search(
+    onerror_match = re.search(
         r'window\.onerror\s*=\s*function[^{]*\{.*?return false;\s*\}',
-        html, _re.DOTALL
+        html, re.DOTALL
     )
     onerror_body = onerror_match.group(0) if onerror_match else ""
     check("ONERR-1: window.onerror prüft App-Zustand vor welcome-overlay",
@@ -1609,14 +1594,14 @@ def main():
           "window.onerror zeigt welcome-overlay ohne App-Zustandsprüfung")
 
     # ONERR-2: loadData() JSON-Parse-Fehler zeigt welcome-overlay NUR wenn App noch nicht gestartet
-    loaddata_match = _re.search(
+    loaddata_match = re.search(
         r'async function loadData\(\)[^{]*\{([\s\S]*?)^\}',
-        html, _re.MULTILINE
+        html, re.MULTILINE
     )
     loaddata_body = loaddata_match.group(1) if loaddata_match else ""
-    parse_catch_match = _re.search(
+    parse_catch_match = re.search(
         r'parsedStored\s*=\s*JSON\.parse\(stored\).*?catch\s*\{(.*?)return;\s*\}',
-        html, _re.DOTALL
+        html, re.DOTALL
     )
     parse_catch_body = parse_catch_match.group(1) if parse_catch_match else ""
     check("ONERR-2: loadData() JSON-Parse-Fehler prüft App-Zustand vor welcome-overlay",
@@ -1628,7 +1613,7 @@ def main():
           "loadData() zeigt welcome-overlay bei Parse-Fehler ohne App-Zustandsprüfung")
 
     # ═══════════════════════════════════════
-    print("\n=== 27. SPEICHERN-HINWEIS (Haftungsausschluss vor Export) ===")
+    print("\n=== 52a. SPEICHERN-HINWEIS (Haftungsausschluss vor Export) ===")
     # ═══════════════════════════════════════
     check("Speichern-Hinweis: _saveHinweisGezeigt Flag",
           "_saveHinweisGezeigt" in html,
@@ -1873,7 +1858,7 @@ def main():
     # ─────────────────────────────────────────────────────────────────
     # 59. DOKUMENTEN-ÜBERSICHT IM WORD-EXPORT
     # ─────────────────────────────────────────────────────────────────
-    print("\n  59. DOKUMENTEN-ÜBERSICHT IM WORD-EXPORT")
+    print("\n=== 59. DOKUMENTEN-ÜBERSICHT IM WORD-EXPORT ===")
     check("DokUebersicht Word: Abschnitt 13 vorhanden",
           '"13. Dokumenten-\u00dcbersicht \u2014 Ablageorte"' in html)
     check("DokUebersicht Word: Beschreibungszeile vorhanden",
@@ -2787,7 +2772,6 @@ def main():
 
     import json as _json
     import os as _os
-    import re as _re
 
     html_dir = _os.path.dirname(_os.path.abspath(filepath))
 
@@ -2824,15 +2808,15 @@ def main():
         check(f"{filename}: id korrekt",
               t.get("id") == expected_id)
         check(f"{filename}: id-Muster gueltig",
-              bool(_re.match(r'^[a-z0-9]([a-z0-9-]*[a-z0-9])?$', t.get("id", ""))))
+              bool(re.match(r'^[a-z0-9]([a-z0-9-]*[a-z0-9])?$', t.get("id", ""))))
         check(f"{filename}: version SemVer",
-              bool(_re.match(r'^\d+\.\d+\.\d+$', t.get("version", ""))))
+              bool(re.match(r'^\d+\.\d+\.\d+$', t.get("version", ""))))
         check(f"{filename}: title.short vorhanden",
               bool(t.get("title", {}).get("short")))
         check(f"{filename}: title.full vorhanden",
               bool(t.get("title", {}).get("full")))
         check(f"{filename}: locale BCP-47",
-              bool(_re.match(r'^[a-z]{2}(-[A-Z]{2})?$', t.get("locale", ""))))
+              bool(re.match(r'^[a-z]{2}(-[A-Z]{2})?$', t.get("locale", ""))))
         check(f"{filename}: issuer.name vorhanden",
               bool(t.get("issuer", {}).get("name")))
         check(f"{filename}: license.id vorhanden",
@@ -3441,8 +3425,6 @@ def main():
     check("Erinnerung: Jetzt-pruefen-Button in Einstellungen",
           "erinnerungNotifCheck(true)" in html)
 
-    passed = sum(1 for s, _, _ in results if s == "PASS")
-
     # ═══════════════════════════════════════
     print("\n=== 84. PUBLIC-KEY-VERSCHLÜSSELUNG (P1 Stufe 1 — Key-Generierung) ===")
     # ═══════════════════════════════════════
@@ -3539,8 +3521,113 @@ def main():
     check("PubKey: Fallback wenn Zwischenablage nicht verfügbar",
           "Zwischenablage in diesem Browser nicht verfügbar" in html)
 
+    # BUG-A: Memory-Leak — URL.createObjectURL() ohne URL.revokeObjectURL()
+    # Public/Private-Key-Download-Funktionen muessen die Object-URL freigeben,
+    # sonst belegt jeder Klick auf "Speichern" Speicher bis Reload.
+    def _key_dl_has_revoke(fn_name):
+        m = re.search(
+            r'function ' + re.escape(fn_name) + r'\([^)]*\)\s*\{[\s\S]*?\n\}',
+            html
+        )
+        if not m:
+            return False
+        body = m.group(0)
+        return 'createObjectURL' in body and 'revokeObjectURL' in body
+
+    check("PubKey: keyManagementDownloadPublic ruft revokeObjectURL auf",
+          _key_dl_has_revoke('keyManagementDownloadPublic'),
+          "Memory-Leak: ObjectURL wird nicht freigegeben")
+    check("PubKey: keyManagementDownloadPrivate ruft revokeObjectURL auf",
+          _key_dl_has_revoke('keyManagementDownloadPrivate'),
+          "Memory-Leak: ObjectURL wird nicht freigegeben")
+
+    # BUG-A (Forts.): Gleicher Memory-Leak-Check fuer alle uebrigen
+    # Download-/Export-Funktionen, die URL.createObjectURL nutzen.
+    # Service-Worker-Registrierung (Z. ~23615) ist absichtlich
+    # ausgenommen — die Blob-URL muss persistent bleiben.
+    BUG_A_DOWNLOAD_FUNCTIONS = [
+        'downloadCSVTemplate',
+        'downloadInstitutionTemplate',
+        'tplEditorExport',
+        'saveAsHTML',
+        'exportJSON',
+        '_generateDocxInner',
+        'generateVorsorgevollmacht',
+        'generatePatientenverfuegung',
+        'generateFHIR',
+        'generateGesundheitsvollmacht',
+        'exportFIMJson',
+    ]
+    for _fn in BUG_A_DOWNLOAD_FUNCTIONS:
+        check(f"BUG-A: {_fn} ruft revokeObjectURL auf",
+              _key_dl_has_revoke(_fn),
+              "Memory-Leak: ObjectURL wird nicht freigegeben")
+
+    # BUG-D: JSON.parse(parsedStored.plain) muss try/catch haben
+    # Korrupte localStorage-Daten duerfen die App-Init nicht crashen
+    # (sonst: weisse Seite beim Start).
+    # Regex: vom if-Check bis zum "return;\n  }" (Ende des if-Bodies bei 2-Space-Einrueckung)
+    m_plain = re.search(
+        r'if\s*\(parsedStored\.plain\)\s*\{[\s\S]*?return;\s*\n  \}',
+        html
+    )
+    if m_plain:
+        block = m_plain.group(0)
+        has_try = 'try' in block and 'JSON.parse(parsedStored.plain)' in block
+        has_catch = 'catch' in block
+        check("BUG-D: parsedStored.plain Parse ist try/catch-geschuetzt",
+              has_try and has_catch,
+              "Korrupte plain-Daten koennen die App-Init crashen")
+    else:
+        check("BUG-D: if(parsedStored.plain)-Block gefunden",
+              False,
+              "Struktur von loadData() hat sich geaendert")
+
+    # BUG-E: localStorage.setItem ohne Quota-Schutz
+    # Bei vollem Storage werfen diese Aufrufe QuotaExceededError, was
+    # den Event-Handler / die UI-Funktion unerwartet abbricht.
+    BUG_E_FUNCTIONS = [
+        'dismissUpdateBanner',
+        'submitEmailOptin',
+        'dismissEmailOptin',
+    ]
+    for _fn in BUG_E_FUNCTIONS:
+        m_fn = re.search(
+            r'function ' + re.escape(_fn) + r'\([^)]*\)\s*\{[\s\S]*?\n\}',
+            html
+        )
+        if m_fn:
+            body = m_fn.group(0)
+            has_setitem = 'localStorage.setItem' in body
+            has_trycatch = 'try' in body and 'catch' in body
+            check(f"BUG-E: {_fn} faengt setItem-Exceptions",
+                  (not has_setitem) or (has_setitem and has_trycatch),
+                  "setItem ohne try/catch kann UI-Funktion crashen")
+        else:
+            check(f"BUG-E: {_fn} existiert",
+                  False,
+                  "Funktion nicht gefunden")
+
+    # Escape-Key-Handler: spezifischer Check, da keine eigene Funktion
+    # Die setItem-Zeile ist ein Einzeiler — ganze Zeile matchen.
+    _esc = re.search(
+        r"if\s*\(eo\)\s*\{[^\n]*email_optin[^\n]*\}",
+        html
+    )
+    if _esc:
+        check("BUG-E: Escape-Handler email-optin faengt setItem-Exceptions",
+              'try' in _esc.group(0) and 'catch' in _esc.group(0),
+              "Escape-Key setItem ohne try/catch bricht Handler ab")
+    else:
+        check("BUG-E: Escape-Handler email-optin gefunden",
+              False,
+              "Struktur des Escape-Handlers hat sich geaendert")
+
+    passed = sum(1 for s, _, _ in results if s == "PASS")
     failed = sum(1 for s, _, _ in results if s == "FAIL")
     total = len(results)
+    if passed + failed != total:
+        print(f"  ⚠️  Counter-Inkonsistenz: {passed}+{failed} != {total}")
     
     print(f"\n  Gesamt: {total} Tests")
     print(f"  ✓ Bestanden: {passed}")

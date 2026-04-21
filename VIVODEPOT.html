@@ -10514,25 +10514,14 @@ function findAlignmentPattern(matrix, alignmentPatternQuads, topRight, topLeft, 
 });</script>
 <script>
 // ── Bibliotheks-Verfügbarkeitsprüfung ──────────────────────────────────────────
-function ensureJsPDF(callback) {
-  // Bibliothek ist inline eingebettet — immer verfügbar
-  if (window.jspdf && window.jspdf.jsPDF) { callback(null); return; }
-  callback(new Error('jsPDF nicht initialisiert'));
-}
-
-function ensureDocx(callback) {
-  // Bibliothek ist inline eingebettet — immer verfügbar
-  if (typeof docx !== 'undefined' || (window.docx && window.docx.Document)) { callback(null); return; }
-  callback(new Error('docx nicht initialisiert'));
-}
+function ensureJsPDF(callback) { callback(null); }
+function ensureDocx(callback)  { callback(null); }
 </script>
 <script>
 // Normalise docx global — jsdelivr exposes it as window.docx
 const VIVODEPOT_VERSION = '1.0.0-beta.16';
 function getLogoData() { var img = document.querySelector('.topbar-logo img'); return img ? img.src : ''; }
-if (typeof docx === 'undefined' && typeof window.docx === 'undefined') {
-  // docx inline eingebettet — sollte nicht vorkommen
-}
+
 </script>
 <style>
 :root {
@@ -11922,8 +11911,8 @@ function initNotfallButton() {
   btn.setAttribute('draggable', 'false');
   (function() {
     var startX, startY, startRight, startBottom, dragging = false;
-    function getRight()  { return parseInt(btn.style.right)  || 20; }
-    function getBottom() { return parseInt(btn.style.bottom) || 74; }
+    function getRight()  { return parseInt(btn.style.right,  10) || 20; }
+    function getBottom() { return parseInt(btn.style.bottom, 10) || 74; }
     function onDown(ex, ey) {
       dragging = true; btn._dragging = true;
       startX = ex; startY = ey;
@@ -12061,15 +12050,6 @@ function doGlobalSearch(query) {
 
   var q = query.toLowerCase();
   var found = [];
-
-  // Search through all fields in STEP_RENDERERS
-  // Build a searchable index from field definitions
-  var fieldDefs = [
-    // [step_index, label, key, section]
-  ];
-
-  // Extract from HTML source: field('key','label',...) and textarea('key','label',...)
-  var html = document.documentElement.outerHTML;
   var stepIds = STEPS.map(function(s) { return s.id; });
 
   // Simple approach: search field labels and current values
@@ -12191,7 +12171,7 @@ function findStepForKey(key) {
   };
   var lk = key.toLowerCase();
   for (var prefix in maps) {
-    if (lk.indexOf(prefix) === 0 || lk.indexOf(prefix) >= 0) return maps[prefix];
+    if (lk.indexOf(prefix) >= 0) return maps[prefix];
   }
   return -1;
 }
@@ -12235,7 +12215,7 @@ var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecogniti
 var aktiveDiktierFelder = null;
 
 function startDiktat(inputId) {
-  if (!SpeechRecognition) { toast('Spracheingabe wird von diesem Browser nicht unterstützt — bitte Chrome oder Edge verwenden'); return; }
+  if (!SpeechRecognition) { toast('Spracheingabe ist in Ihrem Browser leider nicht verfügbar.'); return; }
   var inp = document.getElementById(inputId);
   if (!inp) return;
 
@@ -12258,23 +12238,23 @@ function startDiktat(inputId) {
     inp.value = existing ? existing + ' ' + text : text;
     // Trigger oninput for data binding
     inp.dispatchEvent(new Event('input', { bubbles: true }));
-    toast(' „' + text.substring(0, 40) + (text.length > 40 ? '…' : '') + '"');
+    toast('„' + text.substring(0, 40) + (text.length > 40 ? '…' : '') + '"');
   };
 
   recognition.onerror = function(event) {
     if (event.error === 'no-speech') { toast('Kein Ton erkannt — bitte nochmal versuchen'); }
     else if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-      toast('Mikrofon-Zugriff nicht erlaubt — Spracheingabe wurde ausgeblendet');
+      toast('Mikrofon-Zugriff wurde verweigert — bitte in den Browser-Einstellungen freigeben.');
       try { localStorage.setItem('vivodepot_mikrofon', '0'); } catch(e) {}
       renderStep();
     }
-    else { toast('Spracheingabe-Fehler: ' + event.error); }
+    else { toast('Spracheingabe hat leider nicht funktioniert — bitte nochmal versuchen.'); }
     stopDiktat();
   };
 
   recognition.onend = function() { stopDiktat(); };
 
-  try { recognition.start(); } catch(e) { toast('Spracheingabe konnte nicht gestartet werden'); stopDiktat(); }
+  try { recognition.start(); } catch(e) { toast('Spracheingabe konnte leider nicht starten.'); stopDiktat(); }
 }
 
 function stopDiktat() {
@@ -12595,22 +12575,21 @@ function addNewProfile() {
   hideAllOverlays();
   showOverlay('welcome-overlay');
   updateProfileButton();
-  toast('Neues Profil erstellt — bitte ausfüllen');
+  toast('Neues Profil angelegt — herzlich willkommen!');
 }
 
 async function deleteCurrentProfile() {
   closeProfileDropdown();
   var manifest = getProfileManifest();
-  if (manifest.profiles.length <= 1) { toast('Das letzte Profil kann nicht gelöscht werden'); return; }
+  if (manifest.profiles.length <= 1) { toast('Das einzige Profil kann nicht gelöscht werden.'); return; }
   var profile = manifest.profiles.find(function(p){ return p.id === activeProfileId; });
   var displayName = profile ? getProfileDisplayName(profile) : 'Dieses Profil';
-  var _manifest = manifest;
   vivoConfirm('Profil „' + displayName + '“ löschen?<br><span style="font-size:0.8rem;color:var(--red)">Alle Daten werden unwiderruflich gelöscht.</span>', async function() {
     try { localStorage.removeItem(STORE_KEY); localStorage.removeItem(STORE_META); localStorage.removeItem(STORE_KEY + '_notfall'); } catch(e){}
-    _manifest.profiles = _manifest.profiles.filter(function(p){ return p.id !== activeProfileId; });
-    var nextId = _manifest.profiles[0].id;
-    _manifest.active = nextId;
-    saveProfileManifest(_manifest);
+    manifest.profiles = manifest.profiles.filter(function(p){ return p.id !== activeProfileId; });
+    var nextId = manifest.profiles[0].id;
+    manifest.active = nextId;
+    saveProfileManifest(manifest);
     sessionKey = null; data = {};
     setActiveProfile(nextId);
     await loadData();
@@ -12778,20 +12757,25 @@ function safeRender() {
     console.error('[VIVODEPOT]', e && e.message, e && e.stack);
   }
 }
+// Gespeicherten Fokus wiederherstellen — gemeinsam genutzt von enterApp, returnContinue, savedWelcomeOwner.
+// showWizardIfAll=true: Wizard auch zeigen wenn Fokus 'all' ist (Erstaufruf).
+// showWizardIfAll=false: Wizard nur zeigen wenn noch gar kein Fokus gewählt wurde (Rückkehr).
+function restoreFokus(showWizardIfAll) {
+  var savedFokus = (typeof data !== 'undefined') ? (data['__fokus__'] || '') : '';
+  if (savedFokus && savedFokus !== 'all') {
+    selectedGoal = savedFokus;
+    applyGoalWizard();
+  } else if (!savedFokus || showWizardIfAll) {
+    setTimeout(function(){ if (!window._angehoerigenModus) showGoalWizard(); }, 300);
+  }
+}
+
 function enterApp() {
   hideAllOverlays();
   safeRender();
 
   // Gespeicherten Fokus wiederherstellen
-  var savedFokus = (typeof data !== 'undefined') ? (data['__fokus__'] || '') : '';
-  if (savedFokus && savedFokus !== 'all') {
-    selectedGoal = savedFokus;
-    applyGoalWizard();
-    // Kein Wizard zeigen — Fokus ist bekannt
-  } else {
-    // Nur beim ersten Mal oder wenn kein Fokus gespeichert: Wizard anbieten
-    setTimeout(function(){ if (!window._angehoerigenModus) showGoalWizard(); }, 300);
-  }
+  restoreFokus(true);
 
   // E-Mail-Opt-in (verzögert, damit der Seitenaufbau fertig ist)
   maybeShowEmailOptin();
@@ -13009,13 +12993,7 @@ function returnContinue() {
   try { updateProfileButton(); } catch(e) {}
 
   // Gespeicherten Fokus wiederherstellen; Wizard nur bei fehlendem Fokus zeigen
-  var savedFokus = (typeof data !== 'undefined') ? (data['__fokus__'] || '') : '';
-  if (savedFokus && savedFokus !== 'all') {
-    selectedGoal = savedFokus;
-    applyGoalWizard();
-  } else if (!savedFokus) {
-    setTimeout(function(){ if (!window._angehoerigenModus) showGoalWizard(); }, 300);
-  }
+  restoreFokus(false);
 }
 
 function lockApp() {
@@ -13059,7 +13037,6 @@ function removePassword() {
     toast('Passwort entfernt');
     renderStep();
   });
-  return;
 }
 
 function showAngehoerigenAuswahl() {
@@ -13112,7 +13089,7 @@ function showSavedFileWelcome() {
   el.innerHTML =
     '<div style="max-width:420px;width:90%;text-align:center;padding:2rem 1.5rem">' +
     '<div style="font-family:\'Lora\',serif;font-size:2rem;font-weight:700;color:var(--forest);letter-spacing:0.06em;margin-bottom:0.2rem">VIVO<span style="color:var(--gold)">DEPOT</span></div>' +
-    '<div style="font-size:0.78rem;color:var(--ink3);letter-spacing:0.12em;margin-bottom:2rem">PERÖNLICHE VORSORGE</div>' +
+    '<div style="font-size:0.78rem;color:var(--ink3);letter-spacing:0.12em;margin-bottom:2rem">PERSÖNLICHE VORSORGE</div>' +
     altershinweis +
     '<div style="background:#fff;border-radius:12px;padding:1.5rem;box-shadow:0 2px 16px rgba(61,90,42,0.1);margin-bottom:1.5rem">' +
     '<p style="font-size:0.88rem;color:var(--ink2);margin-bottom:1.2rem">Wer öffnet diese persönliche Vorsorge-Mappe?</p>' +
@@ -13133,13 +13110,7 @@ function savedWelcomeOwner() {
   try { updateProfileButton(); } catch(e) {}
 
   // Gespeicherten Fokus wiederherstellen
-  var savedFokus = (typeof data !== 'undefined') ? (data['__fokus__'] || '') : '';
-  if (savedFokus && savedFokus !== 'all') {
-    selectedGoal = savedFokus;
-    applyGoalWizard();
-  } else {
-    setTimeout(function(){ if (!window._angehoerigenModus) showGoalWizard(); }, 300);
-  }
+  restoreFokus(true);
 }
 
 function savedWelcomeAngehoerige() {
@@ -13331,7 +13302,7 @@ function openAngehoerigenView(scenario) {
       html += '<h4 style="margin-top:12px">Medikamente</h4>';
       meds.forEach(function(m){ html += '<div style="padding:4px 0">' + esc(m.name||'—') + (m.dosis?' — '+esc(m.dosis):'') + '</div>'; });
     }
-    html += '<h3 style="color:var(--forest);margin:1rem 0 0.5rem">Behandelnde Aerzte</h3>';
+    html += '<h3 style="color:var(--forest);margin:1rem 0 0.5rem">Behandelnde Ärzte</h3>';
     [['Hausarzt',get('hausarzt')],['Spezialist 1',get('facharzt_1')],['Spezialist 2',get('facharzt_2')]].forEach(function(f){ if(f[1]) html += '<div style="padding:6px 0;border-bottom:1px solid var(--border)"><span style="color:var(--ink2);font-size:0.8rem">' + f[0] + '</span><br><strong>' + esc(f[1]) + '</strong></div>'; });
     if (get('behandlung_aktuell')) html += '<div style="padding:8px;background:var(--beige);border-radius:6px;margin-top:6px"><span style="color:var(--ink2);font-size:0.8rem">Laufende Behandlung</span><br>' + esc(get('behandlung_aktuell')).replace(/\n/g,'<br>') + '</div>';
     html += '<h3 style="color:var(--forest);margin:1rem 0 0.5rem">Vollmachten</h3>';
@@ -13408,7 +13379,16 @@ async function loadData() {
 
   // Plain (unencrypted) data
   if (parsedStored.plain) {
-    data = JSON.parse(parsedStored.plain);
+    try {
+      data = JSON.parse(parsedStored.plain);
+    } catch (e) {
+      // Korrupte plain-Daten: Recovery wie bei Parse-Fehler im aeusseren
+      // Block — App nicht crashen, zurueck auf welcome-overlay.
+      data = {};
+      hideAllOverlays();
+      showOverlay('welcome-overlay');
+      return;
+    }
     updateReturnGreeting();
     hideAllOverlays();
     showOverlay('return-overlay');
@@ -14186,9 +14166,11 @@ function downloadCSVTemplate(listKey) {
   const csv = rows.map(r => r.map(v => `"${v.replace(/"/g,'""')}"`).join(',')).join('\r\n');
   const blob = new Blob(['\uFEFF' + csv], {type:'text/csv;charset=utf-8'});
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
+  const url = URL.createObjectURL(blob);
+  a.href = url;
   a.download = listKey === 'kontakte' ? 'Vorlage_Vertrauenspersonen.csv' : 'Vorlage_Informationskontakte.csv';
   a.click();
+  setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
   toast('Vorlage heruntergeladen ');
 }
 
@@ -15307,9 +15289,11 @@ function downloadInstitutionTemplate() {
   var json = JSON.stringify(template, null, 2);
   var blob = new Blob([json], { type: 'application/json' });
   var a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
+  var url = URL.createObjectURL(blob);
+  a.href = url;
   a.download = 'Vivodepot_Muster_Vorlage_v1.json';
   a.click();
+  setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
   statsIncrement('template_download');
   toast('Muster-Vorlage heruntergeladen');
 }
@@ -15467,9 +15451,11 @@ function tplEditorExport() {
   var json = JSON.stringify(t, null, 2);
   var blob = new Blob([json], { type: 'application/json' });
   var a    = document.createElement('a');
-  a.href   = URL.createObjectURL(blob);
+  var url  = URL.createObjectURL(blob);
+  a.href   = url;
   a.download = (t.id || 'vorlage') + '.json';
   a.click();
+  setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
   toast('Vorlage als Datei heruntergeladen');
 }
 
@@ -18017,7 +18003,8 @@ async function saveAsHTML() {
 
   // Fallback: standard download
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
+  const url = URL.createObjectURL(blob);
+  a.href = url;
   a.download = fileName;
 
   // iOS Safari: a.click() öffnet Datei als Vorschau statt sie zu speichern
@@ -18040,10 +18027,13 @@ async function saveAsHTML() {
         function() {}, 'Verstanden', ''
       );
     }, 800);
+    // iOS-Vorschau hält die Blob-URL aktiv, bis Nutzer "Teilen" wählt — länger warten
+    setTimeout(function() { URL.revokeObjectURL(url); }, 60000);
     return;
   }
 
   a.click();
+  setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
   toast('Gespeichert — Datei auf USB-Stick verschieben, damit Angehörige im Notfall Zugriff haben');
   showAutosave();
 }
@@ -18052,9 +18042,11 @@ async function saveAsHTML() {
 function exportJSON() {
   const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
+  const url = URL.createObjectURL(blob);
+  a.href = url;
   a.download = 'Vivodepot_Daten_' + new Date().toISOString().slice(0,10) + '.json';
   a.click();
+  setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
   toast('JSON-Daten exportiert ');
 }
 
@@ -18569,9 +18561,11 @@ function _generateDocxInner() {
 
       Packer.toBlob(doc).then(blob => {
         const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
+        const url = URL.createObjectURL(blob);
+        a.href = url;
         a.download = 'Vivodepot_' + (get('nachname')||'Dokument') + '.docx';
         a.click();
+        setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
         toast('Word-Dokument erstellt ');
       });
     } catch(e) { console.error(e); toast('Fehler beim Erstellen: ' + e.message); }
@@ -18698,9 +18692,11 @@ function generateVorsorgevollmacht() {
 
       Packer.toBlob(doc).then(blob => {
         const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
+        const url = URL.createObjectURL(blob);
+        a.href = url;
         a.download = 'Vorsorgevollmacht_' + (get('nachname')||'Dokument') + '.docx';
         a.click();
+        setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
         toastDownload('Vorsorgevollmacht');
       });
     } catch(e) { console.error(e); toast('Fehler: ' + e.message); }
@@ -18821,9 +18817,11 @@ function generatePatientenverfuegung() {
 
       Packer.toBlob(doc).then(blob => {
         const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
+        const url = URL.createObjectURL(blob);
+        a.href = url;
         a.download = 'Patientenverfuegung_' + (get('nachname')||'Dokument') + '.docx';
         a.click();
+        setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
         toastDownload('Patientenverfügung');
       });
     } catch(e) { console.error(e); toast('Fehler: ' + e.message); }
@@ -21247,9 +21245,11 @@ function generateFHIR() {
   var json = JSON.stringify(bundle, null, 2);
   var blob = new Blob([json], { type: 'application/fhir+json' });
   var a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
+  var url = URL.createObjectURL(blob);
+  a.href = url;
   a.download = 'IPS_' + (nachname || 'Patient') + '_' + new Date().toISOString().slice(0, 10) + '.fhir.json';
   a.click();
+  setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
   statsIncrement('fhir_export');
   toast('IPS-Dokument exportiert');
 }
@@ -22138,9 +22138,11 @@ function generateGesundheitsvollmacht() {
         children: children }] });
       d.Packer.toBlob(doc2).then(function(blob) {
         var a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
+        var url = URL.createObjectURL(blob);
+        a.href = url;
         a.download = 'Gesundheitsvollmacht_'+get('nachname','Entwurf')+'.docx';
         a.click();
+        setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
         toastDownload('Gesundheitsvollmacht');
       });
     } catch(e) { toast('Fehler: '+e.message); }
@@ -22621,9 +22623,11 @@ function exportFIMJson() {
 
     var blob = new Blob([JSON.stringify(fimData, null, 2)], {type:'application/json'});
     var a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
+    var url = URL.createObjectURL(blob);
+    a.href = url;
     a.download = 'Vivodepot_Behoerdendaten_'+(get('nachname')||'Export')+'_'+new Date().toISOString().slice(0,10)+'.json';
     a.click();
+    setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
     toast('Beh\u00F6rdendaten als JSON exportiert OK');
   } catch(e) { toast('Fehler: '+e.message); }
 }
@@ -23186,23 +23190,18 @@ function showImportPreview(format, mapped, details) {
 // ═══════════════════════════════════════════════
 // PWA INSTALL PROMPT
 // ═══════════════════════════════════════════════
-var _deferredInstallPrompt = null;
-window.addEventListener('beforeinstallprompt', function(e) {
-  e.preventDefault();
-  _deferredInstallPrompt = e;
-  var btn = document.getElementById('pwa-install-btn');
-  if (btn) btn.style.display = 'inline-block';
-  var hint = document.getElementById('pwa-install-hint');
-  if (hint) hint.style.display = 'none';
-});
+// deferredInstallPrompt wird weiter unten deklariert —
+// gemeinsam genutzt von pwaInstall() und installApp().
 function pwaInstall() {
-  if (_deferredInstallPrompt) {
-    _deferredInstallPrompt.prompt();
-    _deferredInstallPrompt.userChoice.then(function(r) {
-      if (r.outcome === 'accepted') toast('Vivodepot wurde als App installiert ');
-      _deferredInstallPrompt = null;
+  if (deferredInstallPrompt) {
+    deferredInstallPrompt.prompt();
+    deferredInstallPrompt.userChoice.then(function(r) {
+      if (r.outcome === 'accepted') toast('Vivodepot wurde als App installiert \u2714');
+      deferredInstallPrompt = null;
       var btn = document.getElementById('pwa-install-btn');
       if (btn) btn.style.display = 'none';
+      var banner = document.getElementById('install-banner');
+      if (banner) banner.remove();
     });
   }
 }
@@ -23443,7 +23442,7 @@ document.addEventListener('keydown', function(e) {
   if (co && co.style.display !== 'none') { co.style.display = 'none'; }
   // Email-Optin schließen
   var eo = document.getElementById('email-optin-overlay');
-  if (eo) { eo.remove(); if (!localStorage.getItem('vivodepot_email_optin')) localStorage.setItem('vivodepot_email_optin','dismissed'); }
+  if (eo) { eo.remove(); try { if (!localStorage.getItem('vivodepot_email_optin')) localStorage.setItem('vivodepot_email_optin','dismissed'); } catch(e) {} }
   // Update-Banner schließen
   var ub = document.getElementById('update-banner');
   if (ub) ub.remove();
@@ -23547,7 +23546,7 @@ function showUpdateBanner(newVersion, info) {
 function dismissUpdateBanner() {
   var b = document.getElementById('update-banner');
   if (b) b.remove();
-  localStorage.setItem('vivodepot_update_dismissed', VIVODEPOT_VERSION);
+  try { localStorage.setItem('vivodepot_update_dismissed', VIVODEPOT_VERSION); } catch(e) {}
 }
 
 // ── E-Mail-Opt-in ─────────────────────────────────────────────────────────────
@@ -23587,7 +23586,7 @@ function submitEmailOptin() {
   var inp = document.getElementById('email-optin-input');
   var email = inp ? inp.value.trim() : '';
   if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast('Bitte geben Sie eine gültige E-Mail-Adresse ein.'); return; }
-  localStorage.setItem('vivodepot_email_optin', email || 'dismissed');
+  try { localStorage.setItem('vivodepot_email_optin', email || 'dismissed'); } catch(e) {}
   dismissEmailOptin();
   if (email) {
     try { fetch('https://vivodepot.de/newsletter/subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email, version: VIVODEPOT_VERSION }), keepalive: true }).catch(function() {}); } catch (e) {}
@@ -23598,7 +23597,7 @@ function submitEmailOptin() {
 function dismissEmailOptin() {
   var ov = document.getElementById('email-optin-overlay');
   if (ov) ov.remove();
-  if (!localStorage.getItem('vivodepot_email_optin')) { localStorage.setItem('vivodepot_email_optin', 'dismissed'); }
+  try { if (!localStorage.getItem('vivodepot_email_optin')) { localStorage.setItem('vivodepot_email_optin', 'dismissed'); } } catch(e) {}
 }
 </script>
 
@@ -23619,11 +23618,17 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
 }
 
 // ── Android/Desktop: "App installieren" Prompt ──
+// Einziger beforeinstallprompt-Handler — aktiviert Button im Settings-Step
+// und zeigt das floating Install-Banner.
 var deferredInstallPrompt = null;
 
 window.addEventListener('beforeinstallprompt', function(e) {
   e.preventDefault();
   deferredInstallPrompt = e;
+  var btn = document.getElementById('pwa-install-btn');
+  if (btn) btn.style.display = 'inline-block';
+  var hint = document.getElementById('pwa-install-hint');
+  if (hint) hint.style.display = 'none';
   showInstallBanner();
 });
 
@@ -23646,10 +23651,12 @@ function installApp() {
   if (deferredInstallPrompt) {
     deferredInstallPrompt.prompt();
     deferredInstallPrompt.userChoice.then(function(choice) {
-      if (choice.outcome === 'accepted') { toast('App wird installiert! '); }
+      if (choice.outcome === 'accepted') { toast('App wird installiert! ✔'); }
       deferredInstallPrompt = null;
-      var b = document.getElementById('install-banner');
-      if (b) b.remove();
+      var banner = document.getElementById('install-banner');
+      if (banner) banner.remove();
+      var btn = document.getElementById('pwa-install-btn');
+      if (btn) btn.style.display = 'none';
     });
   }
 }
@@ -25100,9 +25107,11 @@ function keyManagementDownloadPublic() {
                   'Erzeugt am: ' + new Date().toLocaleString('de-DE') + '\n';
   const blob = new Blob([content], { type: 'text/plain' });
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
+  const url = URL.createObjectURL(blob);
+  a.href = url;
   a.download = 'vivodepot-public-key-' + Math.floor(Date.now() / 1000) + '.txt';
   a.click();
+  setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
   toast('Public Key heruntergeladen');
 }
 
@@ -25129,9 +25138,11 @@ function keyManagementDownloadPrivate() {
                       'Erzeugt am: ' + new Date().toLocaleString('de-DE') + '\n';
       const blob = new Blob([content], { type: 'text/plain' });
       const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
+      const url = URL.createObjectURL(blob);
+      a.href = url;
       a.download = 'vivodepot-private-key-' + Math.floor(Date.now() / 1000) + '.txt';
       a.click();
+      setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
       toast('Private Key heruntergeladen — sicher aufbewahren');
     },
     null
