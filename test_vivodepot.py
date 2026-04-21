@@ -3442,6 +3442,103 @@ def main():
           "erinnerungNotifCheck(true)" in html)
 
     passed = sum(1 for s, _, _ in results if s == "PASS")
+
+    # ═══════════════════════════════════════
+    print("\n=== 84. PUBLIC-KEY-VERSCHLÜSSELUNG (P1 Stufe 1 — Key-Generierung) ===")
+    # ═══════════════════════════════════════
+
+    # Kern-Funktionen vorhanden
+    check("PubKey: genKeyPair() vorhanden",
+          "async function genKeyPair(" in html)
+    check("PubKey: keyToBase64() vorhanden",
+          "async function keyToBase64(" in html)
+    check("PubKey: keyBrowserCheck() vorhanden",
+          "async function keyBrowserCheck(" in html)
+    check("PubKey: renderKeyManagement() vorhanden",
+          "function renderKeyManagement(" in html)
+    check("PubKey: keyManagementGenerateNew() vorhanden",
+          "async function keyManagementGenerateNew(" in html)
+    check("PubKey: keyManagementDownloadPublic() vorhanden",
+          "function keyManagementDownloadPublic(" in html)
+    check("PubKey: keyManagementDownloadPrivate() vorhanden",
+          "function keyManagementDownloadPrivate(" in html)
+    check("PubKey: keyManagementCopyPublicKey() vorhanden",
+          "function keyManagementCopyPublicKey(" in html)
+    check("PubKey: keyManagementShowPublic() vorhanden",
+          "function keyManagementShowPublic(" in html)
+    check("PubKey: keyManagementReset() vorhanden",
+          "function keyManagementReset(" in html)
+
+    # KORREKTE X25519 API — Web Crypto API Syntax
+    check("PubKey: X25519 als eigener Algorithmus (nicht ECDH-namedCurve)",
+          "{ name: 'X25519' }" in html)
+    check("PubKey: KEINE falsche ECDH-X25519-Syntax",
+          "{ name: 'ECDH', namedCurve: 'X25519' }" not in html)
+    check("PubKey: keyUsages deriveKey und deriveBits",
+          "'deriveKey', 'deriveBits'" in html)
+    check("PubKey: Web Crypto API wird genutzt",
+          "window.crypto.subtle" in html)
+
+    # Browser-Check
+    check("PubKey: Browser-Check ruft generateKey auf",
+          "keyBrowserCheck" in html and "generateKey" in html)
+    check("PubKey: Browser-Check gibt Versions-Info zurück",
+          "Chrome 133" in html and "Firefox 132" in html and "Safari 18.4" in html)
+    check("PubKey: Browser-Check wird vor Keyerzeugung aufgerufen",
+          "keyBrowserCheck()" in html and "keyManagementGenerateNew" in html)
+
+    # Session-Speicher (nicht persistent)
+    check("PubKey: _currentPrivateKey Variable",
+          "var _currentPrivateKey" in html)
+    check("PubKey: _currentPrivateKeyBase64 Variable",
+          "var _currentPrivateKeyBase64" in html)
+    check("PubKey: _currentPublicKeyBase64 Variable",
+          "var _currentPublicKeyBase64" in html)
+    check("PubKey: KEIN localStorage für Private Key",
+          "localStorage.setItem('_currentPrivateKey" not in html)
+    check("PubKey: KEIN sessionStorage für Private Key",
+          "sessionStorage.setItem('_currentPrivateKey" not in html)
+
+    # UI-Integration
+    check("PubKey: Key Management Container im Institutionen-Bereich",
+          'id="key-management-content"' in html)
+    check("PubKey: renderKeyManagement() wird aus Template aufgerufen",
+          "${renderKeyManagement()}" in html)
+
+    # Base64-Kodierung
+    check("PubKey: window.btoa() für Base64-Kodierung",
+          "window.btoa(" in html)
+    check("PubKey: window.crypto.subtle.exportKey für Key-Export",
+          "exportKey" in html)
+    check("PubKey: spki-Format für Public Key",
+          "'spki'" in html)
+    check("PubKey: pkcs8-Format für Private Key",
+          "'pkcs8'" in html)
+
+    # Benutzer-Warnungen (korrekter vivoConfirm-Aufruf)
+    check("PubKey: vivoConfirm mit 3 Parametern bei Private Key Download",
+          "keyManagementDownloadPrivate" in html)
+    check("PubKey: Warnung vor Private Key Weitergabe",
+          "NIE weitergeben" in html or "NIE weitergegeben" in html)
+    check("PubKey: Hinweis auf Neuladen-Problem",
+          "Neuladen" in html and "Keypair" in html)
+    check("PubKey: Hinweis auf Verlust-Problem",
+          "Verlust" in html and "Private Key" in html)
+
+    # Fehlerbehandlung
+    check("PubKey: try-catch in genKeyPair()",
+          html.count("try {") > 0 and "genKeyPair" in html)
+    check("PubKey: Toast bei Fehler",
+          "Fehler: Schlüssel" in html)
+    check("PubKey: Null-Prüfung auf _currentPublicKeyBase64",
+          "if (!_currentPublicKeyBase64)" in html)
+
+    # Kopierfunktion mit Fallback
+    check("PubKey: navigator.clipboard.writeText wird genutzt",
+          "navigator.clipboard.writeText" in html)
+    check("PubKey: Fallback wenn Zwischenablage nicht verfügbar",
+          "Zwischenablage in diesem Browser nicht verfügbar" in html)
+
     failed = sum(1 for s, _, _ in results if s == "FAIL")
     total = len(results)
     

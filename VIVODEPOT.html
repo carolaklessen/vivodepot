@@ -16065,6 +16065,10 @@ const STEP_RENDERERS = {
       Vorlagen bleiben ausschließlich auf Ihrem Gerät und werden nicht ins Internet gesendet. Vollständig ausgefüllte Vorlagen können heruntergeladen oder als QR-Code weitergegeben werden.
     </div>
 
+    <div id="key-management-content">${renderKeyManagement()}</div>
+
+    <div style="margin-top:1.75rem;border-top:2px solid var(--border);padding-top:1.5rem"></div>
+
     <input type="file" id="tpl-file-input" accept="application/json,.json" style="display:none" onchange="if(this.files[0]) tplLoadFromFile(this.files[0]); this.value='';">
 
     <div ondragover="tplOnDragOver(event)" ondragleave="tplOnDragLeave(event)" ondrop="tplOnDrop(event)"
@@ -24971,6 +24975,263 @@ function showStepPicker() {
 function closeStepPicker() {
   var overlay = document.getElementById('step-picker-overlay');
   if (overlay) overlay.classList.remove('open');
+}
+
+// ──────────────────────────────────────────────────────────────────────────
+// Sektion 84: Public-Key-Verschlüsselung — Stufe 1 (Key-Generierung)
+// ──────────────────────────────────────────────────────────────────────────
+// X25519 Elliptic Curve Diffie-Hellman für VP Response Verschlüsselung.
+// Entscheidung: X25519 (21. April 2026) — offener Standard, 32-Byte-Schlüssel
+// (QR-tauglich), von EUDIW bevorzugt, in Web Crypto API nativ seit:
+//   Chrome 133+, Firefox 132+, Safari 18.4+, Edge 133+
+//
+// Private Key bleibt in einer Session-Variable — NICHT im Datensatz, NICHT
+// in localStorage oder sessionStorage. Bei Seiten-Neuladen ist das Keypair
+// weg. Das ist beabsichtigt.
+
+// Session-Speicher
+var _currentPrivateKey = null;         // CryptoKey-Objekt
+var _currentPrivateKeyBase64 = null;    // Base64 (nur für Download)
+var _currentPublicKeyBase64 = null;     // Base64 (für Weitergabe)
+
+// Browser-Check: Ist X25519 in diesem Browser verfügbar?
+async function keyBrowserCheck() {
+  if (!window.crypto || !window.crypto.subtle || !window.crypto.subtle.generateKey) {
+    return { ok: false, reason: 'Web Crypto API steht in diesem Browser nicht zur Verfügung.' };
+  }
+  try {
+    await window.crypto.subtle.generateKey(
+      { name: 'X25519' },
+      true,
+      ['deriveKey', 'deriveBits']
+    );
+    return { ok: true };
+  } catch (e) {
+    return {
+      ok: false,
+      reason: 'X25519 ist in diesem Browser nicht verfügbar. Benötigt werden: Chrome 133 oder neuer, Firefox 132 oder neuer, Safari 18.4 oder neuer, Edge 133 oder neuer.'
+    };
+  }
+}
+
+// Erzeuge X25519 Keypair mit Web Crypto API
+async function genKeyPair() {
+  try {
+    const keyPair = await window.crypto.subtle.generateKey(
+      { name: 'X25519' },
+      true,
+      ['deriveKey', 'deriveBits']
+    );
+    return keyPair;
+  } catch (e) {
+    console.error('Fehler bei der Schlüsselerzeugung:', e);
+    return null;
+  }
+}
+
+// Konvertiere CryptoKey zu Base64
+async function keyToBase64(cryptoKey, isPublic) {
+  try {
+    const exported = await window.crypto.subtle.exportKey(
+      isPublic ? 'spki' : 'pkcs8',
+      cryptoKey
+    );
+    const arr = new Uint8Array(exported);
+    let binaryStr = '';
+    for (let i = 0; i < arr.length; i++) {
+      binaryStr += String.fromCharCode(arr[i]);
+    }
+    return window.btoa(binaryStr);
+  } catch (e) {
+    console.error('Fehler bei der Base64-Konvertierung:', e);
+    return null;
+  }
+}
+
+// Erzeuge neues Keypair
+async function keyManagementGenerateNew() {
+  const check = await keyBrowserCheck();
+  if (!check.ok) {
+    vivoConfirm(
+      '<strong>Schlüsselerzeugung nicht möglich</strong><br><br>' + check.reason,
+      function() {}, null
+    );
+    return;
+  }
+
+  toast('Schlüsselpaar wird erzeugt ...');
+  const keyPair = await genKeyPair();
+  if (!keyPair) {
+    toast('Fehler: Schlüsselpaar konnte nicht erzeugt werden');
+    return;
+  }
+
+  const pubBase64 = await keyToBase64(keyPair.publicKey, true);
+  const privBase64 = await keyToBase64(keyPair.privateKey, false);
+  if (!pubBase64 || !privBase64) {
+    toast('Fehler: Schlüssel konnte nicht kodiert werden');
+    return;
+  }
+
+  _currentPrivateKey = keyPair.privateKey;
+  _currentPrivateKeyBase64 = privBase64;
+  _currentPublicKeyBase64 = pubBase64;
+
+  toast('Schlüsselpaar erfolgreich erzeugt');
+
+  const container = document.getElementById('key-management-content');
+  if (container) {
+    container.innerHTML = renderKeyManagement();
+  }
+}
+
+// Public Key als .txt speichern
+function keyManagementDownloadPublic() {
+  if (!_currentPublicKeyBase64) {
+    toast('Kein Schlüsselpaar vorhanden');
+    return;
+  }
+  const content = 'X25519 Public Key für Vivodepot\n' +
+                  '====================================\n\n' +
+                  'Public Key (Base64, für VP Request):\n' +
+                  _currentPublicKeyBase64 + '\n\n' +
+                  'Dieser Schlüssel kann öffentlich weitergegeben werden.\n' +
+                  'Der zugehörige Private Key darf NIE weitergegeben werden.\n\n' +
+                  'Erzeugt am: ' + new Date().toLocaleString('de-DE') + '\n';
+  const blob = new Blob([content], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'vivodepot-public-key-' + Math.floor(Date.now() / 1000) + '.txt';
+  a.click();
+  toast('Public Key heruntergeladen');
+}
+
+// Private Key als .txt speichern (mit Warnung)
+function keyManagementDownloadPrivate() {
+  if (!_currentPrivateKeyBase64) {
+    toast('Kein Schlüsselpaar vorhanden');
+    return;
+  }
+  vivoConfirm(
+    '<strong>Warnung: Private Key wird heruntergeladen</strong><br><br>' +
+    'Der Private Key ist geheim. Nur die Institution darf ihn haben. ' +
+    'Bei Verlust sind verschlüsselte Daten nicht mehr entschlüsselbar.<br><br>' +
+    'Speichern Sie die Datei an einem sicheren Ort (z. B. Passwort-Manager).<br><br>' +
+    'Klicken Sie OK, um fortzufahren.',
+    function() {
+      const content = 'X25519 Private Key für Vivodepot\n' +
+                      '====================================\n\n' +
+                      'GEHEIM: Diesen Schlüssel NICHT weitergeben.\n\n' +
+                      'Private Key (Base64):\n' +
+                      _currentPrivateKeyBase64 + '\n\n' +
+                      'Dieser Schlüssel wird benötigt, um VP Responses zu entschlüsseln.\n' +
+                      'Sichere Aufbewahrung (Passwort-Manager, HSM) empfohlen.\n\n' +
+                      'Erzeugt am: ' + new Date().toLocaleString('de-DE') + '\n';
+      const blob = new Blob([content], { type: 'text/plain' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'vivodepot-private-key-' + Math.floor(Date.now() / 1000) + '.txt';
+      a.click();
+      toast('Private Key heruntergeladen — sicher aufbewahren');
+    },
+    null
+  );
+}
+
+// Public Key in Zwischenablage
+function keyManagementCopyPublicKey() {
+  if (!_currentPublicKeyBase64) {
+    toast('Kein Schlüsselpaar vorhanden');
+    return;
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(_currentPublicKeyBase64).then(function() {
+      toast('Public Key in Zwischenablage kopiert');
+    }).catch(function() {
+      toast('Fehler beim Kopieren');
+    });
+  } else {
+    toast('Zwischenablage in diesem Browser nicht verfügbar');
+  }
+}
+
+// Public Key anzeigen (Vorbereitung für QR-Code in Stufe 2)
+function keyManagementShowPublic() {
+  if (!_currentPublicKeyBase64) {
+    toast('Kein Schlüsselpaar vorhanden');
+    return;
+  }
+  vivoConfirm(
+    '<strong>Public Key (Base64)</strong><br><br>' +
+    '<code style="font-size:0.7rem;word-break:break-all;background:var(--beige);padding:8px;display:block;border-radius:4px">' +
+    _currentPublicKeyBase64 + '</code><br>' +
+    'Dieser Schlüssel kann frei weitergegeben werden.<br>' +
+    'QR-Code-Anzeige folgt in Stufe 2.',
+    function() {}, null
+  );
+}
+
+// Keypair zurücksetzen (neu erzeugen)
+function keyManagementReset() {
+  vivoConfirm(
+    '<strong>Neues Schlüsselpaar erzeugen?</strong><br><br>' +
+    'Das aktuelle Schlüsselpaar wird verworfen. ' +
+    'Daten, die mit dem alten Public Key verschlüsselt wurden, sind dann nicht mehr entschlüsselbar.',
+    function() {
+      _currentPrivateKey = null;
+      _currentPrivateKeyBase64 = null;
+      _currentPublicKeyBase64 = null;
+      keyManagementGenerateNew();
+    },
+    null
+  );
+}
+
+// UI rendern
+function renderKeyManagement() {
+  if (!_currentPublicKeyBase64) {
+    return '<div style="background:var(--beige);border-radius:10px;padding:1.5rem;margin-bottom:1rem">' +
+      '<div style="font-weight:bold;margin-bottom:0.5rem;color:var(--forest)">Sicherheit und Schlüsselverwaltung</div>' +
+      '<div style="font-size:0.85rem;color:var(--ink2);line-height:1.5;margin-bottom:1rem">' +
+      'Für die sichere Remote-Übergabe an Institutionen können Sie ein Schlüsselpaar erzeugen. ' +
+      'Der Public Key wird an die Institution übermittelt, der Private Key bleibt nur bei Ihnen.' +
+      '</div>' +
+      '<button class="btn-nav primary" onclick="keyManagementGenerateNew()" style="font-size:0.9rem">Schlüsselpaar erzeugen</button>' +
+      '<div style="font-size:0.78rem;color:var(--ink3);margin-top:0.5rem">' +
+      'X25519 Elliptic Curve, browser-nativ, keine Server.' +
+      '</div>' +
+      '</div>';
+  }
+
+  const pubDisplay = _currentPublicKeyBase64.substring(0, 60) + '...';
+  return '<div style="background:var(--forest);color:#fff;border-radius:10px;padding:1.5rem;margin-bottom:1rem">' +
+    '<div style="font-weight:bold;margin-bottom:0.5rem;font-size:1rem">Schlüsselpaar aktiv</div>' +
+    '<div style="font-size:0.82rem;line-height:1.5;margin-bottom:1rem">' +
+    'Public Key wurde erzeugt und ist bereit zur Weitergabe. Der Private Key liegt nur in dieser Session.' +
+    '</div>' +
+    '<div style="background:rgba(255,255,255,0.1);border-radius:6px;padding:1rem;margin-bottom:1rem;border:1px solid rgba(255,255,255,0.2)">' +
+    '<div style="font-size:0.78rem;color:rgba(255,255,255,0.8);margin-bottom:0.5rem">Public Key (gekürzt):</div>' +
+    '<div style="font-family:monospace;font-size:0.75rem;word-break:break-all;color:#fff">' + pubDisplay + '</div>' +
+    '</div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:0.75rem">' +
+    '<button class="btn-nav" onclick="keyManagementCopyPublicKey()" style="font-size:0.82rem;background:#fff;color:var(--forest);border-color:#fff">Public Key kopieren</button>' +
+    '<button class="btn-nav" onclick="keyManagementShowPublic()" style="font-size:0.82rem;background:#fff;color:var(--forest);border-color:#fff">Public Key anzeigen</button>' +
+    '</div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
+    '<button class="btn-nav" onclick="keyManagementDownloadPublic()" style="font-size:0.82rem;background:#fff;color:var(--forest);border-color:#fff">Public Key speichern</button>' +
+    '<button class="btn-nav" onclick="keyManagementDownloadPrivate()" style="font-size:0.82rem;background:var(--red);color:#fff;border-color:var(--red)">Private Key speichern</button>' +
+    '</div>' +
+    '<div style="margin-top:1rem;border-top:1px solid rgba(255,255,255,0.2);padding-top:1rem;font-size:0.78rem;color:rgba(255,255,255,0.9);line-height:1.5">' +
+    '<strong>Wichtige Hinweise:</strong><br>' +
+    'Der Public Key kann frei weitergegeben werden.<br>' +
+    'Der Private Key darf NIE weitergegeben werden.<br>' +
+    'Beim Neuladen der Seite ist das Keypair weg. Vorher speichern.<br>' +
+    'Bei Verlust des Private Keys ist die Entschlüsselung unmöglich.' +
+    '</div>' +
+    '</div>' +
+    '<div style="margin-top:1rem;text-align:center">' +
+    '<button class="btn-nav" onclick="keyManagementReset()" style="font-size:0.82rem;color:var(--red)">Neues Schlüsselpaar erzeugen</button>' +
+    '</div>';
 }
 
 </script>
