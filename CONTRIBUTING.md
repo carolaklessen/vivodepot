@@ -57,6 +57,7 @@ Ergebnis muss `0 FAIL` sein, bevor eine Änderung als Baseline akzeptiert wird.
 | `test_vivodepot.py` | Automatisierte Tests (Python, 1.499 Tests in 83 Sektionen) |
 | `CHANGELOG.md` | Versionshistorie |
 | `DOCS.md` | Technische Dokumentation |
+| `INTEROPERABILITY.md` | Austauschformate, Standards, Konformitätsnachweise, Lückenanalyse |
 | `FAQ.md` | Häufige Fragen |
 | `QUICKSTART.md` | Schnellstart-Anleitung |
 | `SECURITY.md` | Sicherheitsrichtlinie |
