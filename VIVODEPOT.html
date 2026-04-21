@@ -10528,7 +10528,7 @@ function ensureDocx(callback) {
 </script>
 <script>
 // Normalise docx global — jsdelivr exposes it as window.docx
-const VIVODEPOT_VERSION = '1.0.0-beta.14';
+const VIVODEPOT_VERSION = '1.0.0-beta.16';
 function getLogoData() { var img = document.querySelector('.topbar-logo img'); return img ? img.src : ''; }
 if (typeof docx === 'undefined' && typeof window.docx === 'undefined') {
   // docx inline eingebettet — sollte nicht vorkommen
@@ -11494,7 +11494,7 @@ textarea { min-height: 44px; }
         <div class="more-divider"></div>
         <button onclick="activatePassword(); closeMoreMenu()" id="lock-btn">Passwortschutz</button>
         <div class="more-divider"></div>
-        <a href="mailto:hilfe@vivodepot.de?subject=Hilfe%20mit%20Vivodepot&body=Hallo%2C%0A%0Aich%20brauche%20Hilfe%20mit%20folgendem%20Problem%3A%0A%0A" onclick="closeMoreMenu()" style="display:block;padding:10px 16px;font-size:0.9rem;color:inherit;text-decoration:none">Hilfe — hilfe@vivodepot.de</a>
+        <button onclick="closeMoreMenu(); feedbackOpen()" style="display:block;padding:10px 16px;font-size:0.9rem;color:inherit;text-decoration:none;width:100%;text-align:left;background:none;border:none;cursor:pointer">Hilfe — hilfe@vivodepot.de</button>
         <div class="more-divider"></div>
         <div style="padding:8px 16px;font-size:0.75rem;color:var(--ink3)" id="storage-meter"></div>
       </div>
@@ -11600,6 +11600,29 @@ textarea { min-height: 44px; }
   </div>
 </div>
 
+<!-- Inline-Feedback-Formular — Fallback wenn E-Mail-App nicht öffnet -->
+<div class="crypto-overlay" id="feedback-overlay" style="display:none" onclick="if(event.target===this)feedbackClose()">
+  <div class="crypto-modal" style="max-width:460px">
+    <div style="font-size:1rem;font-weight:600;color:var(--forest);margin-bottom:0.3rem">Nachricht an Vivodepot</div>
+    <div style="font-size:0.84rem;color:var(--ink2);margin-bottom:0.8rem;line-height:1.5">
+      Was hat nicht funktioniert? Was würden Sie sich wünschen?<br>
+      Gerät und Version werden automatisch angehängt.
+    </div>
+    <textarea id="feedback-text"
+      placeholder="Ihr Text hier …"
+      style="width:100%;box-sizing:border-box;min-height:110px;font-size:0.95rem;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;resize:vertical;font-family:inherit;line-height:1.5"></textarea>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:0.8rem">
+      <button class="btn-nav primary" onclick="feedbackSend()">Per E-Mail senden</button>
+      <button class="btn-nav" onclick="feedbackCopy()">Text kopieren</button>
+      <button class="btn-nav" onclick="feedbackClose()" style="margin-left:auto">Schließen</button>
+    </div>
+    <div style="font-size:0.75rem;color:var(--ink3);margin-top:0.7rem;line-height:1.4">
+      „Per E-Mail senden" öffnet Ihre E-Mail-App mit dem Text fertig ausgefüllt.<br>
+      „Text kopieren" legt den Text in die Zwischenablage — danach manuell in eine E-Mail oder Nachricht einfügen.
+    </div>
+  </div>
+</div>
+
 <div class="app">
   <nav class="sidebar" id="sidebar"></nav>
   <div class="main-content" id="main-content"></div>
@@ -11614,6 +11637,17 @@ textarea { min-height: 44px; }
   <button id="fokus-bar-btn" onclick="showGoalWizard()" style="background:none;border:1.5px solid rgba(255,255,255,0.5);color:#fff;border-radius:8px;padding:10px 14px;cursor:pointer;font-size:0.88rem;white-space:nowrap;min-height:44px">Thema</button>
   <button onclick="saveAsHTML()" style="background:var(--gold);color:var(--forest);border:none;border-radius:8px;padding:10px 14px;cursor:pointer;font-size:0.88rem;font-weight:600;white-space:nowrap;min-height:44px">Speichern</button>
   <button id="bar-next-btn" onclick="barNextStep()" style="background:none;border:1.5px solid rgba(255,255,255,0.35);color:#fff;border-radius:8px;padding:10px 16px;cursor:pointer;font-size:1.1rem;line-height:1;min-width:44px;min-height:44px">→</button>
+</div>
+
+<!-- Prüftermin-Hinweis-Balken — Fallback wenn Web Notifications nicht verfügbar.
+     Erscheint nur bei überfälligen Einträgen (über 14 Monate). Nicht blockierend.
+     Wird beim Schließen oder "Jetzt prüfen" für diese Sitzung ausgeblendet. -->
+<div id="erinnerung-hinweis-bar" style="display:none;position:fixed;top:0;left:0;right:0;z-index:1150;background:#b8860b;color:#fff;padding:9px 14px;align-items:center;gap:10px;box-shadow:0 2px 8px rgba(0,0,0,0.15)">
+  <span id="erinnerung-hinweis-text" style="flex:1;font-size:0.84rem;line-height:1.4"></span>
+  <button onclick="goToStep(STEPS.findIndex(function(s){return s.id==='erinnerung';}));erinnerungHinweisHide()"
+          style="background:rgba(255,255,255,0.2);border:none;border-radius:6px;color:#fff;font-size:0.82rem;padding:5px 12px;cursor:pointer;white-space:nowrap;min-height:32px">Jetzt prüfen</button>
+  <button onclick="erinnerungHinweisHide()"
+          style="background:none;border:1px solid rgba(255,255,255,0.5);border-radius:6px;color:#fff;font-size:0.82rem;padding:5px 10px;cursor:pointer;min-height:32px">Schließen</button>
 </div>
 
 <script>
@@ -12126,6 +12160,16 @@ function doGlobalSearch(query) {
   if (found.length > 15) html += '<div style="text-align:center;color:var(--ink3);padding:8px;font-size:0.78rem">… und ' + (found.length - 15) + ' weitere Treffer</div>';
   results.innerHTML = html;
 }
+
+// Geschaetzte Bearbeitungszeit je Schritt (in Minuten, gerundet).
+// Wird fuer Fortschrittsanzeige und Nutzerhinweise verwendet.
+var STEP_TIMES = {
+  start:3, kontakte:5, infokontakte:3, testament:8, finanzen:6,
+  versich:4, immobilien:4, vertraege:4, gesundheit:8, pflege:5,
+  haustiere:2, digital:5, persoenliches:4, bestattung:5,
+  notfall:2, erinnerung:3, dokumente:3, datenaustausch:4,
+  assistenten:3, exportStep:1, einstellungen:2, institutionen:2
+};
 
 function findStepForKey(key) {
   // Map keys to step indices based on known prefixes/patterns
@@ -12750,6 +12794,10 @@ function enterApp() {
 
   // E-Mail-Opt-in (verzögert, damit der Seitenaufbau fertig ist)
   maybeShowEmailOptin();
+
+  // Prüftermin-Erinnerung: prüft ob Notifications aktiv sind oder
+  // Balken angezeigt werden soll. Verzögert, um den Seitenaufbau nicht zu blockieren.
+  setTimeout(function () { erinnerungNotifCheck(false); }, 800);
 }
 
 function welcomeStart() {
@@ -14805,6 +14853,13 @@ function navButtons(hideBack=false, lastStep=false) {
 
 // Validator — prüft, ob ein Objekt ein gültiges Companion-Template ist.
 // Gibt ein Array mit Fehlertexten zurück; leeres Array bedeutet gültig.
+// ─── Vorlagen-Editor — Zustand ────────────────────────────────────────────────
+// Bleibt über renderStep()-Aufrufe hinweg erhalten, da es sich um
+// Modul-Variablen handelt — kein localStorage, kein Server.
+var _tplEditorOpen    = false;
+var _tplEditorDraft   = null;
+var _tplEditorPreview = false;
+
 function tplValidate(t) {
   const errs = [];
   if (!t || typeof t !== 'object') { errs.push('Datei enthält kein Objekt.'); return errs; }
@@ -14990,6 +15045,225 @@ function tplLoadFromFile(file) {
   reader.readAsText(file);
 }
 
+// ─── Lokale Nutzungsstatistik ────────────────────────────────────────────────
+// Zählt ausgewählte Aktionen im localStorage. Kein Server, keine Übertragung.
+// Schlüssel: vivo_stat_{name} (Zahl), vivo_stat_fhir_last (Datum als ISO-String).
+
+function statsIncrement(key) {
+  try {
+    var n = parseInt(localStorage.getItem('vivo_stat_' + key) || '0', 10);
+    localStorage.setItem('vivo_stat_' + key, String(n + 1));
+    if (key === 'fhir_export') {
+      localStorage.setItem('vivo_stat_fhir_last', new Date().toISOString().split('T')[0]);
+    }
+  } catch (e) { /* localStorage nicht verfügbar — kein Fehler */ }
+}
+
+function statsGet(key) {
+  try { return parseInt(localStorage.getItem('vivo_stat_' + key) || '0', 10); }
+  catch (e) { return 0; }
+}
+
+function statsRenderBlock() {
+  var fhir     = statsGet('fhir_export');
+  var tplDl    = statsGet('template_download');
+  var resDl    = statsGet('result_download');
+  var tplComp  = statsGet('tpl_complete');
+  var lastDate = '';
+  try { lastDate = localStorage.getItem('vivo_stat_fhir_last') || ''; } catch (e) {}
+
+  function zeile(text) {
+    return '<div style="font-size:0.83rem;color:var(--ink2);margin-bottom:3px">' + text + '</div>';
+  }
+
+  return '<div style="margin-top:1.2rem;padding:1rem;background:var(--beige);border-radius:10px;border-left:4px solid var(--teal)">'
+    + '<div style="font-size:0.85rem;font-weight:600;color:var(--forest);margin-bottom:0.5rem">Nutzungsstatistik</div>'
+    + zeile('Sie haben Vivodepot <strong>' + fhir + ' Mal</strong> exportiert.' + (lastDate ? ' Zuletzt am ' + lastDate + '.' : ''))
+    + zeile('Die Muster-Vorlage wurde <strong>' + tplDl + ' Mal</strong> heruntergeladen.')
+    + zeile('Vollständig ausgefüllte Vorlagen: <strong>' + tplComp + '</strong>.')
+    + zeile('Ergebnisse an Institutionen weitergegeben: <strong>' + resDl + ' Mal</strong>.')
+    + '<div style="font-size:0.72rem;color:var(--ink3);margin-top:0.5rem">Nur auf Ihrem Gerät gespeichert — kein Server, keine Übertragung.</div>'
+    + '</div>';
+}
+
+// ─── Inline-Feedback-Formular ────────────────────────────────────────────────
+// Fallback wenn die externe E-Mail-App nicht öffnet (ältere Android-Geräte).
+// Kein Server — Text wird entweder per mailto: oder in die Zwischenablage übergeben.
+
+function feedbackOpen() {
+  var el = document.getElementById('feedback-overlay');
+  if (!el) return;
+  var ta = document.getElementById('feedback-text');
+  if (ta) ta.value = '';
+  el.style.display = 'flex';
+  if (ta) setTimeout(function () { ta.focus(); }, 80);
+}
+
+function feedbackClose() {
+  var el = document.getElementById('feedback-overlay');
+  if (el) el.style.display = 'none';
+}
+
+// Baut den vollständigen Nachrichtentext inklusive automatisch erfasster
+// Geräteinformationen (Version, Plattform, Browser).
+function feedbackBuildText() {
+  var userText = ((document.getElementById('feedback-text') || {}).value || '').trim();
+  if (!userText) return null;
+  var info = '\n\n---\nVersion: ' + VIVODEPOT_VERSION
+           + '\nGer\u00e4t: '    + (navigator.platform || 'unbekannt')
+           + '\nBrowser: '       + navigator.userAgent.slice(0, 100);
+  return userText + info;
+}
+
+// Versucht die E-Mail-App zu öffnen. Schlägt das fehl (kein Handler vorhanden),
+// bleibt das Formular offen — der Nutzer kann dann „Text kopieren" verwenden.
+function feedbackSend() {
+  var full = feedbackBuildText();
+  if (!full) { alert('Bitte geben Sie zuerst Ihren Text ein.'); return; }
+  var mailto = 'mailto:hilfe@vivodepot.de'
+             + '?subject=' + encodeURIComponent('Feedback Vivodepot')
+             + '&body='    + encodeURIComponent(full);
+  try { window.location.href = mailto; } catch (e) {}
+  feedbackClose();
+}
+
+// Kopiert den Text in die Zwischenablage. Funktioniert auch ohne E-Mail-App.
+function feedbackCopy() {
+  var full = feedbackBuildText();
+  if (!full) { alert('Bitte geben Sie zuerst Ihren Text ein.'); return; }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(full).then(function () {
+      toast('Text kopiert \u2014 in Ihre E-Mail oder Nachricht einf\u00fcgen');
+      feedbackClose();
+    }).catch(function () { feedbackCopyFallback(full); });
+  } else {
+    feedbackCopyFallback(full);
+  }
+}
+
+function feedbackCopyFallback(full) {
+  try {
+    var ta = document.createElement('textarea');
+    ta.value = full;
+    ta.style.position = 'fixed';
+    ta.style.opacity  = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    toast('Text kopiert \u2014 in Ihre E-Mail oder Nachricht einf\u00fcgen');
+    feedbackClose();
+  } catch (e) {
+    alert('Kopieren nicht m\u00f6glich \u2014 bitte den Text manuell markieren und kopieren.');
+  }
+}
+
+// ─── Prüftermin-Erinnerungen ──────────────────────────────────────────────────
+// Primär:  Web Notifications API — einmalige Erlaubnis in Einstellungen,
+//          max. eine Meldung pro Tag, nur bei fälligen oder überfälligen Einträgen.
+// Fallback: Hinweis-Balken beim App-Start — nur bei überfälligen Einträgen
+//          (über 14 Monate), kein automatisches Erlaubnis-Popup.
+// Die Erlaubnis wird NIE automatisch angefragt — nur auf Wunsch in Einstellungen.
+
+// Gibt fällige (11–14 Monate) und überfällige (>14 Monate) Einträge zurück.
+function erinnerungFaelligeItems() {
+  var docs = [
+    { key: 'erinnerung_vollmacht',            label: 'Vorsorgevollmacht'        },
+    { key: 'erinnerung_gesundheitsvollmacht',  label: 'Gesundheitsvollmacht'    },
+    { key: 'erinnerung_patientenverf',         label: 'Patientenverfügung'      },
+    { key: 'erinnerung_testament',             label: 'Testament'               },
+    { key: 'erinnerung_vollmacht_bank',        label: 'Bankvollmacht'           },
+    { key: 'erinnerung_sba',                   label: 'Schwerbehindertenausweis'},
+    { key: 'erinnerung_notfallmappe',          label: 'Vivodepot (diese)'       }
+  ];
+  var now = new Date();
+  var result = [];
+  docs.forEach(function (doc) {
+    var val = get(doc.key);
+    if (!val) return; // kein Datum eingetragen — keine Erinnerung
+    var months = (now - new Date(val)) / (1000 * 60 * 60 * 24 * 30);
+    if (months >= 11) {
+      result.push({ label: doc.label, overdue: months >= 14 });
+    }
+  });
+  return result;
+}
+
+// Fragt nach Browser-Notification-Berechtigung.
+// Wird NUR aufgerufen, wenn der Nutzer den Button in Einstellungen drückt.
+function erinnerungNotifRequest() {
+  if (!('Notification' in window)) {
+    toast('Ihr Browser unterstützt keine Benachrichtigungen. Der Hinweis-Balken wird als Fallback genutzt.');
+    return;
+  }
+  if (Notification.permission === 'granted') {
+    toast('Erinnerungen sind bereits aktiviert.');
+    return;
+  }
+  Notification.requestPermission().then(function (perm) {
+    if (perm === 'granted') {
+      toast('Erinnerungen aktiviert');
+      renderStep();
+      erinnerungNotifCheck(true);
+    } else if (perm === 'denied') {
+      toast('Berechtigung verweigert — bitte in den Browser-Einstellungen ändern.');
+      renderStep();
+    }
+  });
+}
+
+// Sendet eine einzige Benachrichtigung — alle fälligen Einträge zusammengefasst.
+function erinnerungNotifSend(items) {
+  if (!items || items.length === 0) return;
+  var overdue = items.filter(function (i) { return i.overdue; });
+  var warning = items.filter(function (i) { return !i.overdue; });
+  var body = '';
+  if (overdue.length > 0) body += 'Überfällig: ' + overdue.map(function (i) { return i.label; }).join(', ') + '. ';
+  if (warning.length > 0) body += 'Bald fällig: ' + warning.map(function (i) { return i.label; }).join(', ') + '.';
+  try {
+    new Notification('Vivodepot \u2014 Prüftermin', { body: body.trim() });
+    try { localStorage.setItem('vivodepot_notif_date', new Date().toISOString().split('T')[0]); } catch (e) {}
+  } catch (e) { /* Benachrichtigung konnte nicht erzeugt werden */ }
+}
+
+// Wird beim App-Start aufgerufen. Wählt je nach Berechtigung zwischen
+// Web Notification und Hinweis-Balken.
+// force = true: Notification auch senden, wenn heute schon eine gesendet wurde.
+function erinnerungNotifCheck(force) {
+  var items = erinnerungFaelligeItems();
+  if (items.length === 0) { erinnerungHinweisHide(); return; }
+
+  if ('Notification' in window && Notification.permission === 'granted') {
+    var today    = new Date().toISOString().split('T')[0];
+    var lastDate = '';
+    try { lastDate = localStorage.getItem('vivodepot_notif_date') || ''; } catch (e) {}
+    if (force || lastDate !== today) erinnerungNotifSend(items);
+    erinnerungHinweisHide(); // Notification aktiv — kein Balken
+    return;
+  }
+
+  // Fallback: Balken nur bei tatsächlich überfälligen Einträgen (>14 Monate)
+  var overdueItems = items.filter(function (i) { return i.overdue; });
+  if (overdueItems.length > 0) {
+    erinnerungHinweisShow(overdueItems);
+  }
+}
+
+// Zeigt den Hinweis-Balken mit überfälligen Einträgen.
+function erinnerungHinweisShow(items) {
+  var el = document.getElementById('erinnerung-hinweis-bar');
+  if (!el) return;
+  var names = items.map(function (i) { return i.label; }).join(', ');
+  var txt = document.getElementById('erinnerung-hinweis-text');
+  if (txt) txt.textContent = 'Prüftermin fällig: ' + names + ' — bitte aktualisieren.';
+  el.style.display = 'flex';
+}
+
+function erinnerungHinweisHide() {
+  var el = document.getElementById('erinnerung-hinweis-bar');
+  if (el) el.style.display = 'none';
+}
+
 // Muster-Vorlage für Institutionen herunterladen (v1-Lücke: institutionelles Request-Template)
 // Erstellt eine gültige, anpassbare JSON-Vorlage nach dem Vivodepot-Companion-Schema.
 function downloadInstitutionTemplate() {
@@ -15035,7 +15309,310 @@ function downloadInstitutionTemplate() {
   a.href = URL.createObjectURL(blob);
   a.download = 'Vivodepot_Muster_Vorlage_v1.json';
   a.click();
+  statsIncrement('template_download');
   toast('Muster-Vorlage heruntergeladen');
+}
+
+// ─── Vorlagen-Editor — Funktionen ─────────────────────────────────────────────
+// Erstellt und bearbeitet Vorlagen direkt in der App.
+// Kein Texteditor erforderlich. Kein Server. Kein Datei-Upload nötig.
+
+// Öffnet den Editor mit einer leeren Vorlage.
+function tplEditorNew() {
+  _tplEditorDraft = {
+    schemaVersion: '1.0',
+    id: 'vorlage-' + Date.now(),
+    version: '1.0.0',
+    locale: 'de-DE',
+    title:   { short: '', full: '' },
+    issuer:  { name: '' },
+    license: { id: 'intern' },
+    instruction: 'Bitte beantworten Sie die folgenden Fragen.',
+    scale: { options: [
+      { value: 0, label: 'Nein' },
+      { value: 1, label: 'Ja'   }
+    ]},
+    items:   [ { id: 'F_01', text: '' } ],
+    scoring: { method: 'sum', ranges: [] },
+    safety:  []
+  };
+  _tplEditorOpen    = true;
+  _tplEditorPreview = false;
+  renderStep();
+}
+
+// Schließt den Editor nach Rückfrage.
+function tplEditorClose() {
+  vivoConfirm('Editor schließen? Nicht gespeicherte Änderungen gehen verloren.', function () {
+    _tplEditorOpen    = false;
+    _tplEditorDraft   = null;
+    _tplEditorPreview = false;
+    renderStep();
+  });
+}
+
+// Liest alle Formularfelder in _tplEditorDraft zurück.
+// Muss vor jedem renderStep()-Aufruf im Editor aufgerufen werden,
+// damit der aktuelle Eingabestand nicht verloren geht.
+function tplEditorReadForm() {
+  var d = _tplEditorDraft;
+  if (!d) return;
+  function val(id) { var el = document.getElementById(id); return el ? el.value : ''; }
+  d.title.short = val('tpled-title-short').trim();
+  d.title.full  = val('tpled-title-full').trim();
+  d.issuer.name = val('tpled-issuer').trim();
+  // Skala-Optionen auslesen
+  var optVals   = document.querySelectorAll('.tpled-opt-val');
+  var optLabels = document.querySelectorAll('.tpled-opt-label');
+  var opts = [];
+  for (var i = 0; i < optVals.length; i++) {
+    var v = parseFloat(optVals[i].value);
+    var l = (optLabels[i] ? optLabels[i].value.trim() : '');
+    opts.push({ value: isNaN(v) ? i : v, label: l });
+  }
+  d.scale.options = opts;
+  // Fragen auslesen (Reihenfolge der DOM-Elemente entspricht der Fragenreihenfolge)
+  var itemEls = document.querySelectorAll('.tpled-item-text');
+  var items = [];
+  for (var j = 0; j < itemEls.length; j++) {
+    items.push({ id: 'F_' + String(j + 1).padStart(2, '0'), text: itemEls[j].value });
+  }
+  d.items = items;
+}
+
+function tplEditorAddOption() {
+  tplEditorReadForm();
+  var nextVal = _tplEditorDraft.scale.options.length;
+  _tplEditorDraft.scale.options.push({ value: nextVal, label: '' });
+  renderStep();
+}
+
+function tplEditorRemoveOption(idx) {
+  tplEditorReadForm();
+  // Mindestens 2 Optionen sind Pflicht (tplValidate prüft das ebenfalls).
+  if (_tplEditorDraft.scale.options.length <= 2) return;
+  _tplEditorDraft.scale.options.splice(idx, 1);
+  renderStep();
+}
+
+function tplEditorAddItem() {
+  tplEditorReadForm();
+  var n = _tplEditorDraft.items.length;
+  _tplEditorDraft.items.push({ id: 'F_' + String(n + 1).padStart(2, '0'), text: '' });
+  renderStep();
+}
+
+function tplEditorRemoveItem(idx) {
+  tplEditorReadForm();
+  // Mindestens 1 Frage muss verbleiben.
+  if (_tplEditorDraft.items.length <= 1) return;
+  _tplEditorDraft.items.splice(idx, 1);
+  renderStep();
+}
+
+function tplEditorTogglePreview() {
+  tplEditorReadForm();
+  _tplEditorPreview = !_tplEditorPreview;
+  renderStep();
+}
+
+// Baut das finale Template-Objekt und ergänzt automatisch erzeugte Scoring-Ranges.
+// Die Ranges werden aus der Skala und der Fragenanzahl berechnet — keine manuelle
+// Konfiguration nötig. Das Export-JSON kann anschließend manuell angepasst werden.
+function tplEditorBuildTemplate() {
+  tplEditorReadForm();
+  var d = _tplEditorDraft;
+  // Leere Fragen entfernen, IDs neu vergeben
+  d.items = d.items.filter(function (it) { return it.text.trim().length > 0; });
+  d.items.forEach(function (it, i) { it.id = 'F_' + String(i + 1).padStart(2, '0'); });
+  // Scoring-Ranges aus Skala und Fragenanzahl berechnen
+  var maxOpt   = d.scale.options.reduce(function (m, o) { return Math.max(m, o.value); }, 0);
+  var maxScore = maxOpt * d.items.length;
+  var mid      = Math.floor(maxScore / 2);
+  d.scoring = {
+    method: 'sum',
+    ranges: [
+      { min: 0,       max: mid,      category: 'Kein Bedarf',     color: '#2e7d32' },
+      { min: mid + 1, max: maxScore, category: 'Weiteres kl\u00e4ren', color: '#b8860b' }
+    ]
+  };
+  return d;
+}
+
+// Speichert die fertige Vorlage direkt in der App (localStorage).
+function tplEditorSave() {
+  var t = tplEditorBuildTemplate();
+  var errs = tplValidate(t);
+  if (errs.length > 0) {
+    alert('Die Vorlage ist noch nicht vollst\u00e4ndig:\n\n\u2022 ' + errs.join('\n\u2022 '));
+    return;
+  }
+  tplSave(t);
+  _tplEditorOpen    = false;
+  _tplEditorDraft   = null;
+  _tplEditorPreview = false;
+  toast('Vorlage gespeichert');
+  renderStep();
+}
+
+// L\u00e4dt die Vorlage als .json-Datei herunter (ohne sie in der App zu speichern).
+function tplEditorExport() {
+  var t = tplEditorBuildTemplate();
+  var errs = tplValidate(t);
+  if (errs.length > 0) {
+    alert('Die Vorlage ist noch nicht vollst\u00e4ndig:\n\n\u2022 ' + errs.join('\n\u2022 '));
+    return;
+  }
+  var json = JSON.stringify(t, null, 2);
+  var blob = new Blob([json], { type: 'application/json' });
+  var a    = document.createElement('a');
+  a.href   = URL.createObjectURL(blob);
+  a.download = (t.id || 'vorlage') + '.json';
+  a.click();
+  toast('Vorlage als Datei heruntergeladen');
+}
+
+// Gibt den HTML-Code des Editor-Formulars zur\u00fcck.
+function tplEditorRender() {
+  var d = _tplEditorDraft;
+  if (!d) return '';
+  var html = '';
+
+  // Zur\u00fcck-Schaltfl\u00e4che
+  html += '<button class="btn-nav" onclick="tplEditorClose()" '
+       + 'style="font-size:0.85rem;margin-bottom:1.2rem">'
+       + '&#8592; Zur\u00fcck zur \u00dcbersicht'
+       + '</button>';
+
+  html += '<h2 style="font-size:1.05rem;color:var(--forest);margin:0 0 1rem">'
+       + 'Neue Vorlage erstellen'
+       + '</h2>';
+
+  // ---- Block: Informationen ----
+  html += '<div style="background:var(--beige);border-radius:10px;padding:1rem;margin-bottom:1rem">';
+  html += '<div style="font-size:0.88rem;font-weight:600;color:var(--forest);margin-bottom:0.7rem">'
+       + 'Informationen zur Vorlage'
+       + '</div>';
+
+  html += '<div style="margin-bottom:0.7rem">'
+       + '<label style="font-size:0.84rem;color:var(--ink2);display:block;margin-bottom:3px">'
+       + 'Kurztitel <span style="color:var(--red)" title="Pflichtfeld">*</span>'
+       + '</label>'
+       + '<input id="tpled-title-short" type="text" value="' + tplEscape(d.title.short) + '" '
+       + 'placeholder="z.\u202FB. Erstaufnahme-Bogen" '
+       + 'style="width:100%;box-sizing:border-box;font-size:1rem;padding:7px 10px;'
+       + 'border:1.5px solid var(--border);border-radius:7px;background:var(--bg,#fff)">'
+       + '</div>';
+
+  html += '<div style="margin-bottom:0.7rem">'
+       + '<label style="font-size:0.84rem;color:var(--ink2);display:block;margin-bottom:3px">'
+       + 'Vollst\u00e4ndiger Titel'
+       + '</label>'
+       + '<input id="tpled-title-full" type="text" value="' + tplEscape(d.title.full) + '" '
+       + 'placeholder="z.\u202FB. Erstaufnahme-Bogen \u2014 Haus Sonnenschein" '
+       + 'style="width:100%;box-sizing:border-box;font-size:1rem;padding:7px 10px;'
+       + 'border:1.5px solid var(--border);border-radius:7px;background:var(--bg,#fff)">'
+       + '</div>';
+
+  html += '<div>'
+       + '<label style="font-size:0.84rem;color:var(--ink2);display:block;margin-bottom:3px">'
+       + 'Herausgeber (Institution) <span style="color:var(--red)" title="Pflichtfeld">*</span>'
+       + '</label>'
+       + '<input id="tpled-issuer" type="text" value="' + tplEscape(d.issuer.name) + '" '
+       + 'placeholder="z.\u202FB. Pflegeheim Haus Sonnenschein GmbH" '
+       + 'style="width:100%;box-sizing:border-box;font-size:1rem;padding:7px 10px;'
+       + 'border:1.5px solid var(--border);border-radius:7px;background:var(--bg,#fff)">'
+       + '</div>';
+
+  html += '</div>';
+
+  // ---- Block: Antwort-Skala ----
+  html += '<div style="background:var(--beige);border-radius:10px;padding:1rem;margin-bottom:1rem">';
+  html += '<div style="font-size:0.88rem;font-weight:600;color:var(--forest);margin-bottom:0.3rem">'
+       + 'Antwort-Skala'
+       + '</div>';
+  html += '<div style="font-size:0.79rem;color:var(--ink3);margin-bottom:0.7rem;line-height:1.4">'
+       + 'Legt fest, welche Antwortm\u00f6glichkeiten es gibt. '
+       + 'Jede Option hat einen Zahlenwert (f\u00fcr die Auswertung) und eine Bezeichnung (was die Person sieht). '
+       + 'Typisch: 0\u202F=\u202FNein, 1\u202F=\u202FJa \u2014 oder 0\u202Fbis\u202F4 f\u00fcr eine abgestufte Skala.'
+       + '</div>';
+  d.scale.options.forEach(function (opt, i) {
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">'
+         + '<span style="font-size:0.8rem;color:var(--ink3);white-space:nowrap;flex-shrink:0">Option ' + (i + 1) + ':</span>'
+         + '<input class="tpled-opt-val" type="number" step="1" value="' + opt.value + '" '
+         + 'placeholder="Wert" title="Zahlenwert f\u00fcr die Auswertung" '
+         + 'style="width:64px;font-size:0.95rem;padding:6px 8px;'
+         + 'border:1.5px solid var(--border);border-radius:7px;background:var(--bg,#fff)">'
+         + '<input class="tpled-opt-label" type="text" value="' + tplEscape(opt.label) + '" '
+         + 'placeholder="Bezeichnung (z.\u202FB. Nein)" title="Text, den die Person sieht" '
+         + 'style="flex:1;font-size:0.95rem;padding:6px 8px;'
+         + 'border:1.5px solid var(--border);border-radius:7px;background:var(--bg,#fff)">';
+    if (d.scale.options.length > 2) {
+      html += '<button class="btn-remove" onclick="tplEditorRemoveOption(' + i + ')" '
+           + 'title="Option entfernen">&#10005;</button>';
+    }
+    html += '</div>';
+  });
+  html += '<button class="btn-nav" onclick="tplEditorAddOption()" '
+       + 'style="font-size:0.82rem;margin-top:4px">+ Option hinzuf\u00fcgen</button>';
+  html += '</div>';
+
+  // ---- Block: Fragen ----
+  html += '<div style="background:var(--beige);border-radius:10px;padding:1rem;margin-bottom:1rem">';
+  html += '<div style="font-size:0.88rem;font-weight:600;color:var(--forest);margin-bottom:0.3rem">'
+       + 'Fragen <span style="color:var(--red)" title="Pflichtfeld">*</span>'
+       + '</div>';
+  html += '<div style="font-size:0.79rem;color:var(--ink3);margin-bottom:0.7rem;line-height:1.4">'
+       + 'Mindestens eine Frage. Reihenfolge entspricht der Anzeigereihenfolge im Fragebogen.'
+       + '</div>';
+  d.items.forEach(function (item, i) {
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">'
+         + '<span style="font-size:0.82rem;color:var(--ink3);min-width:1.6rem;text-align:right;flex-shrink:0">'
+         + (i + 1) + '.</span>'
+         + '<input class="tpled-item-text" type="text" value="' + tplEscape(item.text) + '" '
+         + 'placeholder="Frage eingeben \u2026" '
+         + 'style="flex:1;font-size:0.95rem;padding:6px 8px;'
+         + 'border:1.5px solid var(--border);border-radius:7px;background:var(--bg,#fff)">';
+    if (d.items.length > 1) {
+      html += '<button class="btn-remove" onclick="tplEditorRemoveItem(' + i + ')" '
+           + 'title="Frage entfernen">&#10005;</button>';
+    }
+    html += '</div>';
+  });
+  html += '<button class="btn-nav" onclick="tplEditorAddItem()" '
+       + 'style="font-size:0.82rem;margin-top:4px">+ Frage hinzuf\u00fcgen</button>';
+  html += '</div>';
+
+  // ---- Vorschau ----
+  if (_tplEditorPreview) {
+    var previewDraft = JSON.parse(JSON.stringify(d));
+    previewDraft.items = previewDraft.items.filter(function (it) { return it.text.trim().length > 0; });
+    html += '<div style="background:var(--bg,#fff);border:2px solid var(--teal);border-radius:10px;'
+         + 'padding:1rem;margin-bottom:1rem">';
+    html += '<div style="font-size:0.88rem;font-weight:600;color:var(--teal);margin-bottom:0.7rem">Vorschau</div>';
+    if (previewDraft.items.length > 0 && previewDraft.scale.options.length >= 2) {
+      html += tplRenderItems(previewDraft);
+    } else {
+      html += '<div style="color:var(--ink3);font-size:0.84rem">'
+           + 'Noch keine Fragen eingegeben.'
+           + '</div>';
+    }
+    html += '</div>';
+  }
+
+  // ---- Aktions-Schaltfl\u00e4chen ----
+  html += '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:0.5rem">';
+  html += '<button class="btn-nav primary" onclick="tplEditorSave()">In App speichern</button>';
+  html += '<button class="btn-nav" onclick="tplEditorExport()">Als Datei (.json) herunterladen</button>';
+  html += '<button class="btn-nav" onclick="tplEditorTogglePreview()" style="font-size:0.85rem">'
+       + (_tplEditorPreview ? 'Vorschau ausblenden' : 'Vorschau anzeigen')
+       + '</button>';
+  html += '</div>';
+  html += '<div style="font-size:0.78rem;color:var(--ink3);margin-bottom:1.5rem">'
+       + '* Pflichtfeld \u2014 muss ausgef\u00fcllt sein, damit die Vorlage gespeichert werden kann.'
+       + '</div>';
+
+  return html;
 }
 
 // Dateidialog öffnen
@@ -15382,6 +15959,8 @@ function tplDownloadFhir(templateId) {
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
+  statsIncrement('tpl_complete');
+  statsIncrement('result_download');
   setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
 }
 
@@ -15427,6 +16006,17 @@ function tplRenderQr(t) {
 
 const STEP_RENDERERS = {
   institutionen: () => {
+    // Wenn der Editor geöffnet ist, nur den Editor-Bereich anzeigen.
+    if (_tplEditorOpen) {
+      return `
+    <div class="step-header">
+      <h1>F\u00fcr Institutionen</h1>
+      <p>Neue Vorlage direkt in der App erstellen.</p>
+      ${stepDots()}
+    </div>
+    ${tplEditorRender()}
+    ${navButtons()}`;
+    }
     const list = tplGetLoaded();
     let cards = '';
     if (list.length === 0) {
@@ -15486,6 +16076,13 @@ const STEP_RENDERERS = {
       Noch keine Vorlage?
       <button class="btn-nav" onclick="downloadInstitutionTemplate()" style="font-size:0.82rem;padding:5px 12px;margin-left:4px">Muster-Vorlage herunterladen</button>
       <span style="display:block;margin-top:0.4rem;color:var(--ink3)">Anschließend die heruntergeladene Datei oben einlesen — dann hier bearbeiten.</span>
+    </div>
+
+    <div style="margin-bottom:1.25rem">
+      <button class="btn-nav primary" onclick="tplEditorNew()" style="font-size:0.9rem">Neue Vorlage erstellen</button>
+      <div style="font-size:0.79rem;color:var(--ink3);margin-top:0.4rem;line-height:1.4">
+        Fragebogen direkt in der App zusammenstellen — ohne Texteditor, ohne Datei-Upload.
+      </div>
     </div>
 
     <h3 style="margin:1rem 0 0.6rem">Geladene Vorlagen (${list.length})</h3>
@@ -16813,6 +17410,7 @@ const STEP_RENDERERS = {
       </div>
       <a href="mailto:hilfe@vivodepot.de?subject=Hilfe%20mit%20Vivodepot&body=Hallo%2C%0A%0Aich%20brauche%20Hilfe%20mit%20folgendem%20Problem%3A%0A%0A" style="display:inline-block;background:var(--teal);color:#fff;padding:10px 20px;border-radius:8px;text-decoration:none;font-size:0.9rem;font-weight:600">Nachricht schreiben</a>
       <div style="font-size:0.78rem;color:var(--ink3);margin-top:0.6rem">hilfe@vivodepot.de</div>
+      <button onclick="feedbackOpen()" class="btn-nav" style="margin-top:0.7rem;font-size:0.82rem">E-Mail-App klappt nicht? Formular öffnen</button>
     </div>
 
     <div class="field-section-title">${tl('Passwort & Verschlüsselung')}</div>
@@ -16833,13 +17431,6 @@ const STEP_RENDERERS = {
         ${sessionKey ? '<button class="btn-nav" onclick="removePassword()" style="font-size:0.82rem;color:var(--red)">Passwort entfernen</button>' : ''}
       </div>
       <p style="background:var(--gold-lt);border:1.5px solid var(--gold-mid);border-radius:8px;padding:0.75rem 1rem;font-size:0.83rem;color:#6b4c10;margin-top:10px;margin-bottom:0"><strong>Bitte notieren:</strong> Das Passwort ist nicht wiederherstellbar. Bewahren Sie es an einem sicheren Ort auf und teilen Sie es Ihren Vertrauenspersonen mit.</p>
-    </div>
-
-    <div class="field-section-title">${tl('Fokus')}</div>
-    <div style="font-size:0.85rem;color:var(--ink2);margin-bottom:8px">Beim ersten Start haben Sie ein Ziel gewählt (oder übersprungen). Sie können das jederzeit neu einstellen.</div>
-    <div style="margin-bottom:1.2rem">
-      <button class="btn-nav" onclick="showGoalWizard()" style="font-size:0.85rem"> Meinen Fokus neu wählen</button>
-      <span style="font-size:0.78rem;color:var(--ink3);margin-left:8px">Passt die Seitenleiste an Ihre Situation an</span>
     </div>
 
     <div class="field-section-title">${tl('Darstellung')}</div>
@@ -16933,6 +17524,34 @@ const STEP_RENDERERS = {
       <strong>KI-Hinweis:</strong> Entwickelt mit KI-Unterstützung (EU AI Act Art. 50)<br>
       <span style="font-size:0.72rem;color:var(--ink3);letter-spacing:0.08em">SOUVERÄNITÄT BY DESIGN</span>
     </div>
+    ${statsRenderBlock()}
+
+    <div class="field-section-title">Prüftermin-Erinnerungen</div>
+    <div style="background:var(--beige);border-radius:10px;padding:1rem 1.2rem;margin-bottom:1.2rem">
+      <div style="font-size:0.88rem;color:var(--ink2);line-height:1.6;margin-bottom:0.7rem">
+        Vivodepot kann Sie erinnern, wenn Vollmachten oder Dokumente erneuert werden sollten —
+        als Browser-Benachrichtigung, einmal pro Tag, nur wenn etwas fällig ist.
+      </div>
+      <div style="font-size:0.84rem;margin-bottom:0.7rem">
+        <strong>Status:</strong>&nbsp;${
+          !('Notification' in window)
+            ? '<span style="color:var(--ink3)">Nicht unterstützt (Browser oder iOS)</span>'
+            : Notification.permission === 'granted'
+              ? '<span style="color:var(--teal)">Aktiviert</span>'
+              : Notification.permission === 'denied'
+                ? '<span style="color:var(--red)">Vom Browser blockiert \u2014 bitte in den Browser-Einstellungen \u00e4ndern</span>'
+                : '<span style="color:var(--ink3)">Nicht aktiviert</span>'
+        }
+      </div>
+      ${
+        !('Notification' in window)
+          ? '<div style="font-size:0.79rem;color:var(--ink3);line-height:1.5">Auf Ihrem Ger\u00e4t oder Browser werden keine Benachrichtigungen unterst\u00fctzt. \u00dcbcrf\u00e4llige Eintr\u00e4ge werden stattdessen als Hinweis-Balken angezeigt.</div>'
+          : Notification.permission === 'granted'
+            ? '<button class="btn-nav" onclick="erinnerungNotifCheck(true)" style="font-size:0.88rem">Jetzt auf f\u00e4llige Termine pr\u00fcfen</button>'
+            : '<button class="btn-nav primary" onclick="erinnerungNotifRequest()" style="font-size:0.88rem">Erinnerungen aktivieren</button>'
+      }
+    </div>
+
     ${navButtons()}`,
 
   datenaustausch: () => `
@@ -20626,6 +21245,7 @@ function generateFHIR() {
   a.href = URL.createObjectURL(blob);
   a.download = 'IPS_' + (nachname || 'Patient') + '_' + new Date().toISOString().slice(0, 10) + '.fhir.json';
   a.click();
+  statsIncrement('fhir_export');
   toast('IPS-Dokument exportiert');
 }
 

@@ -1,6 +1,6 @@
 # VIVODEPOT — Schnellstart
 
-*Version 1.0.0-beta.11 · April 2026*
+*Version 1.0.0-beta.16 · April 2026*
 
 ---
 
@@ -80,6 +80,18 @@ Beim Öffnen der gespeicherten Datei: Weiche „Inhaberin" oder „Angehörige/r
 
 ---
 
+## Prüftermin-Erinnerungen
+
+In den Einstellungen können Browser-Benachrichtigungen aktiviert werden — VIVODEPOT erinnert dann automatisch, wenn Vollmachten oder andere Dokumente erneuert werden sollten. Maximal eine Erinnerung pro Tag. Auf iPhone und iPad werden stattdessen Hinweise beim App-Start angezeigt.
+
+---
+
+## Hilfe
+
+Bei Fragen oder wenn etwas nicht funktioniert: Drei-Punkte-Menü → „Hilfe" oder Einstellungen → „Hilfe & Kontakt". Dort können Sie direkt eine Nachricht schreiben — auch wenn Ihre E-Mail-App nicht öffnet.
+
+---
+
 ## Systemvoraussetzungen
 
 | Browser | Version |
@@ -95,4 +107,4 @@ Vollständig offline — kein Internet erforderlich.
 
 ## Häufige Fragen
 
-[FAQ.md](FAQ.md) · [feedback@vivodepot.de](mailto:feedback@vivodepot.de) · [vivodepot.de](https://vivodepot.de)
+[FAQ.md](FAQ.md) · [hilfe@vivodepot.de](mailto:hilfe@vivodepot.de) · [vivodepot.de](https://vivodepot.de)

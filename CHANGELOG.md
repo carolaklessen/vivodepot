@@ -4,6 +4,95 @@ Alle wichtigen Änderungen werden in dieser Datei dokumentiert.
 
 ---
 
+## [1.0.0-beta.16] — April 2026
+
+### Lastenheft v2 vollständig abgearbeitet
+
+Diese Version schließt alle Anforderungen aus dem Lastenheft v2 ab und
+enthält außerdem alle Änderungen aus beta.15, die bislang nicht mit einer
+Versionsnummer veröffentlicht worden waren.
+
+### Neu — Vorlagen-Editor für Institutionen (P1, Sektion 81)
+
+- **Vorlagen direkt in der App erstellen** — Kein Texteditor, kein JSON-Wissen
+  erforderlich. Neuer Button „Neue Vorlage erstellen" im Institutionen-Bereich
+  öffnet den Editor direkt in der App.
+- **Editor-Felder:** Kurztitel, vollständiger Titel, Herausgeber, Antwort-Skala
+  (Optionen hinzufügen/entfernen, Wert und Bezeichnung), Fragen
+  (hinzufügen/entfernen, Reihenfolge durch Position).
+- **Vorschau** — Zeigt den Fragebogen vor dem Speichern in der App-Ansicht.
+- **Zwei Ausgabewege:** In App speichern (localStorage, direkt verwendbar) oder
+  als `.json`-Datei herunterladen (für externe Weitergabe).
+- **Validierung** — `tplValidate()` wird vor jedem Speichern und vor jedem
+  Export aufgerufen. Fehlermeldung listet alle Probleme verständlich auf.
+- **Scoring automatisch** — Ranges werden aus Skala und Fragenanzahl berechnet;
+  kein manueller Eingriff erforderlich (manuell anpassbar nach Export).
+- **Schließen mit Rückfrage** — `vivoConfirm()` verhindert versehentlichen
+  Datenverlust.
+- Nicht enthalten (bewusst ausgeschlossen): Verzweigungslogik, Safety-Regeln
+  per UI, Mehrsprachige Vorlagen.
+- **Neue Funktionen (13):** `tplEditorNew`, `tplEditorClose`, `tplEditorReadForm`,
+  `tplEditorAddItem`, `tplEditorRemoveItem`, `tplEditorAddOption`,
+  `tplEditorRemoveOption`, `tplEditorTogglePreview`, `tplEditorBuildTemplate`,
+  `tplEditorSave`, `tplEditorExport`, `tplEditorRender`.
+
+### Neu — Inline-Feedback-Formular (P2, Sektion 82)
+
+- **Fallback für hilfe@vivodepot.de** — Das mailto:-Link öffnet auf älteren
+  Android-Geräten nicht zuverlässig. Das Formular ist als robuste Alternative
+  immer erreichbar.
+- **Einstiegspunkte:** More-Menu-Eintrag „Hilfe — hilfe@vivodepot.de" und
+  neuer Button „E-Mail-App klappt nicht? Formular öffnen" in Einstellungen.
+- **Formular:** Textarea mit Platzhaltertext. Gerät, Browser und Version werden
+  automatisch angehängt — kein manuelles Kopieren nötig.
+- **Zwei Ausgabewege:** „Per E-Mail senden" öffnet die E-Mail-App fertig
+  ausgefüllt. „Text kopieren" legt den Text in die Zwischenablage (Clipboard-API
+  mit execCommand-Fallback für ältere Browser).
+- Kein Server. Kein Datei-Upload.
+- **Neue Funktionen (6):** `feedbackOpen`, `feedbackClose`, `feedbackBuildText`,
+  `feedbackSend`, `feedbackCopy`, `feedbackCopyFallback`.
+
+### Neu — Prüftermin-Erinnerungen (P3, Sektion 83)
+
+- **Primär: Web Notifications API** — In Einstellungen (neuer Block
+  „Prüftermin-Erinnerungen") per Button aktivierbar. Erlaubnis wird nie
+  automatisch angefragt. Max. eine Benachrichtigung pro Tag. Alle fälligen
+  Einträge in einer einzigen Meldung zusammengefasst. Unterscheidet
+  „bald fällig" (11–14 Monate) und „überfällig" (>14 Monate).
+- **Fallback: Hinweis-Balken** — Amber-Balken am oberen Rand, erscheint nur
+  bei tatsächlich überfälligen Einträgen (>14 Monate), nicht blockierend,
+  kein Erlaubnis-Popup. Schaltflächen: „Jetzt prüfen" (navigiert direkt zum
+  Prüftermine-Schritt) und „Schließen" (gilt für diese Sitzung).
+- Prüft alle 7 Dokumenttypen: Vorsorgevollmacht, Gesundheitsvollmacht,
+  Patientenverfügung, Testament, Bankvollmacht, Schwerbehindertenausweis,
+  Vivodepot (diese Datei).
+- Status-Anzeige in Einstellungen: Aktiviert / Nicht aktiviert /
+  Vom Browser blockiert / Nicht unterstützt (iOS).
+- **Neue Funktionen (6):** `erinnerungFaelligeItems`, `erinnerungNotifRequest`,
+  `erinnerungNotifSend`, `erinnerungNotifCheck`, `erinnerungHinweisShow`,
+  `erinnerungHinweisHide`.
+
+### Tests
+
+77 neue Tests in 3 neuen Sektionen:
+
+| Sektion | Inhalt | Tests |
+|---|---|---|
+| 81 | Vorlagen-Editor: Zustand, Funktionen, Validierung, Renderer, Export | 27 |
+| 82 | Inline-Feedback-Formular: Overlay, Funktionen, Clipboard, kein Server | 21 |
+| 83 | Prüftermin-Erinnerungen: Balken, Funktionen, Web Notifications, Einstellungen | 29 |
+
+Gesamt: **1.499 Tests, 0 Fehler, 0 Altlasten.**
+
+### Dateien
+
+| Datei | Änderung |
+|---|---|
+| `VIVODEPOT.html` | Vorlagen-Editor, Feedback-Formular, Prüftermin-Erinnerungen, Version 1.0.0-beta.16 |
+| `test_vivodepot.py` | +77 Tests (Sektionen 81–83) |
+
+---
+
 ## [1.0.0-beta.14] — April 2026
 
 ### UX-Optimierung für Senioren (Schwerpunkt dieser Version)
@@ -154,6 +243,89 @@ bessere Erfahrung für die Zielgruppe (60+, nicht digital-affin).
 | `SOVEREIGNTY.md` | Neu — WCAG 3.3.8-Begründung |
 | `Vivodepot_HL7_Konformitaetsbericht_2026-04-19.docx` | Neu — HL7 EU Base IG Konformitätsnachweis |
 | `Vivodepot_IPS_Konformitaetsbericht_2026-04-20.docx` | Neu — IPS 2.0.0 Konformitätsnachweis |
+
+---
+
+## [1.0.0-beta.15] — April 2026
+
+### Neu — Datenweitergabe an Institutionen
+
+- **DSGVO-Einwilligungsdokumentation im FHIR-Export** — `generateFHIR()` erzeugt
+  jetzt eine `Consent`-Ressource mit Status `active`, Scope `patient-privacy`,
+  LOINC-Code 59284-0, GDPR-Art.-6-Policy-URI, Zweck `TREAT` und einer Extension
+  mit der Liste der exportierten Sektionen. UUID wird pro Export neu generiert.
+
+- **Institutionelles Request-Template** — `downloadInstitutionTemplate()` erzeugt
+  eine herunterladbare Muster-Vorlage (`Vivodepot_Muster_Vorlage_v1.json`) im
+  Companion-Schema 1.0. Enthält Beispielfragen, Skala, Scoring und leeres
+  Safety-Array. Button „Muster-Vorlage herunterladen" im Institutionen-Bereich.
+
+- **Supportkanal** — E-Mail-Adresse `hilfe@vivodepot.de` in Einstellungen
+  (Block „Hilfe & Kontakt" mit Schaltfläche „Nachricht schreiben") und im
+  More-Menu (Link „Hilfe — hilfe@vivodepot.de" mit vorausgefülltem Betreff
+  und Körper). Institutionen-Bereich: `support@vivodepot.de`.
+
+### E-Mail-Migration
+
+- `feedback@vivodepot.de` vollständig durch `hilfe@vivodepot.de` (sichtbarer
+  Bereich) und `support@vivodepot.de` (Institutionen) ersetzt.
+
+### Technische Schuld bereinigt — Einstellungen
+
+- **Doppelter Fokus-Abschnitt entfernt** — Ein redundanter erster Fokus-Block
+  in den Einstellungen (Zeile ~16838) wurde entfernt. Der funktionale zweite
+  Block (zeigt aktuellen Zustand, „Fokus ändern", „Alle anzeigen") bleibt.
+  Neuer Test (Sektion 79) sichert Einmaligkeit dauerhaft ab.
+
+### Neu — Lokale Nutzungsstatistik (Sektion 80)
+
+- **Drei neue Funktionen:** `statsIncrement()`, `statsGet()`, `statsRenderBlock()`.
+- **Vier Zähler** im localStorage — kein Server, keine Übertragung:
+  - `vivo_stat_fhir_export` — Anzahl FHIR-Exporte + Datum des letzten
+  - `vivo_stat_template_download` — Anzahl Muster-Vorlage-Downloads
+  - `vivo_stat_tpl_complete` — Anzahl vollständig ausgefüllter Vorlagen
+  - `vivo_stat_result_download` — Anzahl Ergebnis-Downloads (`tplDownloadFhir`)
+- **Anzeigeblock** in Einstellungen unter „Über Vivodepot" — natürlichsprachliche
+  Sätze, z.B. „Sie haben Vivodepot 7 Mal exportiert."
+
+### Neu — STEP_TIMES-Objekt
+
+- **Geschätzte Bearbeitungszeiten** für alle Schritte als JavaScript-Objekt
+  eingeführt. Enthält alle 22 Steps inkl. `notfall:2` und `institutionen:2`,
+  die bisher fehlten.
+
+### Altlasten bereinigt (alle offenen Fälle)
+
+- **ANF-UX-01 Lock-Button** — Testprüfung auf veraltetes Emoji durch Prüfung
+  auf SVG-Button mit korrekten ARIA-Attributen ersetzt. Funktionale Absicherung
+  bleibt vollständig erhalten.
+- **Script-Syntax-Test** — Drittanbieter-Bibliotheken (jsPDF, pako, JSZip)
+  werden anhand eindeutiger Signaturen erkannt und übersprungen. Eigener
+  Projektcode wird weiterhin vollständig geprüft.
+- **Externe Dateien** (SOVEREIGNTY.md, phq9/gad7/who5-de-v1.json) —
+  Fallback-Suchpfad auf bekannte Projektverzeichnisse ergänzt. In
+  Produktionsumgebungen verhält sich der Test unverändert.
+
+### Tests
+
+42 neue Tests, 5 bestehende Tests angepasst:
+
+| Sektion | Inhalt | Tests |
+|---|---|---|
+| 76 | DSGVO-Consent im FHIR-Export | 10 |
+| 77 | Institutionelles Template | 8 |
+| 78 | Supportkanal: hilfe@ in Einstellungen und More-Menu | 12 |
+| 79 | Fokus-Abschnitt Einmaligkeit | 1 |
+| 80 | Lokale Nutzungsstatistik | 11 |
+
+Gesamt: **1.422 Tests, 0 Fehler, 0 Altlasten.**
+
+### Dateien
+
+| Datei | Änderung |
+|---|---|
+| `VIVODEPOT.html` | DSGVO-Consent, Template-Download, Supportkanal, E-Mail-Migration, Fokus-Bereinigung, Statistikfunktionen, STEP_TIMES |
+| `test_vivodepot.py` | +42 Tests (Sektionen 76–80), 5 angepasst |
 
 ---
 

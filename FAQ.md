@@ -1,6 +1,6 @@
 # VIVODEPOT — Häufige Fragen
 
-*Version 1.0.0-beta.17 · April 2026*
+*Version 1.0.0-beta.16 · April 2026*
 
 ---
 
@@ -13,7 +13,7 @@ Eine Einzeldatei-HTML-App zur Vorsorgedokumentation — Kontakte, Finanzen, Gesu
 Die Basisversion ist kostenlos. Zukünftige Premium-Funktionen sind in Planung.
 
 **Wer steckt dahinter?**
-Vivodepot UG (haftungsbeschränkt), Berlin. Kontakt: [feedback@vivodepot.de](mailto:feedback@vivodepot.de)
+Vivodepot UG (haftungsbeschränkt), Berlin. Kontakt: [hilfe@vivodepot.de](mailto:hilfe@vivodepot.de)
 
 ---
 
@@ -32,45 +32,10 @@ Ja — wenn Sie Passwortschutz einrichten. AES-256-GCM mit 200.000 PBKDF2-Iterat
 Die `localStorage`-Daten gehen verloren. Empfehlung: Regelmäßig über „Speichern" eine HTML-Datei erstellen und sichern.
 
 **Kann ich die Daten exportieren?**
-Ja — als HTML-Datei (Speichern), als Weitergabe-Datei für Dritte, als QR-Code, als PDF, Word oder FHIR R4 JSON.
+Ja — als HTML-Datei (Speichern), als Weitergabe-Datei für Dritte, als QR-Code, als PDF oder Word.
 
 **Kann ich die Daten importieren?**
 Ja — FHIR R4, FIM-JSON, EUDI-Wallet (SD-JWT) und allgemeines JSON.
-
----
-
-## Wohlbefinden & Seele (PROM)
-
-**Was sind die Fragebögen im Schritt „Wohlbefinden & Seele"?**
-Vier validierte Selbstauskunft-Instrumente: PHQ-4 (Kurzscreening, 4 Fragen), PHQ-9 (Stimmung, 9 Fragen), GAD-7 (Angst, 7 Fragen) und WHO-5 (Wohlbefinden, 5 Fragen). Alle sind Public Domain — keine Genehmigung erforderlich.
-
-**Was passiert nach dem PHQ-4?**
-Wenn Ihr PHQ-4-Ergebnis einen Hinweis auf Depressivität oder Angst zeigt, erscheint automatisch ein Hinweis mit einer Schaltfläche. Ein Klick bringt Sie direkt zum empfohlenen ausführlicheren Fragebogen (PHQ-9 oder GAD-7).
-
-**Ersetzen die Fragebögen eine ärztliche Diagnose?**
-Nein. Die Ergebnisse sind Orientierungswerte für das Gespräch mit Ihrer Ärztin oder Ihrem Arzt — keine Diagnose.
-
-**Was passiert mit meinen Antworten?**
-Sie bleiben ausschließlich auf Ihrem Gerät. Kein Server, keine Übertragung. Sie können die Ergebnisse im FHIR-Export für Arztgespräche nutzen.
-
-**Werden meine PROM-Antworten im FHIR-Export enthalten?**
-Ja — wenn Sie einen Fragebogen vollständig ausgefüllt haben. Der FHIR-Export enthält die Einzelantworten (QuestionnaireResponse) und den Gesamtscore (Observation) mit internationalen LOINC-Codes.
-
----
-
-## FHIR & EHDS
-
-**Was ist FHIR?**
-FHIR (Fast Healthcare Interoperability Resources) ist der internationale Standard für den Austausch von Gesundheitsdaten. VIVODEPOT exportiert Ihre Daten in FHIR R4 — das Format, das Arztpraxen, Kliniken und Behörden zunehmend verstehen.
-
-**Was ist EHDS?**
-Der European Health Data Space (Verordnung EU 2025/327, in Kraft seit März 2025) regelt den Austausch von Gesundheitsdaten in der EU. VIVODEPOT implementiert die bürgerseitige Dateneingabe — den Teil, den der EHDS selbst nicht spezifiziert.
-
-**Was bedeutet PGHD?**
-Patient-Generated Health Data — Gesundheitsdaten, die Bürgerinnen und Bürger selbst erfassen. Das ist eine explizite Kategorie im EHDS. Alle PROM-Scores in VIVODEPOT sind als PGHD gekennzeichnet.
-
-**Was sind die JSON-Vorlagen im Ordner `templates/`?**
-Maschinenlesbare Definitionen der Fragebögen nach Schema 1.0 — für Institutionen, Entwickler und Forschungsprojekte, die VIVODEPOT-Daten weiterverarbeiten möchten. Jede Vorlage enthält LOINC-Codes, Scoring-Bereiche und Safety-Regeln.
 
 ---
 
@@ -83,7 +48,7 @@ Chrome, Firefox, Edge (ab Version 90), Safari (ab Version 14). DuckDuckGo Browse
 Vollständig. Alle Bibliotheken sind direkt eingebettet — keine externe Anfrage.
 
 **Wie groß ist die Datei?**
-Ca. 1,7 MB (VIVODEPOT.html). Die Leseansicht (vivodepot-lesen.html) ist deutlich kleiner.
+Ca. 1,3 MB (VIVODEPOT.html). Die Leseansicht (vivodepot-lesen.html) ist deutlich kleiner.
 
 **Kann ich VIVODEPOT auf einem USB-Stick nutzen?**
 Ja — HTML-Datei kopieren und in Chrome oder Firefox öffnen.
@@ -107,12 +72,53 @@ Ein QR-Code, der auf die Leseansicht verlinkt und einen verschlüsselten Datensa
 **Was ist die Leseansicht?**
 Die Seite `carolaklessen.github.io/vivodepot/vivodepot-lesen.html` — öffnet QR-Codes und Weitergabe-Dateien. Kein Account, kein Speichern, kein Netzwerkzugriff.
 
+**Was wenn der QR-Code zu groß ist?**
+VIVODEPOT teilt den Payload automatisch auf bis zu 6 QR-Codes auf. Die Leseansicht sammelt alle Teile und fragt einmal den PIN.
+
+**Braucht der Empfänger auch VIVODEPOT?**
+Nein — die Leseansicht ist frei verfügbar und braucht keine Installation.
+
+**Ist der QR-Code sicher?**
+Ja. AES-256-GCM-verschlüsselt, PIN-geschützt, 24 Stunden gültig. Der Hash-Teil der URL erreicht den Server nie.
+
 ---
 
-## Lizenz & Quellen
+## Für Institutionen
 
-**Unter welcher Lizenz steht VIVODEPOT?**
-EUPL-1.2 — Europäische Union Public Licence. Open Source, Copyleft, bevorzugte EU-Lizenz für öffentliche Förderung.
+**Was ist der Institutionen-Bereich?**
+Institutionen (Pflegeheime, Kliniken, Behörden) können Fragebogen-Vorlagen im Companion-Schema v1.0 erstellen und bereitstellen. Nutzer füllen den Fragebogen in der App aus. Das Ergebnis kann als FHIR-konformes JSON weitergegeben werden — mit automatisch erstelltem DSGVO-Einwilligungsnachweis.
 
-**Unter welcher Lizenz stehen die Fragebögen?**
-PHQ-9, GAD-7, PHQ-4: Public Domain (Kroenke, Spitzer & Williams). WHO-5: WHO Regionalbüro Europa, frei nutzbar. Keine Genehmigung für nicht-kommerzielle Nutzung erforderlich.
+**Wie erstellt eine Institution eine Vorlage?**
+Direkt in der App: Schritt „Für Institutionen" → „Neue Vorlage erstellen". Titel, Herausgeber, Fragen und Antwort-Skala per Formular eingeben, Vorschau anzeigen, als Datei speichern oder direkt in der App speichern. Kein Texteditor, kein JSON-Wissen erforderlich.
+
+**Kann die Vorlage auch manuell bearbeitet werden?**
+Ja — die exportierte .json-Datei kann in einem Texteditor nachbearbeitet und anschließend wieder eingelesen werden.
+
+---
+
+## Erinnerungen & Benachrichtigungen
+
+**Kann VIVODEPOT mich erinnern, Dokumente zu erneuern?**
+Ja. In Einstellungen → „Prüftermin-Erinnerungen" können Browser-Benachrichtigungen aktiviert werden. Wenn etwas fällig ist, erscheint einmal täglich eine Meldung. Auf iPhone und iPad werden stattdessen Hinweise beim App-Start angezeigt.
+
+**Werden Erinnerungen automatisch eingeschaltet?**
+Nein. Die Browser-Berechtigung wird nur eingeholt, wenn Sie in den Einstellungen auf „Erinnerungen aktivieren" klicken.
+
+---
+
+## Notfall & Katastrophenschutz
+
+**Was zeigt die Notfall-Kategorie?**
+Sechs Statuskarten (Wasser, Lebensmittel, Medikamente, Dokumente, Licht & Kommunikation, Bargeld), Evakuierungsplan, lokale Kontakte, Notrufnummern. Nach BBK-Empfehlungen.
+
+**Was enthält das Notfall-Blatt?**
+Notrufnummern, Vorratsstatus, Evakuierungsplan, Sammelplatz, medizinische Hinweise. Zum Ausdrucken.
+
+---
+
+## Hilfe & Kontakt
+
+**Wie kann ich Hilfe bekommen?**
+Drei-Punkte-Menü → „Hilfe" oder Einstellungen → „Hilfe & Kontakt". Wenn Ihre E-Mail-App nicht öffnet, steht ein Formular bereit, das den Text in Ihre Zwischenablage kopiert.
+
+[hilfe@vivodepot.de](mailto:hilfe@vivodepot.de) · [github.com/carolaklessen/vivodepot](https://github.com/carolaklessen/vivodepot)

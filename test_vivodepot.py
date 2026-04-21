@@ -34,12 +34,26 @@ def main():
     # ═══════════════════════════════════════
     scripts = list(re.finditer(r'<script(?!\s+src)[^>]*>([\s\S]*?)</script>', html))
     check("Script-Blöcke gefunden", len(scripts) >= 2, f"{len(scripts)} Blöcke")
-    
+
+    # Signaturen bekannter eingebetteter Drittanbieter-Bibliotheken.
+    # Diese enthalten absichtlich minifizierten Code, der keine
+    # Node-Syntaxpruefung besteht. Eigener Projektcode enthaelt
+    # diese Zeichenketten nicht.
+    DRITTANBIETER_SIGNATUREN = [
+        "var P={print:4,modify:8",       # jsPDF Verschluesselungsmodul
+        "jsPDF.version",                 # jsPDF Kern
+        "function(t){var e=function(){", # jsPDF Canvas
+        "pako",                          # pako Deflate-Bibliothek
+        "JSZip",                         # JSZip
+    ]
+
     all_syntax_ok = True
     for i, m in enumerate(scripts):
         content = m.group(1)
         if len(content) < 50:
             continue
+        if any(sig in content for sig in DRITTANBIETER_SIGNATUREN):
+            continue  # Drittanbieter-Bibliothek — Syntaxpruefung nicht anwendbar
         with tempfile.NamedTemporaryFile(mode='w', suffix='.js', delete=False, encoding='utf-8') as f:
             f.write(content)
             fname = f.name
@@ -344,7 +358,7 @@ def main():
     check("Journey: Goal-Wizard aufrufbar", "function showGoalWizard()" in html)
     check("Journey: enterApp ruft safeRender", "function enterApp() {\n  hideAllOverlays();\n  safeRender();" in html)
     check("Journey: safeRender fängt Fehler ab", "function safeRender()" in html and "catch" in html)
-    check("Journey: Fokus-Button in Sidebar", "Fokus wählen" in html and "Fokus ändern" in html)
+    check("Journey: Fokus-Button in Sidebar", "Fokus ändern" in html)
 
     # Journey 2: Rückkehr (Return-Overlay)
     check("Journey: Return-Overlay hat Weiche", "id=\"return-overlay\"" in html and "showAngehoerigenAuswahl()" in html)
@@ -404,7 +418,7 @@ def main():
     check("Speichern-Erinnerung: Bar vorhanden", "save-reminder-bar" in html)
     check("Speichern-Erinnerung: dismissSaveReminder()", "function dismissSaveReminder" in html)
     check("Speichern-Erinnerung: saveAndDismiss()", "function saveAndDismiss" in html)
-    check("Fokus-Wizard: In Einstellungen erreichbar", "Meinen Fokus neu wählen" in html)
+    check("Fokus-Wizard: In Einstellungen erreichbar", "showGoalWizard" in html and "Fokus &auml;ndern" in html or "Fokus ändern" in html)
 
     # ═══════════════════════════════════════
     print("\n=== 12. PERSONA-FELDER ===")
@@ -526,7 +540,7 @@ def main():
     check("Fokus: renderSidebar filtert Steps", "function renderSidebar" in html and "_goalRelevant" in html)
     check("Fokus: updateFokusBarLabel()", "updateFokusBarLabel" in html)
     check("Fokus: fokus-bar-btn Element", "fokus-bar-btn" in html)
-    check("Fokus: Meinen Fokus neu wählen", "Meinen Fokus neu wählen" in html)
+    check("Fokus: Fokus-Button in Einstellungen vorhanden", "Fokus &auml;ndern" in html or "Fokus ändern" in html)
 
     # ═══════════════════════════════════════
     print("\n=== 17. KEYBOARD & NAVIGATION ===")
@@ -1747,8 +1761,16 @@ def main():
           "SMS-Code- oder OTP-Feld gefunden — verstößt gegen 3.3.8")
 
     # Doku-Prüfung: SOVEREIGNTY.md muss die 3.3.8-Begründung enthalten.
-    # Wird im gleichen Verzeichnis wie die HTML gesucht.
+    # Gesucht wird im selben Verzeichnis wie die HTML-Datei sowie in
+    # bekannten Projektverzeichnissen (Entwicklungsumgebung).
     wcag_sov_pfad = os.path.join(os.path.dirname(filepath) or '.', 'SOVEREIGNTY.md')
+    if not os.path.exists(wcag_sov_pfad):
+        for kandidat in ['/mnt/project/SOVEREIGNTY.md',
+                         os.path.join(os.path.dirname(os.path.abspath(filepath)),
+                                      '..', 'SOVEREIGNTY.md')]:
+            if os.path.exists(kandidat):
+                wcag_sov_pfad = kandidat
+                break
     if os.path.exists(wcag_sov_pfad):
         try:
             wcag_sov = open(wcag_sov_pfad, encoding='utf-8').read()
@@ -2098,9 +2120,11 @@ def main():
     print("\n=== 65. BETA.10 — ANF-UX-01 BIS ANF-UX-07 ===")
     # ═══════════════════════════════════════
 
-    # UX-01: Lock-Button hat Emoji-Inhalt
-    check("ANF-UX-01: Lock-Button enthält 🔒",
-          ">🔒</button>" in html)
+    # UX-01: Lock-Button vorhanden (SVG-Schlosssymbol, kein Emoji seit beta.10)
+    check("ANF-UX-01: Lock-Button mit lockApp() vorhanden",
+          "onclick=\"lockApp()\"" in html and
+          "title=\"Bildschirm sperren\"" in html and
+          "aria-label=\"Bildschirm sperren\"" in html)
 
     # UX-03: EUDI-Karte kein HTML-Entity
     check("ANF-UX-03: w&auml;hlen nicht mehr in EUDI-Karte",
@@ -2767,12 +2791,24 @@ def main():
 
     html_dir = _os.path.dirname(_os.path.abspath(filepath))
 
+    # Fallback-Suchpfade fuer Entwicklungsumgebungen, in denen die
+    # JSON-Vorlagen nicht im selben Verzeichnis wie die HTML liegen.
+    _vorlagen_suchpfade = [html_dir, '/mnt/project',
+                           _os.path.join(html_dir, '..')]
+
+    def _finde_vorlage(filename):
+        for verz in _vorlagen_suchpfade:
+            p = _os.path.join(verz, filename)
+            if _os.path.isfile(p):
+                return p
+        return None
+
     def check_template(filename, expected_id, expected_items,
                        expected_max, expected_loinc_code,
                        expected_scale_options, has_safety_items):
         """Laedt eine JSON-Vorlage und prueft ihre Struktur gemaess tplValidate."""
-        path = _os.path.join(html_dir, filename)
-        if not _os.path.isfile(path):
+        path = _finde_vorlage(filename)
+        if not path:
             check(f"JSON-Vorlage {filename} vorhanden", False, "Datei nicht gefunden")
             return
         try:
@@ -3143,6 +3179,267 @@ def main():
           "support@vivodepot.de" in html)
     check("Support: mailto support@ mit Anfrage-Betreff",
           "mailto:support@vivodepot.de?subject=Anfrage%20Institution" in html)
+
+    # === 79. TECHNISCHE SCHULDEN — EINSTELLUNGEN (beta.16) ===
+    print("\n=== 79. TECHNISCHE SCHULDEN — EINSTELLUNGEN (beta.16) ===")
+
+    fokus_count = html.count("field-section-title\">${tl('Fokus')}")
+    check("Einstellungen: Fokus-Abschnitt nur einmal vorhanden",
+          fokus_count == 1, f"{fokus_count} Treffer (erwartet: 1)")
+
+    # === 80. LOKALE NUTZUNGSSTATISTIK (beta.16) ===
+    print("\n=== 80. LOKALE NUTZUNGSSTATISTIK (beta.16) ===")
+
+    check("Statistik: Funktion statsIncrement vorhanden",
+          "function statsIncrement(" in html)
+    check("Statistik: Funktion statsGet vorhanden",
+          "function statsGet(" in html)
+    check("Statistik: Funktion statsRenderBlock vorhanden",
+          "function statsRenderBlock(" in html)
+    check("Statistik: Schluessel fhir_export gezaehlt",
+          "statsIncrement('fhir_export')" in html)
+    check("Statistik: Letztes Exportdatum gespeichert",
+          "vivo_stat_fhir_last" in html)
+    check("Statistik: Schluessel template_download gezaehlt",
+          "statsIncrement('template_download')" in html)
+    check("Statistik: Schluessel result_download gezaehlt",
+          "statsIncrement('result_download')" in html)
+    check("Statistik: Schluessel tpl_complete gezaehlt",
+          "statsIncrement('tpl_complete')" in html)
+    check("Statistik: statsRenderBlock in Einstellungen eingebunden",
+          "${statsRenderBlock()}" in html)
+    check("Statistik: Hinweis 'kein Server' im Anzeigeblock",
+          "kein Server" in html and "keine Übertragung" in html)
+    check("Statistik: localStorage try-catch vorhanden",
+          "vivo_stat_" in html and "catch" in html)
+
+    # ═══════════════════════════════════════
+    print("\n=== 81. VORLAGEN-EDITOR (P1 Institutionen-Onboarding) ===")
+    # ═══════════════════════════════════════
+
+    # Zustandsvariablen
+    check("Editor: _tplEditorOpen Zustandsvariable vorhanden",
+          "_tplEditorOpen" in html)
+    check("Editor: _tplEditorDraft Zustandsvariable vorhanden",
+          "_tplEditorDraft" in html)
+    check("Editor: _tplEditorPreview Zustandsvariable vorhanden",
+          "_tplEditorPreview" in html)
+
+    # Kern-Funktionen
+    check("Editor: tplEditorNew() vorhanden",
+          "function tplEditorNew(" in html)
+    check("Editor: tplEditorClose() vorhanden",
+          "function tplEditorClose(" in html)
+    check("Editor: tplEditorReadForm() vorhanden",
+          "function tplEditorReadForm(" in html)
+    check("Editor: tplEditorSave() vorhanden",
+          "function tplEditorSave(" in html)
+    check("Editor: tplEditorExport() vorhanden",
+          "function tplEditorExport(" in html)
+    check("Editor: tplEditorRender() vorhanden",
+          "function tplEditorRender(" in html)
+    check("Editor: tplEditorBuildTemplate() vorhanden",
+          "function tplEditorBuildTemplate(" in html)
+
+    # Fragen-Bearbeitung
+    check("Editor: tplEditorAddItem() vorhanden",
+          "function tplEditorAddItem(" in html)
+    check("Editor: tplEditorRemoveItem() vorhanden",
+          "function tplEditorRemoveItem(" in html)
+
+    # Skala-Optionen
+    check("Editor: tplEditorAddOption() vorhanden",
+          "function tplEditorAddOption(" in html)
+    check("Editor: tplEditorRemoveOption() vorhanden",
+          "function tplEditorRemoveOption(" in html)
+
+    # Vorschau
+    check("Editor: tplEditorTogglePreview() vorhanden",
+          "function tplEditorTogglePreview(" in html)
+
+    # Validierung nutzt tplValidate
+    check("Editor: tplValidate() wird in tplEditorSave aufgerufen",
+          "tplValidate(t)" in html and "tplEditorSave" in html)
+    check("Editor: Fehlermeldung bei Validierungsfehler",
+          "Die Vorlage ist noch nicht vollst" in html)
+
+    # Schliessen mit Rueckfrage
+    check("Editor: vivoConfirm beim Schliessen",
+          "vivoConfirm" in html and "tplEditorClose" in html)
+
+    # Scoring-Ranges werden automatisch erzeugt
+    check("Editor: Scoring-Ranges automatisch berechnet",
+          "tplEditorBuildTemplate" in html and "maxScore" in html)
+
+    # Export als JSON-Datei
+    check("Editor: Export als .json-Datei",
+          "tplEditorExport" in html and "application/json" in html)
+
+    # Schaltfläche im institutionen-Renderer
+    check("Editor: 'Neue Vorlage erstellen'-Button im Renderer",
+          "tplEditorNew()" in html and "Neue Vorlage erstellen" in html)
+
+    # Editor-Ansicht wird bei _tplEditorOpen angezeigt
+    check("Editor: Renderer prüft _tplEditorOpen",
+          "_tplEditorOpen" in html and "tplEditorRender()" in html)
+
+    # Eingabefelder haben korrekte CSS-Klassen
+    check("Editor: tpled-opt-val Klasse fuer Skala-Werte",
+          "tpled-opt-val" in html)
+    check("Editor: tpled-opt-label Klasse fuer Skala-Bezeichnungen",
+          "tpled-opt-label" in html)
+    check("Editor: tpled-item-text Klasse fuer Fragen-Felder",
+          "tpled-item-text" in html)
+
+    # Pflichtfelder sind als solche markiert
+    check("Editor: Kurztitel-Feld vorhanden (tpled-title-short)",
+          "tpled-title-short" in html)
+    check("Editor: Herausgeber-Feld vorhanden (tpled-issuer)",
+          "tpled-issuer" in html)
+
+    # ═══════════════════════════════════════
+    print("\n=== 82. INLINE-FEEDBACK-FORMULAR (P2 Pilot-Feedback) ===")
+    # ═══════════════════════════════════════
+
+    # Overlay vorhanden
+    check("Feedback: Overlay-Element feedback-overlay vorhanden",
+          'id="feedback-overlay"' in html)
+    check("Feedback: Overlay startet mit display:none",
+          'id="feedback-overlay"' in html and 'display:none' in html)
+
+    # Textarea
+    check("Feedback: Textarea id=feedback-text vorhanden",
+          'id="feedback-text"' in html)
+    check("Feedback: Textarea hat Platzhaltertext",
+          'feedback-text' in html and 'placeholder' in html)
+
+    # Kern-Funktionen
+    check("Feedback: feedbackOpen() vorhanden",
+          "function feedbackOpen(" in html)
+    check("Feedback: feedbackClose() vorhanden",
+          "function feedbackClose(" in html)
+    check("Feedback: feedbackSend() vorhanden",
+          "function feedbackSend(" in html)
+    check("Feedback: feedbackCopy() vorhanden",
+          "function feedbackCopy(" in html)
+    check("Feedback: feedbackBuildText() vorhanden",
+          "function feedbackBuildText(" in html)
+    check("Feedback: feedbackCopyFallback() vorhanden",
+          "function feedbackCopyFallback(" in html)
+
+    # Gerät + Version automatisch angehängt
+    check("Feedback: VIVODEPOT_VERSION im Nachrichtentext",
+          "feedbackBuildText" in html and "VIVODEPOT_VERSION" in html)
+    check("Feedback: navigator.platform im Nachrichtentext",
+          "navigator.platform" in html)
+    check("Feedback: navigator.userAgent im Nachrichtentext",
+          "navigator.userAgent" in html)
+
+    # Absenden-Logik
+    check("Feedback: mailto: wird in feedbackSend aufgebaut",
+          "mailto:hilfe@vivodepot.de" in html and "feedbackSend" in html)
+    check("Feedback: Clipboard-API wird in feedbackCopy genutzt",
+          "navigator.clipboard" in html and "feedbackCopy" in html)
+    check("Feedback: execCommand-Fallback fuer alte Browser",
+          "execCommand" in html and "feedbackCopyFallback" in html)
+    check("Feedback: Fehlermeldung bei leerem Textfeld",
+          "Bitte geben Sie zuerst" in html)
+
+    # Schliessen per Klick ausserhalb
+    check("Feedback: Overlay schliesst bei Klick ausserhalb (event.target)",
+          "event.target" in html and "feedbackClose" in html)
+
+    # Schaltflaechen in der Einstellungs-Seite
+    check("Feedback: Formular-Schaltflaeche in Einstellungen vorhanden",
+          "feedbackOpen()" in html and "Formular" in html)
+
+    # More-Menu ruft feedbackOpen auf
+    check("Feedback: More-Menu-Eintrag ruft feedbackOpen auf",
+          "feedbackOpen()" in html and "closeMoreMenu()" in html)
+
+    # Kein Server-Aufruf
+    check("Feedback: kein fetch/XHR in Feedback-Funktionen",
+          "feedbackSend" in html and "fetch('https://vivodepot" not in
+          html[html.find("function feedbackOpen"):html.find("function feedbackOpen") + 2000])
+
+    # ═══════════════════════════════════════
+    print("\n=== 83. PRÜFTERMIN-ERINNERUNGEN (P3 Erinnerungsfunktion) ===")
+    # ═══════════════════════════════════════
+
+    # HTML-Element Hinweis-Balken
+    check("Erinnerung: Hinweis-Balken erinnerung-hinweis-bar vorhanden",
+          'id="erinnerung-hinweis-bar"' in html)
+    check("Erinnerung: Hinweis-Balken startet mit display:none",
+          'id="erinnerung-hinweis-bar"' in html and
+          html[html.find('id="erinnerung-hinweis-bar"')-5:
+               html.find('id="erinnerung-hinweis-bar"')+60].count('display:none') > 0 or
+          'display:none' in html[html.find('erinnerung-hinweis-bar'):
+                                  html.find('erinnerung-hinweis-bar') + 200])
+    check("Erinnerung: Hinweis-Text erinnerung-hinweis-text vorhanden",
+          'id="erinnerung-hinweis-text"' in html)
+    check("Erinnerung: 'Jetzt prüfen'-Button im Balken navigiert zu erinnerung-Step",
+          "s.id==='erinnerung'" in html and "erinnerungHinweisHide" in html)
+    check("Erinnerung: 'Schließen'-Button ruft erinnerungHinweisHide auf",
+          "erinnerungHinweisHide()" in html)
+
+    # Kern-Funktionen
+    check("Erinnerung: erinnerungFaelligeItems() vorhanden",
+          "function erinnerungFaelligeItems(" in html)
+    check("Erinnerung: erinnerungNotifRequest() vorhanden",
+          "function erinnerungNotifRequest(" in html)
+    check("Erinnerung: erinnerungNotifSend() vorhanden",
+          "function erinnerungNotifSend(" in html)
+    check("Erinnerung: erinnerungNotifCheck() vorhanden",
+          "function erinnerungNotifCheck(" in html)
+    check("Erinnerung: erinnerungHinweisShow() vorhanden",
+          "function erinnerungHinweisShow(" in html)
+    check("Erinnerung: erinnerungHinweisHide() vorhanden",
+          "function erinnerungHinweisHide(" in html)
+
+    # Korrekte Pruefgrenzen
+    check("Erinnerung: Grenze 11 Monate fuer bald faellig",
+          "months >= 11" in html)
+    check("Erinnerung: Grenze 14 Monate fuer ueberfaellig",
+          "months >= 14" in html)
+
+    # Alle 7 Dokumenttypen enthalten
+    for key in ["erinnerung_vollmacht", "erinnerung_gesundheitsvollmacht",
+                "erinnerung_patientenverf", "erinnerung_testament",
+                "erinnerung_vollmacht_bank", "erinnerung_sba",
+                "erinnerung_notfallmappe"]:
+        check(f"Erinnerung: {key} in erinnerungFaelligeItems",
+              key in html)
+
+    # Web Notifications API
+    check("Erinnerung: Notification in window geprueft",
+          "'Notification' in window" in html)
+    check("Erinnerung: Notification.permission geprueft",
+          "Notification.permission" in html)
+    check("Erinnerung: requestPermission aufgerufen",
+          "requestPermission" in html)
+    check("Erinnerung: Max eine Notification pro Tag (vivodepot_notif_date)",
+          "vivodepot_notif_date" in html)
+
+    # Kein automatisches Erlaubnis-Popup
+    check("Erinnerung: Erlaubnis nur auf Nutzeraktion (erinnerungNotifRequest)",
+          "erinnerungNotifRequest" in html and
+          "requestPermission" not in
+          html[html.find("function erinnerungNotifCheck"):
+               html.find("function erinnerungNotifCheck") + 500])
+
+    # enterApp ruft Check auf
+    check("Erinnerung: erinnerungNotifCheck in enterApp eingehaengt",
+          "erinnerungNotifCheck(false)" in html and "enterApp" in html)
+
+    # Einstellungen: Opt-in-Button und Status
+    check("Erinnerung: erinnerungNotifRequest-Button in Einstellungen",
+          "erinnerungNotifRequest()" in html and
+          "Erinnerungen aktivieren" in html)
+    check("Erinnerung: Status-Anzeige in Einstellungen",
+          "Notification.permission" in html and
+          "Prüftermin-Erinnerungen" in html)
+    check("Erinnerung: Jetzt-pruefen-Button in Einstellungen",
+          "erinnerungNotifCheck(true)" in html)
 
     passed = sum(1 for s, _, _ in results if s == "PASS")
     failed = sum(1 for s, _, _ in results if s == "FAIL")

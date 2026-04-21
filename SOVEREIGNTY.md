@@ -227,7 +227,7 @@ Vivodepot strebt eine unabhängige Validierung durch das ZenDiS an und möchte a
 ## Kontakt
 
 Vivodepot UG (haftungsbeschränkt) · Berlin
-[feedback@vivodepot.de](mailto:feedback@vivodepot.de) · [vivodepot.de](https://vivodepot.de)
+[hilfe@vivodepot.de](mailto:hilfe@vivodepot.de) · [vivodepot.de](https://vivodepot.de)
 Quellcode: [github.com/carolaklessen/vivodepot](https://github.com/carolaklessen/vivodepot)
 Lizenz: EUPL-1.2
 

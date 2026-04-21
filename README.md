@@ -2,13 +2,11 @@
 
 **Ihr persönlicher Vorsorge-Assistent. Keine Cloud. Kein Abo. Volle Kontrolle.**
 
-[![Version](https://img.shields.io/badge/Version-1.0.0--beta.17-gold)](https://github.com/carolaklessen/vivodepot)
+[![Version](https://img.shields.io/badge/Version-1.0.0--beta.16-gold)](https://github.com/carolaklessen/vivodepot)
 [![Lizenz](https://img.shields.io/badge/Lizenz-EUPL--1.2-green)](LICENSE)
 [![Offline](https://img.shields.io/badge/Offline-100%25-brightgreen)](#offline)
-[![Tests](https://img.shields.io/badge/Tests-1458%2F1459-brightgreen)](#tests)
+[![Tests](https://img.shields.io/badge/Tests-1499%2F1499-brightgreen)](#tests)
 [![ZenDiS](https://img.shields.io/badge/ZenDiS-20%2F20-blue)](#souveränität)
-[![FHIR](https://img.shields.io/badge/FHIR-R4-blue)](#fhir)
-[![EHDS](https://img.shields.io/badge/EHDS-konform-green)](#ehds)
 
 VIVODEPOT ist eine vollständig offline-fähige Einzeldatei-HTML-Anwendung zur Vorsorgedokumentation. Alle Daten bleiben ausschließlich auf Ihrem Gerät — keine Cloud, kein Server, keine Übertragung.
 
@@ -36,7 +34,7 @@ VIVODEPOT hilft Menschen dabei, alle wichtigen Informationen für den Notfall an
 - Notfall & Katastrophenschutz (BBK-Empfehlungen)
 - Persönliche Erinnerungen und Botschaften
 
-Am Ende erstellt VIVODEPOT druckfertige Dokumente: PDF, Word, Notfallblatt, Arztbogen und mehr.
+Am Ende erstellt VIVODEPOT druckfertige Dokumente: PDF, Word, Notfallblatt, Arztbogen und mehr. Die QR-Übergabe überträgt Daten ohne USB an Institutionen. Die Leseansicht öffnet QR-Codes und Weitergabe-Dateien ohne VIVODEPOT-Installation.
 
 ---
 
@@ -54,7 +52,7 @@ Am Ende erstellt VIVODEPOT druckfertige Dokumente: PDF, Word, Notfallblatt, Arzt
 | Immobilien | Eigentum, Schlüssel |
 | Verträge & Abos | Kündigungsfristen |
 | Gesundheit | Blutgruppe, Allergien, Medikamente |
-| Wohlbefinden & Seele | PHQ-9, GAD-7, WHO-5, PHQ-4 mit Routing (seit beta.11/17) |
+| Wohlbefinden & Seele | PHQ-9, GAD-7, WHO-5 |
 | Pflege | Pflegegrad, Biografie-Modul |
 | Mein Wille | Testament & Vollmachten, BGB-Referenzen (2023) |
 | Mein Abschied | Bestattungswünsche, Trauerfeier |
@@ -65,51 +63,9 @@ Am Ende erstellt VIVODEPOT druckfertige Dokumente: PDF, Word, Notfallblatt, Arzt
 | Notfall | BBK-Ampelkarten, Katastrophenschutz-PDF |
 | Dokumente erstellen | Alle PDF- und Word-Exporte |
 | Datenaustausch | Import und Export (FHIR, FIM, EUDI, Weitergabe, QR, Solid Pod) |
-| Erinnerungen | Ampel-Status Schlüsseldokumente |
-| Dokumente (intern) | Export-Step |
-| Einstellungen | Passwort, Barrierefreiheit, Profile |
-
-### PROM-Modul (seit beta.11, Phase 1 vollständig seit beta.17)
-
-Validierte Selbstauskunft-Fragebögen — Public Domain, FHIR R4, EHDS-konform.
-
-| Instrument | Bereich | Items | LOINC |
-|---|---|---|---|
-| PHQ-9 | Stimmung | 9 | 44249-1 |
-| GAD-7 | Angst | 7 | 69737-5 |
-| WHO-5 | Wohlbefinden | 5 | 71969-0 |
-| PHQ-4 | Kurzscreening | 4 | 69724-3 |
-
-PHQ-4 leitet automatisch zu PHQ-9 oder GAD-7 weiter, wenn ein Subscore ≥ 3 ist. PROM-Ergebnisse werden als `QuestionnaireResponse` und `Observation` in den FHIR-Export eingebettet.
-
-### FHIR R4 Export
-
-Der FHIR-Export enthält:
-- Patient, AllergyIntolerance, Condition, MedicationStatement
-- QuestionnaireResponse (PROM-Einzelantworten)
-- Observation (PROM-Scores mit LOINC-Codes)
-- PGHD-Tag (`Patient-Generated Health Data`) — EHDS-Kategorie
-
-### EHDS-Alignierung
-
-VIVODEPOT ist die einzige bekannte Open-Source-Offline-Implementierung des EHDS Citizen User Journey (Verordnung EU 2025/327, in Kraft seit März 2025).
-
-- FHIR R4 vollständig implementiert
-- EUPL-1.2 — europäische Open-Source-Lizenz
-- PGHD (Patient-Generated Health Data) — explizite EHDS-Kategorie
-- Offline / kein Server — Bürger behält volle Kontrolle
-
-### JSON-Vorlagen (Ordner `templates/`)
-
-Standardisierte PROM-Vorlagen für Institutionen und Entwickler. Schema 1.0 — maschinenlesbar, LOINC-codiert, validierbar.
-
-```
-templates/
-├── phq9-de-v1.json
-├── gad7-de-v1.json
-├── who5-de-v1.json
-└── phq4-de-v1.json
-```
+| Prüftermine | Ampel-Status Schlüsseldokumente, Erinnerungen |
+| Export (intern) | Export-Step |
+| Einstellungen | Passwort, Barrierefreiheit, Profile, Erinnerungen |
 
 ### Exporte
 
@@ -119,11 +75,11 @@ templates/
 - Arztbogen (Standard, Radiologie, Präoperativ, Geriatrie)
 - Szenario-PDFs (Krankenhaus, Todesfall, Notfall-Tasche)
 - Vorsorgevollmacht, Patientenverfügung, Gesundheitsvollmacht (Word)
-- FHIR R4 JSON (inkl. PROM-Ressourcen)
 - QR-Aufkleber, vCard-Export
 - Weitergabe-Datei (HTML, verschlüsselt)
 - QR-Übergabe (AES-verschlüsselt, URL-basiert, Mehr-Teile-fähig)
 - Solid Pod Export (Turtle, .ttl)
+- FHIR-Export mit PROM-Scores und DSGVO-Consent-Ressource
 
 ### Weitergabe-Datei (seit beta.8)
 
@@ -131,7 +87,7 @@ Eigenständige, verschlüsselte HTML-Datei mit gefiltertem Datensatz. Vier Profi
 
 ### QR-Übergabe (seit beta.8, URL-Format seit beta.10)
 
-QR-Codes verlinken direkt auf die Leseansicht. Verschlüsselt per AES-256-GCM, PIN-geschützt, 24 Stunden gültig. Bei größeren Datenmengen automatische Aufteilung auf bis zu 6 QR-Codes. Löst das USB-Verbotsproblem in Institutionen.
+QR-Codes verlinken direkt auf die Leseansicht. Verschlüsselt per AES-256-GCM, PIN-geschützt, 24 Stunden gültig. Bei größeren Datenmengen automatische Aufteilung auf bis zu 6 QR-Codes.
 
 ### Leseansicht (seit beta.10)
 
@@ -141,11 +97,21 @@ QR-Codes verlinken direkt auf die Leseansicht. Verschlüsselt per AES-256-GCM, P
 
 ### Solid Pod Export (seit beta.9)
 
-Export im Turtle-Format (.ttl) mit Linked-Data-Standards. Eigene Gruppe „Eigener Datenspeicher". Anbieterbeispiel: solidcommunity.net.
+Export im Turtle-Format (.ttl) mit Linked-Data-Standards. Anbieterbeispiel: solidcommunity.net.
 
 ### Import
 
 EUDI-Wallet (SD-JWT), FHIR R4, FIM-JSON, allgemeines JSON.
+
+### Für Institutionen (seit beta.15/16)
+
+Fragebogen-Vorlagen im Companion-Schema v1.0 laden und ausfüllen. Ergebnisse als FHIR-konformes JSON weitergeben. DSGVO-Consent-Ressource im Export inbegriffen.
+
+**Vorlagen-Editor (seit beta.16):** Vorlagen direkt in der App erstellen — kein Texteditor, kein JSON-Wissen erforderlich. Fragen, Antwort-Skala und Herausgeber per Formular eingeben, Vorschau anzeigen, als Datei exportieren oder direkt speichern.
+
+### Prüftermin-Erinnerungen (seit beta.16)
+
+Erinnert daran, Vollmachten und Dokumente rechtzeitig zu erneuern. Primär als Browser-Benachrichtigung (Web Notifications API, opt-in in Einstellungen), als Fallback als Hinweis-Balken beim App-Start. Max. eine Meldung pro Tag.
 
 ### Barrierefreiheit
 
@@ -181,12 +147,11 @@ Vollständige Bewertung: [SOVEREIGNTY.md](SOVEREIGNTY.md)
 
 ## Technologie
 
-- Einzeldatei HTML (~1,7 MB) + vivodepot-lesen.html
+- Einzeldatei HTML (ca. 1,3 MB) + vivodepot-lesen.html
 - Kein Build-System, kein Framework, kein CDN
 - Vanilla JavaScript (ES5/ES6)
 - AES-256-GCM via Web Crypto API
 - jsPDF 2.5.1, docx.js 8.5.0, QRCode-Generator 1.4.4, jsQR 1.4.0 (alle inline)
-- FHIR R4 Export inkl. QuestionnaireResponse und Observation
 - EUPL-1.2 Lizenz
 
 ---
@@ -197,15 +162,15 @@ Vollständige Bewertung: [SOVEREIGNTY.md](SOVEREIGNTY.md)
 python3 test_vivodepot.py VIVODEPOT.html
 ```
 
-**1459 Tests in 32 Sektionen — 1458 bestehen.**
+**1.499 Tests in 83 Sektionen — 1.499 bestehen.**
 
-Abgedeckt: Syntax, Verschlüsselung, Navigation, PDF/Word-Export, Barrierefreiheit, Mobile, Offline, Krypto-Portabilität, Weitergabe-Datei, QR-Übergabe, Leseansicht, EUDI/FHIR-Import, Solid Pod, PROM (JSON-Vorlagen, FHIR-Export, EHDS-Indikator, PHQ-4-Routing) und mehr.
+Abgedeckt: Syntax, Verschlüsselung, Navigation, PDF/Word-Export, Barrierefreiheit, Mobile, Offline, Krypto-Portabilität, Weitergabe-Datei, QR-Übergabe (URL-Format + Mehr-Teile), Leseansicht-Logik, EUDI/FHIR-Import, Solid Pod, PROM-Modul, DSGVO-Consent, Vorlagen-Editor, Feedback-Formular, Prüftermin-Erinnerungen und mehr.
 
 ---
 
 ## Mitmachen
 
-[CONTRIBUTING.md](CONTRIBUTING.md) · [SECURITY.md](SECURITY.md) · [feedback@vivodepot.de](mailto:feedback@vivodepot.de)
+[CONTRIBUTING.md](CONTRIBUTING.md) · [SECURITY.md](SECURITY.md) · [hilfe@vivodepot.de](mailto:hilfe@vivodepot.de)
 
 ---
 

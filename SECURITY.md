@@ -1,6 +1,6 @@
 # VIVODEPOT — Sicherheitsrichtlinie
 
-*Version 1.0.0-beta.11 · April 2026*
+*Version 1.0.0-beta.16 · April 2026*
 
 ---
 
@@ -8,8 +8,13 @@
 
 | Version | Support |
 |---|---|
-| 1.0.0-beta.11 | Aktiv |
-| 1.0.0-beta.10 | Unterstützt — Update empfohlen |
+| 1.0.0-beta.16 | Aktiv |
+| 1.0.0-beta.15 | Unterstützt — Update empfohlen |
+| 1.0.0-beta.14 | Unterstützt — Update empfohlen |
+| 1.0.0-beta.13 | Unterstützt |
+| 1.0.0-beta.12 | Unterstützt |
+| 1.0.0-beta.11 | Unterstützt |
+| 1.0.0-beta.10 | Unterstützt |
 | 1.0.0-beta.9 | Unterstützt — Update empfohlen |
 | 1.0.0-beta.8 | Unterstützt |
 | 1.0.0-beta.7 | Unterstützt |
@@ -45,11 +50,19 @@ Das Fragment wird nicht an den Server gesendet. Nur der Browser und der Empfäng
 - Keine Cookies, kein localStorage, kein Tracking.
 - Logo als Base64 eingebettet — vollständig selbsttragend.
 
+### Feedback-Formular (seit beta.16)
+
+Das Inline-Feedback-Formular sendet keine Daten an Server. Text wird entweder per `mailto:` an die E-Mail-App übergeben oder in die Zwischenablage kopiert. Der Text verlässt das Gerät nur durch die Aktion des Nutzers.
+
+### Prüftermin-Erinnerungen (seit beta.16)
+
+Die Web Notifications API erfordert eine einmalige Browser-Berechtigung. Die Erlaubnis wird nie automatisch angefragt — nur auf expliziten Wunsch in den Einstellungen. Die Benachrichtigungen enthalten keine Nutzerdaten, nur generische Texte wie „Prüftermin fällig". Keine Server-Kommunikation.
+
 ---
 
 ## Sicherheitslücken melden
 
-**E-Mail:** [feedback@vivodepot.de](mailto:feedback@vivodepot.de)  
+**E-Mail:** [hilfe@vivodepot.de](mailto:hilfe@vivodepot.de)  
 **Betreff:** `[SECURITY] Kurzbeschreibung`
 
 Bitte keine öffentlichen GitHub-Issues für Sicherheitslücken.
@@ -85,3 +98,4 @@ Bitte keine öffentlichen GitHub-Issues für Sicherheitslücken.
 - **Gerätesicherheit:** Kompromittiertes Gerät (Malware, Keylogger) kann auch VIVODEPOT nicht schützen.
 - **Passwort nicht wiederherstellbar:** By Design.
 - **Privathandy bei QR-Übergabe:** Technisch nicht erzwingbar. Die Leseansicht enthält einen Hinweis auf Praxis-/Dienstgeräte. Verantwortung liegt bei der Institution.
+- **Web Notifications:** Benachrichtigungen werden vom Browser verwaltet. Auf iOS nicht unterstützt. Inhalt der Benachrichtigungen ist sichtbar auf dem Sperrbildschirm.
