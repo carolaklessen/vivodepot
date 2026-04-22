@@ -159,8 +159,8 @@ def main():
               next_script_open > last_script_close,
               "vCard-JS liegt außerhalb eines <script>-Tags — wird als Text gerendert!")
     else:
-        check("BUG-10: vCard-Code innerhalb <script>-Tag", False,
-              "Marker '// ── vCard 4.0 Export' nicht gefunden")
+        check("BUG-10: vCard-Marker '// ── vCard 4.0 Export' gefunden", False,
+              "Marker nicht gefunden — vCard-Check kann nicht ausgeführt werden")
 
     # BUG-11: mehr()-Aufrufe mit falschem 3. Argument (Template statt Array → filter-Fehler)
     mehr_calls = re.findall(r"mehr\('([^']+)',\s*'[^']*',\s*(`|\[)", html)
@@ -309,22 +309,28 @@ def main():
     check("Export: Checkliste enthält Gesundheit",   "get('hausarzt')" in html and "generateChecklist" in html)
     check("Export: FHIR R4 Bundle",                  "Bundle" in html and "generateFHIR" in html)
     check("Export: Behördendaten Kindergeld",        "Kindergeld" in html or "generateBehoerdendaten" in html)
-    check("Export: Behördendaten Elterngeld — Karte vorhanden",        "'elterngeld'" in html and "Elterngeld-Datenblatt" in html)
+    check("Export: Behördendaten Elterngeld — Karte vorhanden",
+          "'elterngeld'" in html and "Elterngeld-Datenblatt" in html)
     check("Export: Behördendaten Elterngeld — PDF-Logik vorhanden",    "type === 'elterngeld'" in html)
     check("Export: Behördendaten Elterngeld — Checkliste Geburtsurkunde", "Geburtsurkunde des Kindes" in html)
     check("Export: Behördendaten Elterngeld — Hinweis 3-Monats-Frist", "3 Monate" in html and "Elterngeld" in html)
     check("Export: Behördendaten Elterngeld — QR-Code Payload",        "t:'EG'" in html)
     check("Export: Behördendaten Elterngeld — im titles-Objekt",       "elterngeld:'Elterngeld'" in html)
-    check("Export: Behördendaten Grundsicherung — Karte vorhanden",    "'grundsicherung'" in html and "Grundsicherung-Datenblatt" in html)
+    check("Export: Behördendaten Grundsicherung — Karte vorhanden",
+          "'grundsicherung'" in html and "Grundsicherung-Datenblatt" in html)
     check("Export: Behördendaten Grundsicherung — PDF-Logik vorhanden","type === 'grundsicherung'" in html)
-    check("Export: Behördendaten Grundsicherung — Checkliste Kontoauszüge", "Kontoausz" in html and "grundsicherung" in html)
+    check("Export: Behördendaten Grundsicherung — Checkliste Kontoauszüge",
+          "Kontoausz" in html and "grundsicherung" in html)
     check("Export: Behördendaten Grundsicherung — SGB-Hinweis",        "SGB II" in html and "SGB XII" in html)
     check("Export: Behördendaten Grundsicherung — QR-Code Payload",    "t:'GS'" in html)
     check("Export: Behördendaten Grundsicherung — im titles-Objekt",   "grundsicherung:'Grundsicherung'" in html)
-    check("Export: Behördendaten Schwerbehinderung — Karte vorhanden", "'schwerbehinderung'" in html and "Schwerbehindertenantrag-Datenblatt" in html)
+    check("Export: Behördendaten Schwerbehinderung — Karte vorhanden",
+          "'schwerbehinderung'" in html and "Schwerbehindertenantrag-Datenblatt" in html)
     check("Export: Behördendaten Schwerbehinderung — PDF-Logik vorhanden", "type === 'schwerbehinderung'" in html)
-    check("Export: Behördendaten Schwerbehinderung — GdB-Feld",        "get('gdb')" in html and "schwerbehinderung" in html)
-    check("Export: Behördendaten Schwerbehinderung — Merkzeichen",     "Merkzeichen" in html and "schwerbehinderung" in html.lower())
+    check("Export: Behördendaten Schwerbehinderung — GdB-Feld",
+          "get('gdb')" in html and "schwerbehinderung" in html)
+    check("Export: Behördendaten Schwerbehinderung — Merkzeichen",
+          "Merkzeichen" in html and "schwerbehinderung" in html.lower())
     check("Export: Behördendaten Schwerbehinderung — Hinweis GdB 50",  "GdB von 50" in html)
     check("Export: Behördendaten Schwerbehinderung — QR-Code Payload", "t:'SB'" in html)
     check("Export: Behördendaten Schwerbehinderung — im titles-Objekt","schwerbehinderung:'Schwerbehinderung'" in html)
@@ -412,7 +418,8 @@ def main():
     # Journey 2: Rückkehr (Return-Overlay)
     check("Journey: Return-Overlay hat Weiche", "id=\"return-overlay\"" in html and "showAngehoerigenAuswahl()" in html)
     check("Journey: Return-Overlay zeigt Namen", "return-owner-label" in html)
-    check("Journey: returnContinue ruft safeRender", "function returnContinue() {\n  hideAllOverlays();\n  safeRender();" in html)
+    check("Journey: returnContinue ruft safeRender",
+          "function returnContinue() {\n  hideAllOverlays();\n  safeRender();" in html)
 
     # Journey 3: Gespeicherte Datei
     check("Journey: showSavedFileWelcome vorhanden", "function showSavedFileWelcome()" in html)
@@ -467,7 +474,8 @@ def main():
     check("Speichern-Erinnerung: Bar vorhanden", "save-reminder-bar" in html)
     check("Speichern-Erinnerung: dismissSaveReminder()", "function dismissSaveReminder" in html)
     check("Speichern-Erinnerung: saveAndDismiss()", "function saveAndDismiss" in html)
-    check("Fokus-Wizard: In Einstellungen erreichbar", "showGoalWizard" in html and "Fokus &auml;ndern" in html or "Fokus ändern" in html)
+    check("Fokus-Wizard: In Einstellungen erreichbar",
+          "showGoalWizard" in html and ("Fokus &auml;ndern" in html or "Fokus ändern" in html))
 
     # ═══════════════════════════════════════
     print("\n=== 12. PERSONA-FELDER ===")
@@ -672,7 +680,10 @@ def main():
     check("ARIA: aria-modal=true", 'aria-modal="true"' in html)
     check("ARIA: aria-live auf Bannern", "aria-live" in html)
     check("ARIA: aria-label auf Buttons", "aria-label" in html)
-    check("ARIA: role=alert in Update-Banner (JS)", 'role="alert"' in html or "role='alert'" in html or "setAttribute('role', 'alert')" in html or "setAttribute(\"role\", \"alert\")" in html)
+    check("ARIA: role=alert in Update-Banner (JS)",
+          'role="alert"' in html or "role='alert'" in html
+          or "setAttribute('role', 'alert')" in html
+          or 'setAttribute("role", "alert")' in html)
     check("ARIA: aria-labelledby", "aria-labelledby" in html)
     check("ARIA: label-Elemente", "<label" in html)
     check("ARIA: for-Attribut auf Labels", 'for="' in html)
@@ -822,7 +833,8 @@ def main():
     check("Notfall: Eigener Step 'notfall' in STEPS",    "{ id: 'notfall'" in html)
     check("Notfall: Renderer vorhanden",                   "notfall: () =>" in html)
     check("Notfall: nina_regionen Feld",                   "'nina_regionen'" in html or "'ks_nina_installiert'" in html)
-    check("Notfall: notfallvorrat_stand Feld",             "'notfallvorrat_stand'" in html or "'ks_wasser_liter'" in html)
+    check("Notfall: notfallvorrat_stand Feld",
+          "'notfallvorrat_stand'" in html or "'ks_wasser_liter'" in html)
     check("Notfall: notfall_treffpunkt Feld",              "'notfall_treffpunkt'" in html or "'ks_sammelplatz'" in html)
     check("Notfall: notfall_nachbar Feld",                 "'notfall_nachbar'" in html or "'ks_nachbar'" in html)
     check("Notfall: Vorrat-Checkliste interaktiv",         "vorrat_" in html and "NOTFALL_VORRAT_ITEMS" in html)
@@ -1008,7 +1020,8 @@ def main():
         ("Gesundheit: Allergien",           "allergien" in html),
         ("Gesundheit: Medikamente",         "medikamente" in html or "medikament" in html),
         ("Gesundheit: Organspende",         "organspende" in html.lower()),
-        ("Gesundheit: Patientenverfügung",  "patientenverfügung" in html.lower() or "patientenverfuegung" in html.lower()),
+        ("Gesundheit: Patientenverfügung",  "patientenverfügung" in html.lower()
+                                            or "patientenverfuegung" in html.lower()),
         ("Finanzen: IBAN",                  "iban" in html.lower()),
         ("Finanzen: Rente/Renten",         "rente" in html.lower()),
         ("Finanzen: Krypto/Bitcoin",        "krypto" in html.lower()),
@@ -1017,7 +1030,9 @@ def main():
         ("Versicherungen: KFZ",             "kfz" in html.lower() or "auto" in html.lower()),
         ("Versicherungen: Lebensversicherung","lebensversicherung" in html.lower()),
         ("Digital: Passwörter/Zugänge",    "digital" in html and "passwort" in html.lower()),
-        ("Digital: Social Media",           "social" in html.lower() or "instagram" in html.lower() or "facebook" in html.lower()),
+        ("Digital: Social Media",           "social" in html.lower()
+                                            or "instagram" in html.lower()
+                                            or "facebook" in html.lower()),
         ("Bestattung: Wünsche",             "bestattung" in html.lower()),
         ("Haustiere: Veterinär",            "haustier" in html.lower() or "tier" in html.lower()),
         ("Pflege: Pflegegrad",              "pflegegrad" in html.lower()),
@@ -1035,7 +1050,8 @@ def main():
     check("Update-Ext: Opt-in Verzögerung 4000ms",        "4000" in html and "showEmailOptin" in html)
     check("Update-Ext: Update-Check Verzögerung 5000ms",  "5000" in html and "checkForUpdates" in html)
     check("Update-Ext: vivodepot.de/newsletter",          "vivodepot.de/newsletter" in html)
-    check("Update-Ext: E-Mail Regex Validierung",         r"@[^\s@]+" in html or "test(email)" in html or "includes('@')" in html)
+    check("Update-Ext: E-Mail Regex Validierung",
+          r"@[^\s@]+" in html or "test(email)" in html or "includes('@')" in html)
     check("Update-Ext: vivodepot.de/datenschutz Link",   "vivodepot.de/datenschutz" in html)
     check("Update-Ext: Banner unter Topbar (top:68px)",   "68px" in html and "update-banner" in html)
     check("Update-Ext: Banner min-width 160px",           "160px" in html and "update-banner" in html)
@@ -1059,7 +1075,8 @@ def main():
     check("Vollmacht: Vollmacht-Bezug im Dokument", "Vollmacht" in html and "generateVorsorgevollmacht" in html)
     check("Vollmacht: Gesundheitsvollmacht Schritt 1–5", "gvwiz-step-info" in html)
     check("Vollmacht: Vorsorgevollmacht §§ BGB", "§" in html and "Vollmacht" in html)
-    check("Vollmacht: Patientenverfügung Bewusstlos", "bewusstlos" in html.lower() or "Bewusstlosigkeit" in html or "Patientenverfügung" in html)
+    check("Vollmacht: Patientenverfügung Bewusstlos",
+          "bewusstlos" in html.lower() or "Bewusstlosigkeit" in html or "Patientenverfügung" in html)
     check("Vollmacht: Vollmacht Hinweis Alleinlebende", "Alleinlebend oder verwitwet?" in html)
 
     # ═══════════════════════════════════════
@@ -1091,7 +1108,8 @@ def main():
     check("Eingabe: IBAN-Delegation nur auf INPUT",        "tagName" in html and "ibanFormat" in html)
 
     # Bestehende Validierung
-    check("Eingabe: validateField() IBAN-Prüfziffer",      "Mod 97" in html or "mod.97" in html.lower() or "% 97" in html)
+    check("Eingabe: validateField() IBAN-Prüfziffer",
+          "Mod 97" in html or "mod.97" in html.lower() or "% 97" in html)
     check("Eingabe: validateField() DE-IBAN 22 Zeichen",   "22" in html and "iban" in html.lower())
     check("Eingabe: validateField() Geburtsdatum Zukunft", "Geburtsdatum liegt in der Zukunft" in html)
     check("Eingabe: validateField() Alter über 120",       "120" in html and "geburtsdatum" in html.lower())
@@ -1116,7 +1134,8 @@ def main():
     check("Inaktiv: sessionStorage Datei-gespeichert",     "vivodepot_file_saved" in html)
     check("Inaktiv: saveAsHTML patchen",                   "vivodepot_file_saved" in html and "saveAsHTML" in html)
     check("Inaktiv: passive Event-Listener",               "passive: true" in html or "passive:true" in html)
-    check("Inaktiv: Mehrere Events (input/click/keydown)", "_idleTimer" in html and "keydown" in html and "touchstart" in html)
+    check("Inaktiv: Mehrere Events (input/click/keydown)",
+          "_idleTimer" in html and "keydown" in html and "touchstart" in html)
 
     # ═══════════════════════════════════════
     print("\n=== 39. VOLLSTÄNDIGKEITS-REGRESSION (Chat-Abgleich) ===")
@@ -1452,8 +1471,9 @@ def main():
     check("WG-16a: wg-overlay in ALL_OVERLAY_IDS registriert",
           all_ids_wg and 'wg-overlay' in all_ids_wg.group(1),
           "wg-overlay fehlt in ALL_OVERLAY_IDS — Dialog bleibt offen bei Overlay-Wechsel")
+    hide_fn_start = html.find('function hideAllOverlays')
     check("WG-16b: hideAllOverlays nutzt ALL_OVERLAY_IDS",
-          all_ids_wg and 'ALL_OVERLAY_IDS' in html[html.find('function hideAllOverlays'):html.find('function hideAllOverlays')+200],
+          all_ids_wg and 'ALL_OVERLAY_IDS' in html[hide_fn_start:hide_fn_start + 200],
           "hideAllOverlays nutzt ALL_OVERLAY_IDS nicht")
 
     # ── window.onerror: App-Zustandsprüfung ───────────────────────────────
@@ -2037,16 +2057,11 @@ def main():
     check("PROM entfernt: prom-Renderer nicht mehr vorhanden",
           "prom: () => `" not in html)
 
-    # ═══════════════════════════════════════
-    print("\n=== 61. PROM im QR-Export — entfernt (beta.13) ===")
-    # ═══════════════════════════════════════
-    # PROM-Score-Felder im Notfall-QR entfernt, da prom-Schritt entfernt.
-
-    check("QR-PROM entfernt: phq9_score nicht mehr in WG_FELDNAMEN als Pflichtfeld",
-          True)  # Kein Fehler — bewusste Entscheidung, kein Inhalt mehr
+    # PROM-Score-Felder im Notfall-QR ebenfalls entfernt (prom-Schritt entfernt).
+    # phq9_score ist bewusst kein WG_FELDNAMEN-Pflichtfeld mehr — kein aktiver Check nötig.
 
     # ═══════════════════════════════════════
-    print("\n=== 62. TEMPLATE-MECHANISMUS — LOADER (beta.12) ===")
+    print("\n=== 61. TEMPLATE-MECHANISMUS — LOADER (beta.12) ===")
     # ═══════════════════════════════════════
 
     # ---- Struktur: neuer Schritt ----
@@ -2126,7 +2141,7 @@ def main():
           "Diese Vorlage wirklich entfernen?" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 63. TEMPLATE-MECHANISMUS — RENDERER (beta.12) ===")
+    print("\n=== 62. TEMPLATE-MECHANISMUS — RENDERER (beta.12) ===")
     # ═══════════════════════════════════════
 
     # ---- Neue Hilfsfunktionen ----
@@ -2218,7 +2233,7 @@ def main():
           "prom: () => `" not in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 64. TEMPLATE-MECHANISMUS — SCORING-ENGINE (beta.12) ===")
+    print("\n=== 63. TEMPLATE-MECHANISMUS — SCORING-ENGINE (beta.12) ===")
     # ═══════════════════════════════════════
 
     # ---- Neue Hilfsfunktionen ----
@@ -2316,7 +2331,7 @@ def main():
           "function promScoreBox" not in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 65. TEMPLATE-MECHANISMUS — SAFETY-HANDLER (beta.12) ===")
+    print("\n=== 64. TEMPLATE-MECHANISMUS — SAFETY-HANDLER (beta.12) ===")
     # ═══════════════════════════════════════
 
     # ---- Neue Hilfsfunktionen ----
@@ -2424,7 +2439,7 @@ def main():
           "function promRadioRow" not in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 66. TEMPLATE-MECHANISMUS — FHIR-EXPORT (beta.12) ===")
+    print("\n=== 65. TEMPLATE-MECHANISMUS — FHIR-EXPORT (beta.12) ===")
     # ═══════════════════════════════════════
 
     # ---- Neue Hilfsfunktionen ----
@@ -2548,7 +2563,7 @@ def main():
           "function promRadioRow" not in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 67. TEMPLATE-MECHANISMUS — QR-UEBERGABE (beta.12) ===")
+    print("\n=== 66. TEMPLATE-MECHANISMUS — QR-UEBERGABE (beta.12) ===")
     # ═══════════════════════════════════════
 
     # ---- Neue Hilfsfunktionen ----
@@ -2644,7 +2659,7 @@ def main():
           "function promRadioRow" not in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 68. JSON-VORLAGEN ===")
+    print("\n=== 67. JSON-VORLAGEN ===")
     # ═══════════════════════════════════════
     # Prueft alle offiziellen JSON-Vorlagendateien im selben Verzeichnis
     # wie die HTML-Datei. Pruefung: Pflichtfelder gemaess tplValidate,
@@ -2824,8 +2839,8 @@ def main():
         has_safety_items=False,
     )
 
-    # === 69. IPS-UPGRADE — generateFHIR() (beta.14) ===
-    print("\n=== 69. IPS-UPGRADE — generateFHIR() (beta.14) ===")
+    # === 68. IPS-UPGRADE — generateFHIR() (beta.14) ===
+    print("\n=== 68. IPS-UPGRADE — generateFHIR() (beta.14) ===")
 
     fhir_block = re.search(
         r"function generateFHIR\(\)\s*\{.*?^\}",
@@ -2907,8 +2922,8 @@ def main():
     check("IPS: Alter Dateiname 'FHIR_R4_' entfernt",
           fhir_block is not None and "FHIR_R4_" not in fhir_block.group(0))
 
-    # === 70. BIBLIOTHEKEN — KEINE RAW-CONTROL-CHARACTERS (beta.14) ===
-    print("\n=== 70. BIBLIOTHEKEN — KEINE RAW-CONTROL-CHARACTERS (beta.14) ===")
+    # === 69. BIBLIOTHEKEN — KEINE RAW-CONTROL-CHARACTERS (beta.14) ===
+    print("\n=== 69. BIBLIOTHEKEN — KEINE RAW-CONTROL-CHARACTERS (beta.14) ===")
 
     # Verbotene Bytes: 0x00–0x08, 0x0B, 0x0C, 0x0E–0x1F
     # Erlaubt: 0x09 (Tab), 0x0A (Newline), 0x0D (CR)
@@ -2943,8 +2958,8 @@ def main():
         b"\x1b[" not in raw_bytes,
     )
 
-    # === 71. DSGVO-EINWILLIGUNGSDOKUMENTATION IM FHIR-EXPORT (beta.15) ===
-    print("\n=== 71. DSGVO-EINWILLIGUNGSDOKUMENTATION IM FHIR-EXPORT (beta.15) ===")
+    # === 70. DSGVO-EINWILLIGUNGSDOKUMENTATION IM FHIR-EXPORT (beta.15) ===
+    print("\n=== 70. DSGVO-EINWILLIGUNGSDOKUMENTATION IM FHIR-EXPORT (beta.15) ===")
 
     check("DSGVO: Consent-Ressource im FHIR-Export vorhanden",
           fhir_block is not None and "resourceType: 'Consent'" in fhir_block.group(0))
@@ -2967,8 +2982,8 @@ def main():
     check("DSGVO: Consent-UUID generiert",
           fhir_block is not None and "consentUUID = generateUUID()" in fhir_block.group(0))
 
-    # === 72. INSTITUTIONELLES REQUEST-TEMPLATE (beta.15) ===
-    print("\n=== 72. INSTITUTIONELLES REQUEST-TEMPLATE (beta.15) ===")
+    # === 71. INSTITUTIONELLES REQUEST-TEMPLATE (beta.15) ===
+    print("\n=== 71. INSTITUTIONELLES REQUEST-TEMPLATE (beta.15) ===")
 
     check("Template: Funktion downloadInstitutionTemplate vorhanden",
           "function downloadInstitutionTemplate()" in html)
@@ -2995,8 +3010,8 @@ def main():
     check("Template: Support-Block unter der Vorlagenliste platziert",
           html.index("support@vivodepot.de") > html.index("Geladene Vorlagen"))
 
-    # === 73. SUPPORTKANAL IN EINSTELLUNGEN (beta.15) ===
-    print("\n=== 73. SUPPORTKANAL IN EINSTELLUNGEN (beta.15) ===")
+    # === 72. SUPPORTKANAL IN EINSTELLUNGEN (beta.15) ===
+    print("\n=== 72. SUPPORTKANAL IN EINSTELLUNGEN (beta.15) ===")
 
     check("Support: Abschnitt 'Hilfe & Kontakt' vorhanden",
           "Hilfe &amp; Kontakt" in html or "Hilfe & Kontakt" in html)
@@ -3016,8 +3031,8 @@ def main():
     check("Support: Visuell hervorgehobener Block (border-left teal)",
           "border-left:4px solid var(--teal)" in html or "border-left: 4px solid var(--teal)" in html)
 
-    # === 74. SUPPORTKANAL — HILFE-LINK IM MORE-MENU (beta.15) ===
-    print("\n=== 74. SUPPORTKANAL — HILFE-LINK IM MORE-MENU (beta.15) ===")
+    # === 73. SUPPORTKANAL — HILFE-LINK IM MORE-MENU (beta.15) ===
+    print("\n=== 73. SUPPORTKANAL — HILFE-LINK IM MORE-MENU (beta.15) ===")
 
     check("Support: Hilfe-Link im More-Menu vorhanden",
           "Hilfe — hilfe@vivodepot.de" in html)
@@ -3044,15 +3059,15 @@ def main():
     check("Support: mailto support@ mit Anfrage-Betreff",
           "mailto:support@vivodepot.de?subject=Anfrage%20Institution" in html)
 
-    # === 75. TECHNISCHE SCHULDEN — EINSTELLUNGEN (beta.16) ===
-    print("\n=== 75. TECHNISCHE SCHULDEN — EINSTELLUNGEN (beta.16) ===")
+    # === 74. TECHNISCHE SCHULDEN — EINSTELLUNGEN (beta.16) ===
+    print("\n=== 74. TECHNISCHE SCHULDEN — EINSTELLUNGEN (beta.16) ===")
 
     fokus_count = html.count("field-section-title\">${tl('Fokus')}")
     check("Einstellungen: Fokus-Abschnitt nur einmal vorhanden",
           fokus_count == 1, f"{fokus_count} Treffer (erwartet: 1)")
 
-    # === 76. LOKALE NUTZUNGSSTATISTIK (beta.16) ===
-    print("\n=== 76. LOKALE NUTZUNGSSTATISTIK (beta.16) ===")
+    # === 75. LOKALE NUTZUNGSSTATISTIK (beta.16) ===
+    print("\n=== 75. LOKALE NUTZUNGSSTATISTIK (beta.16) ===")
 
     check("Statistik: Funktion statsIncrement vorhanden",
           "function statsIncrement(" in html)
@@ -3078,7 +3093,7 @@ def main():
           "vivo_stat_" in html and "catch" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 77. VORLAGEN-EDITOR (P1 Institutionen-Onboarding) ===")
+    print("\n=== 76. VORLAGEN-EDITOR (P1 Institutionen-Onboarding) ===")
     # ═══════════════════════════════════════
 
     # Zustandsvariablen
@@ -3162,7 +3177,7 @@ def main():
           "tpled-issuer" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 78. INLINE-FEEDBACK-FORMULAR (P2 Pilot-Feedback) ===")
+    print("\n=== 77. INLINE-FEEDBACK-FORMULAR (P2 Pilot-Feedback) ===")
     # ═══════════════════════════════════════
 
     # Overlay vorhanden
@@ -3227,7 +3242,7 @@ def main():
           html[html.find("function feedbackOpen"):html.find("function feedbackOpen") + 2000])
 
     # ═══════════════════════════════════════
-    print("\n=== 79. PRÜFTERMIN-ERINNERUNGEN (P3 Erinnerungsfunktion) ===")
+    print("\n=== 78. PRÜFTERMIN-ERINNERUNGEN (P3 Erinnerungsfunktion) ===")
     # ═══════════════════════════════════════
 
     # HTML-Element Hinweis-Balken
@@ -3306,7 +3321,7 @@ def main():
           "erinnerungNotifCheck(true)" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 80. PUBLIC-KEY-VERSCHLÜSSELUNG (P1 Stufe 1 — Key-Generierung) ===")
+    print("\n=== 79. PUBLIC-KEY-VERSCHLÜSSELUNG (P1 Stufe 1 — Key-Generierung) ===")
     # ═══════════════════════════════════════
 
     # Kern-Funktionen vorhanden
