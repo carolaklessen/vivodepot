@@ -292,12 +292,42 @@ def main():
     check("Word Patientenverfügung", 'generatePatientenverfuegung' in html)
     check("Word Gesundheitsvollmacht", 'generateGesundheitsvollmacht' in html)
     check("Checklist Export", 'generateChecklist' in html or 'Checkliste' in html)
-    check("FHIR R4 Export", 'generateFHIR' in html)
+    check("FHIR R4 Export", 'function generateFHIR' in html)
     check("FIM-JSON Export", 'exportFIMJson' in html)
-    check("Behördendaten Export", 'generateBehoerdendaten' in html)
+    check("Behördendaten Export", 'function generateBehoerdendaten' in html)
     check("Structured Import", 'importStructured' in html)
     check("jsPDF geladen", 'jspdf' in html.lower())
     check("docx geladen", 'docx@' in html)
+    check("Export: generateArztbogen() vorhanden", "function generateArztbogen" in html)
+    check("Export: generateScenarioPDF() vorhanden", "function generateScenarioPDF" in html)
+    check("Export: generateQRStickers() vorhanden", "function generateQRStickers" in html)
+    check("Export: generateHeimaufnahme() vorhanden", "function generateHeimaufnahme" in html)
+    check("Export: Szenario hospital",               "hospital" in html and "generateScenarioPDF" in html)
+    check("Export: Szenario emergency (Todesfall)",  "'emergency'" in html and "generateScenarioPDF" in html)
+    check("Export: Szenario pet (Haustier)",         "'pet'" in html and "generateScenarioPDF" in html)
+    check("Export: QR-Code-Bibliothek geladen",      "qrcode" in html.lower())
+    check("Export: Checkliste enthält Gesundheit",   "get('hausarzt')" in html and "generateChecklist" in html)
+    check("Export: FHIR R4 Bundle",                  "Bundle" in html and "generateFHIR" in html)
+    check("Export: Behördendaten Kindergeld",        "Kindergeld" in html or "generateBehoerdendaten" in html)
+    check("Export: Behördendaten Elterngeld — Karte vorhanden",        "'elterngeld'" in html and "Elterngeld-Datenblatt" in html)
+    check("Export: Behördendaten Elterngeld — PDF-Logik vorhanden",    "type === 'elterngeld'" in html)
+    check("Export: Behördendaten Elterngeld — Checkliste Geburtsurkunde", "Geburtsurkunde des Kindes" in html)
+    check("Export: Behördendaten Elterngeld — Hinweis 3-Monats-Frist", "3 Monate" in html and "Elterngeld" in html)
+    check("Export: Behördendaten Elterngeld — QR-Code Payload",        "t:'EG'" in html)
+    check("Export: Behördendaten Elterngeld — im titles-Objekt",       "elterngeld:'Elterngeld'" in html)
+    check("Export: Behördendaten Grundsicherung — Karte vorhanden",    "'grundsicherung'" in html and "Grundsicherung-Datenblatt" in html)
+    check("Export: Behördendaten Grundsicherung — PDF-Logik vorhanden","type === 'grundsicherung'" in html)
+    check("Export: Behördendaten Grundsicherung — Checkliste Kontoauszüge", "Kontoausz" in html and "grundsicherung" in html)
+    check("Export: Behördendaten Grundsicherung — SGB-Hinweis",        "SGB II" in html and "SGB XII" in html)
+    check("Export: Behördendaten Grundsicherung — QR-Code Payload",    "t:'GS'" in html)
+    check("Export: Behördendaten Grundsicherung — im titles-Objekt",   "grundsicherung:'Grundsicherung'" in html)
+    check("Export: Behördendaten Schwerbehinderung — Karte vorhanden", "'schwerbehinderung'" in html and "Schwerbehindertenantrag-Datenblatt" in html)
+    check("Export: Behördendaten Schwerbehinderung — PDF-Logik vorhanden", "type === 'schwerbehinderung'" in html)
+    check("Export: Behördendaten Schwerbehinderung — GdB-Feld",        "get('gdb')" in html and "schwerbehinderung" in html)
+    check("Export: Behördendaten Schwerbehinderung — Merkzeichen",     "Merkzeichen" in html and "schwerbehinderung" in html.lower())
+    check("Export: Behördendaten Schwerbehinderung — Hinweis GdB 50",  "GdB von 50" in html)
+    check("Export: Behördendaten Schwerbehinderung — QR-Code Payload", "t:'SB'" in html)
+    check("Export: Behördendaten Schwerbehinderung — im titles-Objekt","schwerbehinderung:'Schwerbehinderung'" in html)
     
     # ═══════════════════════════════════════
     print("\n=== 7. WIZARDS ===")
@@ -314,6 +344,15 @@ def main():
     }
     for name, fn in wizards.items():
         check(f"Wizard: {name}", f'function {fn}' in html)
+    check("Wizard: gwizClose() vorhanden",          "function gwizClose" in html)
+    check("Wizard: gwizNext() vorhanden",           "function gwizNext" in html)
+    check("Wizard: gwizPrev() vorhanden",           "function gwizPrev" in html)
+    check("Wizard: Fortschrittsbalken vorhanden",   "wizard-progress-bar" in html)
+    check("Wizard: Schritt-Info vorhanden",         "wizard-step-info" in html or "Schritt" in html)
+    check("Wizard: Zurück-Button vorhanden",        "wizard-btn-back" in html)
+    check("Wizard: Weiter-Button vorhanden",        "wizard-btn-next" in html)
+    check("Wizard: Schließen im Header",            'title="Schlie' in html)
+    check("Wizard: Schließen-Button hat sichtbaren Inhalt", 'title="Schließen">✕</button>' in html)
     
     # ═══════════════════════════════════════
     print("\n=== 8. ROBUSTHEIT ===")
@@ -333,6 +372,16 @@ def main():
     check("Profil: Dropdown UI", 'profile-dropdown' in html)
     check("Profil: STORE_KEY ist let (nicht const)", 'let STORE_KEY' in html)
     check("Profil: setActiveProfile()", 'function setActiveProfile' in html)
+    check("Store: localStorage.getItem verwendet", "localStorage.getItem(" in html)
+    check("Store: localStorage.setItem verwendet", "localStorage.setItem(" in html)
+    check("Store: kein undefiniertes _ls Objekt", "_ls.get(" not in html and "_ls.set(" not in html)
+    check("Store: async saveData()", "async function saveData" in html)
+    check("Store: async loadData()", "async function loadData" in html)
+    check("Store: saveAsHTML()", "function saveAsHTML" in html)
+    check("Store: showSaveFilePicker (USB)", "showSaveFilePicker" in html)
+    check("Store: importData()", "function importData" in html)
+    check("Store: exportJSON()", "exportJSON" in html)
+    check("Store: importStructured()", "importStructured" in html)
     
     # ═══════════════════════════════════════
     print("\n=== 10. UI & BRANDING ===")
@@ -504,7 +553,12 @@ def main():
     # ═══════════════════════════════════════
 
     check("Mobile: viewport-fit=cover", "viewport-fit=cover" in html)
-    check("Mobile: safe-area-inset am FAB", "safe-area-inset" in html)
+    check("Mobile: safe-area-inset-bottom",        "safe-area-inset-bottom" in html)
+    check("Mobile: safe-area-inset-right",         "safe-area-inset-right" in html)
+    check("Mobile: apple-mobile-web-app-capable",  "apple-mobile-web-app-capable" in html)
+    check("Mobile: apple-mobile-web-app-title",    "apple-mobile-web-app-title" in html)
+    check("Mobile: apple-mobile-web-app-status",   "apple-mobile-web-app-status-bar-style" in html)
+    check("Mobile: theme-color meta",              'name="theme-color"' in html)
     check("Mobile: @media print", "@media print" in html)
     check("Mobile: window.print()", "window.print" in html)
     check("Mobile: @media Breakpoints >= 3", html.count("@media") >= 3)
@@ -517,6 +571,12 @@ def main():
     check("Mobile: display:flex Layout", "display:flex" in html or "display: flex" in html)
     check("Mobile: flex-wrap vorhanden", "flex-wrap" in html)
     check("Mobile: grid-template-columns", "grid-template-columns" in html)
+    check("Mobile: FAB draggable mousedown",       "mousedown" in html and "btn._dragging" in html)
+    check("Mobile: FAB draggable touchstart",      "touchstart" in html and "onDown" in html)
+    check("Mobile: FAB touchmove preventDefault",  "preventDefault" in html and "touchmove" in html)
+    check("Mobile: FAB bounds (min 4px)",          "Math.max(4," in html)
+    check("Mobile: Systemschrift geladen",          "DM Sans" in html or "-apple-system" in html or "Georgia" in html)
+    check("Mobile: Lora Schrift geladen",          "Lora" in html)
 
     # ═══════════════════════════════════════
     print("\n=== 16. FOKUS-SYSTEM ===")
@@ -531,12 +591,19 @@ def main():
     check("Fokus: Ziel emergency", "'emergency'" in html)
     check("Fokus: Ziel health", "'health'" in html)
     check("Fokus: Ziel legal (Mein Wille)", "'legal'" in html)
+    check("Fokus: Modus 'start'",                  "'start'" in html)
+    check("Fokus: Modus 'all'",                    "'all'" in html)
+    check("Fokus: goalBtn() Hilfsfunktion",        "function goalBtn" in html or "goalBtn(" in html)
+    check("Fokus: selectedGoal Variable",          "selectedGoal" in html)
+    check("Fokus: Alle Bereiche anzeigen Button",  "Alle anzeigen" in html or "_goalMode=false" in html)
     check("Fokus: nextStep/prevStep via goToStep mit Fokus",
           "function nextStep" in html and "function prevStep" in html and
           "function goToStep" in html and "_goalMode" in html)
     check("Fokus: Fokus-Navigation — goToStep kennt _goalRelevant",
           "goToStep" in html and "_goalRelevant" in html and "_goalMode" in html)
-    check("Fokus: renderSidebar filtert Steps", "function renderSidebar" in html and "_goalRelevant" in html)
+    check("Fokus: Relevanz-Filterung in renderSidebar",
+          "_goalRelevant" in html[html.find("function renderSidebar"):html.find("function renderSidebar")+800]
+          if "function renderSidebar" in html else False)
     check("Fokus: updateFokusBarLabel()", "updateFokusBarLabel" in html)
     check("Fokus: fokus-bar-btn Element", "fokus-bar-btn" in html)
     check("Fokus: Fokus-Button in Einstellungen vorhanden", "Fokus &auml;ndern" in html or "Fokus ändern" in html)
@@ -586,12 +653,16 @@ def main():
     check("vCard: BEGIN:VCARD", "BEGIN:VCARD" in html)
     check("vCard: END:VCARD", "END:VCARD" in html)
     check("vCard: FN-Feld", "'FN:'" in html or '"FN:"' in html)
-    check("vCard: TEL-Feld", "'TEL;" in html or '"TEL;' in html)
+    check("vCard: TEL TYPE=VOICE",                 "TEL;TYPE=VOICE" in html)
     check("vCard: EMAIL-Feld", "'EMAIL:'" in html or '"EMAIL:"' in html)
     check("vCard: .vcf Dateiendung", ".vcf" in html)
     check("vCard: toast nach Export", "vCard exportiert" in html)
     check("vCard: parseVCard() Import", "parseVCard" in html)
     check("vCard: RFC 6350 Referenz", "RFC 6350" in html or "vCard 4.0" in html or "vcard" in html.lower())
+    check("vCard: PRODID Vivodepot",               "PRODID:-//Vivodepot" in html)
+    check("vCard: Blob text/vcard",                "text/vcard" in html)
+    check("vCard: Alle Kontakte Export",           "vivodepot-kontakte.vcf" in html)
+    check("vCard: Leere Kontakte Prüfung",         "Keine Kontakte" in html or "personen" in html)
 
     # ═══════════════════════════════════════
     print("\n=== 20. ARIA & BARRIEREFREIHEIT ===")
@@ -606,16 +677,23 @@ def main():
     check("ARIA: label-Elemente", "<label" in html)
     check("ARIA: for-Attribut auf Labels", 'for="' in html)
     check("ARIA: title-Attribute auf Buttons", 'title="' in html)
-    check("ARIA: toggleNacht()", "toggleNacht" in html)
-    check("ARIA: toggleKontrast()", "toggleKontrast" in html)
-    check("ARIA: toggleVorlesen()", "toggleVorlesen" in html)
-    check("ARIA: cycleFontSize()", "cycleFontSize" in html)
-    check("ARIA: fs-large CSS-Klasse", "fs-large" in html)
+    check("ARIA: toggleNacht()", "function toggleNacht" in html)
+    check("ARIA: toggleKontrast()", "function toggleKontrast" in html)
+    check("ARIA: toggleVorlesen()", "function toggleVorlesen" in html)
+    check("ARIA: cycleFontSize()", "function cycleFontSize" in html)
+    check("ARIA: fs-medium / fs-large Klassen",   "fs-medium" in html and "fs-large" in html)
     check("ARIA: high-contrast CSS-Klasse", "high-contrast" in html)
     check("ARIA: dark-mode CSS-Klasse", "dark-mode" in html)
     check("ARIA: 2px Input-Rahmen (Kontrast)", "border: 2px solid #a89e90" in html)
-    check("ARIA: toggleMikrofon() / Spracheingabe", "toggleMikrofon" in html or "mikrofon" in html.lower())
-    check("ARIA: toggleLupe()", "toggleLupe" in html)
+    check("ARIA: toggleMikrofon()",                "function toggleMikrofon" in html)
+    check("ARIA: toggleLupe()", "function toggleLupe" in html)
+    check("ARIA: Spracheingabe startDiktat()",     "function startDiktat" in html)
+    check("A11y: aria-label auf Schließen-Button", 'aria-label="Hinweis schlie' in html or 'aria-label="Schlie' in html)
+    check("A11y: Escape-Handler vorhanden",        "'Escape'" in html and "keydown" in html)
+    check("A11y: Escape schließt Crypto-Overlay",  "'Escape'" in html and "crypto-overlay" in html)
+    check("A11y: Escape schließt Wizards",         "'Escape'" in html and "gwiz-overlay" in html)
+    check("A11y: Escape schließt Email-Optin",     "'Escape'" in html and "email-optin-overlay" in html)
+    check("A11y: Escape schließt Suche",           "'Escape'" in html and "search-overlay" in html)
 
     # ═══════════════════════════════════════
     print("\n=== 21. NOTFALLVORSORGE & BBK ===")
@@ -671,29 +749,7 @@ def main():
     check("Krypto: 200000 Iterationen PBKDF2", "200000" in html or "100000" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 24. DATENSPEICHER & PROFIL ===")
-    # ═══════════════════════════════════════
-
-    check("Store: let STORE_KEY", "let STORE_KEY" in html)
-    check("Store: getProfileManifest()", "function getProfileManifest" in html)
-    check("Store: setActiveProfile()", "function setActiveProfile" in html)
-    check("Store: switchToProfile()", "switchToProfile" in html)
-    check("Store: addNewProfile()", "function addNewProfile" in html)
-    check("Store: updateProfileButton()", "function updateProfileButton" in html)
-    check("Store: profile-dropdown UI", "profile-dropdown" in html)
-    check("Store: localStorage.getItem verwendet", "localStorage.getItem(" in html)
-    check("Store: localStorage.setItem verwendet", "localStorage.setItem(" in html)
-    check("Store: kein undefiniertes _ls Objekt", "_ls.get(" not in html and "_ls.set(" not in html)
-    check("Store: async saveData()", "async function saveData" in html)
-    check("Store: async loadData()", "async function loadData" in html)
-    check("Store: saveAsHTML()", "function saveAsHTML" in html)
-    check("Store: showSaveFilePicker (USB)", "showSaveFilePicker" in html)
-    check("Store: importData()", "function importData" in html)
-    check("Store: exportJSON()", "exportJSON" in html)
-    check("Store: importStructured()", "importStructured" in html)
-
-    # ═══════════════════════════════════════
-    print("\n=== 25. SCHRITT-INHALTE ===")
+    print("\n=== 24. SCHRITT-INHALTE ===")
     # ═══════════════════════════════════════
 
     check("Inhalt: Vorname-Feld", "'vorname'" in html)
@@ -719,7 +775,7 @@ def main():
     check("Inhalt: selbstaendig_notfall", "'selbstaendig_notfall'" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 26. RECHT & EXTERNE LINKS ===")
+    print("\n=== 25. RECHT & EXTERNE LINKS ===")
     # ═══════════════════════════════════════
 
     check("Recht: EUPL-1.2 Lizenz", "EUPL" in html)
@@ -739,98 +795,13 @@ def main():
     check("Recht: Alleinlebend Vollmacht Hinweis", "Alleinlebend oder verwitwet?" in html)
     check("Recht: unwiederbringlich verloren (Krypto)", "unwiederbringlich" in html)
     check("Recht: Nachlassgericht (Alleinerziehend)", "Nachlassgericht hinterlegen" in html)
+    check("Recht: © 2026 Vivodepot",              "© 2026" in html)
+    check("Recht: Dokumente sind Entwürfe",        "Entwürfe" in html or "Entwurf" in html)
+    check("Recht: § BGB Referenzen",               '§' in html and ('BGB' in html or 'GG' in html))
 
 
     # ═══════════════════════════════════════
-    print("\n=== 27. MOBILE & RESPONSIVE ===")
-    # ═══════════════════════════════════════
-
-    check("Mobile: safe-area-inset-bottom",        "safe-area-inset-bottom" in html)
-    check("Mobile: safe-area-inset-right",         "safe-area-inset-right" in html)
-    check("Mobile: apple-mobile-web-app-capable",  "apple-mobile-web-app-capable" in html)
-    check("Mobile: apple-mobile-web-app-title",    "apple-mobile-web-app-title" in html)
-    check("Mobile: apple-mobile-web-app-status",   "apple-mobile-web-app-status-bar-style" in html)
-    check("Mobile: theme-color meta",              'name="theme-color"' in html)
-    check("Mobile: @media print vorhanden",        "@media print" in html)
-    check("Mobile: window.scrollTo vorhanden",     "scrollTo" in html)
-    check("Mobile: FAB draggable mousedown",       "mousedown" in html and "btn._dragging" in html)
-    check("Mobile: FAB draggable touchstart",      "touchstart" in html and "onDown" in html)
-    check("Mobile: FAB touchmove preventDefault",  "preventDefault" in html and "touchmove" in html)
-    check("Mobile: FAB bounds (min 4px)",          "Math.max(4," in html)
-    check("Mobile: input type=date vorhanden",     'type="date"' in html or "type='date'" in html)
-    check("Mobile: input type=email vorhanden",    'type="email"' in html or "type='email'" in html)
-    check("Mobile: autocomplete Attribute",        "autocomplete" in html)
-    check("Mobile: Systemschrift geladen",          "DM Sans" in html or "-apple-system" in html or "Georgia" in html)
-    check("Mobile: Lora Schrift geladen",          "Lora" in html)
-
-    # ═══════════════════════════════════════
-    print("\n=== 28. FOKUS-SYSTEM ===")
-    # ═══════════════════════════════════════
-
-    check("Fokus: goalBtn() Hilfsfunktion",        "function goalBtn" in html or "goalBtn(" in html)
-    check("Fokus: Modus 'start'",                  "'start'" in html)
-    check("Fokus: Modus 'family'",                 "'family'" in html)
-    check("Fokus: Modus 'emergency'",              "'emergency'" in html)
-    check("Fokus: Modus 'health'",                 "'health'" in html)
-    check("Fokus: Modus 'legal' (Vollmacht/Testament)", "'legal'" in html)
-    check("Fokus: Modus 'all'",                    "'all'" in html)
-    check("Fokus: goToStep() hat try/catch",
-          "function goToStep" in html and
-          "try {" in html[html.find("function goToStep"):html.find("function goToStep")+500])
-    check("Fokus: goToStep() catch mit console.error",
-          "console.error" in html[html.find("function goToStep"):html.find("function goToStep")+600])
-    check("Fokus: nextStep() vorhanden",           "function nextStep" in html)
-    check("Fokus: prevStep() vorhanden",           "function prevStep" in html)
-    check("Fokus: selectedGoal Variable",           "selectedGoal" in html)
-    check("Fokus: Alle Bereiche anzeigen Button",  "Alle anzeigen" in html or "_goalMode=false" in html)
-    check("Fokus: Relevanz-Filterung in renderSidebar",
-          "_goalRelevant" in html[html.find("function renderSidebar"):html.find("function renderSidebar")+800]
-          if "function renderSidebar" in html else False)
-
-    # ═══════════════════════════════════════
-    print("\n=== 29. BARRIEREFREIHEIT (ERWEITERT) ===")
-    # ═══════════════════════════════════════
-
-    check("A11y: aria-label auf FAB",              'aria-label' in html)
-    check("A11y: role=dialog auf Overlays",        'role="dialog"' in html)
-    check("A11y: aria-modal=true",                 'aria-modal="true"' in html)
-    check("A11y: aria-live auf Update-Banner",     'aria-live' in html)
-    check("A11y: aria-labelledby vorhanden",       "aria-labelledby" in html)
-    check("A11y: aria-label auf Schließen-Button", 'aria-label="Hinweis schlie' in html or 'aria-label="Schlie' in html)
-    check("A11y: Escape-Handler vorhanden",        "'Escape'" in html and "keydown" in html)
-    check("A11y: Escape schließt Crypto-Overlay",  "'Escape'" in html and "crypto-overlay" in html)
-    check("A11y: Escape schließt Wizards",         "'Escape'" in html and "gwiz-overlay" in html)
-    check("A11y: Escape schließt Email-Optin",     "'Escape'" in html and "email-optin-overlay" in html)
-    check("A11y: Escape schließt Suche",           "'Escape'" in html and "search-overlay" in html)
-    check("A11y: toggleVorlesen()",                "function toggleVorlesen" in html)
-    check("A11y: toggleKontrast()",                "function toggleKontrast" in html)
-    check("A11y: toggleNacht()",                   "function toggleNacht" in html)
-    check("A11y: cycleFontSize()",                 "function cycleFontSize" in html)
-    check("A11y: toggleLupe()",                    "function toggleLupe" in html)
-    check("A11y: toggleMikrofon()",                "function toggleMikrofon" in html)
-    check("A11y: Spracheingabe startDiktat()",     "function startDiktat" in html)
-    check("A11y: fs-medium / fs-large Klassen",   "fs-medium" in html and "fs-large" in html)
-    check("A11y: high-contrast Klasse",            "high-contrast" in html)
-    check("A11y: dark-mode Klasse",                "dark-mode" in html)
-
-    # ═══════════════════════════════════════
-    print("\n=== 30. VCARD & KONTAKTE ===")
-    # ═══════════════════════════════════════
-
-    check("vCard: exportVCard() vorhanden",        "function exportVCard" in html)
-    check("vCard: generateVCard() vorhanden",      "function generateVCard" in html)
-    check("vCard: PRODID Vivodepot",               "PRODID:-//Vivodepot" in html)
-    check("vCard: TEL TYPE=VOICE",                 "TEL;TYPE=VOICE" in html)
-    check("vCard: RFC 6350 vCard 4.0",             "RFC 6350" in html or "VERSION:4.0" in html)
-    check("vCard: .vcf Download",                  ".vcf" in html)
-    check("vCard: Blob text/vcard",                "text/vcard" in html)
-    check("vCard: Import parseVCard vorhanden",    "parseVCard" in html or "vcard" in html.lower())
-    check("vCard: Export Bestätigung toast()",     "vCard exportiert" in html or "generateVCard" in html)
-    check("vCard: Alle Kontakte Export",           "vivodepot-kontakte.vcf" in html)
-    check("vCard: Leere Kontakte Prüfung",         "Keine Kontakte" in html or "personen" in html)
-
-    # ═══════════════════════════════════════
-    print("\n=== 31. NOTFALL & KATASTROPHENSCHUTZ ===")
+    print("\n=== 26. NOTFALL & KATASTROPHENSCHUTZ ===")
     # ═══════════════════════════════════════
 
     check("Notfall: NOTFALL_VORRAT_ITEMS definiert", "NOTFALL_VORRAT_ITEMS" in html)
@@ -871,7 +842,7 @@ def main():
     check("Notfall: Liste hat genau 15 Einträge", vorrat_count == 15, f"Gefunden: {vorrat_count}")
 
     # ═══════════════════════════════════════
-    print("\n=== 32. BROWSER-VERHALTEN & ROBUSTHEIT ===")
+    print("\n=== 27. BROWSER-VERHALTEN & ROBUSTHEIT ===")
     # ═══════════════════════════════════════
 
     check("Browser: popstate Handler",             "popstate" in html)
@@ -890,9 +861,21 @@ def main():
     check("Browser: PWA beforeinstallprompt",      "beforeinstallprompt" in html)
     check("Browser: matchMedia standalone",        "display-mode: standalone" in html)
     check("Browser: iOS standalone detect",        "window.navigator.standalone" in html)
+    check("Robust: safeRender() mit catch", "function safeRender" in html and "catch" in html)
+    check("Robust: goToStep try/catch",
+          "try {" in html[html.find("function goToStep"):html.find("function goToStep")+800])
+    check("Robust: fetch mit catch", "fetch" in html and ".catch" in html)
+    check("Robust: clearTimeout nach fetch", "clearTimeout" in html)
+    check("Robust: catch(e) >= 20 Blöcke", html.count("catch(e)") + html.count("catch (e)") >= 20)
+    check("Robust: try/catch >= 20 Blöcke", html.count("try {") + html.count("try{") >= 20)
+    check("Robust: console.error für Entwickler", "console.error" in html)
+    check("Robust: Keine nicht-abgefangenen Promises", html.count(".catch(") >= 3)
+    check("Robust: vivoConfirm statt confirm()", "function vivoConfirm" in html and "if (!confirm(" not in html)
+    check("Robust: toast für Nutzerfeedback", "function toast" in html)
+    check("Robust: Daten-Fallback bei leerem Wert", "|| ''" in html or "|| \"\"" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 33. EXPORT-QUALITÄT ===")
+    print("\n=== 28. EXPORT-QUALITÄT ===")
     # ═══════════════════════════════════════
 
     check("Export: PDF generiert Titelseite",      "Mein Vivodepot" in html and "generatePDF" in html)
@@ -915,7 +898,7 @@ def main():
     check("Export: © 2026 Vivodepot",             "© 2026 Vivodepot" in html or "2026 Vivodepot" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 34. DATENSPEICHERUNG ===")
+    print("\n=== 29. DATENSPEICHERUNG ===")
     # ═══════════════════════════════════════
 
     check("Speicher: STORE_KEY let (nicht const)",    "let STORE_KEY" in html)
@@ -938,7 +921,7 @@ def main():
     check("Speicher: setActiveProfile()",             "function setActiveProfile" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 35. INTERNATIONALISIERUNG ===")
+    print("\n=== 30. INTERNATIONALISIERUNG ===")
     # ═══════════════════════════════════════
 
     en_block_start = html.find("var EN")
@@ -955,7 +938,7 @@ def main():
     check("i18n: tl('Fokus')",                    "tl('Fokus" in html or 'tl("Fokus' in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 36. PWA & INSTALLATION ===")
+    print("\n=== 31. PWA & INSTALLATION ===")
     # ═══════════════════════════════════════
 
     check("PWA: rel=manifest vorhanden",            'rel="manifest"' in html)
@@ -974,48 +957,7 @@ def main():
     check("PWA: Apple Touch Icon",                  "apple-touch-icon" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 37. LEGAL & COMPLIANCE ===")
-    # ═══════════════════════════════════════
-
-    check("Legal: EUPL-1.2 Lizenz",                "EUPL" in html)
-    check("Legal: © 2026 Vivodepot",              "© 2026" in html)
-    check("Legal: Keine Rechtsberatung Hinweis",   "Keine Rechtsberatung" in html)
-    check("Legal: Dokumente sind Entwürfe",        "Entwürfe" in html or "Entwurf" in html)
-    check("Legal: Datenschutz showDatenschutz()",  "showDatenschutz" in html)
-    check("Legal: Datenschutz-Erwähnung (DSGVO-konform)", "Datenschutz" in html)
-    check("Legal: EU AI Act Art. 50",              "EU AI Act" in html)
-    check("Legal: Kontakt hilfe@vivodepot.de",  "hilfe@vivodepot.de" in html)
-    check("Legal: GitHub-Link",                    "github.com" in html)
-    check("Legal: Organspende-Register Link",       "organspende-register" in html)
-    check("Legal: § 2077 BGB Testament",           "2077" in html)
-    check("Legal: § BGB Referenzen",               '§' in html and ('BGB' in html or 'GG' in html))
-    check("Legal: Alleinlebend-Warnung Vollmacht",  "Alleinlebend" in html)
-    check("Legal: Patchwork-Warnung Erbrecht",     "Stiefkinder" in html)
-    check("Legal: Unverheiratete Paare Warnung",   "nicht verheiratete Paare" in html)
-
-    # ═══════════════════════════════════════
-    print("\n=== 38. WIZARDS (ERWEITERT) ===")
-    # ═══════════════════════════════════════
-
-    check("Wizard: gwizOpen() Gesundheitskarte",   "function gwizOpen" in html)
-    check("Wizard: gwizClose() vorhanden",          "function gwizClose" in html)
-    check("Wizard: gwizNext() vorhanden",           "function gwizNext" in html)
-    check("Wizard: gwizPrev() vorhanden",           "function gwizPrev" in html)
-    check("Wizard: vvwizOpen() Vorsorgevollmacht",  "function vvwizOpen" in html)
-    check("Wizard: pvwizOpen() Patientenverfügung", "function pvwizOpen" in html)
-    check("Wizard: bwizOpen() Bestattung",          "function bwizOpen" in html)
-    check("Wizard: hwizOpen() Haustier",            "function hwizOpen" in html)
-    check("Wizard: gvwizOpen() Gesundheitsvollmacht","function gvwizOpen" in html)
-    check("Wizard: showGoalWizard() Fokus",        "function showGoalWizard" in html)
-    check("Wizard: Fortschrittsbalken vorhanden",   "wizard-progress-bar" in html)
-    check("Wizard: Schritt-Info vorhanden",         "wizard-step-info" in html or "Schritt" in html)
-    check("Wizard: Zurück-Button vorhanden",        "wizard-btn-back" in html)
-    check("Wizard: Weiter-Button vorhanden",        "wizard-btn-next" in html)
-    check("Wizard: Schließen im Header",            'title="Schlie' in html)
-    check("Wizard: Schließen-Button hat sichtbaren Inhalt", 'title="Schließen">✕</button>' in html)
-
-    # ═══════════════════════════════════════
-    print("\n=== 39. IMPORT-SYSTEM ===")
+    print("\n=== 32. IMPORT-SYSTEM ===")
     # ═══════════════════════════════════════
 
     check("Import: parseVCard() vorhanden",        "parseVCard" in html)
@@ -1030,7 +972,7 @@ def main():
     check("Import: FileReader onload",             "FileReader" in html and "onload" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 40. UX-DETAILS ===")
+    print("\n=== 33. UX-DETAILS ===")
     # ═══════════════════════════════════════
 
     check("UX: toast() Funktion",                  "function toast(" in html)
@@ -1055,7 +997,7 @@ def main():
     check("UX: stepDots() Hilfsfunktion",          "function stepDots" in html or "stepDots" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 41. INHALTLICHE VOLLSTÄNDIGKEIT ===")
+    print("\n=== 34. INHALTLICHE VOLLSTÄNDIGKEIT ===")
     # ═══════════════════════════════════════
 
     content_checks = [
@@ -1084,7 +1026,7 @@ def main():
         check(f"Inhalt: {label}", cond)
 
     # ═══════════════════════════════════════
-    print("\n=== 42. UPDATE-SYSTEM (ERWEITERT) ===")
+    print("\n=== 35. UPDATE-SYSTEM (ERWEITERT) ===")
     # ═══════════════════════════════════════
 
     check("Update-Ext: vivodepot_use_count gespeichert",  "vivodepot_use_count" in html)
@@ -1104,49 +1046,7 @@ def main():
 
 
     # ═══════════════════════════════════════
-    print("\n=== 43. EXPORTE — QUALITÄT ===")
-    # ═══════════════════════════════════════
-
-    check("Export: generateArztbogen() vorhanden", "function generateArztbogen" in html)
-    check("Export: generateScenarioPDF() vorhanden", "function generateScenarioPDF" in html)
-    check("Export: generateQRStickers() vorhanden", "function generateQRStickers" in html)
-    check("Export: generateHeimaufnahme() vorhanden", "function generateHeimaufnahme" in html)
-    check("Export: generateFHIR() vorhanden", "function generateFHIR" in html)
-    check("Export: exportFIMJson() vorhanden", "exportFIMJson" in html)
-    check("Export: generateBehoerdendaten() vorhanden", "function generateBehoerdendaten" in html)
-    check("Export: generateChecklist() vorhanden", "function generateChecklist" in html)
-    check("Export: Szenario hospital", "hospital" in html and "generateScenarioPDF" in html)
-    check("Export: Szenario emergency (Todesfall)", "'emergency'" in html and "generateScenarioPDF" in html)
-    check("Export: Szenario pet (Haustier)", "'pet'" in html and "generateScenarioPDF" in html)
-    check("Export: QR-Code-Bibliothek geladen", "qrcode" in html.lower())
-    check("Export: jsPDF-Bibliothek geladen", "jspdf" in html.lower())
-    check("Export: docx-Bibliothek geladen", "docx@" in html)
-    check("Export: Checkliste enthält Gesundheit", "get('hausarzt')" in html and "generateChecklist" in html)
-    check("Export: FHIR R4 Bundle", "Bundle" in html and "generateFHIR" in html)
-    check("Export: FIM-JSON Struktur", "exportFIMJson" in html)
-    check("Export: Behördendaten Kindergeld", "Kindergeld" in html or "generateBehoerdendaten" in html)
-    check("Export: Behördendaten Elterngeld — Karte vorhanden", "'elterngeld'" in html and "Elterngeld-Datenblatt" in html)
-    check("Export: Behördendaten Elterngeld — PDF-Logik vorhanden", "type === 'elterngeld'" in html)
-    check("Export: Behördendaten Elterngeld — Checkliste Geburtsurkunde", "Geburtsurkunde des Kindes" in html)
-    check("Export: Behördendaten Elterngeld — Hinweis 3-Monats-Frist", "3 Monate" in html and "Elterngeld" in html)
-    check("Export: Behördendaten Elterngeld — QR-Code Payload", "t:'EG'" in html)
-    check("Export: Behördendaten Elterngeld — im titles-Objekt", "elterngeld:'Elterngeld'" in html)
-    check("Export: Behördendaten Grundsicherung — Karte vorhanden", "'grundsicherung'" in html and "Grundsicherung-Datenblatt" in html)
-    check("Export: Behördendaten Grundsicherung — PDF-Logik vorhanden", "type === 'grundsicherung'" in html)
-    check("Export: Behördendaten Grundsicherung — Checkliste Kontoauszüge", "Kontoausz" in html and "grundsicherung" in html)
-    check("Export: Behördendaten Grundsicherung — SGB-Hinweis", "SGB II" in html and "SGB XII" in html)
-    check("Export: Behördendaten Grundsicherung — QR-Code Payload", "t:'GS'" in html)
-    check("Export: Behördendaten Grundsicherung — im titles-Objekt", "grundsicherung:'Grundsicherung'" in html)
-    check("Export: Behördendaten Schwerbehinderung — Karte vorhanden", "'schwerbehinderung'" in html and "Schwerbehindertenantrag-Datenblatt" in html)
-    check("Export: Behördendaten Schwerbehinderung — PDF-Logik vorhanden", "type === 'schwerbehinderung'" in html)
-    check("Export: Behördendaten Schwerbehinderung — GdB-Feld", "get('gdb')" in html and "schwerbehinderung" in html)
-    check("Export: Behördendaten Schwerbehinderung — Merkzeichen", "Merkzeichen" in html and "schwerbehinderung" in html.lower())
-    check("Export: Behördendaten Schwerbehinderung — Hinweis GdB 50", "GdB von 50" in html)
-    check("Export: Behördendaten Schwerbehinderung — QR-Code Payload", "t:'SB'" in html)
-    check("Export: Behördendaten Schwerbehinderung — im titles-Objekt", "schwerbehinderung:'Schwerbehinderung'" in html)
-
-    # ═══════════════════════════════════════
-    print("\n=== 44. VOLLMACHTEN & DOKUMENTE ===")
+    print("\n=== 36. VOLLMACHTEN & DOKUMENTE ===")
     # ═══════════════════════════════════════
 
     check("Vollmacht: generateVorsorgevollmacht()", "function generateVorsorgevollmacht" in html)
@@ -1163,27 +1063,7 @@ def main():
     check("Vollmacht: Vollmacht Hinweis Alleinlebende", "Alleinlebend oder verwitwet?" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 45. ROBUSTHEIT & FEHLERBEHANDLUNG ===")
-    # ═══════════════════════════════════════
-
-    check("Robust: window.onerror", "window.onerror" in html)
-    check("Robust: safeRender() mit catch", "function safeRender" in html and "catch" in html)
-    check("Robust: localStorage try/catch", "localStorage" in html and "try" in html and "localStorage" in html)
-    check("Robust: goToStep try/catch",
-          "try {" in html[html.find("function goToStep"):html.find("function goToStep")+800])
-    check("Robust: fetch mit catch", "fetch" in html and ".catch" in html)
-    check("Robust: AbortController Timeout", "AbortController" in html)
-    check("Robust: clearTimeout nach fetch", "clearTimeout" in html)
-    check("Robust: catch(e) >= 20 Blöcke", html.count("catch(e)") + html.count("catch (e)") >= 20)
-    check("Robust: try/catch >= 20 Blöcke", html.count("try {") + html.count("try{") >= 20)
-    check("Robust: console.error für Entwickler", "console.error" in html)
-    check("Robust: Keine nicht-abgefangenen Promises", html.count(".catch(") >= 3)
-    check("Robust: vivoConfirm statt confirm()", "function vivoConfirm" in html and "if (!confirm(" not in html)
-    check("Robust: toast für Nutzerfeedback", "function toast" in html)
-    check("Robust: Daten-Fallback bei leerem Wert", "|| ''" in html or "|| \"\"" in html)
-
-    # ═══════════════════════════════════════
-    print("\n=== 46. UPDATE-SYSTEM INTEGRATION ===")
+    print("\n=== 37. UPDATE-SYSTEM INTEGRATION ===")
     # ═══════════════════════════════════════
 
     check("Update: VIVODEPOT_VERSION Konstante", "VIVODEPOT_VERSION" in html)
@@ -1200,7 +1080,7 @@ def main():
     check("Update: Opt-in mit 4s Verzögerung", "4000" in html and "showEmailOptin" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 47. EINGABE-HILFE & VALIDIERUNG ===")
+    print("\n=== 38. EINGABE-HILFE & VALIDIERUNG ===")
     # ═══════════════════════════════════════
 
     # IBAN-Formatierung
@@ -1239,7 +1119,7 @@ def main():
     check("Inaktiv: Mehrere Events (input/click/keydown)", "_idleTimer" in html and "keydown" in html and "touchstart" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 48. VOLLSTÄNDIGKEITS-REGRESSION (Chat-Abgleich) ===")
+    print("\n=== 39. VOLLSTÄNDIGKEITS-REGRESSION (Chat-Abgleich) ===")
     # ═══════════════════════════════════════
 
     # Fokus-System: notfall muss in emergency UND family enthalten sein
@@ -1330,7 +1210,7 @@ def main():
 
 
     # ═══════════════════════════════════════
-    print("\n=== 48a. ERGÄNZUNGEN (Chat-Abgleich & Sessions) ===")
+    print("\n=== 40. ERGÄNZUNGEN (Chat-Abgleich & Sessions) ===")
     # ═══════════════════════════════════════
 
     # Persona-Felder aus Chat-Abgleich
@@ -1387,7 +1267,7 @@ def main():
     check("Fokus: Wizard nur bei fehlendem Fokus",        "savedFokus" in html and "showGoalWizard" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 49. VIEWPORT & LAYOUT-REGRESSION ===")
+    print("\n=== 41. VIEWPORT & LAYOUT-REGRESSION ===")
     # ═══════════════════════════════════════
 
     # BUG-12: .crypto-modal auf kleinen Bildschirmen (iPhone) oben/unten abgeschnitten.
@@ -1406,7 +1286,7 @@ def main():
         check("BUG-12: .crypto-modal CSS-Block gefunden", False, "Klasse nicht gefunden")
 
     # ═══════════════════════════════════════
-    print("\n=== 50. NEUE BUGS (BUG-NEW) ===")
+    print("\n=== 42. NEUE BUGS (BUG-NEW) ===")
     # ═══════════════════════════════════════
 
     # BUG-NEW-02: window.onerror darf bei Cross-Origin-Fehlern (Script error, Zeile 0, kein src)
@@ -1439,7 +1319,7 @@ def main():
               "btn.textContent-Ternary in updateFokusBarLabel() nicht gefunden")
 
     # ═══════════════════════════════════════
-    print("\n=== 51. KRYPTO-PORTABILITÄT (Salt in Datei) ===")
+    print("\n=== 43. KRYPTO-PORTABILITÄT (Salt in Datei) ===")
     # ═══════════════════════════════════════
 
     # BUG-SALT-01: Salt muss beim Speichern in die HTML-Datei eingebettet werden.
@@ -1472,7 +1352,7 @@ def main():
           "initBlock-Kommentar fehlt — Regex trifft gespeicherte Datei nicht beim Weiter-Speichern")
 
     # ═══════════════════════════════════════
-    print("\n=== 52. WEITERGABE-DATEI ===")
+    print("\n=== 44. WEITERGABE-DATEI ===")
     # ═══════════════════════════════════════
 
     # WG-01: Weitergabe-Teaser-Block im DOM
@@ -1577,7 +1457,7 @@ def main():
           "hideAllOverlays nutzt ALL_OVERLAY_IDS nicht")
 
     # ── window.onerror: App-Zustandsprüfung ───────────────────────────────
-    print("\n=== 52. WINDOW.ONERROR — APP-ZUSTANDSPRÜFUNG ===")
+    print("\n=== 45. WINDOW.ONERROR — APP-ZUSTANDSPRÜFUNG ===")
 
     # ONERR-1: window.onerror zeigt welcome-overlay NUR wenn App noch nicht gestartet
     onerror_match = re.search(
@@ -1613,7 +1493,7 @@ def main():
           "loadData() zeigt welcome-overlay bei Parse-Fehler ohne App-Zustandsprüfung")
 
     # ═══════════════════════════════════════
-    print("\n=== 52a. SPEICHERN-HINWEIS (Haftungsausschluss vor Export) ===")
+    print("\n=== 46. SPEICHERN-HINWEIS (Haftungsausschluss vor Export) ===")
     # ═══════════════════════════════════════
     check("Speichern-Hinweis: _saveHinweisGezeigt Flag",
           "_saveHinweisGezeigt" in html,
@@ -1658,7 +1538,7 @@ def main():
           "Gefunden: fetch() in showSavedFileWelcome — Offline-Versprechen gebrochen")
 
     # ═══════════════════════════════════════
-    print("\n=== 53. WCAG 2.2 BARRIEREFREIHEIT ===")
+    print("\n=== 47. WCAG 2.2 BARRIEREFREIHEIT ===")
     # ═══════════════════════════════════════
     # Prüfung der sechs neuen WCAG-2.2-Kriterien (gegenüber 2.1), die für
     # Vivodepot relevant sind. Siehe SOVEREIGNTY.md Sektion 2.7 für Übersicht.
@@ -1774,7 +1654,7 @@ def main():
               f"Nicht gefunden: {wcag_sov_pfad} — Begründung kann nicht geprüft werden")
 
     # ═══════════════════════════════════════
-    print("\n=== 54. IMMOBILIEN — KAUFVERTRAG UND KREDITVERTRAG ===")
+    print("\n=== 48. IMMOBILIEN — KAUFVERTRAG UND KREDITVERTRAG ===")
     # ═══════════════════════════════════════
 
     check("Immobilien: Kaufvertrag-Ablageort-Feld vorhanden", "'obj1_kaufvertrag'" in html)
@@ -1785,7 +1665,7 @@ def main():
     check("Immobilien: Kreditvertrag-Tooltip vorhanden", "Bank informiert" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 55. TESTAMENT — EHEVERTRAG ===")
+    print("\n=== 49. TESTAMENT — EHEVERTRAG ===")
     # ═══════════════════════════════════════
 
     check("Ehevertrag: Ablageort-Feld vorhanden", "'dok_ehevertrag'" in html)
@@ -1796,7 +1676,7 @@ def main():
     check("Ehevertrag: im Word-Export", html.count("get('dok_ehevertrag')") >= 2)
 
     # ═══════════════════════════════════════
-    print("\n=== 56. KINDER — BETREUUNGSMODELL UND GEBURTSURKUNDE ===")
+    print("\n=== 50. KINDER — BETREUUNGSMODELL UND GEBURTSURKUNDE ===")
     # ═══════════════════════════════════════
 
     check("Kinder: Betreuungsmodell-Feld vorhanden", "'betreuungsmodell'" in html)
@@ -1811,7 +1691,7 @@ def main():
     check("Kinder: addItem enthaelt geburtsurkunde_ort", "geburtsurkunde_ort:''" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 57. FINANZEN — ALTERSVORSORGE HERAUSGESTELLT ===")
+    print("\n=== 51. FINANZEN — ALTERSVORSORGE HERAUSGESTELLT ===")
     # ═══════════════════════════════════════
 
     check("Altersvorsorge: Abschnitt direkt im Finanzen-Step sichtbar",
@@ -1826,7 +1706,7 @@ def main():
           html.index("renderRentenBlocks()") < html.index("finanzen_mehr"))
 
     # ═══════════════════════════════════════
-    print("\n=== 58. DOKUMENTEN-ÜBERSICHT IM EXPORT ===")
+    print("\n=== 52. DOKUMENTEN-ÜBERSICHT IM EXPORT ===")
     # ═══════════════════════════════════════
 
     # Seite erscheint nur im PDF-Export, nicht als Navigationspunkt.
@@ -1858,7 +1738,7 @@ def main():
     # ─────────────────────────────────────────────────────────────────
     # 59. DOKUMENTEN-ÜBERSICHT IM WORD-EXPORT
     # ─────────────────────────────────────────────────────────────────
-    print("\n=== 59. DOKUMENTEN-ÜBERSICHT IM WORD-EXPORT ===")
+    print("\n=== 53. DOKUMENTEN-ÜBERSICHT IM WORD-EXPORT ===")
     check("DokUebersicht Word: Abschnitt 13 vorhanden",
           '"13. Dokumenten-\u00dcbersicht \u2014 Ablageorte"' in html)
     check("DokUebersicht Word: Beschreibungszeile vorhanden",
@@ -1883,7 +1763,7 @@ def main():
           html.count('13. Dokumenten-\u00dcbersicht') == 1)
 
     # ═══════════════════════════════════════
-    print("\n=== 60. ANF-07a — BASIS-ANAMNESE ===")
+    print("\n=== 54. ANF-07a — BASIS-ANAMNESE ===")
     # ═══════════════════════════════════════
 
     check("ANF-07a: mehr()-Block vorhanden",
@@ -1922,7 +1802,7 @@ def main():
           "'beruf_aktuell'" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 61. ANF-07b — FACHSPEZIFISCHE SICHERHEITSFELDER ===")
+    print("\n=== 55. ANF-07b — FACHSPEZIFISCHE SICHERHEITSFELDER ===")
     # ═══════════════════════════════════════
 
     check("ANF-07b: mehr()-Block vorhanden",
@@ -1973,7 +1853,7 @@ def main():
           html.index("'anf07b_fach'") < html.index("'gesundheit_mehr'"))
 
     # ═══════════════════════════════════════
-    print("\n=== 62. ANF-07c — ARZTBOGEN-EXPORTE UND WIZARD ===")
+    print("\n=== 56. ANF-07c — ARZTBOGEN-EXPORTE UND WIZARD ===")
     # ═══════════════════════════════════════
 
     check("ANF-07c: generateArztbogenRadiologie() definiert",
@@ -2040,7 +1920,7 @@ def main():
           "awizStep === 6" in html and "geriat_pflegegrad" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 63. BETA.10 — QR-ÜBERGABE URL-FORMAT ===")
+    print("\n=== 57. BETA.10 — QR-ÜBERGABE URL-FORMAT ===")
     # ═══════════════════════════════════════
 
     # QR_LESEN_URL-Konstante vorhanden und korrekt gesetzt
@@ -2064,7 +1944,7 @@ def main():
           "JSON.parse(rohText)" in html and "qreQrErkannt" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 64. BETA.10 — MEHR-TEILE-QR-CODES ===")
+    print("\n=== 58. BETA.10 — MEHR-TEILE-QR-CODES ===")
     # ═══════════════════════════════════════
 
     # Schwellwerte und Chunk-Logik
@@ -2102,7 +1982,7 @@ def main():
           'id="qr-multi-label"' in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 65. BETA.10 — ANF-UX-01 BIS ANF-UX-07 ===")
+    print("\n=== 59. BETA.10 — ANF-UX-01 BIS ANF-UX-07 ===")
     # ═══════════════════════════════════════
 
     # UX-01: Lock-Button vorhanden (SVG-Schlosssymbol, kein Emoji seit beta.10)
@@ -2141,7 +2021,7 @@ def main():
           "solidcommunity.net" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 66. PROM — entfernt (beta.13) ===")
+    print("\n=== 60. PROM — entfernt (beta.13) ===")
     # ═══════════════════════════════════════
     # Hardcoded PHQ-9/GAD-7/WHO-5 wurde in beta.13 entfernt.
     # Die Funktionalität wird durch den Template-Mechanismus abgedeckt.
@@ -2158,7 +2038,7 @@ def main():
           "prom: () => `" not in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 67. PROM im QR-Export — entfernt (beta.13) ===")
+    print("\n=== 61. PROM im QR-Export — entfernt (beta.13) ===")
     # ═══════════════════════════════════════
     # PROM-Score-Felder im Notfall-QR entfernt, da prom-Schritt entfernt.
 
@@ -2166,7 +2046,7 @@ def main():
           True)  # Kein Fehler — bewusste Entscheidung, kein Inhalt mehr
 
     # ═══════════════════════════════════════
-    print("\n=== 68. TEMPLATE-MECHANISMUS — LOADER (beta.12) ===")
+    print("\n=== 62. TEMPLATE-MECHANISMUS — LOADER (beta.12) ===")
     # ═══════════════════════════════════════
 
     # ---- Struktur: neuer Schritt ----
@@ -2246,7 +2126,7 @@ def main():
           "Diese Vorlage wirklich entfernen?" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 69. TEMPLATE-MECHANISMUS — RENDERER (beta.12) ===")
+    print("\n=== 63. TEMPLATE-MECHANISMUS — RENDERER (beta.12) ===")
     # ═══════════════════════════════════════
 
     # ---- Neue Hilfsfunktionen ----
@@ -2338,7 +2218,7 @@ def main():
           "prom: () => `" not in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 70. TEMPLATE-MECHANISMUS — SCORING-ENGINE (beta.12) ===")
+    print("\n=== 64. TEMPLATE-MECHANISMUS — SCORING-ENGINE (beta.12) ===")
     # ═══════════════════════════════════════
 
     # ---- Neue Hilfsfunktionen ----
@@ -2436,7 +2316,7 @@ def main():
           "function promScoreBox" not in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 71. TEMPLATE-MECHANISMUS — SAFETY-HANDLER (beta.12) ===")
+    print("\n=== 65. TEMPLATE-MECHANISMUS — SAFETY-HANDLER (beta.12) ===")
     # ═══════════════════════════════════════
 
     # ---- Neue Hilfsfunktionen ----
@@ -2544,7 +2424,7 @@ def main():
           "function promRadioRow" not in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 72. TEMPLATE-MECHANISMUS — FHIR-EXPORT (beta.12) ===")
+    print("\n=== 66. TEMPLATE-MECHANISMUS — FHIR-EXPORT (beta.12) ===")
     # ═══════════════════════════════════════
 
     # ---- Neue Hilfsfunktionen ----
@@ -2668,7 +2548,7 @@ def main():
           "function promRadioRow" not in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 73. TEMPLATE-MECHANISMUS — QR-UEBERGABE (beta.12) ===")
+    print("\n=== 67. TEMPLATE-MECHANISMUS — QR-UEBERGABE (beta.12) ===")
     # ═══════════════════════════════════════
 
     # ---- Neue Hilfsfunktionen ----
@@ -2764,7 +2644,7 @@ def main():
           "function promRadioRow" not in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 29. JSON-VORLAGEN ===")
+    print("\n=== 68. JSON-VORLAGEN ===")
     # ═══════════════════════════════════════
     # Prueft alle offiziellen JSON-Vorlagendateien im selben Verzeichnis
     # wie die HTML-Datei. Pruefung: Pflichtfelder gemaess tplValidate,
@@ -2944,8 +2824,8 @@ def main():
         has_safety_items=False,
     )
 
-    # === 74. IPS-UPGRADE — generateFHIR() (beta.14) ===
-    print("\n=== 74. IPS-UPGRADE — generateFHIR() (beta.14) ===")
+    # === 69. IPS-UPGRADE — generateFHIR() (beta.14) ===
+    print("\n=== 69. IPS-UPGRADE — generateFHIR() (beta.14) ===")
 
     fhir_block = re.search(
         r"function generateFHIR\(\)\s*\{.*?^\}",
@@ -3027,8 +2907,8 @@ def main():
     check("IPS: Alter Dateiname 'FHIR_R4_' entfernt",
           fhir_block is not None and "FHIR_R4_" not in fhir_block.group(0))
 
-    # === 75. BIBLIOTHEKEN — KEINE RAW-CONTROL-CHARACTERS (beta.14) ===
-    print("\n=== 75. BIBLIOTHEKEN — KEINE RAW-CONTROL-CHARACTERS (beta.14) ===")
+    # === 70. BIBLIOTHEKEN — KEINE RAW-CONTROL-CHARACTERS (beta.14) ===
+    print("\n=== 70. BIBLIOTHEKEN — KEINE RAW-CONTROL-CHARACTERS (beta.14) ===")
 
     # Verbotene Bytes: 0x00–0x08, 0x0B, 0x0C, 0x0E–0x1F
     # Erlaubt: 0x09 (Tab), 0x0A (Newline), 0x0D (CR)
@@ -3063,8 +2943,8 @@ def main():
         b"\x1b[" not in raw_bytes,
     )
 
-    # === 76. DSGVO-EINWILLIGUNGSDOKUMENTATION IM FHIR-EXPORT (beta.15) ===
-    print("\n=== 76. DSGVO-EINWILLIGUNGSDOKUMENTATION IM FHIR-EXPORT (beta.15) ===")
+    # === 71. DSGVO-EINWILLIGUNGSDOKUMENTATION IM FHIR-EXPORT (beta.15) ===
+    print("\n=== 71. DSGVO-EINWILLIGUNGSDOKUMENTATION IM FHIR-EXPORT (beta.15) ===")
 
     check("DSGVO: Consent-Ressource im FHIR-Export vorhanden",
           fhir_block is not None and "resourceType: 'Consent'" in fhir_block.group(0))
@@ -3087,8 +2967,8 @@ def main():
     check("DSGVO: Consent-UUID generiert",
           fhir_block is not None and "consentUUID = generateUUID()" in fhir_block.group(0))
 
-    # === 77. INSTITUTIONELLES REQUEST-TEMPLATE (beta.15) ===
-    print("\n=== 77. INSTITUTIONELLES REQUEST-TEMPLATE (beta.15) ===")
+    # === 72. INSTITUTIONELLES REQUEST-TEMPLATE (beta.15) ===
+    print("\n=== 72. INSTITUTIONELLES REQUEST-TEMPLATE (beta.15) ===")
 
     check("Template: Funktion downloadInstitutionTemplate vorhanden",
           "function downloadInstitutionTemplate()" in html)
@@ -3115,8 +2995,8 @@ def main():
     check("Template: Support-Block unter der Vorlagenliste platziert",
           html.index("support@vivodepot.de") > html.index("Geladene Vorlagen"))
 
-    # === 78. SUPPORTKANAL IN EINSTELLUNGEN (beta.15) ===
-    print("\n=== 78. SUPPORTKANAL IN EINSTELLUNGEN (beta.15) ===")
+    # === 73. SUPPORTKANAL IN EINSTELLUNGEN (beta.15) ===
+    print("\n=== 73. SUPPORTKANAL IN EINSTELLUNGEN (beta.15) ===")
 
     check("Support: Abschnitt 'Hilfe & Kontakt' vorhanden",
           "Hilfe &amp; Kontakt" in html or "Hilfe & Kontakt" in html)
@@ -3136,8 +3016,8 @@ def main():
     check("Support: Visuell hervorgehobener Block (border-left teal)",
           "border-left:4px solid var(--teal)" in html or "border-left: 4px solid var(--teal)" in html)
 
-    # === 78. SUPPORTKANAL — HILFE-LINK IM MORE-MENU (beta.15) ===
-    print("\n=== 78. SUPPORTKANAL — HILFE-LINK IM MORE-MENU (beta.15) ===")
+    # === 74. SUPPORTKANAL — HILFE-LINK IM MORE-MENU (beta.15) ===
+    print("\n=== 74. SUPPORTKANAL — HILFE-LINK IM MORE-MENU (beta.15) ===")
 
     check("Support: Hilfe-Link im More-Menu vorhanden",
           "Hilfe — hilfe@vivodepot.de" in html)
@@ -3164,15 +3044,15 @@ def main():
     check("Support: mailto support@ mit Anfrage-Betreff",
           "mailto:support@vivodepot.de?subject=Anfrage%20Institution" in html)
 
-    # === 79. TECHNISCHE SCHULDEN — EINSTELLUNGEN (beta.16) ===
-    print("\n=== 79. TECHNISCHE SCHULDEN — EINSTELLUNGEN (beta.16) ===")
+    # === 75. TECHNISCHE SCHULDEN — EINSTELLUNGEN (beta.16) ===
+    print("\n=== 75. TECHNISCHE SCHULDEN — EINSTELLUNGEN (beta.16) ===")
 
     fokus_count = html.count("field-section-title\">${tl('Fokus')}")
     check("Einstellungen: Fokus-Abschnitt nur einmal vorhanden",
           fokus_count == 1, f"{fokus_count} Treffer (erwartet: 1)")
 
-    # === 80. LOKALE NUTZUNGSSTATISTIK (beta.16) ===
-    print("\n=== 80. LOKALE NUTZUNGSSTATISTIK (beta.16) ===")
+    # === 76. LOKALE NUTZUNGSSTATISTIK (beta.16) ===
+    print("\n=== 76. LOKALE NUTZUNGSSTATISTIK (beta.16) ===")
 
     check("Statistik: Funktion statsIncrement vorhanden",
           "function statsIncrement(" in html)
@@ -3198,7 +3078,7 @@ def main():
           "vivo_stat_" in html and "catch" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 81. VORLAGEN-EDITOR (P1 Institutionen-Onboarding) ===")
+    print("\n=== 77. VORLAGEN-EDITOR (P1 Institutionen-Onboarding) ===")
     # ═══════════════════════════════════════
 
     # Zustandsvariablen
@@ -3282,7 +3162,7 @@ def main():
           "tpled-issuer" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 82. INLINE-FEEDBACK-FORMULAR (P2 Pilot-Feedback) ===")
+    print("\n=== 78. INLINE-FEEDBACK-FORMULAR (P2 Pilot-Feedback) ===")
     # ═══════════════════════════════════════
 
     # Overlay vorhanden
@@ -3347,7 +3227,7 @@ def main():
           html[html.find("function feedbackOpen"):html.find("function feedbackOpen") + 2000])
 
     # ═══════════════════════════════════════
-    print("\n=== 83. PRÜFTERMIN-ERINNERUNGEN (P3 Erinnerungsfunktion) ===")
+    print("\n=== 79. PRÜFTERMIN-ERINNERUNGEN (P3 Erinnerungsfunktion) ===")
     # ═══════════════════════════════════════
 
     # HTML-Element Hinweis-Balken
@@ -3426,7 +3306,7 @@ def main():
           "erinnerungNotifCheck(true)" in html)
 
     # ═══════════════════════════════════════
-    print("\n=== 84. PUBLIC-KEY-VERSCHLÜSSELUNG (P1 Stufe 1 — Key-Generierung) ===")
+    print("\n=== 80. PUBLIC-KEY-VERSCHLÜSSELUNG (P1 Stufe 1 — Key-Generierung) ===")
     # ═══════════════════════════════════════
 
     # Kern-Funktionen vorhanden
