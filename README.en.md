@@ -97,7 +97,7 @@ The software is free software. Citizens, research institutions, non-profits, and
 
 This construction combines three things that usually do not go together: maximum freedom for the people whose data is held; sufficient commercial viability to maintain the architecture over time; and a time-shifted open-source promise that ensures the solution never becomes permanently proprietary.
 
-Details on the licensing approach are in [LICENSE](LICENSE), [LICENSING.md](LICENSING.md), and at [vivodepot.de/lizenzierung](https://vivodepot.de/lizenzierung).
+Vivodepot as an application is **Open Source** under EUPL-1.2 — free for all, without restriction. The **template mechanism** (provider-supplied templates, companion schemata, trust-authority substance) is licensed under BUSL-1.1 with automatic conversion to EUPL-1.2 after four years; institutional use processing personal data of more than 1,000 individuals requires a commercial licence. Details: [LICENSE](LICENSE), [LICENSING.md](LICENSING.md), [vivodepot.de/lizenzierung](https://vivodepot.de/lizenzierung).
 
 ## Responsibility
 

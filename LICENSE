@@ -1,68 +1,95 @@
 Vivodepot — Lizenzen
 ====================
 
-Dieses Repository steht unter einem zweistufigen Lizenzmodell: BUSL-1.1
-für aktuelle Versionen, mit automatischer Konversion zu EUPL-1.2 nach
-vier Jahren. Eine ausführliche Erklärung in einfacher Sprache findet
-sich in LICENSING.md.
-
-Die Markenrichtlinie zur Wortmarke „Vivodepot" steht in TRADEMARK.md
-und ist nicht Teil dieser Code-Lizenz.
+Dieses Repository enthält zwei Substanz-Schichten mit unterschiedlichen
+Lizenzen. Eine ausführliche Erklärung in einfacher Sprache findet sich
+in LICENSING.md. Die Markenrichtlinie zur Wortmarke „Vivodepot" steht
+in TRADEMARK.md und ist nicht Teil dieser Code-Lizenzen.
 
 
-Business Source License 1.1 — aktuelle Version
------------------------------------------------
+1. App-Code — EUPL-1.2
+-----------------------
 
-Licensed Work:    Vivodepot 1.0.0-beta.16
-Licensor:         Carola Klessen, Berlin, Deutschland
-Additional Use
-  Grant:          Use of the Licensed Work in a production environment by
-                  an organization processing personal data of fewer than
-                  1,000 individuals is permitted. Non-commercial use,
-                  research use, educational use, and use by individuals
-                  is permitted without restriction.
+Die Vivodepot-Anwendung als Ganzes ist Open Source unter der European
+Union Public Licence v1.2 (EUPL-1.2).
 
-                  Use of the Licensed Work in a production environment by
-                  an organization processing personal data of more than
-                  1,000 individuals requires a commercial license
-                  obtainable from the Licensor.
+Umfang dieser Schicht:
 
-Change Date:      2030-05-01
-Change License:   EUPL-1.2 (European Union Public Licence v1.2)
+  - VIVODEPOT.html
+  - vivodepot-lesen.html
+  - test_vivodepot.py
+  - index.html
+  - alle weiteren Dateien außerhalb der Template-Library-Schicht
+    (siehe Punkt 2)
 
-For information about alternative licensing arrangements, please contact
-lizenz@vivodepot.de or legal@vivodepot.de.
+Lizenztext:
+
+  Licensed under the EUPL, Version 1.2 only (the "Licence").
+  You may not use this work except in compliance with the Licence.
+  You may obtain a copy of the Licence at:
+  https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the Licence is distributed on an
+  "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+  either express or implied. See the Licence for the specific
+  language governing permissions and limitations under the Licence.
+
+EUPL © the European Union 2007, 2016
+
+
+2. Template-Mechanismus — BUSL-1.1
+-----------------------------------
+
+Die Template-Library (anbieter-mitgebrachte Vorlagen, Companion-Schema-
+Dateien, der zugehörige Übergabe- und Trust-Authority-Mechanismus) ist
+unter der Business Source License 1.1 lizenziert. Vier Jahre nach
+Veröffentlichung jeder einzelnen Version konvertiert diese Schicht
+automatisch zu EUPL-1.2.
+
+Umfang dieser Schicht:
+
+  - gad7-de-v1.json
+  - phq4-de-v1.json
+  - phq9-de-v1.json
+  - who5-de-v1.json
+  - alle weiteren Dateien im (zukünftigen) Verzeichnis templates/
+  - Companion-Schema-Templates (sobald via AP 8 eingeführt)
+
+BUSL-1.1-Header für die Template-Library:
+
+  Licensed Work:    Vivodepot Template Library 1.0.0-beta.16
+  Licensor:         Carola Klessen, Berlin, Deutschland
+  Additional Use
+    Grant:          Use of the Template Library in a production
+                    environment by an organization processing personal
+                    data of fewer than 1,000 individuals is permitted.
+                    Non-commercial use, research use, educational use,
+                    and use by individuals is permitted without
+                    restriction.
+
+                    Use of the Template Library in a production
+                    environment by an organization processing personal
+                    data of more than 1,000 individuals requires a
+                    commercial license obtainable from the Licensor.
+
+  Change Date:      2030-05-01
+  Change License:   EUPL-1.2 (European Union Public Licence v1.2)
 
 Notice: The Business Source License (this document, or the Business
 Source License as it may be modified from time to time) is not an Open
-Source license. However, the Licensed Work will eventually be made
-available under an Open Source license, as stated in this License.
+Source license. However, the Template Library will eventually be made
+available under EUPL-1.2, as stated in this License.
 
 Full BUSL-1.1 license text:
 https://mariadb.com/bsl11/
 
 
-European Union Public Licence v1.2 — Change License
-----------------------------------------------------
+Per-Version Change Dates (Template-Mechanismus)
+------------------------------------------------
 
-After the Change Date, the Licensed Work converts automatically to the
-European Union Public Licence v1.2 (EUPL-1.2). From that date on, the
-work may be used, modified, and distributed under the terms of the
-EUPL-1.2 without further restriction.
-
-Full EUPL-1.2 license text:
-https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
-
-EUPL © the European Union 2007, 2016
-
-
-Per-Version Change Dates
-------------------------
-
-Each Vivodepot version converts to EUPL-1.2 four years after its release
-date. The Change Date above applies to the version named in this file.
-Earlier and later versions carry their own Change Dates in their
-respective release commits.
+Jede Vivodepot-Version hat ihren eigenen Change Date für die Template-
+Mechanismus-Schicht. Die Tabelle führt die Daten:
 
   Version            Released      Change Date
   ----------------   -----------   -----------
@@ -70,14 +97,33 @@ respective release commits.
   1.0.0-beta.15      2026-04-21    2030-04-21
   (earlier betas)    see CHANGELOG.md
 
-Once a version's Change Date has passed, that version is permanently
-EUPL-1.2-licensed and may be used by anyone, including for commercial
-purposes, without further consent.
+Sobald der Change Date einer Version erreicht ist, ist die Template-
+Library dieser Version dauerhaft EUPL-1.2-lizenziert und kann von
+jedermann ohne Einschränkungen kommerziell genutzt werden.
 
 
-Contact
+3. Warum zwei Schichten
+------------------------
+
+Die Vivodepot-Anwendung ist Werkzeug. Sie soll für Bürger, Forschung,
+Bildung und kleine Akteure ohne Lizenzgebühren verfügbar sein —
+deshalb EUPL-1.2 für den App-Code.
+
+Der Template-Mechanismus ist Plattform. Über ihn werden anbieter-
+gebrachte Vorlagen verteilt und kryptographisch signiert. Dieser
+Mechanismus trägt die kommerzielle Tragfähigkeit von Vivodepot — über
+ihn kommen institutionelle Verträge zustande, die die Weiterentwicklung
+finanzieren. Deshalb BUSL-1.1 mit EUPL-1.2 als Change License für diese
+Schicht.
+
+Beide Schichten zusammen ergeben das Vivodepot-Lizenzmodell: maximale
+Freiheit für Personen, die Vivodepot nutzen wollen, plus tragende
+Gegenfinanzierung über die Template-Plattform.
+
+
+Kontakt
 -------
 
-Licensing:   lizenz@vivodepot.de · legal@vivodepot.de
-Trademark:   marken@vivodepot.de (TRADEMARK.md)
-General:     kontakt@vivodepot.de
+Lizenzfragen:        lizenz@vivodepot.de · legal@vivodepot.de
+Markenrichtlinie:    TRADEMARK.md · marken@vivodepot.de
+Allgemein:           kontakt@vivodepot.de
