@@ -5,8 +5,8 @@ applicationSuite: ~
 url: "https://github.com/carolaklessen/vivodepot"
 landingURL: "https://vivodepot.de"
 isBasedOn: ~
-softwareVersion: "1.0.0-beta.9"
-releaseDate: "2026-04-01"
+softwareVersion: "1.0.0-beta.16"
+releaseDate: "2026-05-01"
 logo: ~
 monochromeLogo: ~
 
@@ -117,8 +117,8 @@ description:
       - Open Source under EUPL-1.2
 
 legal:
-  license: EUPL-1.2
-  mainCopyrightOwner: "Vivodepot UG (haftungsbeschränkt)"
+  license: BUSL-1.1
+  mainCopyrightOwner: "Carola Klessen"
   repoOwner: "Carola Klessen"
   authorsFile: ~
 
@@ -126,8 +126,8 @@ maintenance:
   type: internal
   contacts:
     - name: Carola Klessen
-      email: feedback@vivodepot.de
-      affiliation: "Vivodepot UG (haftungsbeschränkt)"
+      email: kontakt@vivodepot.de
+      affiliation: "Vivodepot (in Gründung), Berlin"
 
 localisation:
   localisationReady: false

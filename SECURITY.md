@@ -1,6 +1,30 @@
-# VIVODEPOT — Sicherheitsrichtlinie
+# Vivodepot — Sicherheitsrichtlinie
 
-*Version 1.0.0-beta.16 · April 2026*
+*Stand: Mai 2026 · Version 1.0.0-beta.16*
+
+---
+
+## Sicherheitslücken melden
+
+**E-Mail:** [security@vivodepot.de](mailto:security@vivodepot.de)
+**Betreff:** `[SECURITY] Kurzbeschreibung`
+
+Bitte keine öffentlichen GitHub-Issues für Sicherheitslücken — diese erreichen Vivodepot über den vertraulichen Kanal schneller und schützen die Nutzer-Basis bis zur Behebung.
+
+### Was wir benötigen
+
+- Beschreibung der Lücke
+- Schritte zur Reproduktion
+- Betroffene Version(en)
+- Potenzielle Auswirkungen
+- Optional: Vorschlag zur Behebung
+
+### Was Sie erwarten können
+
+- Eingangsbestätigung innerhalb 48 Stunden
+- Regelmäßige Updates zum Bearbeitungsstand
+- Anerkennung in der Versionsnote (wenn gewünscht)
+- Bei kritischen Lücken: koordinierte Veröffentlichung nach Behebung
 
 ---
 
@@ -21,13 +45,15 @@
 | 1.0.0-beta.6 | Sicherheitsrelevanter Fehler (BUG-SALT) — Update empfohlen |
 | < 1.0.0-beta.6 | Nicht unterstützt |
 
+Version 1.0 ist in Entwicklung. Bei Veröffentlichung wird diese Tabelle entsprechend ergänzt.
+
 ---
 
 ## Sicherheitsarchitektur
 
 ### VIVODEPOT.html
 
-- **Keine Netzwerkkommunikation:** Die App sendet keinerlei Daten an externe Server.
+- **Keine Netzwerkkommunikation:** Die Anwendung sendet keinerlei Daten an externe Server.
 - **Lokale Verschlüsselung:** AES-256-GCM mit PBKDF2-HMAC-SHA256 (200.000 Iterationen, kryptographisch zufälliger Salt). Web Crypto API — keine externe Bibliothek.
 - **Salt in gespeicherter Datei (seit beta.7):** Auf jedem Gerät mit korrektem Passwort entschlüsselbar.
 - **Kein Server, kein Account, kein CDN.**
@@ -52,33 +78,11 @@ Das Fragment wird nicht an den Server gesendet. Nur der Browser und der Empfäng
 
 ### Feedback-Formular (seit beta.16)
 
-Das Inline-Feedback-Formular sendet keine Daten an Server. Text wird entweder per `mailto:` an die E-Mail-App übergeben oder in die Zwischenablage kopiert. Der Text verlässt das Gerät nur durch die Aktion des Nutzers.
+Das Inline-Feedback-Formular sendet keine Daten an Server. Text wird entweder per `mailto:` an die E-Mail-App übergeben oder in die Zwischenablage kopiert. Der Text verlässt das Gerät nur durch die Aktion der Person.
 
 ### Prüftermin-Erinnerungen (seit beta.16)
 
 Die Web Notifications API erfordert eine einmalige Browser-Berechtigung. Die Erlaubnis wird nie automatisch angefragt — nur auf expliziten Wunsch in den Einstellungen. Die Benachrichtigungen enthalten keine Nutzerdaten, nur generische Texte wie „Prüftermin fällig". Keine Server-Kommunikation.
-
----
-
-## Sicherheitslücken melden
-
-**E-Mail:** [hilfe@vivodepot.de](mailto:hilfe@vivodepot.de)  
-**Betreff:** `[SECURITY] Kurzbeschreibung`
-
-Bitte keine öffentlichen GitHub-Issues für Sicherheitslücken.
-
-### Was wir benötigen
-
-- Beschreibung der Lücke
-- Schritte zur Reproduktion
-- Betroffene Version(en)
-- Potenzielle Auswirkungen
-
-### Was Sie erwarten können
-
-- Eingangsbestätigung innerhalb 48 Stunden
-- Regelmäßige Updates zum Bearbeitungsstand
-- Anerkennung in der Versionsnote (wenn gewünscht)
 
 ---
 
@@ -95,7 +99,14 @@ Bitte keine öffentlichen GitHub-Issues für Sicherheitslücken.
 ## Bekannte Einschränkungen
 
 - **Kein Passwortschutz:** Ohne gesetztes Passwort sind Daten unverschlüsselt im localStorage. Empfehlung: Passwortschutz immer aktivieren.
-- **Gerätesicherheit:** Kompromittiertes Gerät (Malware, Keylogger) kann auch VIVODEPOT nicht schützen.
+- **Gerätesicherheit:** Kompromittiertes Gerät (Malware, Keylogger) kann auch Vivodepot nicht schützen.
 - **Passwort nicht wiederherstellbar:** By Design.
 - **Privathandy bei QR-Übergabe:** Technisch nicht erzwingbar. Die Leseansicht enthält einen Hinweis auf Praxis-/Dienstgeräte. Verantwortung liegt bei der Institution.
 - **Web Notifications:** Benachrichtigungen werden vom Browser verwaltet. Auf iOS nicht unterstützt. Inhalt der Benachrichtigungen ist sichtbar auf dem Sperrbildschirm.
+
+---
+
+## Kontakt
+
+- Sicherheitsmeldungen: [security@vivodepot.de](mailto:security@vivodepot.de)
+- Allgemein: [kontakt@vivodepot.de](mailto:kontakt@vivodepot.de)

@@ -1,18 +1,83 @@
-European Union Public Licence (EUPL) v. 1.2
+Vivodepot — Lizenzen
+====================
+
+Dieses Repository steht unter einem zweistufigen Lizenzmodell: BUSL-1.1
+für aktuelle Versionen, mit automatischer Konversion zu EUPL-1.2 nach
+vier Jahren. Eine ausführliche Erklärung in einfacher Sprache findet
+sich in LICENSING.md.
+
+Die Markenrichtlinie zur Wortmarke „Vivodepot" steht in TRADEMARK.md
+und ist nicht Teil dieser Code-Lizenz.
+
+
+Business Source License 1.1 — aktuelle Version
+-----------------------------------------------
+
+Licensed Work:    Vivodepot 1.0.0-beta.16
+Licensor:         Carola Klessen, Berlin, Deutschland
+Additional Use
+  Grant:          Use of the Licensed Work in a production environment by
+                  an organization processing personal data of fewer than
+                  1,000 individuals is permitted. Non-commercial use,
+                  research use, educational use, and use by individuals
+                  is permitted without restriction.
+
+                  Use of the Licensed Work in a production environment by
+                  an organization processing personal data of more than
+                  1,000 individuals requires a commercial license
+                  obtainable from the Licensor.
+
+Change Date:      2030-05-01
+Change License:   EUPL-1.2 (European Union Public Licence v1.2)
+
+For information about alternative licensing arrangements, please contact
+lizenz@vivodepot.de or legal@vivodepot.de.
+
+Notice: The Business Source License (this document, or the Business
+Source License as it may be modified from time to time) is not an Open
+Source license. However, the Licensed Work will eventually be made
+available under an Open Source license, as stated in this License.
+
+Full BUSL-1.1 license text:
+https://mariadb.com/bsl11/
+
+
+European Union Public Licence v1.2 — Change License
+----------------------------------------------------
+
+After the Change Date, the Licensed Work converts automatically to the
+European Union Public Licence v1.2 (EUPL-1.2). From that date on, the
+work may be used, modified, and distributed under the terms of the
+EUPL-1.2 without further restriction.
+
+Full EUPL-1.2 license text:
+https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
 
 EUPL © the European Union 2007, 2016
 
-This European Union Public Licence (the 'EUPL') applies to the Work (as
-defined below) which is provided under the terms of this Licence. Any use of
-the Work, other than as authorised under this Licence is prohibited (to the
-extent such use is covered by a right of the copyright holder of the Work).
 
-The Work is provided under the terms of this Licence when the Licensor (as
-defined below) has placed the following notice immediately following the
-copyright notice for the Work:
+Per-Version Change Dates
+------------------------
 
-Licensed under the EUPL
+Each Vivodepot version converts to EUPL-1.2 four years after its release
+date. The Change Date above applies to the version named in this file.
+Earlier and later versions carry their own Change Dates in their
+respective release commits.
 
-or has expressed by any other means his willingness to license under the EUPL.
+  Version            Released      Change Date
+  ----------------   -----------   -----------
+  1.0.0-beta.16      2026-05-01    2030-05-01
+  1.0.0-beta.15      2026-04-21    2030-04-21
+  (earlier betas)    see CHANGELOG.md
 
-Full licence text: https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+Once a version's Change Date has passed, that version is permanently
+EUPL-1.2-licensed and may be used by anyone, including for commercial
+purposes, without further consent.
+
+
+Contact
+-------
+
+Licensing:   lizenz@vivodepot.de · legal@vivodepot.de
+Trademark:   marken@vivodepot.de (TRADEMARK.md)
+General:     kontakt@vivodepot.de

@@ -1,8 +1,18 @@
-# VIVODEPOT — Mitmachen
+# Vivodepot — Mitwirken
 
-*Version 1.0.0-beta.16 · April 2026*
+*Stand: Mai 2026*
 
-Vielen Dank für Ihr Interesse an VIVODEPOT. Jede Rückmeldung hilft.
+Vielen Dank für Ihr Interesse an Vivodepot. Beiträge sind willkommen — Code, Dokumentation, kritische Reviews, Anwendungsszenarien, nationale Anpassungen.
+
+---
+
+## Aktueller Entwicklungsstand
+
+Vivodepot **beta.16** liegt öffentlich auf GitHub. **Version 1.0** mit Sorge-Struktur, übergabefähigen Vollmachten, Anlass-Wizards und neuer Nutzerführung wird derzeit auf einem internen Arbeitsbranch entwickelt; sie wird mit dem v1-Release in dieses Repository überführt.
+
+**Beiträge zur beta.16-Codebasis** sind willkommen, aber bitte beachten: beta.16 ist auf Stabilisierung ausgelegt, nicht auf Funktionserweiterung. Strukturelle Änderungen, neue Module und Architektur-Vorschläge gehen in den v1-Strang ein, nicht in beta.16.
+
+**Beiträge zur Architektur-Diskussion** (Konzepte, ADRs, Standardisierungs-Beiträge, nationale Anpassungen) sind unabhängig vom Release-Strang willkommen.
 
 ---
 
@@ -10,41 +20,62 @@ Vielen Dank für Ihr Interesse an VIVODEPOT. Jede Rückmeldung hilft.
 
 ### Fehler melden
 
-1. Prüfen Sie, ob der Fehler in der aktuellen Version (1.0.0-beta.16) noch vorhanden ist
-2. Öffnen Sie ein [GitHub Issue](https://github.com/carolaklessen/vivodepot/issues)
-3. Beschreiben Sie: Was haben Sie getan? Was ist passiert? Was hätten Sie erwartet?
-4. Nennen Sie Browser, Betriebssystem und Gerätetyp
+1. Prüfen Sie, ob der Fehler in der aktuellen veröffentlichten Version (beta.16) reproduzierbar ist.
+2. Öffnen Sie ein [GitHub Issue](https://github.com/carolaklessen/vivodepot/issues).
+3. Beschreiben Sie:
+   - Was haben Sie getan?
+   - Was ist passiert?
+   - Was hätten Sie erwartet?
+   - Browser, Betriebssystem, Gerätetyp.
+4. Wenn der Fehler reproduzierbar Sicherheitsrelevanz hat, melden Sie ihn bitte über [SECURITY.md](SECURITY.md), nicht öffentlich.
 
 ### Verbesserungen vorschlagen
 
-- GitHub Issues mit dem Label `enhancement`
-- E-Mail an [hilfe@vivodepot.de](mailto:hilfe@vivodepot.de)
+GitHub Issues mit dem Label `enhancement` oder per E-Mail an [kontakt@vivodepot.de](mailto:kontakt@vivodepot.de). Beschreiben Sie:
+
+- Welches Problem die Verbesserung lösen würde — möglichst aus konkreter Bürger- oder Institutions-Sicht.
+- Wie eine mögliche Lösung aussieht — auch grobe Skizzen helfen.
+- Welche Abwägungen oder Konsequenzen Sie bereits sehen.
 
 ### Code-Beiträge
 
-Da VIVODEPOT aus zwei selbsttragenden HTML-Dateien besteht, sind Code-Beiträge direkt möglich:
+Vivodepot besteht aus zwei selbsttragenden HTML-Dateien (`VIVODEPOT.html` und `vivodepot-lesen.html`) plus Test-Suite. Code-Beiträge folgen dem üblichen Fork-and-Pull-Request-Workflow:
 
-1. Fork erstellen
-2. Änderungen in `VIVODEPOT.html` und/oder `vivodepot-lesen.html` vornehmen
-3. Tests ausführen: `python3 test_vivodepot.py VIVODEPOT.html`
-4. Pull Request erstellen
+1. Repository forken
+2. Branch anlegen mit sprechendem Namen (`feature/...`, `fix/...`, `docs/...`)
+3. Änderungen vornehmen
+4. Tests ausführen: `python3 test_vivodepot.py VIVODEPOT.html`
+5. Pull Request erstellen, Bezug zu Issue oder Konzept-Diskussion verlinken
 
-**Bitte beachten:**
-- Keine externen Abhängigkeiten einführen (alles muss inline bleiben)
-- Barrierefreiheit nicht verschlechtern (Touch-Targets 44px, ARIA-Labels)
-- Bestehende Tests müssen weiterhin bestehen (1.499/1.499)
-- Neue Funktionen sollten durch Tests abgedeckt werden
-- Korrekte Orthographie und Kommasetzung in allen Texten, Labels und Fehlermeldungen
+### Bitte beachten
+
+- **Keine externen Abhängigkeiten einführen.** Vivodepot ist Single-File. Alle Bibliotheken bleiben inline. Pull Requests, die externe Netzwerkaufrufe oder CDN-Bezüge hinzufügen, werden abgelehnt.
+- **Vanilla-Tech-Stack.** Kein npm, kein Webpack, kein Framework, kein Transpiler. Pures HTML, CSS, JavaScript. Damit der Code in zehn Jahren noch in jedem Browser läuft.
+- **Barrierefreiheit nicht verschlechtern.** Touch-Targets ≥ 44 px (WCAG 2.2), ARIA-Labels, Tastaturnavigation, Schriftgrößen-Anpassung.
+- **Bestehende Tests müssen weiterhin laufen.** Neue Funktionen sollten durch Tests abgedeckt werden.
+- **Korrekte Orthographie und Kommasetzung** in allen Texten, Labels, Fehlermeldungen.
 
 ---
 
-## Testlauf
+## Beiträge auf Architektur-Ebene
 
-```bash
-python3 test_vivodepot.py VIVODEPOT.html
-```
+Besonders gesucht — und in vielen Fällen wichtiger als Code-Beiträge — sind Beiträge zur Architektur-Diskussion:
 
-Ergebnis muss `0 FAIL` sein, bevor eine Änderung als Baseline akzeptiert wird.
+### Nationale Anpassungen
+
+Vivodepot ist in Deutschland gebaut, mit deutschen rechtlichen Rahmen (BGB-Vollmachten, DSGVO-Umsetzung, Patientenrechtegesetz, ZenDiS-Souveränitätsprüfung). Eine in Deutschland gebaute Version bildet nicht automatisch ab, was in Frankreich, der Schweiz, Großbritannien, den Niederlanden oder den nordischen Ländern benötigt wird. Vivodepot ist so angelegt, dass nationale Versionen entstehen können — getragen von Personen, die das jeweilige Recht und die jeweilige Lebenswirklichkeit kennen.
+
+### Migrations-, Flucht- und Einwanderungsgeschichte
+
+Die Lebenswirklichkeit von Menschen mit Asyl-, Duldungs-, Aufenthalts- oder Einbürgerungsgeschichte ist datenarchitektonisch bisher nicht abgebildet. Beiträge in diese Richtung brauchen Kenntnis des Aufenthalts- und Asylrechts plus Mehrsprachigkeit über die häufigsten Sprachen der Einwanderergruppen hinweg. Vivodepot ist offen für solche Kooperationen.
+
+### Begleitete Souveränität
+
+Datensouveränität aus eigener Hand setzt voraus, dass die Person diese Hand auch hat. Wer auf Stellvertretung angewiesen ist, in Gewaltkontexten lebt, keinen sicheren Aufbewahrungsort hat oder digitale Kompetenzgefälle überbrücken muss — für diese Lebenslagen braucht es Begleitstrukturen. Vivodepot ist offen für die Zusammenarbeit mit Sozialverbänden, Beratungsstellen, Betreuungs- und Vormundschaftseinrichtungen.
+
+### Standardisierungs-Beiträge
+
+Vivodepot positioniert sich als Standardschicht, nicht als Anwendung. Beiträge in Standardisierungs-Gremien (HL7, IHE, ZenDiS-Konsultation, FIM, EUDI, EHDS) sind willkommen. Wer in solchen Gremien aktiv ist und Vivodepot dort sichtbar machen will, ist eingeladen, direkten Kontakt aufzunehmen.
 
 ---
 
@@ -52,31 +83,42 @@ Ergebnis muss `0 FAIL` sein, bevor eine Änderung als Baseline akzeptiert wird.
 
 | Datei | Inhalt |
 |---|---|
-| `VIVODEPOT.html` | Hauptanwendung — Einzeldatei, ca. 1,3 MB |
-| `vivodepot-lesen.html` | Eigenständige Leseansicht für QR-Codes und Weitergabe-Dateien |
-| `test_vivodepot.py` | Automatisierte Tests (Python, 1.499 Tests in 83 Sektionen) |
-| `CHANGELOG.md` | Versionshistorie |
+| `VIVODEPOT.html` | Hauptanwendung — Single-File |
+| `vivodepot-lesen.html` | Leseansicht für QR-Codes und Weitergabe-Dateien |
+| `test_vivodepot.py` | Test-Suite |
+| `README.md` / `README.en.md` | Architektur-Beschreibung plus Stand beta.16 |
+| `LICENSE` | Lizenz-Volltext (BUSL-1.1 → EUPL-1.2) |
+| `LICENSING.md` | Lizenzpolitik in einfacher Sprache |
+| `TRADEMARK.md` | Markenrichtlinie zur Wortmarke „Vivodepot" |
+| `SECURITY.md` | Sicherheitsrichtlinie und Meldewege |
+| `SOVEREIGNTY.md` | Selbstbewertung nach Souveränitätsrahmenwerken |
 | `DOCS.md` | Technische Dokumentation |
-| `INTEROPERABILITY.md` | Austauschformate, Standards, Konformitätsnachweise, Lückenanalyse |
+| `INTEROPERABILITY.md` | Austauschformate, Standards, Konformitätsnachweise |
 | `FAQ.md` | Häufige Fragen |
 | `QUICKSTART.md` | Schnellstart-Anleitung |
-| `SECURITY.md` | Sicherheitsrichtlinie |
-| `SOVEREIGNTY.md` | ZenDiS-Souveränitätsprüfung |
+| `CHANGELOG.md` | Versionshistorie |
+| `publiccode.yml` | Metadaten für openCode/ZenDiS-Registrierung |
 
 ---
 
-## KI-Entwicklung
+## KI-Transparenz
 
-VIVODEPOT wird mit KI-Unterstützung (Claude, Anthropic) entwickelt. Das ist in der App, im Code und in allen Dokumenten transparent ausgewiesen (EU AI Act Art. 50).
+Vivodepot wird mit Unterstützung von KI-Werkzeugen (Claude, Anthropic) entwickelt. Der Code wird vor Aufnahme in die veröffentlichte Version von der Verantwortlichen geprüft, getestet und freigegeben. Wenn Sie KI-Werkzeuge für Ihre Beiträge verwenden, kennzeichnen Sie dies bitte im Pull Request — entsprechend EU AI Act Art. 50.
 
 ---
 
 ## Lizenz
 
-Durch Ihren Beitrag stimmen Sie zu, dass Ihre Änderungen unter der [EUPL-1.2](LICENSE) veröffentlicht werden.
+Mit Ihrem Beitrag stimmen Sie zu, dass Ihre Änderungen unter den im Repository hinterlegten Lizenzbedingungen veröffentlicht werden — siehe [LICENSE](LICENSE) und [LICENSING.md](LICENSING.md). Für die jeweils aktuelle Version bedeutet das: BUSL-1.1, mit automatischer Konversion zu EUPL-1.2 nach vier Jahren.
+
+Beiträge zur Vivodepot-Codebasis dürfen Sie in Ihrem Lebenslauf, auf Ihrer Website und in beruflichen Profilen nennen — siehe Markenrichtlinie [TRADEMARK.md](TRADEMARK.md) §3.
 
 ---
 
 ## Kontakt
 
-[hilfe@vivodepot.de](mailto:hilfe@vivodepot.de) · [vivodepot.de](https://vivodepot.de)
+- Allgemein: [kontakt@vivodepot.de](mailto:kontakt@vivodepot.de)
+- Sicherheitslücken: [security@vivodepot.de](mailto:security@vivodepot.de) (siehe [SECURITY.md](SECURITY.md))
+- Lizenzfragen: [lizenz@vivodepot.de](mailto:lizenz@vivodepot.de)
+- Markenfragen: [marken@vivodepot.de](mailto:marken@vivodepot.de)
+- Web: [vivodepot.de](https://vivodepot.de)
