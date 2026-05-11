@@ -30,7 +30,7 @@ Vivodepot trägt diese Übergänge im Kern. Der Angehörigen-Modus, die Sorge-St
 
 Eine einzige Datei. Verschlüsselt. Auf einem Datenträger der Wahl. In der Hand der Person, der die Daten gehören.
 
-Diese Datei — wir nennen die Einträge in ihr Vivos — kann Gesundheitsdaten enthalten, Versicherungsunterlagen, Schulzeugnisse, Bankdokumente, Steuerunterlagen, persönliche Aufzeichnungen, Verträge, Vollmachten, alles, was ein Mensch im Verlauf seines Lebens an Daten ansammelt oder zugespielt bekommt. Die Datei ist nach offenen Standards strukturiert (FHIR R4 für medizinische Daten, weitere Standards je nach Domäne), AES-256-GCM verschlüsselt, single-file in einer Form, die ohne Internetzugang funktioniert.
+Diese Datei — wir nennen die Einträge in ihr Vivos — kann Gesundheitsdaten enthalten, Versicherungsunterlagen, Schulzeugnisse, Bankdokumente, Steuerunterlagen, persönliche Aufzeichnungen, Verträge, Vollmachten, alles, was ein Mensch im Verlauf seines Lebens an Daten ansammelt oder zugespielt bekommt. Die Datei ist nach offenen Standards strukturiert (vollständige Übersicht siehe [Offene Standards](#offene-standards)), AES-256-GCM verschlüsselt, single-file in einer Form, die ohne Internetzugang funktioniert.
 
 Institutionen können Vivodepot-Dateien lesen und schreiben, wenn die Person ihnen den Schlüssel gibt. Ohne Schlüssel sehen sie nichts. Mit Schlüssel sehen sie nur, was die Person freigibt.
 
@@ -52,13 +52,13 @@ Eine Vivodepot-Datei ist ein in sich geschlossenes Objekt — keine Datenbank, k
 
 Vivodepot funktioniert ohne Internetverbindung. Synchronisation, Online-Funktionen, Cloud-Backups sind optional und immer entschlüsselbar nur mit dem privaten Schlüssel der Person. Die Datei selbst hat keine externen Abhängigkeiten. Das ist nicht Nostalgie — es ist Resilienz gegen Ausfälle, gegen Übergriffe, gegen geopolitische Veränderungen.
 
-### Standards statt Eigenformate
+### Offene Standards statt Eigenformate
 
-Vivodepot baut auf FHIR R4, etablierten kryptographischen Verfahren (AES-256-GCM, demnächst auch Post-Quantum-fähige Verfahren), gängigen Datenformaten. Es erfindet nichts neu, was bereits gut steht. Das macht Vivodepot interoperabel mit allem, was institutionell schon existiert, und übergabefähig für die Zukunft.
+Vivodepot erfindet keine Datenformate. Es baut auf internationalen Spezifikationen, die Institutionen bereits betreiben und die langfristig lesbar bleiben. Eine vollständige Übersicht findet sich im Abschnitt [Offene Standards](#offene-standards).
 
 ### Lesbarkeit für die Person
 
-Eine Vivodepot-Datei muss für ihren Inhaber:innen mit zumutbarem Aufwand lesbar sein — nicht nur durch die Vivodepot-Software, sondern strukturell. Eine Person, die in zehn Jahren ihre Daten zurückholen will, soll das auch ohne den Anbieter Vivodepot tun können. Die Spezifikation ist offen, der Code ist quellenoffen.
+Eine Vivodepot-Datei muss für ihre Inhaber:innen mit zumutbarem Aufwand lesbar sein — nicht nur durch die Vivodepot-Software, sondern strukturell. Eine Person, die in zehn Jahren ihre Daten zurückholen will, soll das auch ohne den Anbieter Vivodepot tun können. Die Spezifikation ist offen, der Code ist quellenoffen.
 
 ### Compliance-Konformität als Werkzeug, nicht als Hindernis
 
@@ -66,9 +66,51 @@ Vivodepot ist so gebaut, dass Institutionen ihre regulatorischen Pflichten — D
 
 ## Was Vivodepot nicht ist
 
-Vivodepot ist keine Cloud-Lösung. Es ist keine zentrale Plattform. Es ist kein Login-System. Es ist keine Identity-Wallet im Sinne der EUDI Wallet (es kann mit ihr koexistieren, aber sie ersetzt nicht und sie wird nicht ersetzt). Es ist kein Konkurrent zu institutionellen Datenbanken — Institutionen behalten ihre Daten weiterhin. Es ist auch keine Blockchain, keine dezentrale Datenbank, kein neues Krypto-Konstrukt.
+Vivodepot ist keine Cloud-Lösung. Es ist keine zentrale Plattform. Es ist kein Login-System. Es ist keine Identity-Wallet im Sinne der EU Digital Identity Wallet — es kann mit ihr koexistieren, importiert aus ihr, ersetzt sie aber nicht und wird von ihr nicht ersetzt. Es ist kein Konkurrent zu institutionellen Datenbanken — Institutionen behalten ihre Daten weiterhin. Es ist auch keine Blockchain, keine dezentrale Datenbank, kein neues Krypto-Konstrukt.
 
 Es ist eine zusätzliche Schicht zwischen Person und Institution, in der die Person eine eigene, vollständige Kopie ihrer für sie relevanten Daten hält, sicher und unter ihrer Kontrolle.
+
+## Identifizierbarkeit und Interoperabilität
+
+Eine der Kernfunktionen von Vivodepot ist die bürger-initiierte Identifizierbarkeit: Nicht die Institution fragt Identitätsdaten ab — die Person legt sie aktiv vor, in einem Format, das die Institution lesen kann.
+
+### EUDIW-Anbindung
+
+Vivodepot importiert Identitätsdaten aus dem EU Digital Identity Wallet (EUDIW) im SD-JWT-Format (Selective Disclosure JWT gemäß eIDAS 2.0). Das bedeutet: Behördlich verbürgte Identitätsdaten — Ausweis, Meldeadresse, Sozialversicherungsnummer, Berufsqualifikationen — können aus dem staatlich ausgestellten Wallet in das persönliche Depot übertragen und dort als Grundlage für Identifizierung gegenüber Institutionen genutzt werden. Die Person wählt bei jeder Übergabe, welche Felder sie offenlegt.
+
+### Identitätsanker im Gesundheitskontext
+
+Im Gesundheitsbereich dient die FHIR-Patient-Resource als Identitätsanker. Sie enthält strukturierte Identifikatoren (GKV-Versichertennummer, Krankenhaus-interne IDs, KV-Nummern) und ist das Verbindungsstück zwischen der Person und ihren Gesundheitsdaten bei verschiedenen Leistungserbringern.
+
+### Beziehungscodierung und Vollmachten
+
+Vivodepot codiert Beziehungen nach HL7 V3 RoleCode — dem internationalen Standard für Rollen in Gesundheits- und Sorgekontexten. Wer für wen handelt (als Bevollmächtigte:r, als gesetzliche Betreuerin, als Erbin), ist damit in einem Format dokumentiert, das institutionelle Systeme lesen können. Vollmachten werden mit JWS-Signaturen (RFC 7515) versehen; die Trust-Authority-Substanz sichert die Echtheit anbieter-mitgebrachter Templates per W3C-Verifiable-Credentials-Zertifikat.
+
+### Ausgabeformate für Institutionen
+
+Institutionen empfangen Daten in Formaten, die in ihren Systemen direkt verarbeitbar sind: FHIR R4 für Gesundheitseinrichtungen, FIM-JSON für Behörden, SD-JWT für EUDIW-kompatible Systeme, strukturiertes JSON für alle anderen. Die Integration läuft nicht über eine Schnittstelle zu Vivodepot — sie läuft über das, was die Person aktiv übergibt.
+
+## Offene Standards
+
+Vivodepot verwendet ausschließlich offene, international spezifizierte Standards. Keine proprietären Formate, keine Vendor-Lock-in-Konstrukte.
+
+| Standard | Spezifikation | Anwendung in Vivodepot |
+|---|---|---|
+| FHIR R4 | HL7 FHIR Release 4 | Datenstruktur Gesundheitsdaten, Export, Import, IPS |
+| IPS | ISO 27269 / HL7 FHIR | International Patient Summary Export |
+| SD-JWT | IETF / eIDAS 2.0 | EUDIW-Import, selektive Offenlegung von Identitätsdaten |
+| eIDAS 2.0 | EU-Verordnung 910/2014 i.d.F. 2024 | Rahmen für Identifizierbarkeit und Wallet-Kompatibilität |
+| JWS | RFC 7515 | Vollmacht-Signaturen, Template-Übergabemechanismus |
+| W3C Verifiable Credentials | W3C | Anbieter-Zertifikate (Trust Authority) |
+| HL7 V3 RoleCode | HL7 | Beziehungscodierung (Vollmachten, Sorge, Stellvertretung) |
+| FIM-JSON | FIM-Standard Deutschland | Import/Export für Behördenkontexte |
+| AES-256-GCM | NIST FIPS 197 / SP 800-38D | Verschlüsselung der Depot-Datei |
+| PBKDF2-HMAC-SHA256 | NIST SP 800-132 | Schlüsselableitung aus Passwort |
+| vCard | RFC 6350 | Kontakt-Export |
+| RDF/Turtle | W3C | Solid Pod Export |
+| WCAG 2.2 | W3C | Barrierefreiheit |
+
+Interoperabilitäts-Details und Validierungsnachweise: [INTEROPERABILITY.md](INTEROPERABILITY.md).
 
 ## Was Vivodepot für Institutionen leistet
 
@@ -84,10 +126,57 @@ Die regulatorischen und technischen Voraussetzungen für eine solche Schicht sin
 - Die EU Digital Identity Wallet wird ab 2026/27 verpflichtend und schafft eine vertrauenswürdige Authentisierungsschicht, mit der Vivodepot zusammenwirken kann.
 - Data Governance Act und Data Act haben rechtliche Rahmen geschaffen, in denen Bürger:innen-zentrierte Datenarchitekturen erstmals klar regulatorisch verortet sind.
 - Strukturen wie der Sovereign Tech Fund (Förderung kritischer Open-Source-Infrastruktur) und das Zentrum Digitale Souveränität (ZenDiS) mit der Plattform OpenCode haben in Deutschland politische und finanzielle Voraussetzungen für souveräne Tech-Lösungen geschaffen.
-- FHIR R4 ist als internationaler Standard für medizinische Daten in Deutschland und der EU mittlerweile breit verankert.
 - Speziell in Deutschland verankert das vom Bundestag am 23. April 2026 beschlossene Vergabebeschleunigungsgesetz — vorbehaltlich der Bundesratszustimmung am 8. Mai 2026 und mit voraussichtlichem Inkrafttreten am 1. Juli 2026 — digitale Souveränität ausdrücklich als zulässiges qualitatives Zuschlagskriterium bei öffentlichen IT-Beschaffungen. Genannt sind Merkmale wie die Nutzung interoperabler und offener IT-Systeme, die Nachvollziehbarkeit und Kontrolle von Datenverarbeitungsvorgängen, Datenlokalisierung sowie die rechtliche, organisatorische und technische Immunität gegen unerwünschte Zugriffe — Eigenschaften, die Vivodepot strukturell trägt.
 
 Vor fünf Jahren wäre Vivodepot eine isolierte Vision gewesen. Heute ist es ein anschlussfähiger Baustein in einem politisch gewollten Korridor.
+
+## Beitrag zu den Nachhaltigkeitszielen der Vereinten Nationen
+
+Vivodepot ist als Architektur für Europa gebaut, folgt aber Prinzipien, die universell gelten — und adressiert gesellschaftliche Asymmetrien, die weit über Deutschland hinaus bestehen.
+
+**SDG 16 — Frieden, Gerechtigkeit und starke Institutionen**
+
+Der direkte Anknüpfungspunkt liegt bei Ziel 16.10: öffentlicher Zugang zu Informationen und Schutz der Grundfreiheiten. Das Recht auf informationelle Selbstbestimmung — in Deutschland seit 1983 Grundrecht (BVerfGE 65,1) — ist in der Praxis für die meisten Menschen kaum ausübbar, weil die eigenen Daten technisch und organisatorisch bei Institutionen liegen, nicht bei den Personen, denen sie gehören. Vivodepot macht aus diesem Recht eine ausübbare Funktion: eine Standardschicht, über die Bürgerinnen und Bürger ihre Daten halten, prüfen und gezielt weitergeben können — ohne Cloud-Abhängigkeit, ohne Plattform, ohne Vertrauen in Dritte.
+
+**SDG 3 — Gesundheit und Wohlergehen**
+
+Der Gesundheitsbereich ist strukturell besonders asymmetrisch: Diagnosen, Medikation, Pflegedokumentationen, Patientenverfügungen liegen verteilt über Praxen, Kliniken und Versicherungen — für Patientinnen und Patienten selbst oft nicht zugänglich. Vivodepot bildet Gesundheitsdaten nach offenen Standards ab (FHIR R4, IPS) und gibt sie in die Hand der Person: als Übergabedatei an die Notaufnahme, als Grundlage für die Heimaufnahme, als langfristiger Speicher für den Ernstfall.
+
+**SDG 10 — Weniger Ungleichheiten**
+
+Datensouveränität ist in der Praxis eine Frage von Ressourcen und Kompetenz. Wer sich in digitalen Systemen auskennt, wer Anwältinnen oder Anwälte bezahlen kann, wer keine kognitiven oder sprachlichen Barrieren hat, kann seine Rechte leichter durchsetzen. Vivodepot adressiert dies strukturell: durch WCAG-2.2-konforme Barrierefreiheit, durch eine Sorge-Struktur, die stellvertretendes Handeln für Angehörige technisch abbildet, und durch das Prinzip, dass die Software für alle Menschen dauerhaft kostenfrei bleibt.
+
+**Hinweis zur geografischen Ausrichtung**
+
+Vivodepot ist primär für europäische Rechtskontexte entwickelt. Die Offline-first-Architektur — keine Serverabhängigkeit, keine Cloud, kein Login — ist jedoch besonders wertvoll in Regionen mit eingeschränkter Konnektivität. Das Projekt ist ausdrücklich offen für die Adaption auf andere Rechtsräume und Lebenswirklichkeiten; die technische Architektur ist jurisdiktionsunabhängig.
+
+## Datenschutz und Datensicherheit
+
+Vivodepot behandelt personenbezogene Daten strukturell anders als serverbasierte Anwendungen: Die Daten verlassen das Gerät der nutzenden Person nicht, es sei denn, sie gibt sie aktiv frei.
+
+**1. Privacy by Design und Privacy by Default**
+
+Datenschutz ist architektonische Grundentscheidung. Verschlüsselung findet lokal statt, bevor Daten gespeichert werden. Kein Server empfängt Daten, keine Telemetrie wird erhoben, keine externen Skripte werden geladen. Keine Cookies, kein Tracking, keine Benutzerkonten.
+
+**2. Datensparsamkeit**
+
+Keine Pflichtfelder, keine Mindestdatenmenge, keine Datenerhebung durch die Software selbst. Vivodepot speichert nur, was die Person aktiv eingibt.
+
+**3. Zweckbindung**
+
+Weitergaben an Institutionen erfolgen ausschließlich durch explizite Handlung der Person. Jede Weitergabe ist selektiv: Die Person wählt, welche Felder sie übergibt.
+
+**4. Rechte der betroffenen Personen**
+
+Die nutzende Person ist technisch die einzige Inhaberin ihrer Daten. Alle Daten sind jederzeit einsehbar, änderbar, exportierbar oder durch Löschen der Datei vollständig entfernbar — ohne Antrag, ohne Wartezeit, ohne Drittbeteiligung. Da keine Daten bei Vivodepot liegen, entsteht für Vivodepot keine Auskunftspflicht gegenüber Dritten.
+
+**5. Datensicherheit**
+
+Technische Details, Schlüsselableitungsparameter und Sicherheitsarchitektur: [SECURITY.md](SECURITY.md). Sicherheitslücken bitte an [security@vivodepot.de](mailto:security@vivodepot.de) melden.
+
+**6. Lebenszyklusmanagement**
+
+Open Source unter EUPL-1.2, vollständiger Quellcode öffentlich prüfbar. Datenschutzrelevante Änderungen im [CHANGELOG.md](CHANGELOG.md). Da keine Nutzerdaten auf Servern von Vivodepot liegen, entfallen Datenmigrations-, Serverabschaltungs- und Drittanbieterrisiken strukturell.
 
 ## Wirtschaftlicher Ansatz
 
