@@ -15,6 +15,9 @@ Interoperabilität bedeutet in Vivodepot daher: die Fähigkeit, strukturierte
 Daten in etablierten offenen Standards zu erzeugen, die von anderen Systemen
 ohne Konvertierungsaufwand gelesen werden können.
 
+→ Vollständiges Standards-Register mit Implementations-Stand, Quellen und
+Roadmap: [STANDARDS.md](STANDARDS.md)
+
 ---
 
 ## Übersicht aller Austauschformate
