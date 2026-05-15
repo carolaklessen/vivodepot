@@ -411,5 +411,5 @@ alle Felder in einem offenen, dokumentierten Format enthält.
 
 ---
 
-*Vivodepot UG (haftungsbeschränkt) · Berlin · hilfe@vivodepot.de*
+*Vivodepot GmbH · Berlin · hilfe@vivodepot.de*
 *EUPL-1.2 · Entwickelt mit KI-Unterstützung (EU AI Act Art. 50)*

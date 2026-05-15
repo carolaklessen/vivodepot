@@ -795,7 +795,7 @@ def main():
     check("Recht: showDatenschutz()", "showDatenschutz" in html)
     check("Recht: Datenschutzinformationen", "Datenschutz" in html)
     check("Recht: KI-Hinweis EU AI Act", "EU AI Act" in html or "KI-Hinweis" in html)
-    check("Recht: Vivodepot UG (haftungsbeschränkt)", "UG" in html and "haftungsbeschränkt" in html)
+    check("Recht: Vivodepot GmbH", "UG" in html and "haftungsbeschränkt" in html)
     check("Recht: GitHub-Link Quellcode", "github.com" in html)
     check("Recht: joinup.ec.europa.eu EUPL", "joinup.ec.europa.eu" in html)
     check("Recht: Keine Rechtsberatung Hinweis", "Keine Rechtsberatung" in html)

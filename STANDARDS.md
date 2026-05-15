@@ -16,7 +16,7 @@ Vivodepot ist als Bürger-Daten-Container auf Interoperabilität mit institution
 - **Roadmap** — strategisch verankert in ADRs, Master-Briefing oder Verankerungs-Strategie, Implementation für 2026 oder 2027 geplant
 - **Rahmen** — regulatorischer oder lizenzrechtlicher Anschluss, kein eigener Standard im Code
 
-**Zählung für Webseiten-Aussage:** Sechs Implementations-Cluster (1–6) mit insgesamt 33 implementierten Standards. Cluster 7 und 8 sind regulatorische und lizenzrechtliche Rahmen, nicht im Standard-Count enthalten.
+**Zählung für Webseiten-Aussage:** Sechs Implementations-Cluster (1–6) mit insgesamt 32 implementierten Standards. Cluster 7 und 8 sind regulatorische und lizenzrechtliche Rahmen, nicht im Standard-Count enthalten.
 
 ---
 
@@ -180,6 +180,6 @@ Vollständiger Code-Audit über das öffentliche Repository: [gitlab.opencode.de
 
 ## Pflege dieses Dokuments
 
-Diese Datei wird bei jedem neuen Standard-Anschluss aktualisiert. Verantwortliche Pflege: Vivodepot UG (in Gründung). Änderungs-Substanz wird in den ADRs unter `docs/adr/` dokumentiert.
+Diese Datei wird bei jedem neuen Standard-Anschluss aktualisiert. Verantwortliche Pflege: Vivodepot GmbH (i.Gr.). Änderungs-Substanz wird in den ADRs unter `docs/adr/` dokumentiert.
 
 Bei Fragen zu Standards-Implementation oder -Konformität: [eu@vivodepot.de](mailto:eu@vivodepot.de) oder direkt im Repository als Issue.
