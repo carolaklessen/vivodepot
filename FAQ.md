@@ -13,7 +13,7 @@ Eine Einzeldatei-HTML-App zur Vorsorgedokumentation — Kontakte, Finanzen, Gesu
 Die Basisversion ist kostenlos. Zukünftige Premium-Funktionen sind in Planung.
 
 **Wer steckt dahinter?**
-Vivodepot GmbH, Berlin. Kontakt: [hilfe@vivodepot.de](mailto:hilfe@vivodepot.de)
+Vivodepot GmbH (i.Gr.), Berlin. Kontakt: [hilfe@vivodepot.de](mailto:hilfe@vivodepot.de)
 
 ---
 
