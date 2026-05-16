@@ -12,7 +12,7 @@ Vivodepot ist eine souveräne, offline-fähige Architektur für Bürger-Datenhal
 
 ## Zwei Schichten, zwei Lizenzen
 
-Vivodepot besteht aus zwei Substanz-Schichten mit unterschiedlichen Aufgaben — und entsprechend unterschiedlichen Lizenzen:
+Vivodepot besteht aus zwei Code-Schichten mit unterschiedlichen Aufgaben — und entsprechend unterschiedlichen Lizenzen:
 
 ### Schicht 1 — App-Code unter EUPL-1.2 (Open Source)
 
@@ -53,7 +53,7 @@ Eine Bürger-Datensouveränitäts-Plattform muss zwei Dingen gerecht werden, die
 Die Trennung in zwei Schichten löst diesen Konflikt:
 
 - **App-Code unter EUPL-1.2** — Werkzeug. Frei für alle, sofort. Maximale Verbreitung, maximale Freiheit. Das Werkzeug muss bei den Menschen ankommen, die es brauchen.
-- **Template-Mechanismus unter BUSL-1.1** — Plattform. Über sie werden anbieter-gebrachte Vorlagen verteilt und kryptographisch signiert; sie trägt die institutionelle Trust-Substanz. Hier finanzieren Institutionen, die Vivodepot strukturell einsetzen, die Weiterentwicklung. Nach vier Jahren wird auch diese Schicht frei.
+- **Template-Mechanismus unter BUSL-1.1** — Plattform. Über sie werden anbieter-gebrachte Vorlagen verteilt und kryptographisch signiert; sie trägt die institutionelle Trust-Schicht. Hier finanzieren Institutionen, die Vivodepot strukturell einsetzen, die Weiterentwicklung. Nach vier Jahren wird auch diese Schicht frei.
 
 So entsteht ein Modell, das maximale Freiheit für Personen mit ausreichender Tragfähigkeit für eine dauerhaft gepflegte Architektur verbindet — plus ein zeitversetztes Open-Source-Versprechen, das verhindert, dass irgendein Teil dauerhaft proprietär bleibt.
 

@@ -98,7 +98,7 @@ Gesamt: **1.499 Tests, 0 Fehler, 0 Altlasten.**
 ### UX-Optimierung für Senioren (Schwerpunkt dieser Version)
 
 Diese Version konzentriert sich vollständig auf Nutzbarkeit, Barrierefreiheit
-und technische Robustheit — keine neuen Funktionen, aber eine substanziell
+und technische Robustheit — keine neuen Funktionen, aber eine wesentlich
 bessere Erfahrung für die Zielgruppe (60+, nicht digital-affin).
 
 ### Behobene Bugs

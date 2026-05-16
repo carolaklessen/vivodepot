@@ -84,7 +84,7 @@ Im Gesundheitsbereich dient die FHIR-Patient-Resource als Identitätsanker. Sie 
 
 ### Beziehungscodierung und Vollmachten
 
-Vivodepot codiert Beziehungen nach HL7 V3 RoleCode — dem internationalen Standard für Rollen in Gesundheits- und Sorgekontexten. Wer für wen handelt (als Bevollmächtigte:r, als gesetzliche Betreuerin, als Erbin), ist damit in einem Format dokumentiert, das institutionelle Systeme lesen können. Vollmachten werden mit JWS-Signaturen (RFC 7515) versehen; die Trust-Authority-Substanz sichert die Echtheit anbieter-mitgebrachter Templates per W3C-Verifiable-Credentials-Zertifikat.
+Vivodepot codiert Beziehungen nach HL7 V3 RoleCode — dem internationalen Standard für Rollen in Gesundheits- und Sorgekontexten. Wer für wen handelt (als Bevollmächtigte:r, als gesetzliche Betreuerin, als Erbin), ist damit in einem Format dokumentiert, das institutionelle Systeme lesen können. Vollmachten werden mit JWS-Signaturen (RFC 7515) versehen; die Trust-Authority-Schicht sichert die Echtheit anbieter-mitgebrachter Templates per W3C-Verifiable-Credentials-Zertifikat.
 
 ### Ausgabeformate für Institutionen
 
@@ -186,7 +186,7 @@ Die Software ist freie Software. Bürger:innen, Forschungseinrichtungen, gemeinn
 
 Diese Konstruktion verbindet drei Dinge, die normalerweise nicht zusammenpassen: maximale Freiheit für die Personen, deren Daten gehalten werden; ausreichende kommerzielle Tragfähigkeit, um die Architektur dauerhaft zu pflegen; und ein zeitversetztes Open-Source-Versprechen, das verhindert, dass die Lösung jemals dauerhaft proprietär wird.
 
-Vivodepot ist als Anwendung **Open Source** unter EUPL-1.2 — frei für alle, ohne Einschränkung. Der **Template-Mechanismus** (anbieter-mitgebrachte Vorlagen, Companion-Schemata, Trust-Authority-Substanz) ist unter BUSL-1.1 lizenziert mit automatischer Konversion zu EUPL-1.2 nach vier Jahren; institutionelle Nutzung ab 1.000 personenbezogenen Datensätzen erfordert eine kommerzielle Lizenz. Details: [LICENSE](LICENSE), [LICENSING.md](LICENSING.md), [vivodepot.de/lizenzierung](https://vivodepot.de/lizenzierung).
+Vivodepot ist als Anwendung **Open Source** unter EUPL-1.2 — frei für alle, ohne Einschränkung. Der **Template-Mechanismus** (anbieter-mitgebrachte Vorlagen, Companion-Schemata, Trust-Authority-Schicht) ist unter BUSL-1.1 lizenziert mit automatischer Konversion zu EUPL-1.2 nach vier Jahren; institutionelle Nutzung ab 1.000 personenbezogenen Datensätzen erfordert eine kommerzielle Lizenz. Details: [LICENSE](LICENSE), [LICENSING.md](LICENSING.md), [vivodepot.de/lizenzierung](https://vivodepot.de/lizenzierung).
 
 ## Verantwortung
 
@@ -227,7 +227,7 @@ Während v1 in Entwicklung ist, steht beta.16 öffentlich zur Verfügung. Diese 
 
 ### Stand-Tabelle
 
-| Substanz | beta.16 (online) | v1 (in Entwicklung) |
+| Funktion | beta.16 (online) | v1 (in Entwicklung) |
 |---|---|---|
 | Single-File-HTML, AES-256-GCM, Offline, FHIR-R4-Grundgerüst | ✓ | ✓ |
 | Strukturierte Formulare (Stammdaten, Gesundheit, Verträge usw.) | ✓ | erweitert |
@@ -272,7 +272,7 @@ Detaillierte Dokumentation: [DOCS.md](DOCS.md) · [INTEROPERABILITY.md](INTEROPE
 | Salt-Speicherung | In gespeicherter Datei eingebettet (seit beta.7) — auf jedem Gerät mit Passwort entschlüsselbar |
 | Weitergabe-Datei | Eigener Salt, eigenes Passwort |
 | QR-Übergabe | Hash-Fragment-Payload erreicht keinen Server, PIN-geschützt, 24-Stunden-Gültigkeit |
-| Leseansicht | Kein Speichern, kein Server, keine Cookies, keine Tracking-Substanz |
+| Leseansicht | Kein Speichern, kein Server, keine Cookies, keine Tracking-Mechanismen |
 | Netzwerkanfragen | Keine — vollständig offline |
 | Telemetrie | Nicht vorhanden |
 | Externe Skripte | Nicht vorhanden (alle Bibliotheken inline) |

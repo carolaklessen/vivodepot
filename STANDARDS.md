@@ -1,8 +1,8 @@
-# Vivodepot — Standards-Substanz
+# Vivodepot — Standards-Übersicht
 
 *Stand: 13. Mai 2026 · Version 1.0 (Erstfassung) · Bezug: VIVODEPOT.html v1.0.0-beta.17*
 
-Diese Datei dokumentiert alle offenen Standards, die Vivodepot abbildet — implementiert, in Roadmap verankert oder als regulatorischer Rahmen relevant. Sie ist die maßgebliche Substanz für die Aussage „über 30 offene Standards" auf den Webseiten und in Förderanträgen.
+Diese Datei dokumentiert alle offenen Standards, die Vivodepot abbildet — implementiert, in Roadmap verankert oder als regulatorischer Rahmen relevant. Sie ist die maßgebliche Grundlage für die Aussage „über 30 offene Standards" auf den Webseiten und in Förderanträgen.
 
 ---
 
@@ -41,7 +41,7 @@ FHIR R4 und das International Patient Summary (IPS) sind der HL7-Standard für i
 |---|---|---|---|---|
 | **HL7 FHIR R4** | Release 4 | HL7 International (https://hl7.org/fhir/R4/) | Export und Import strukturierter Gesundheitsdaten | Implementiert |
 | **International Patient Summary (IPS)** | v2.0.0 STU 2 (Oktober 2025) | HL7 (https://hl7.org/fhir/uv/ips/STU2/) | Patient Summary mit sechs Pflichtbereichen | Implementiert |
-| **HL7 FHIR Provenance** | Release 4 | HL7 | Sub-Depot-Provenance, Audit-Substanz (ADR-063) | Implementiert |
+| **HL7 FHIR Provenance** | Release 4 | HL7 | Sub-Depot-Provenance, Audit-Belege (ADR-063) | Implementiert |
 | **HL7-V3-RoleCode** | v3 | HL7 Terminology (http://terminology.hl7.org/CodeSystem/v3-RoleCode) | Beziehungs-Codierung Anker zu Sub-Depot (16 Codes) | Implementiert |
 | **HL7-V3-NullFlavor** | v3 | HL7 Terminology (http://terminology.hl7.org/CodeSystem/v3-NullFlavor) | OTH-Beziehung mit Freitext-Fallback | Implementiert |
 
@@ -51,7 +51,7 @@ Die sechs IPS-Pflichtbereiche sind in der Implementation als Konstante `IPS_PFLI
 
 ## Cluster 3 — Identität und Signaturen
 
-Identitäts-Substanz, Verifiable Credentials und kryptographische Signaturen bilden die Vertrauens-Schicht zwischen Bürgerin, Institutionen und Vivodepot. Der Anschluss an eIDAS 2.0 plus EUDIW ist als Identitätsanker implementiert; die Trust-Authority-Architektur für Template-Übergaben nutzt JWS plus W3C Verifiable Credentials.
+Identitäts-Nachweise, Verifiable Credentials und kryptographische Signaturen bilden die Vertrauens-Schicht zwischen Bürgerin, Institutionen und Vivodepot. Der Anschluss an eIDAS 2.0 plus EUDIW ist als Identitätsanker implementiert; die Trust-Authority-Architektur für Template-Übergaben nutzt JWS plus W3C Verifiable Credentials.
 
 | Standard | Version | Quelle | Verwendung | Stand |
 |---|---|---|---|---|
@@ -94,15 +94,15 @@ Vivodepot exportiert nicht nur für Institutionen, sondern auch für Bürgerinne
 | **Schema.org** | aktuell | Schema.org (https://schema.org/) | RDF-Vokabular für Personen-Daten | Implementiert |
 | **FOAF (Friend of a Friend)** | 0.99 | FOAF Project (http://xmlns.com/foaf/0.1/) | RDF-Vokabular für Beziehungen | Implementiert |
 | **W3C vCard Ontology** | W3C Note | W3C (http://www.w3.org/2006/vcard/ns#) | RDF-Vokabular für Kontaktdaten | Implementiert |
-| **RDFS** | W3C Recommendation | W3C | RDF Schema-Substanz | Implementiert |
-| **XSD (XML Schema Datatypes)** | W3C Recommendation | W3C | Typisierung in RDF-Substanz | Implementiert |
+| **RDFS** | W3C Recommendation | W3C | RDF-Schema-Grundlage | Implementiert |
+| **XSD (XML Schema Datatypes)** | W3C Recommendation | W3C | Typisierung in RDF-Exporten | Implementiert |
 | **Solid Protocol** | W3C Solid CG | W3C Solid Community Group (https://solidproject.org/) | Persönlicher Datenspeicher (Solid Pod) | Implementiert (Export) |
 
 ---
 
 ## Cluster 6 — Kryptographie und Sicherheit
 
-Vivodepot ist eine offline-first Single-File-HTML-Anwendung mit lokaler Verschlüsselung. Sämtliche Krypto-Substanz folgt etablierten IETF- und NIST-Standards. Externe Verifikation erfolgt gegen RFC 5869 Test-Vektoren, NIST CAVP und Wycheproof (ADR-055).
+Vivodepot ist eine offline-first Single-File-HTML-Anwendung mit lokaler Verschlüsselung. Sämtliche Krypto-Verfahren folgen etablierten IETF- und NIST-Standards. Externe Verifikation erfolgt gegen RFC 5869 Test-Vektoren, NIST CAVP und Wycheproof (ADR-055).
 
 | Standard | Version | Quelle | Verwendung | Stand |
 |---|---|---|---|---|
@@ -116,9 +116,9 @@ Vivodepot ist eine offline-first Single-File-HTML-Anwendung mit lokaler Verschl�
 
 ## Cluster 7 — Regulatorischer Rahmen *(nicht im Standard-Count)*
 
-Diese regulatorischen Substanzen sind kein technischer Standard im engeren Sinn, sondern der Rechts- und Politik-Rahmen, in den Vivodepot eingebettet ist. Sie werden auf eu.html ausführlicher behandelt.
+Diese regulatorischen Rahmen sind kein technischer Standard im engeren Sinn, sondern der Rechts- und Politik-Rahmen, in den Vivodepot eingebettet ist. Sie werden auf eu.html ausführlicher behandelt.
 
-| Rahmen | Substanz | In-Kraft / Status | Vivodepot-Anschluss |
+| Rahmen | Gegenstand | In-Kraft / Status | Vivodepot-Anschluss |
 |---|---|---|---|
 | **EHDS (European Health Data Space)** | Verordnung (EU) 2025/327 | In Kraft seit März 2025 | FHIR-R4/IPS-konformer Import aus EHDS-Quellen implementiert |
 | **xShare Yellow Button** | EHDS-Exportinstrument | EOI eingereicht Mai 2026 | Vivodepot als Empfänger auf Bürger-Seite |
@@ -129,9 +129,9 @@ Diese regulatorischen Substanzen sind kein technischer Standard im engeren Sinn,
 
 ---
 
-## Cluster 8 — Lizenz-Substanz *(nicht im Standard-Count)*
+## Cluster 8 — Lizenz-Modelle *(nicht im Standard-Count)*
 
-Lizenz-Substanz für die Vivodepot-Anwendung und den Template-Übergabe-Mechanismus. Vollständige Erläuterung in [LICENSING.md](LICENSING.md).
+Lizenz-Modelle für die Vivodepot-Anwendung und den Template-Übergabe-Mechanismus. Vollständige Erläuterung in [LICENSING.md](LICENSING.md).
 
 | Lizenz | Anwendungsbereich | Quelle |
 |---|---|---|
@@ -180,6 +180,6 @@ Vollständiger Code-Audit über das öffentliche Repository: [gitlab.opencode.de
 
 ## Pflege dieses Dokuments
 
-Diese Datei wird bei jedem neuen Standard-Anschluss aktualisiert. Verantwortliche Pflege: Vivodepot GmbH (i.Gr.). Änderungs-Substanz wird in den ADRs unter `docs/adr/` dokumentiert.
+Diese Datei wird bei jedem neuen Standard-Anschluss aktualisiert. Verantwortliche Pflege: Vivodepot GmbH (i.Gr.). Änderungs-Begründungen werden in den ADRs unter `docs/adr/` dokumentiert.
 
 Bei Fragen zu Standards-Implementation oder -Konformität: [eu@vivodepot.de](mailto:eu@vivodepot.de) oder direkt im Repository als Issue.

@@ -109,10 +109,10 @@ Vivodepot wird mit Unterstützung von KI-Werkzeugen (Claude, Anthropic) entwicke
 
 ## Lizenz
 
-Vivodepot besteht aus zwei Substanz-Schichten mit unterschiedlichen Lizenzen — siehe [LICENSE](LICENSE) und [LICENSING.md](LICENSING.md).
+Vivodepot besteht aus zwei Code-Schichten mit unterschiedlichen Lizenzen — siehe [LICENSE](LICENSE) und [LICENSING.md](LICENSING.md).
 
 - **Beiträge zum App-Code** (`VIVODEPOT.html`, `vivodepot-lesen.html`, `test_vivodepot.py`, alle weiteren Code-Dateien außerhalb der Template-Library) werden unter **EUPL-1.2** veröffentlicht.
-- **Beiträge zum Template-Mechanismus** (Vorlagen-Substanz, Companion-Schemata, Trust-Authority-Code) werden unter **BUSL-1.1 mit EUPL-1.2 als Change License** veröffentlicht — automatische Konversion vier Jahre nach Veröffentlichung der jeweiligen Version.
+- **Beiträge zum Template-Mechanismus** (Vorlagen-Inhalt, Companion-Schemata, Trust-Authority-Code) werden unter **BUSL-1.1 mit EUPL-1.2 als Change License** veröffentlicht — automatische Konversion vier Jahre nach Veröffentlichung der jeweiligen Version.
 
 Mit Ihrem Pull Request stimmen Sie der jeweils zutreffenden Lizenzierung zu. Falls unklar ist, in welche Schicht Ihr Beitrag fällt, klären Sie das bitte vor dem Pull Request mit der Markeninhaberin.
 
