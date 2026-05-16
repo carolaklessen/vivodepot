@@ -8,6 +8,7 @@
 
 **E-Mail:** [security@vivodepot.de](mailto:security@vivodepot.de)
 **Betreff:** `[SECURITY] Kurzbeschreibung`
+**PGP-Fingerprint:** `8E91 9851 BDBB 6EB4 B4BA  6614 E9AB 17A4 9DD1 0C07`
 
 Bitte keine öffentlichen GitHub-Issues für Sicherheitslücken — diese erreichen Vivodepot über den vertraulichen Kanal schneller und schützen die Nutzer-Basis bis zur Behebung.
 
