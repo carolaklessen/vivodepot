@@ -215,7 +215,7 @@ Anyone interested in strategic partnership or advisory board participation is in
 - General: [kontakt@vivodepot.de](mailto:kontakt@vivodepot.de)
 - Licensing: [lizenz@vivodepot.de](mailto:lizenz@vivodepot.de) · [LICENSE](LICENSE) · [LICENSING.md](LICENSING.md)
 - Trademark: [marken@vivodepot.de](mailto:marken@vivodepot.de) · [TRADEMARK.md](TRADEMARK.md)
-- Security reports: [security@vivodepot.de](mailto:security@vivodepot.de) · [SECURITY.md](SECURITY.md)
+- Security reports: [security@vivodepot.de](mailto:security@vivodepot.de) · [SECURITY.md](SECURITY.md) · PGP `8E91 9851 BDBB 6EB4 B4BA  6614 E9AB 17A4 9DD1 0C07`
 - Web: [vivodepot.de](https://vivodepot.de)
 - Code: [github.com/carolaklessen/vivodepot](https://github.com/carolaklessen/vivodepot)
 

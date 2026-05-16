@@ -109,5 +109,5 @@ Die Web Notifications API erfordert eine einmalige Browser-Berechtigung. Die Erl
 
 ## Kontakt
 
-- Sicherheitsmeldungen: [security@vivodepot.de](mailto:security@vivodepot.de)
+- Sicherheitsmeldungen: [security@vivodepot.de](mailto:security@vivodepot.de) · PGP `8E91 9851 BDBB 6EB4 B4BA  6614 E9AB 17A4 9DD1 0C07`
 - Allgemein: [kontakt@vivodepot.de](mailto:kontakt@vivodepot.de)
