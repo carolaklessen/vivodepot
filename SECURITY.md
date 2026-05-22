@@ -8,7 +8,8 @@
 
 **E-Mail:** [security@vivodepot.de](mailto:security@vivodepot.de)
 **Betreff:** `[SECURITY] Kurzbeschreibung`
-**PGP-Fingerprint:** `8E91 9851 BDBB 6EB4 B4BA  6614 E9AB 17A4 9DD1 0C07`
+**PGP-Fingerprint:** `30FB 9B42 7F12 095D 317B  4485 F527 3B32 959A 7D42`
+**Öffentlicher Schlüssel:** [`security/pgp-pubkey.asc`](security/pgp-pubkey.asc) (RSA-4096, gültig bis 2029-05-15)
 
 Bitte keine öffentlichen GitHub-Issues für Sicherheitslücken — diese erreichen Vivodepot über den vertraulichen Kanal schneller und schützen die Nutzer-Basis bis zur Behebung.
 
@@ -109,5 +110,5 @@ Die Web Notifications API erfordert eine einmalige Browser-Berechtigung. Die Erl
 
 ## Kontakt
 
-- Sicherheitsmeldungen: [security@vivodepot.de](mailto:security@vivodepot.de) · PGP `8E91 9851 BDBB 6EB4 B4BA  6614 E9AB 17A4 9DD1 0C07`
+- Sicherheitsmeldungen: [security@vivodepot.de](mailto:security@vivodepot.de) · PGP `30FB 9B42 7F12 095D 317B  4485 F527 3B32 959A 7D42` ([Schlüssel](security/pgp-pubkey.asc))
 - Allgemein: [kontakt@vivodepot.de](mailto:kontakt@vivodepot.de)
