@@ -1,0 +1,30 @@
+{
+  "version": "1.0",
+  "stand": "2026-04-22",
+  "templates": [
+    {
+      "id": "betriebsarzt-v2",
+      "titel": "Betriebsärztlicher Dienst",
+      "kanal": "Betriebsarzt",
+      "version": "2.0.0",
+      "beschreibung": "5 Fragen zu Gesundheit und Arbeitsfähigkeit",
+      "lizenz": "BUSL-1.1"
+    },
+    {
+      "id": "notar-v2",
+      "titel": "Notariat",
+      "kanal": "Notar",
+      "version": "2.0.0",
+      "beschreibung": "5 Fragen zur Vollständigkeit rechtlicher Dokumente",
+      "lizenz": "BUSL-1.1"
+    },
+    {
+      "id": "pflegeheim-v2",
+      "titel": "Pflegeeinrichtung",
+      "kanal": "Pflegeheim",
+      "version": "2.0.0",
+      "beschreibung": "5 Fragen zur Aufnahme-Vorbereitung",
+      "lizenz": "BUSL-1.1"
+    }
+  ]
+}
